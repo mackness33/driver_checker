@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Driver Checker</string>
+    <string name="storage_permission_denied_message">The permission has been denied</string>
 </resources>

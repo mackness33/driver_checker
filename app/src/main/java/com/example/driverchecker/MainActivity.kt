@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.content.ContentValues
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.ImageView
@@ -17,6 +18,7 @@ import androidx.core.content.FileProvider
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.google.android.material.snackbar.Snackbar
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonView: Button
     private lateinit var buttonChoose: Button
     private lateinit var imageView: ImageView
+    private lateinit var mCurrentPhotoPath: String
     private val FILENAME = "driver_checker.jpg"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         buttonView.setOnClickListener {
             val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             filePhoto = this.getPhotoFile(FILENAME)
-            val providerFile = FileProvider.getUriForFile(this,"com.example.driver_checker.file_provider", filePhoto)
+            val providerFile = FileProvider.getUriForFile(this,"com.example.driverchecker.fileprovider", filePhoto)
             takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerFile)
         }
 
@@ -84,6 +87,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPhotoFile(fileName: String): File {
+        /* val values = ContentValues(1)
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
+        val fileUri = contentResolver
+            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                values)
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if(intent.resolveActivity(packageManager) != null) {
+            mCurrentPhotoPath = fileUri.toString()
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            startActivityForResult(intent, TAKE_PHOTO_REQUEST)
+        }
+         */
         val directoryStorage = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(fileName, "driver_checker.jpg", directoryStorage)
     }
@@ -100,8 +117,7 @@ class MainActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
         }
         **/
-        val REQUEST_CODE = 13
-        if(requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
+        if(requestCode == IMAGE_CHOOSE && resultCode == Activity.RESULT_OK){
             imageView.setImageURI(data?.data)
         }
     }
@@ -124,8 +140,12 @@ class MainActivity : AppCompatActivity() {
             PERMISSION_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     chooseImageGallery()
-                }else{
+                } else {
                     Toast.makeText(this,"Permission denied", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content),
+                        R.string.storage_permission_denied_message,
+                        Snackbar.LENGTH_LONG)
+                        .show()
                 }
             }
         }
