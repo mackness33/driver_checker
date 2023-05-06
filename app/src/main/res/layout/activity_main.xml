@@ -11,7 +11,7 @@
         android:id="@+id/txtView"
         android:layout_width="0dp"
         android:layout_height="11dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnView"
+        app:layout_constraintBottom_toTopOf="@+id/btnTakeWithCamera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.96" />
 
     <Button
-        android:id="@+id/btnView"
+        android:id="@+id/btnTakeWithCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="92dp"

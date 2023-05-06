@@ -45,7 +45,7 @@ class MainActivityCopy : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         textView = findViewById(R.id.txtView)
-        buttonTakeWithCamera = findViewById(R.id.btnView)
+        buttonTakeWithCamera = findViewById(R.id.btnTakeWithCamera)
         buttonTake = findViewById(btnTake)
         buttonChoose = findViewById(R.id.btnChoose)
         imageView = findViewById(R.id.imgView)
