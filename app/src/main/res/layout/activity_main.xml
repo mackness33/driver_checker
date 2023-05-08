@@ -28,6 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.571"
+        android:elevation="10dp"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -40,6 +41,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.826"
+        android:elevation="10dp"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -51,6 +53,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.189"
+        android:elevation="10dp"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -61,6 +64,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:elevation="10dp"
+        />
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="0dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_centerline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".50" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
