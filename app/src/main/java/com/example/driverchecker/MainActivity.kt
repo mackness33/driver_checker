@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 //            camera!!.takePicture(null, null, PhotoHandler(getApplicationContext()));
 //        }
 
-        viewBinding.btnTake.setOnClickListener { startCamera() }
+        viewBinding.btnTake.setOnClickListener { checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::startCamera) }
 
 //        openCamera()
 
