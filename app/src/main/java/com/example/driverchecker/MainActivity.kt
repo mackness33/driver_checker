@@ -3,6 +3,7 @@ package com.example.driverchecker
 import PhotoHandler
 import android.Manifest.permission
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 //import androidx.camera.view.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -38,6 +40,8 @@ import com.chaquo.python.android.AndroidPlatform
 import com.example.driverchecker.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ExecutorService
 
 class MainActivity : AppCompatActivity() {
@@ -87,6 +91,7 @@ class MainActivity : AppCompatActivity() {
                     add(permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
 
     }
 
@@ -104,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             checkAndRequestPermissions(arrayOf(permission.READ_EXTERNAL_STORAGE), ::chooseImageGallery)
         }
 
-        viewBinding.btnTakeWithCamera.setOnClickListener {
+        viewBinding.btnTakeWithCamera.setOnClickListener{
             checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::takePhotoWithCamera)
         }
 
@@ -112,6 +117,8 @@ class MainActivity : AppCompatActivity() {
 //            camera!!.startPreview();
 //            camera!!.takePicture(null, null, PhotoHandler(getApplicationContext()));
 //        }
+
+//        checkAndRequestPermissions(arrayOf(permission.CAMERA), ::startCamera)
 
         viewBinding.btnTake.setOnClickListener { checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::startCamera) }
 
@@ -313,6 +320,8 @@ class MainActivity : AppCompatActivity() {
                     it.setSurfaceProvider(viewBinding.viewFinder.surfaceProvider)
                 }
 
+            imageCapture = ImageCapture.Builder().build()
+
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
@@ -325,9 +334,51 @@ class MainActivity : AppCompatActivity() {
                     this, cameraSelector, preview)
 
             } catch(exc: Exception) {
-                Log.e("CameraXErr", "Use case binding failed", exc)
+                Log.e("CameraXError", "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun takePhoto() {
+        // Get a stable reference of the modifiable image capture use case
+        val imageCapture = imageCapture ?: return
+
+        // Create time stamped name and MediaStore entry.
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+            .format(System.currentTimeMillis())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+            }
+        }
+
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions
+            .Builder(contentResolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues)
+            .build()
+
+        // Set up image capture listener, which is triggered after photo has
+        // been taken
+        imageCapture.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(this),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(exc: ImageCaptureException) {
+                    Log.e("CameraXError", "Photo capture failed: ${exc.message}", exc)
+                }
+
+                override fun
+                        onImageSaved(output: ImageCapture.OutputFileResults){
+                    val msg = "Photo capture succeeded: ${output.savedUri}"
+                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                    Log.d("CameraXError", msg)
+                }
+            }
+        )
     }
 }
