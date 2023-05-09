@@ -82,36 +82,42 @@ class MainActivity : AppCompatActivity() {
         private val TAKE_PIC_WITH_CAMERA = 1001
         private val PERMISSION_CODE = 1002
         internal val DEBUG_TAG = "MainActivity"
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private val REQUIRED_PERMISSIONS =
             mutableListOf (
-                permission.CAMERA,
-                permission.RECORD_AUDIO
+                permission.CAMERA
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
-        val view: View = viewBinding.root
-        setContentView(view)
+        setContentView(viewBinding.root)
+
+        // Request camera permissions
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            ActivityCompat.requestPermissions(
+                this, REQUIRED_PERMISSIONS, 10)
+        }
+
 
         // Set up the listeners for take photo and video capture buttons
 //        viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
 //        viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
 
-        viewBinding.btnChoose.setOnClickListener {
-            checkAndRequestPermissions(arrayOf(permission.READ_EXTERNAL_STORAGE), ::chooseImageGallery)
-        }
-
-        viewBinding.btnTakeWithCamera.setOnClickListener{
-            checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::takePhotoWithCamera)
-        }
+//        viewBinding.btnChoose.setOnClickListener {
+//            checkAndRequestPermissions(arrayOf(permission.READ_EXTERNAL_STORAGE), ::chooseImageGallery)
+//        }
+//
+//        viewBinding.btnTakeWithCamera.setOnClickListener{
+//            checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::takePhotoWithCamera)
+//        }
 
 //        viewBinding.btnTake.setOnClickListener {
 //            camera!!.startPreview();
@@ -120,9 +126,11 @@ class MainActivity : AppCompatActivity() {
 
 //        checkAndRequestPermissions(arrayOf(permission.CAMERA), ::startCamera)
 
-        viewBinding.btnTake.setOnClickListener { checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::startCamera) }
+//        viewBinding.btnTake.setOnClickListener { takePhoto() }
 
-//        openCamera()
+        viewBinding.btnTake.setOnClickListener{
+            checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::takePhoto)
+        }
 
         // "context" must be an Activity, Service or Application object from your app.
         if (! Python.isStarted()) {
@@ -149,13 +157,22 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this,"Permission denied", Toast.LENGTH_SHORT).show()
-            Snackbar.make(
-                findViewById(android.R.id.content),
-                R.string.storage_permission_denied_message,
-                Snackbar.LENGTH_LONG)
-                .show()
+//        if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+//            Toast.makeText(this,"Permission denied", Toast.LENGTH_SHORT).show()
+//            Snackbar.make(
+//                findViewById(android.R.id.content),
+//                R.string.storage_permission_denied_message,
+//                Snackbar.LENGTH_LONG)
+//                .show()
+//        }
+
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            Toast.makeText(this,
+                "Permissions not granted by the user.",
+                Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 
@@ -322,6 +339,7 @@ class MainActivity : AppCompatActivity() {
 
             imageCapture = ImageCapture.Builder().build()
 
+
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
@@ -332,6 +350,7 @@ class MainActivity : AppCompatActivity() {
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview)
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
 
             } catch(exc: Exception) {
                 Log.e("CameraXError", "Use case binding failed", exc)

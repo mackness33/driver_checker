@@ -44,7 +44,7 @@ class MainActivityCopy : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        textView = findViewById(R.id.txtView)
+        textView = findViewById(R.id.txtResult)
         buttonTakeWithCamera = findViewById(R.id.btnTakeWithCamera)
         buttonTake = findViewById(btnTake)
         buttonChoose = findViewById(R.id.btnChoose)

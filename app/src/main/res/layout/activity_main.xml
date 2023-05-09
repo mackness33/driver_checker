@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/txtView"
+        android:id="@+id/txtResult"
         android:layout_width="0dp"
         android:layout_height="11dp"
         app:layout_constraintBottom_toTopOf="@+id/btnTakeWithCamera"
@@ -68,6 +68,7 @@
         android:elevation="10dp"
         />
 
+
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
         android:layout_width="match_parent"
@@ -81,7 +82,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".50" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
