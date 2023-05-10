@@ -56,16 +56,7 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
-
-    private lateinit var textView: TextView
-    private lateinit var buttonChoose: Button
-    private lateinit var imageView: ImageView
-    private lateinit var buttonTakeWithCamera: Button
-    private lateinit var buttonTake: Button
     private var picture: Picture? = null
-    private val PICTURE_FILE_NAME: String = "driver_checker.jpg"
-    private var cameraId = 0
-
     private lateinit var viewBinding: ActivityMainBinding
 
     private var imageCapture: ImageCapture? = null
@@ -91,6 +82,7 @@ class MainActivity : AppCompatActivity() {
                     add(permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
+        private val PICTURE_FILE_NAME: String = "driver_checker.jpg"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         val py: Python = Python.getInstance()
 
         // Create Python object
-        val pyObj: PyObject = py.getModule("testPy")
+        val pyObj: PyObject = py.getModule("video_analysis")
 
         /// call the function
         val obj: PyObject = pyObj.callAttr("main")
