@@ -25,11 +25,11 @@ android {
         python {
             pip {
                 // A requirement specifier, with or without a version number:
-                install "tensorflow==2.1.0"
-                install "opencv-python"
-                install "requests"
-                install "pillow"
-                install "numpy"
+//                install "tensorflow==2.1.0"
+//                install "opencv-python"
+//                install "requests"
+//                install "pillow"
+//                install "numpy"
             }
         }
 
