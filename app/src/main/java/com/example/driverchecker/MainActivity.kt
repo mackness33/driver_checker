@@ -1,24 +1,17 @@
 package com.example.driverchecker
 
-import PhotoHandler
+//import androidx.camera.view.Preview
 import android.Manifest.permission
 import android.app.Activity
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.ImageFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +19,6 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
-//import androidx.camera.view.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
@@ -38,7 +30,6 @@ import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.example.driverchecker.databinding.ActivityMainBinding
-import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
+    private var roboflow: Roboflow = Roboflow()
     private var picture: Picture? = null
     private lateinit var viewBinding: ActivityMainBinding
 
@@ -98,46 +90,32 @@ class MainActivity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, 10)
         }
 
+        viewBinding.btnChoose.setOnClickListener {
+            checkAndRequestPermissions(arrayOf(permission.READ_EXTERNAL_STORAGE, permission.INTERNET), ::chooseImageGallery)
+        }
 
-        // Set up the listeners for take photo and video capture buttons
-//        viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
-//        viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
-
-//        viewBinding.btnChoose.setOnClickListener {
-//            checkAndRequestPermissions(arrayOf(permission.READ_EXTERNAL_STORAGE), ::chooseImageGallery)
-//        }
-//
-//        viewBinding.btnTakeWithCamera.setOnClickListener{
-//            checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::takePhotoWithCamera)
-//        }
-
-//        viewBinding.btnTake.setOnClickListener {
-//            camera!!.startPreview();
-//            camera!!.takePicture(null, null, PhotoHandler(getApplicationContext()));
-//        }
-
-//        checkAndRequestPermissions(arrayOf(permission.CAMERA), ::startCamera)
-
-//        viewBinding.btnTake.setOnClickListener { takePhoto() }
+        viewBinding.btnTakeWithCamera.setOnClickListener{
+            checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::takePhotoWithCamera)
+        }
 
         viewBinding.btnTake.setOnClickListener{
             checkAndRequestPermissions(arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.CAMERA), ::takePhoto)
         }
 
         // "context" must be an Activity, Service or Application object from your app.
-        if (! Python.isStarted()) {
-            Python.start(AndroidPlatform(baseContext))
-        }
-
-        // need to create a singleton of Python instance to run the various script with it in the whole proj.
-        // Create Python instance
-        val py: Python = Python.getInstance()
-
-        // Create Python object
-        val pyObj: PyObject = py.getModule("video_analysis")
-
-        /// call the function
-        val obj: PyObject = pyObj.callAttr("main")
+//        if (! Python.isStarted()) {
+//            Python.start(AndroidPlatform(baseContext))
+//        }
+//
+//        // need to create a singleton of Python instance to run the various script with it in the whole proj.
+//        // Create Python instance
+//        val py: Python = Python.getInstance()
+//
+//        // Create Python object
+//        val pyObj: PyObject = py.getModule("video_analysis")
+//
+//        /// call the function
+//        val obj: PyObject = pyObj.callAttr("main")
 
         // now set returned text to textview
 //        textView.text = obj.toString()
@@ -207,6 +185,15 @@ class MainActivity : AppCompatActivity() {
 
         if (picture != null && picture?.uri != null) {
             viewBinding.imgView.setImageURI(picture?.uri)
+            val thread = Thread {
+                try {
+                    roboflow.makeReqToRoboflow(result.data!!.data!!.path.toString())
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            thread.start()
         }
     }
 
@@ -231,84 +218,6 @@ class MainActivity : AppCompatActivity() {
         val directoryStorage = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(fileName, "", directoryStorage)
     }
-
-//    private fun findFrontFacingCamera(): Int {
-//        var cameraId = -1
-//        // Search for the front facing camera
-//        val numberOfCameras: Int = Camera.getNumberOfCameras()
-//        for (i in 0 until numberOfCameras) {
-//            val info = Camera.CameraInfo()
-//            Camera.getCameraInfo(i, info)
-//            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-//                Log.d(MainActivityCopy.DEBUG_TAG, "Camera found")
-//                cameraId = i
-//                break
-//            }
-//        }
-//        return cameraId
-//    }
-
-//    private fun openCamera () {
-//        // do we have a camera?
-//        if (!packageManager
-//                .hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-//            Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
-//                .show();
-//        } else {
-//            cameraId = findFrontFacingCamera();
-//            if (cameraId < 0) {
-//                Toast.makeText(this, "No front facing camera found.",
-//                    Toast.LENGTH_LONG).show();
-//            } else {
-//                if ( camera != null) {
-//                    camera = Camera.open(cameraId);
-//                }
-//            }
-//        }
-//    }
-
-//    private fun startCameraSession() {
-//        val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-//
-//        if (cameraManager.cameraIdList.isEmpty()) {
-//            // no cameras
-//            return
-//        }
-//
-////        val firstCamera = cameraIdList[0]
-//
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                permission.CAMERA
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return
-//        }
-//        cameraManager.openCamera(firstCamera, object: CameraDevice.StateCallback() {
-//            override fun onDisconnected(p0: CameraDevice) { }
-//            override fun onError(p0: CameraDevice, p1: Int) { }
-//
-//            override fun onOpened(cameraDevice: CameraDevice) {
-//                // use the camera
-//                val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraDevice.id)
-//
-//                cameraCharacteristics[CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP]?.let { streamConfigurationMap ->
-//                    streamConfigurationMap.getOutputSizes(ImageFormat.JPEG)?.let { yuvSizes ->
-//                        val previewSize = yuvSizes.last()
-//
-//                    }
-//
-//                }
-//            }
-//        }, Handler { true })
-//    }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
