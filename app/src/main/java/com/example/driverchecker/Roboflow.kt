@@ -1,7 +1,9 @@
 package com.example.driverchecker
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Environment
 import android.util.Base64
 import android.util.Log
@@ -14,7 +16,7 @@ import javax.net.ssl.HttpsURLConnection
 
 
 class Roboflow {
-    public fun makeReqToRoboflow (path: String) {
+    public fun makeReqToRoboflow (uri: Uri, context: Context) {
         val url = URL("https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y")
 
         val https = url.openConnection() as HttpsURLConnection
@@ -24,7 +26,7 @@ class Roboflow {
         https.doInput = true
         https.doOutput = true
 
-        val data = encodeImage ("/storage/emulated/0/Pictures/Telegram/Chris.jpg")
+        val data = encodeImage (FileUtilsKotlin.getPath(uri, context))
         val image = data.toByteArray(StandardCharsets.US_ASCII)
         https.setRequestProperty("Content-Length", image.size.toString())
 
@@ -83,7 +85,10 @@ class Roboflow {
 //        }
     }
 
-    private fun encodeImage (path: String) : String {
+    private fun encodeImage (path: String?) : String {
+        if (path == null) {
+            return ""
+        }
         val f = Environment.getExternalStorageDirectory()
         val bm = BitmapFactory.decodeFile(path)
         val baos = ByteArrayOutputStream()

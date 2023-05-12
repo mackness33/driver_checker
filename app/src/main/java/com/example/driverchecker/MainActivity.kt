@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             viewBinding.imgView.setImageURI(picture?.uri)
             val thread = Thread {
                 try {
-                    roboflow.makeReqToRoboflow(result.data!!.data!!.path.toString())
+                    roboflow.makeReqToRoboflow(result.data!!.data!!, this@MainActivity)
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
                 }
