@@ -16,7 +16,7 @@ import javax.net.ssl.HttpsURLConnection
 
 
 class Roboflow {
-    public fun makeReqToRoboflow (uri: Uri, context: Context) {
+    public fun makeReqToRoboflow (path: String) {
         val url = URL("https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y")
 
         val https = url.openConnection() as HttpsURLConnection
@@ -26,7 +26,7 @@ class Roboflow {
         https.doInput = true
         https.doOutput = true
 
-        val data = encodeImage (FileUtilsKotlin.getPath(uri, context))
+        val data = encodeImage (path)
         val image = data.toByteArray(StandardCharsets.US_ASCII)
         https.setRequestProperty("Content-Length", image.size.toString())
 

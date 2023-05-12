@@ -26,9 +26,6 @@ import androidx.camera.video.VideoCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.chaquo.python.PyObject
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
 import com.example.driverchecker.databinding.ActivityMainBinding
 import java.io.File
 import java.text.SimpleDateFormat
@@ -38,16 +35,10 @@ import java.util.concurrent.ExecutorService
 class MainActivity : AppCompatActivity() {
 
     class Picture (var uri: Uri?, var name: String?){
-//        var uri: Uri?
-//        var name: String?
-
-//        constructor (inputName: String?, inputUri: Uri?) {
-//            name = inputName
-//            uri = inputUri
-//        }
     }
 
     private var roboflow: Roboflow = Roboflow()
+    private var imageRecognitionService: ImageRecognitionService = ImageRecognitionService()
     private var picture: Picture? = null
     private lateinit var viewBinding: ActivityMainBinding
 
@@ -61,8 +52,6 @@ class MainActivity : AppCompatActivity() {
 
     // companion object
     companion object {
-        private val PICK_IMAGE = 1000
-        private val TAKE_PIC_WITH_CAMERA = 1001
         private val PERMISSION_CODE = 1002
         internal val DEBUG_TAG = "MainActivity"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -179,21 +168,22 @@ class MainActivity : AppCompatActivity() {
             // There are no request codes
             val data: Intent? = result.data
             if (data != null && data.data != null) {
-                picture = Picture(data.data, "")
-            }
-        }
+                val path: String? = FileUtils.getPath(data.data!!, this@MainActivity)
 
-        if (picture != null && picture?.uri != null) {
-            viewBinding.imgView.setImageURI(picture?.uri)
-            val thread = Thread {
-                try {
-                    roboflow.makeReqToRoboflow(result.data!!.data!!, this@MainActivity)
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
+                if (path != null) {
+                    viewBinding.imgView.setImageURI(picture?.uri)
+                    val thread = Thread {
+                        try {
+                            imageRecognitionService.makePrediction(path, true)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    thread.start()
                 }
             }
 
-            thread.start()
         }
     }
 

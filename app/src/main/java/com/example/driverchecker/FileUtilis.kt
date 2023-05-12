@@ -15,7 +15,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-class FileUtilsKotlin() {
+class FileUtils() {
     private fun fileExists(filePath: String): Boolean {
         val file = File(filePath)
         return file.exists()
@@ -195,7 +195,7 @@ class FileUtilsKotlin() {
 
     companion object {
         private var contentUri: Uri? = null
-        private val fileUtils: FileUtilsKotlin = FileUtilsKotlin()
+        private val fileUtils: FileUtils = FileUtils()
 
         fun getPath(uri: Uri, context: Context): String? {
             // check here to KITKAT or new version
