@@ -3,6 +3,7 @@ package com.example.driverchecker
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -15,9 +16,15 @@ import javax.net.ssl.HttpsURLConnection
 // todo: create the stream to show the boxes on live stream
 class ImageRecognitionService {
 
-    public fun makePrediction (path: String, type: Boolean){
+    fun makePrediction (path: String, type: Boolean) {
         if (type) makeReqToExternalUri(path)
     }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun awaitPrediction (path: String, type: Boolean) = GlobalScope.async {
+            makePrediction(path, type)
+    }
+
 
     // Make a request to an external url to get the prediction of the image in input
     private fun makeReqToExternalUri (path: String) {
@@ -41,7 +48,7 @@ class ImageRecognitionService {
         val dataOutputStream = DataOutputStream(https.outputStream)
         dataOutputStream.write(byteArrayEncodedImage)
 
-        // get the resopnse and process it
+        // get the response and process it
         val responseStream = if (https.responseCode == HttpsURLConnection.HTTP_OK) https.inputStream else https.errorStream
         val  reader = BufferedReader(InputStreamReader(responseStream))
         var line: String?
@@ -59,10 +66,20 @@ class ImageRecognitionService {
     // Function to encode the file found on the path in input.
     // attention: It doesn't check whether the path in input is correct or not
     private fun encodeImage (path: String) : String {
-        val bm = BitmapFactory.decodeFile(path)
-        val baos = ByteArrayOutputStream()
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos) // bm is the bitmap object
+        return Base64.encodeToString(preProcessPhoto(path), Base64.DEFAULT)
+    }
 
-        return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
+
+    private fun preProcessPhoto (path: String): ByteArray {
+        val bm = BitmapFactory.decodeFile(path)
+        val bmScaled = Bitmap.createScaledBitmap(bm, 1280, (bm.height*1280)/bm.width, true)
+        val baos = ByteArrayOutputStream()
+        bmScaled.compress(Bitmap.CompressFormat.JPEG, 100, baos) // bm is the bitmap object
+
+        return baos.toByteArray()
+    }
+
+    private fun respectRatio (bmRatio: Pair<Int, Int>): Pair<Int, Int> {
+        return Pair<Int, Int> (bmRatio.first/1280, bmRatio.second/1080)
     }
 }
