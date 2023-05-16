@@ -58,10 +58,18 @@ class CameraFragment : Fragment() {
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
         layout.findViewById<View>(R.id.btnTake).setOnClickListener {
-            if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO)){
+            if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
-           } else
+            else {
                 cameraXHandler.takePhoto(this.requireContext(), FILENAME_FORMAT, PICTURE_FILE_NAME, imageRecognitionService)
+            }
+        }
+
+        layout.findViewById<View>(R.id.btnChoose).setOnClickListener {
+            if (!hasPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO))
+                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_CHOOSE_PHOTO)
+            else
+                chooseImageGallery()
         }
     }
 
@@ -106,7 +114,7 @@ class CameraFragment : Fragment() {
                     // Permission is granted. Continue the action or workflow in your
                     // app.
                     Log.i("Permission ${grant.key}: ", "Granted")
-                    runCamera()
+                    if (grant.key == Manifest.permission.CAMERA) runCamera()
                 } else {
                     // Explain to the user that the feature is unavailable because the
                     // feature requires a permission that the user has denied. At the
@@ -208,7 +216,6 @@ class CameraFragment : Fragment() {
     private fun chooseImageGallery() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-        intent.putExtra("code", "PICK_IMAGE")
         activityResultLauncher.launch(intent)
     }
 }
