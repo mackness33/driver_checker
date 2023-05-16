@@ -221,10 +221,9 @@ class FileUtils() {
                 // DownloadsProvider
                 if (fileUtils.isDownloadsDocument(uri)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        val id: String
                         var cursor: Cursor? = null
                         try {
-                            cursor = context.getContentResolver().query(
+                            cursor = context.contentResolver.query(
                                 uri,
                                 arrayOf(MediaStore.MediaColumns.DISPLAY_NAME),
                                 null,
@@ -242,7 +241,7 @@ class FileUtils() {
                         } finally {
                             cursor?.close()
                         }
-                        id = DocumentsContract.getDocumentId(uri)
+                        val id: String = DocumentsContract.getDocumentId(uri)
                         if (!TextUtils.isEmpty(id)) {
                             if (id.startsWith("raw:")) {
                                 return id.replaceFirst("raw:".toRegex(), "")
@@ -340,7 +339,7 @@ class FileUtils() {
                     )
                     var cursor: Cursor? = null
                     try {
-                        cursor = context.getContentResolver()
+                        cursor = context.contentResolver
                             .query(uri, projection, selection, selectionArgs, null)
                         val column_index =
                             cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
