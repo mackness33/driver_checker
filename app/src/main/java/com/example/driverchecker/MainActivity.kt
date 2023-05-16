@@ -9,29 +9,21 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.ImageCapture
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import com.example.driverchecker.databinding.ActivityMainBinding
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private val imageRecognitionService: ImageRecognitionService
+    private val imageRecognitionService: ImageRecognitionService = ImageRecognitionService()
     private lateinit var viewBinding: ActivityMainBinding
-    private val cameraXHandler: CameraXHandler
-    private var videoCapture: VideoCapture<Recorder>?
-    private var recording: Recording?
-
-    init {
-        imageRecognitionService = ImageRecognitionService()
-        cameraXHandler = CameraXHandler()
-
-        videoCapture = null
-        recording = null
-    }
+    private val cameraXHandler: CameraXHandler = CameraXHandler()
+    private var videoCapture: VideoCapture<Recorder>? = null
+    private var recording: Recording? = null
 
     // companion object
     companion object {
@@ -47,37 +39,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
 
-        // Request camera permissions
-        if (allCameraXPermissionsGranted()) {
-            cameraXHandler.startCamera(this, viewBinding.viewFinder.surfaceProvider)
-        } else {
-            ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS_TAKE_PHOTO, 10
-            )
-        }
-
-        viewBinding.btnChoose.setOnClickListener {
-            if (checkPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO)) {
-                requestPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO, PERMISSION_CODE)
-            } else {
-                chooseImageGallery()
-            }
-        }
-
-        viewBinding.btnTake.setOnClickListener {
-            if (checkPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO)) {
-                requestPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO, PERMISSION_CODE)
-            } else {
-                cameraXHandler.takePhoto(
-                    this,
-                    FILENAME_FORMAT,
-                    PICTURE_FILE_NAME,
-                    imageRecognitionService
-                )
-            }
+        setContentView(R.layout.activity_main);
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .add(R.id.fragment_container_view, CameraFragment.newInstance(), "Camera")
+                .commit()
         }
     }
 
@@ -89,14 +58,13 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (allCameraXPermissionsGranted()) {
-            cameraXHandler.startCamera(this, viewBinding.viewFinder.surfaceProvider)
+//            cameraXHandler.startCamera(this, viewBinding.viewFinder.surfaceProvider)
         } else {
             Toast.makeText(
                 this,
                 "Permissions not granted by the user.",
                 Toast.LENGTH_SHORT
             ).show()
-            finish()
         }
     }
 
@@ -110,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    var resultLauncher =
+    private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // There are no request codes
@@ -119,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     val path: String? = FileUtils.getPath(data.data as Uri, this@MainActivity)
 
                     if (path != null) {
-                        viewBinding.imgView.setImageURI(data.data)
+//                        viewBinding.imgView.setImageURI(data.data)
                         imageRecognitionService.awaitPrediction(path, true)
                     }
                 }
