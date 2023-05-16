@@ -20,7 +20,9 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.runBlocking
 import java.security.Permission
 
 //1
@@ -43,8 +45,6 @@ class CameraFragment : Fragment() {
         fun newInstance(): CameraFragment {
             return CameraFragment()
         }
-        private const val PERMISSION_CODE = 1002
-        internal const val DEBUG_TAG = "MainActivity"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private val REQUIRED_PERMISSIONS_CHOOSE_PHOTO =
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET)
@@ -84,6 +84,7 @@ class CameraFragment : Fragment() {
                     if (path != null) {
 //                        viewBinding.imgView.setImageURI(data.data)
                         imageRecognitionService.awaitPrediction(path, true)
+                        this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
                     }
                 }
 

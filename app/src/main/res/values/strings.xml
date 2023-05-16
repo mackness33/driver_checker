@@ -6,4 +6,6 @@
     <string name="ok">OK</string>
     <string name="permission_required">Permission is required</string>
     <string name="permission_granted">Permission has been granted</string>
+    <string name="label_result">ResultFragment</string>
+    <string name="label_camera">CameraFragment</string>
 </resources>

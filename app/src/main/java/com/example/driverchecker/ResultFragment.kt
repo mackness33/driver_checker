@@ -23,52 +23,25 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import java.security.Permission
 
-//1
-class CameraFragment : Fragment() {
+class ResultFragment : Fragment() {
     private lateinit var layout: View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        layout = inflater.inflate(R.layout.fragment_camera, container, false)
+        layout = inflater.inflate(R.layout.fragment_result, container, false)
         return layout
     }
 
-    private val imageRecognitionService: ImageRecognitionService = ImageRecognitionService()
-    private val cameraXHandler: CameraXHandler = CameraXHandler()
-    private var videoCapture: VideoCapture<Recorder>? = null
-    private var recording: Recording? = null
-
     // companion object
     companion object {
-        fun newInstance(): CameraFragment {
-            return CameraFragment()
+        fun newInstance(): ResultFragment {
+            return ResultFragment()
         }
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private val REQUIRED_PERMISSIONS_CHOOSE_PHOTO =
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET)
-        private val REQUIRED_PERMISSIONS_TAKE_PHOTO =
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.INTERNET)
-        private const val PICTURE_FILE_NAME: String = "driver_checker"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onClickRequestPermission(view, Manifest.permission.CAMERA)
 
-        layout.findViewById<View>(R.id.btnTake).setOnClickListener {
-            if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
-                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
-            else {
-                cameraXHandler.takePhoto(this.requireContext(), FILENAME_FORMAT, PICTURE_FILE_NAME, imageRecognitionService)
-            }
-        }
-
-        layout.findViewById<View>(R.id.btnChoose).setOnClickListener {
-            if (!hasPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO))
-                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_CHOOSE_PHOTO)
-            else
-                chooseImageGallery()
-        }
     }
 
     private val activityResultLauncher =
@@ -79,10 +52,10 @@ class CameraFragment : Fragment() {
                 if (data != null && data.data != null && data.data is Uri) {
                     val path: String? = FileUtils.getPath(data.data as Uri, this.requireActivity())
 
-                    if (path != null) {
+//                    if (path != null) {
 //                        viewBinding.imgView.setImageURI(data.data)
-                        imageRecognitionService.awaitPrediction(path, true)
-                    }
+//                        imageRecognitionService.awaitPrediction(path, true)
+//                    }
                 }
 
             }
@@ -94,7 +67,7 @@ class CameraFragment : Fragment() {
                 // Permission is granted. Continue the action or workflow in your
                 // app.
                 Log.i("Permission: ", "Granted")
-                runCamera()
+//                runCamera()
             } else {
                 // Explain to the user that the feature is unavailable because the
                 // feature requires a permission that the user has denied. At the
@@ -112,7 +85,7 @@ class CameraFragment : Fragment() {
                     // Permission is granted. Continue the action or workflow in your
                     // app.
                     Log.i("Permission ${grant.key}: ", "Granted")
-                    if (grant.key == Manifest.permission.CAMERA) runCamera()
+//                    if (grant.key == Manifest.permission.CAMERA) runCamera()
                 } else {
                     // Explain to the user that the feature is unavailable because the
                     // feature requires a permission that the user has denied. At the
@@ -123,116 +96,4 @@ class CameraFragment : Fragment() {
                 }
             }
         }
-
-    private fun runCamera() {
-        if (hasPermissions(arrayOf(Manifest.permission.CAMERA)) && !cameraXHandler.hasCameraStarted)
-            cameraXHandler.startCamera(this.requireContext(), layout.findViewById<PreviewView>(R.id.viewFinder).surfaceProvider)
-    }
-
-    private fun onClickRequestPermission(view: View, permission: String) {
-        when {
-            ContextCompat.checkSelfPermission(
-                    this.requireActivity(),
-                    permission
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                layout.showSnackbar(
-                    view,
-                    getString(R.string.permission_granted),
-                    Snackbar.LENGTH_SHORT,
-                    null
-                ) {}
-            }
-
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this.requireActivity(),
-                permission
-            ) -> {
-                layout.showSnackbar(
-                    view,
-                    getString(R.string.permission_required),
-                    Snackbar.LENGTH_SHORT,
-                    getString(R.string.ok)
-                ) {
-                    requestPermissionLauncher.launch(
-                        permission
-                    )
-                }
-            }
-
-            else -> {
-                requestPermissionLauncher.launch(
-                    permission
-                )
-            }
-        }
-    }
-
-    private fun hasPermissions(permissions: Array<String>): Boolean = permissions.all {
-        ActivityCompat.checkSelfPermission(this.requireActivity(), it) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun onClickRequestPermissions(view: View, permissions: Array<String>) {
-        val ungrantedPermissions = permissions.filter { ContextCompat.checkSelfPermission(
-            this.requireActivity(),
-            it
-        ) != PackageManager.PERMISSION_GRANTED }
-
-        when {
-            ungrantedPermissions.isEmpty() -> {
-                layout.showSnackbar(
-                    view,
-                    getString(R.string.permission_granted),
-                    Snackbar.LENGTH_SHORT,
-                    null
-                ) {}
-            }
-
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this.requireActivity(),
-                ungrantedPermissions.first()
-            ) -> {
-                layout.showSnackbar(
-                    view,
-                    getString(R.string.permission_required),
-                    Snackbar.LENGTH_SHORT,
-                    getString(R.string.ok)
-                ) {
-                    requestMultiplePermissionsLauncher.launch(
-                        ungrantedPermissions.toTypedArray()
-                    )
-                }
-            }
-
-            else -> {
-                requestMultiplePermissionsLauncher.launch(
-                    ungrantedPermissions.toTypedArray()
-                )
-            }
-        }
-    }
-
-    private fun chooseImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        activityResultLauncher.launch(intent)
-    }
-}
-
-
-
-fun View.showSnackbar(
-    view: View,
-    msg: String,
-    length: Int,
-    actionMessage: CharSequence?,
-    action: (View) -> Unit
-) {
-    val snackbar = Snackbar.make(view, msg, length)
-    if (actionMessage != null) {
-        snackbar.setAction(actionMessage) {
-            action(this)
-        }.show()
-    } else {
-        snackbar.show()
-    }
 }
