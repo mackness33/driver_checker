@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAppBarConfiguration: AppBarConfiguration
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main);
@@ -24,21 +25,9 @@ class MainActivity : AppCompatActivity() {
         /* NAVIGATION BAR */
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController
-//        val navController = findNavController(R.id.fragment_container_view)
         mAppBarConfiguration = AppBarConfiguration(navController.graph)
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration)
         NavigationUI.setupWithNavController(toolbar, navController)
-//        toolbar
-//            .setupWithNavController(navController, appBarConfiguration)
-
-//        if (savedInstanceState == null) {
-//            supportFragmentManager
-//                .beginTransaction()
-//                .setReorderingAllowed(true)
-//                .add(R.id.fragment_container_view, CameraFragment.newInstance(), "Camera")
-//                .addToBackStack("Camera")
-//                .commit()
-//        }
     }
 
     override fun onRequestPermissionsResult(

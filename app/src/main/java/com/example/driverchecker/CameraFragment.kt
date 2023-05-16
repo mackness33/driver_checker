@@ -87,7 +87,6 @@ class CameraFragment : Fragment() {
                         this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
                     }
                 }
-
             }
         }
 
