@@ -20,8 +20,11 @@ import javax.security.auth.callback.Callback
 
 class CameraXHandler (){
     private var imageCapture: ImageCapture? = null
+    var hasCameraStarted: Boolean = false
+        private set
 
-    public fun startCamera(context: Context, surfaceProvider: SurfaceProvider) {
+    fun startCamera(context: Context, surfaceProvider: SurfaceProvider) {
+        hasCameraStarted = false
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
         cameraProviderFuture.addListener({
@@ -47,9 +50,10 @@ class CameraXHandler (){
 
                 if (context is AppCompatActivity) {
                     // Bind use cases to camera
-                    cameraProvider.bindToLifecycle(context, cameraSelector, preview)
                     cameraProvider.bindToLifecycle(context, cameraSelector, preview, imageCapture);
                 }
+
+                hasCameraStarted = true
 
             } catch(exc: Exception) {
                 Log.e("CameraXError", "Use case binding failed", exc)
@@ -59,7 +63,7 @@ class CameraXHandler (){
     }
 
 
-    public fun takePhoto(context: Context, fileFormat: String, fileName: String, handler: ImageRecognitionService) {
+    fun takePhoto(context: Context, fileFormat: String, fileName: String, handler: ImageRecognitionService) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
