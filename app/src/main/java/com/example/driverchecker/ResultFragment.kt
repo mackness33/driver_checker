@@ -20,15 +20,19 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.google.android.material.snackbar.Snackbar
 import java.security.Permission
 
 class ResultFragment : Fragment() {
     private lateinit var layout: View
+    private var _binding: FragmentCameraBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        layout = inflater.inflate(R.layout.fragment_result, container, false)
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
+        val layout = binding.root
         return layout
     }
 

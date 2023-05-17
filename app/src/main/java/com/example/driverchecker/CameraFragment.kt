@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.runBlocking
 import java.security.Permission
@@ -28,12 +29,21 @@ import java.security.Permission
 //1
 class CameraFragment : Fragment() {
     private lateinit var layout: View
+    private var _binding: FragmentCameraBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        layout = inflater.inflate(R.layout.fragment_camera, container, false)
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
+        layout = binding.root
         return layout
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     private val imageRecognitionService: ImageRecognitionService = ImageRecognitionService()
     private val cameraXHandler: CameraXHandler = CameraXHandler()
@@ -57,7 +67,7 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
-        layout.findViewById<View>(R.id.btnTake).setOnClickListener {
+        binding.btnTake.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
             else {
@@ -65,7 +75,7 @@ class CameraFragment : Fragment() {
             }
         }
 
-        layout.findViewById<View>(R.id.btnChoose).setOnClickListener {
+        binding.btnChoose.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_CHOOSE_PHOTO)
             else
@@ -128,7 +138,7 @@ class CameraFragment : Fragment() {
 
     private fun runCamera() {
         if (hasPermissions(arrayOf(Manifest.permission.CAMERA)) && !cameraXHandler.hasCameraStarted)
-            cameraXHandler.startCamera(this.requireContext(), layout.findViewById<PreviewView>(R.id.viewFinder).surfaceProvider)
+            cameraXHandler.startCamera(this.requireContext(), binding.viewFinder.surfaceProvider)
     }
 
     private fun onClickRequestPermission(view: View, permission: String) {
@@ -137,6 +147,7 @@ class CameraFragment : Fragment() {
                     this.requireActivity(),
                     permission
                 ) == PackageManager.PERMISSION_GRANTED -> {
+                runCamera()
                 layout.showSnackbar(
                     view,
                     getString(R.string.permission_granted),

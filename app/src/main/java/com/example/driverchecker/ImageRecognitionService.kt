@@ -80,8 +80,4 @@ class ImageRecognitionService {
 
         return baos.toByteArray()
     }
-
-    private fun respectRatio (bmRatio: Pair<Int, Int>): Pair<Int, Int> {
-        return Pair<Int, Int> (bmRatio.first/1280, bmRatio.second/1080)
-    }
 }
