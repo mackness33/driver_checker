@@ -18,13 +18,13 @@ class CameraViewModel : ViewModel() {
     private val _path: MutableLiveData<String?> = MutableLiveData(null)
     val path: LiveData<String>
         get() = _path.switchMap { path ->
-        liveData (Dispatchers.IO) {
-            if (path == null)
-                emit ("Image not found")
-            else
-                emit(ImageRecognitionService.makePredictionOfUri(path, true))
+            liveData (Dispatchers.IO) {
+                if (path == null)
+                    emit ("Image not found")
+                else
+                    emit(ImageRecognitionService.makePredictionOfUri(path, true))
+            }
         }
-    }
 
     fun updateResult (path: String) {
         _result.value = path
@@ -34,7 +34,7 @@ class CameraViewModel : ViewModel() {
         _imageUri.value = uri
     }
 
-    fun updatePath (path: String) {
+    fun updatePath (path: String?) {
         _path.value = path
     }
 

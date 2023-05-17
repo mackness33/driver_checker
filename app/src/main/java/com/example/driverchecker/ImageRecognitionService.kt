@@ -59,17 +59,19 @@ class ImageRecognitionService {
         val responseStream = if (https.responseCode == HttpsURLConnection.HTTP_OK) https.inputStream else https.errorStream
         val  reader = BufferedReader(InputStreamReader(responseStream))
         var line: String?
+        var result: String = ""
         while (reader.readLine().also { line = it } != null) {
             // here we're gonna save the result of the prediction
             // todo: get and use the result of the prediction
             println(line)
+            result += line
         }
 
         // close the streams
         reader.close()
         dataOutputStream.close()
 
-        return line ?: "ops"
+        return result
     }
 
     // Function to encode the file found on the path in input.
