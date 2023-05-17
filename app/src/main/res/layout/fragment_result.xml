@@ -8,35 +8,23 @@
     <TextView
         android:id="@+id/txtResult"
         android:layout_width="0dp"
-        android:layout_height="11dp"
-        android:layout_marginTop="568dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="120dp"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imgView" />
 
     <ImageView
         android:id="@+id/imgView"
         android:layout_width="0dp"
         android:layout_height="452dp"
-        android:layout_marginBottom="232dp"
+        android:layout_marginBottom="280dp"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnTake"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:src="@mipmap/ic_launcher"
-        android:text="Take Sbooooot"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.826"
-        android:elevation="10dp"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
