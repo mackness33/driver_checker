@@ -108,4 +108,8 @@ class CameraXHandler (){
             }
         )
     }
+
+    fun pauseCamera () {
+        hasCameraStarted = false
+    }
 }

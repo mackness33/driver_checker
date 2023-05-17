@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
@@ -70,6 +71,7 @@ class CameraFragment : Fragment() {
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
             else {
                 cameraXHandler.takePhoto(this.requireContext(), FILENAME_FORMAT, PICTURE_FILE_NAME, model)
+                cameraXHandler.pauseCamera()
                 this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
             }
         }
@@ -94,8 +96,8 @@ class CameraFragment : Fragment() {
                     if (path != null) {
                         model.updateImageUri(data.data)
                         model.updatePath(path)
-//                        model.updateResult(imageRecognitionService.awaitPrediction(path, true))
-                        this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
+                        cameraXHandler.pauseCamera()
+                        findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
                     }
                 }
             }
@@ -148,7 +150,7 @@ class CameraFragment : Fragment() {
                     this.requireActivity(),
                     permission
                 ) == PackageManager.PERMISSION_GRANTED -> {
-//                runCamera()
+                runCamera()
                 layout.showSnackbar(
                     view,
                     getString(R.string.permission_granted),

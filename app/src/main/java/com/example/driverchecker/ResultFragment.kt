@@ -24,33 +24,22 @@ class ResultFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         layout = binding.root
-
-        /* OBSERVE CHANGES ON THE RESULT*/
-        val resultObserver = Observer<String> { result ->
-            binding.txtResult.text = result
-        }
-        model.path.observe(this.requireActivity(), resultObserver)
-
-        /* OBSERVE CHANGES ON THE URI*/
-        val imageObserver = Observer<Uri?> { uri ->
-            binding.imgView.setImageURI(uri)
-        }
-        model.imageUri.observe(this.requireActivity(), imageObserver)
-
         return layout
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         /* OBSERVE CHANGES ON THE RESULT*/
+        val txt = binding.txtResult
         val resultObserver = Observer<String> { result ->
-            binding.txtResult.text = result
+            txt.text = result
         }
         model.path.observe(this.requireActivity(), resultObserver)
 
         /* OBSERVE CHANGES ON THE URI*/
+        val img = binding.imgView
         val imageObserver = Observer<Uri?> { uri ->
-            binding.imgView.setImageURI(uri)
+            img.setImageURI(uri)
         }
         model.imageUri.observe(this.requireActivity(), imageObserver)
     }
