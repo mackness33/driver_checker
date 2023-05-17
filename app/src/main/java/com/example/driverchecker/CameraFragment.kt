@@ -69,7 +69,8 @@ class CameraFragment : Fragment() {
             if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
             else {
-                cameraXHandler.takePhoto(this.requireContext(), FILENAME_FORMAT, PICTURE_FILE_NAME, imageRecognitionService)
+                cameraXHandler.takePhoto(this.requireContext(), FILENAME_FORMAT, PICTURE_FILE_NAME, model)
+                this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
             }
         }
 

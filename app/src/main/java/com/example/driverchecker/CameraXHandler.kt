@@ -63,7 +63,7 @@ class CameraXHandler (){
     }
 
 
-    fun takePhoto(context: Context, fileFormat: String, fileName: String, handler: ImageRecognitionService) {
+    fun takePhoto(context: Context, fileFormat: String, fileName: String, model: CameraViewModel) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -98,7 +98,8 @@ class CameraXHandler (){
 
                     if (output.savedUri != null) {
                         val path = FileUtils.getPath(output.savedUri!!, context)
-                        if (path != null) handler.awaitPrediction(path, true)
+                        model.updateImageUri(output.savedUri)
+                        if (path != null) model.updatePath(path)
                     }
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
