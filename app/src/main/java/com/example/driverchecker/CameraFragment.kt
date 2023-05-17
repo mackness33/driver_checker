@@ -2,7 +2,6 @@ package com.example.driverchecker;
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -12,25 +11,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.Preview
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
-import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.runBlocking
-import java.security.Permission
 
 //1
 class CameraFragment : Fragment() {
     private lateinit var layout: View
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
+    private val model: CameraViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -78,8 +76,9 @@ class CameraFragment : Fragment() {
         binding.btnChoose.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_CHOOSE_PHOTO)
-            else
+            else{
                 chooseImageGallery()
+            }
         }
     }
 
@@ -93,6 +92,7 @@ class CameraFragment : Fragment() {
 
                     if (path != null) {
 //                        viewBinding.imgView.setImageURI(data.data)
+                        model.updateResult(path)
                         imageRecognitionService.awaitPrediction(path, true)
                         this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
                     }
@@ -147,7 +147,7 @@ class CameraFragment : Fragment() {
                     this.requireActivity(),
                     permission
                 ) == PackageManager.PERMISSION_GRANTED -> {
-                runCamera()
+//                runCamera()
                 layout.showSnackbar(
                     view,
                     getString(R.string.permission_granted),

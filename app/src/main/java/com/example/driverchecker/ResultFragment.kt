@@ -10,16 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.example.driverchecker.databinding.FragmentResultBinding
 
 class ResultFragment : Fragment() {
     private lateinit var layout: View
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
-    private val model: CameraViewModel by viewModels()
+    private val model: CameraViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -30,7 +30,7 @@ class ResultFragment : Fragment() {
         val textObserver = Observer<String> { result ->
             binding.txtResult.text = result
         }
-        model.mResult.observe(this.requireActivity(), textObserver)
+        model.result.observe(this.requireActivity(), textObserver)
 
         /* OBSERVE CHANGES ON THE PATH OF THE IMAGE*/
 //        val imageObserver = Observer<String> { result ->
