@@ -1,10 +1,7 @@
 package com.example.driverchecker;
 
-import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,27 +9,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.Preview
-import androidx.camera.video.Recorder
-import androidx.camera.video.Recording
-import androidx.camera.video.VideoCapture
-import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.driverchecker.databinding.FragmentCameraBinding
-import com.google.android.material.snackbar.Snackbar
-import java.security.Permission
+import com.example.driverchecker.databinding.FragmentResultBinding
 
 class ResultFragment : Fragment() {
     private lateinit var layout: View
-    private var _binding: FragmentCameraBinding? = null
+    private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
+    private val model: CameraViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        _binding = FragmentCameraBinding.inflate(inflater, container, false)
-        val layout = binding.root
+        _binding = FragmentResultBinding.inflate(inflater, container, false)
+        layout = binding.root
+
+        /* OBSERVE CHANGES ON THE RESULT*/
+        val textObserver = Observer<String> { result ->
+            binding.txtResult.text = result
+        }
+        model.mResult.observe(this.requireActivity(), textObserver)
+
+        /* OBSERVE CHANGES ON THE PATH OF THE IMAGE*/
+//        val imageObserver = Observer<String> { result ->
+//            binding.txtResult.text = result
+//        }
+//        model.mResult.observe(this.requireActivity(), textObserver)
+
         return layout
     }
 
@@ -42,6 +47,12 @@ class ResultFragment : Fragment() {
             return ResultFragment()
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
