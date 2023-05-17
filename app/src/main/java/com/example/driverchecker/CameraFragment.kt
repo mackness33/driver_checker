@@ -91,9 +91,9 @@ class CameraFragment : Fragment() {
                     val path: String? = FileUtils.getPath(data.data as Uri, this.requireActivity())
 
                     if (path != null) {
-                        model.updateResult(path)
                         model.updateImageUri(data.data)
-                        imageRecognitionService.awaitPrediction(path, true)
+                        model.updatePath(path)
+//                        model.updateResult(imageRecognitionService.awaitPrediction(path, true))
                         this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
                     }
                 }

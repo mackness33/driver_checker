@@ -16,7 +16,14 @@ import javax.net.ssl.HttpsURLConnection
 // todo: create the stream to show the boxes on live stream
 class ImageRecognitionService {
 
-    fun makePrediction (path: String, type: Boolean) : String? {
+    companion object {
+        val imageRecognitionService = ImageRecognitionService()
+        fun makePredictionOfUri (path: String, type: Boolean) : String {
+            return if (type) imageRecognitionService.makeReqToExternalUri(path) else ""
+        }
+    }
+
+    fun makePrediction (path: String, type: Boolean) : String {
         return if (type) makeReqToExternalUri(path) else ""
     }
 
@@ -27,7 +34,7 @@ class ImageRecognitionService {
 
 
     // Make a request to an external url to get the prediction of the image in input
-    private fun makeReqToExternalUri (path: String) : String? {
+    private fun makeReqToExternalUri (path: String) : String {
         // todo: get the url from the os
         val url = URL("https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y")
 
@@ -62,7 +69,7 @@ class ImageRecognitionService {
         reader.close()
         dataOutputStream.close()
 
-        return line
+        return line ?: "ops"
     }
 
     // Function to encode the file found on the path in input.
