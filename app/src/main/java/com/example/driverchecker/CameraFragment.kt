@@ -1,7 +1,8 @@
-package com.example.driverchecker;
+package com.example.driverchecker
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
@@ -19,10 +19,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.google.android.material.snackbar.Snackbar
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 //1
 class CameraFragment : Fragment() {
@@ -30,11 +32,16 @@ class CameraFragment : Fragment() {
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
     private val model: CameraViewModel by activityViewModels()
+    private val cameraXHandler: CameraXHandler = CameraXHandler()
+    private var videoCapture: VideoCapture<Recorder>? = null
+    private var recording: Recording? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         layout = binding.root
+        model.loadModel(assetFilePath(this.requireContext(), "coco_detection_lite.ptl"))
         return layout
     }
 
@@ -42,12 +49,6 @@ class CameraFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
-    private val imageRecognitionService: ImageRecognitionService = ImageRecognitionService()
-    private val cameraXHandler: CameraXHandler = CameraXHandler()
-    private var videoCapture: VideoCapture<Recorder>? = null
-    private var recording: Recording? = null
 
     // companion object
     companion object {
@@ -231,6 +232,32 @@ class CameraFragment : Fragment() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         activityResultLauncher.launch(intent)
+    }
+    
+    /**
+     * Copies specified asset to the file in /files app directory and returns this file absolute path.
+     *
+     * @return absolute file path
+     */
+    @Throws(IOException::class)
+    private fun assetFilePath(context: Context, assetName: String?): String {
+        if (assetName == null) return ""
+
+        val file = File(context.filesDir, assetName)
+        if (file.exists() && file.length() > 0) {
+            return file.absolutePath
+        }
+        context.assets.open(assetName).use { `is` ->
+            FileOutputStream(file).use { os ->
+                val buffer = ByteArray(4 * 1024)
+                var read: Int
+                while (`is`.read(buffer).also { read = it } != -1) {
+                    os.write(buffer, 0, read)
+                }
+                os.flush()
+            }
+            return file.absolutePath
+        }
     }
 }
 

@@ -34,7 +34,7 @@ class ResultFragment : Fragment() {
         val resultObserver = Observer<String> { result ->
             txt.text = result
         }
-        model.path.observe(this.requireActivity(), resultObserver)
+        model.result.observe(this.requireActivity(), resultObserver)
 
         /* OBSERVE CHANGES ON THE URI*/
         val img = binding.imgView

@@ -18,7 +18,7 @@ abstract class MLService<T> {
     protected var pyModel: PyModel<T>? = null
     protected var urlModel: URLModel<T>? = null
 
-    fun setPyModel (path: String) {
+    fun loadModel (path: String) {
         pyModel?.loadModel(path)
     }
 
@@ -29,4 +29,6 @@ abstract class MLService<T> {
     protected fun analyzeData (data: T, isOnline: Boolean) : String? {
         return if (isOnline) urlModel?.analyzeData(data) else pyModel?.analyzeData(data)
     }
+
+    abstract fun analyzeData(path: String, isOnline: Boolean): String
 }

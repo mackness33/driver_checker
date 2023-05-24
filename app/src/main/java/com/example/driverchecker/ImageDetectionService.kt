@@ -14,18 +14,23 @@ import javax.net.ssl.HttpsURLConnection
 
 
 // todo: create the stream to show the boxes on live stream
-class ImageRecognitionService : MLService<Bitmap>() {
+class ImageDetectionService : MLService<Bitmap>() {
 
-    fun makePrediction (path: String, isOnline: Boolean) : String {
+    init {
+        pyModel = ImageDetectionModel()
+    }
+
+    override fun analyzeData (path: String, isOnline: Boolean) : String {
         val bm = BitmapFactory.decodeFile(path)
-        return analyzeData(bm, isOnline) ?: "There was a problem"
+        // the bitmap MUST BE SCALED, if it is too big the application is going ot crash
+        val bmScaled = Bitmap.createScaledBitmap(bm, 500, (bm.height*500)/bm.width, true)
+        return super.analyzeData(bmScaled, isOnline) ?: "There was a problem"
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    fun awaitPrediction (path: String, type: Boolean) = GlobalScope.async {
-        return@async makePrediction(path, type)
-    }
-
+//    @OptIn(DelicateCoroutinesApi::class)
+//    fun awaitPrediction (path: String, type: Boolean) = GlobalScope.async {
+//        return@async makePrediction(path, type)
+//    }
 
     // Make a request to an external url to get the prediction of the image in input
     private fun makeReqToExternalUri (path: String) : String {
