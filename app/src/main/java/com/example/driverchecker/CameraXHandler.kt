@@ -7,23 +7,26 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Executors
 import javax.security.auth.callback.Callback
+
+typealias ImageDetectionListener = (image: ImageProxy) -> Unit
 
 class CameraXHandler (){
     private var imageCapture: ImageCapture? = null
+    private var imageAnalyzer: ImageAnalysis? = null
     var hasCameraStarted: Boolean = false
         private set
 
-    fun startCamera(context: Context, surfaceProvider: SurfaceProvider) {
+    fun startCamera(context: Context, surfaceProvider: SurfaceProvider, listener: ImageDetectionListener, model: CameraViewModel) {
         hasCameraStarted = false
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
@@ -40,6 +43,31 @@ class CameraXHandler (){
 
             imageCapture = ImageCapture.Builder().build()
 
+            imageAnalyzer = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build().apply {
+                setAnalyzer(Executors.newFixedThreadPool(1), ImageDetectionAnalyzer (listener))
+//                    runBlocking {
+//                        val yBuffer = it.planes[0].buffer // Y
+//                        val vuBuffer = it.planes[2].buffer // VU
+//
+//                        val ySize = yBuffer.remaining()
+//                        val vuSize = vuBuffer.remaining()
+//
+//                        val nv21 = ByteArray(ySize + vuSize)
+//
+//                        yBuffer.get(nv21, 0, ySize)
+//                        vuBuffer.get(nv21, ySize, vuSize)
+//
+//                        val yuvImage = YuvImage(nv21, ImageFormat.NV21, it.width, it.height, null)
+//                        val out = ByteArrayOutputStream()
+//                        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
+//                        val imageBytes = out.toByteArray()
+//                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+//                        model.nextFrame(bitmap)
+//                    }
+//                })
+            }
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
@@ -50,7 +78,7 @@ class CameraXHandler (){
 
                 if (context is AppCompatActivity) {
                     // Bind use cases to camera
-                    cameraProvider.bindToLifecycle(context, cameraSelector, preview, imageCapture);
+                    cameraProvider.bindToLifecycle(context, cameraSelector, preview, imageCapture, imageAnalyzer);
                 }
 
                 hasCameraStarted = true
@@ -112,4 +140,27 @@ class CameraXHandler (){
     fun pauseCamera () {
         hasCameraStarted = false
     }
+
+    private class ImageDetectionAnalyzer(private val listener: ImageDetectionListener) : ImageAnalysis.Analyzer {
+
+        private fun ByteBuffer.toByteArray(): ByteArray {
+            rewind()    // Rewind the buffer to zero
+            val data = ByteArray(remaining())
+            get(data)   // Copy the buffer into a byte array
+            return data // Return the byte array
+        }
+
+        override fun analyze(image: ImageProxy) {
+
+//            val buffer = image.planes[0].buffer
+//            val data = buffer.toByteArray()
+//            val pixels = data.map { it.toInt() and 0xFF }
+//            val luma = pixels.average()
+//            Log.i("Analyze", "it is analyzing yess")
+            listener(image)
+//            Log.i("Analyze", image.format.toString())
+            image.close()
+        }
+    }
+
 }

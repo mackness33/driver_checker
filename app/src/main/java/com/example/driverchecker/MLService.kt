@@ -26,9 +26,7 @@ abstract class MLService<T> {
         urlModel?.setUrl(url)
     }
 
-    protected fun analyzeData (data: T, isOnline: Boolean) : String? {
+    fun analyzeData (data: T, isOnline: Boolean) : String? {
         return if (isOnline) urlModel?.analyzeData(data) else pyModel?.analyzeData(data)
     }
-
-    abstract fun analyzeData(path: String, isOnline: Boolean): String
 }

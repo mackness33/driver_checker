@@ -1,9 +1,8 @@
 package com.example.driverchecker
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.util.Base64
-import kotlinx.coroutines.*
+import androidx.camera.core.ImageProxy
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -20,7 +19,7 @@ class ImageDetectionService : MLService<Bitmap>() {
         pyModel = ImageDetectionModel()
     }
 
-    override fun analyzeData (path: String, isOnline: Boolean) : String {
+    fun analyzeImagePath (path: String, isOnline: Boolean) : String {
         val bm = BitmapFactory.decodeFile(path)
         // the bitmap MUST BE SCALED, if it is too big the application is going ot crash
         val bmScaled = Bitmap.createScaledBitmap(bm, 500, (bm.height*500)/bm.width, true)
@@ -31,6 +30,25 @@ class ImageDetectionService : MLService<Bitmap>() {
 //    fun awaitPrediction (path: String, type: Boolean) = GlobalScope.async {
 //        return@async makePrediction(path, type)
 //    }
+
+    fun imageProxyToBitmap(image: ImageProxy): Bitmap {
+        val yBuffer = image.planes[0].buffer // Y
+        val vuBuffer = image.planes[2].buffer // VU
+
+        val ySize = yBuffer.remaining()
+        val vuSize = vuBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + vuSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vuBuffer.get(nv21, ySize, vuSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
+        val imageBytes = out.toByteArray()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
 
     // Make a request to an external url to get the prediction of the image in input
     private fun makeReqToExternalUri (path: String) : String {

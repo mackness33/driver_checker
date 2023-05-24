@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.ImageProxy
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
@@ -19,9 +21,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.google.android.material.snackbar.Snackbar
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -66,6 +70,13 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
+
+        val txt = binding.txtResult
+        val resultObserver = Observer<String?> { result ->
+            Log.i("LiveData", result)
+            txt.text = result ?: "is null"
+        }
+        model.frame.observe(this.requireActivity(), resultObserver)
 
         binding.btnTake.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
@@ -125,7 +136,7 @@ class CameraFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissionsGranted ->
             for (grant in permissionsGranted) {
                 if (grant.value) {
-                    // Permission is granted. Continue the action or workflow in your
+                    // Permission is granted. ContiimageDetectionService.analyzeData(bitmap, false)nue the action or workflow in your
                     // app.
                     Log.i("Permission ${grant.key}: ", "Granted")
                     if (grant.key == Manifest.permission.CAMERA) runCamera()
@@ -142,7 +153,7 @@ class CameraFragment : Fragment() {
 
     private fun runCamera() {
         if (hasPermissions(arrayOf(Manifest.permission.CAMERA)) && !cameraXHandler.hasCameraStarted)
-            cameraXHandler.startCamera(this.requireContext(), binding.viewFinder.surfaceProvider)
+            cameraXHandler.startCamera(this.requireContext(), binding.viewFinder.surfaceProvider, this::analyzeImage, model)
     }
 
     private fun onClickRequestPermission(view: View, permission: String) {
@@ -259,9 +270,33 @@ class CameraFragment : Fragment() {
             return file.absolutePath
         }
     }
+
+    private fun analyzeImage (image: ImageProxy) {
+        val bitmap = toBitmap(image)
+//        bitmap.recycle()
+        // Do image analysis here if you need bitmap
+        model.nextFrame(bitmap)
+    }
+
+    private fun toBitmap(image: ImageProxy): Bitmap {
+        val yBuffer = image.planes[0].buffer // Y
+        val vuBuffer = image.planes[2].buffer // VU
+
+        val ySize = yBuffer.remaining()
+        val vuSize = vuBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + vuSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vuBuffer.get(nv21, ySize, vuSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
+        val imageBytes = out.toByteArray()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
 }
-
-
 
 fun View.showSnackbar(
     view: View,

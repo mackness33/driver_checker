@@ -1,5 +1,6 @@
 package com.example.driverchecker
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
@@ -7,13 +8,27 @@ import kotlinx.coroutines.Dispatchers
 class CameraViewModel : ViewModel() {
     private val imageDetectionService: ImageDetectionService = ImageDetectionService()
 
+    private val _frame: MutableLiveData<Bitmap?> = MutableLiveData(null)
+    val frame: LiveData<String?>
+        get() = _frame.switchMap { bitmap ->
+            liveData (Dispatchers.IO) {
+                if (bitmap == null)
+                    emit ("Image not found")
+                else{
+                    val res = imageDetectionService.analyzeData(bitmap, false)
+                    emit (res)
+                }
+//                    emit(imageDetectionService.analyzeData(bitmap, false))
+            }
+        }
+
     val result: LiveData<String>
         get() = _path.switchMap { path ->
             liveData (Dispatchers.IO) {
                 if (path == null)
                     emit ("Image not found")
                 else
-                    emit(imageDetectionService.analyzeData(path, false))
+                    emit(imageDetectionService.analyzeImagePath(path, false))
             }
         }
 
@@ -31,6 +46,10 @@ class CameraViewModel : ViewModel() {
 
     fun updatePath (path: String?) {
         _path.value = path
+    }
+
+    fun nextFrame (bitmap: Bitmap?) {
+        _frame.postValue(bitmap)
     }
 
     fun loadModel (path: String) {
