@@ -14,17 +14,11 @@ import javax.net.ssl.HttpsURLConnection
 
 
 // todo: create the stream to show the boxes on live stream
-class ImageRecognitionService {
+class ImageRecognitionService : MLService<Bitmap>() {
 
-    companion object {
-        val imageRecognitionService = ImageRecognitionService()
-        fun makePredictionOfUri (path: String, type: Boolean) : String {
-            return if (type) imageRecognitionService.makeReqToExternalUri(path) else ""
-        }
-    }
-
-    fun makePrediction (path: String, type: Boolean) : String {
-        return if (type) makeReqToExternalUri(path) else ""
+    fun makePrediction (path: String, isOnline: Boolean) : String {
+        val bm = BitmapFactory.decodeFile(path)
+        return analyzeData(bm, isOnline) ?: "There was a problem"
     }
 
     @OptIn(DelicateCoroutinesApi::class)
