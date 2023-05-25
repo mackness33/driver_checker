@@ -10,7 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.*
+import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -23,6 +26,8 @@ typealias ImageDetectionListener = (image: ImageProxy) -> Unit
 class CameraXHandler (){
     private var imageCapture: ImageCapture? = null
     private var imageAnalyzer: ImageAnalysis? = null
+    private var videoCapture: VideoCapture<Recorder>? = null
+    private var recording: Recording? = null
     var hasCameraStarted: Boolean = false
         private set
 
@@ -43,10 +48,10 @@ class CameraXHandler (){
 
             imageCapture = ImageCapture.Builder().build()
 
-            imageAnalyzer = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build().apply {
-                setAnalyzer(Executors.newFixedThreadPool(1), ImageDetectionAnalyzer (listener))
+//            imageAnalyzer = ImageAnalysis.Builder()
+//                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+//                .build().apply {
+//                setAnalyzer(Executors.newFixedThreadPool(1), ImageDetectionAnalyzer (listener))}
 //                    runBlocking {
 //                        val yBuffer = it.planes[0].buffer // Y
 //                        val vuBuffer = it.planes[2].buffer // VU
@@ -67,7 +72,13 @@ class CameraXHandler (){
 //                        model.nextFrame(bitmap)
 //                    }
 //                })
-            }
+//            }
+
+            val recorder = Recorder.Builder()
+                .setQualitySelector(QualitySelector.from(Quality.SD))
+                .build()
+            videoCapture = VideoCapture.withOutput(recorder)
+
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
@@ -78,7 +89,7 @@ class CameraXHandler (){
 
                 if (context is AppCompatActivity) {
                     // Bind use cases to camera
-                    cameraProvider.bindToLifecycle(context, cameraSelector, preview, imageCapture, imageAnalyzer);
+                    cameraProvider.bindToLifecycle(context, cameraSelector, preview, imageCapture, videoCapture);
                 }
 
                 hasCameraStarted = true
@@ -161,6 +172,64 @@ class CameraXHandler (){
 //            Log.i("Analyze", image.format.toString())
             image.close()
         }
+    }
+
+    // Implements VideoCapture use case, including start and stop capturing.
+    fun captureVideo(context: Context, fileFormat: String, model: CameraViewModel) {
+        val videoCapture = this.videoCapture ?: return
+
+//        binding.btnRecordVideo.isEnabled = false
+        model.enableVideo(false)
+
+        val curRecording = recording
+        if (curRecording != null) {
+            // Stop the current recording session.
+            curRecording.stop()
+            recording = null
+            return
+        }
+
+        // create and start a new recording session
+        val name = SimpleDateFormat(fileFormat, Locale.US).format(System.currentTimeMillis())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+            }
+        }
+
+        val mediaStoreOutputOptions = MediaStoreOutputOptions
+            .Builder(context.contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+            .setContentValues(contentValues)
+            .build()
+
+        recording = videoCapture.output
+            .prepareRecording(context, mediaStoreOutputOptions)
+            .start(ContextCompat.getMainExecutor(context)) { recordEvent ->
+                when(recordEvent) {
+                    is VideoRecordEvent.Start -> {
+                        model.enableVideo(true)
+                        model.recordVideo(true)
+                    }
+                    is VideoRecordEvent.Finalize -> {
+                        if (!recordEvent.hasError()) {
+                            val msg = "Video capture succeeded: " +
+                                    "${recordEvent.outputResults.outputUri}"
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT)
+                                .show()
+                            Log.d("CameraX/Video", msg)
+                        } else {
+                            recording?.close()
+                            recording = null
+                            Log.e("CameraX/Video", "Video capture ends with error: " +
+                                    "${recordEvent.error}")
+                        }
+                        model.enableVideo(true)
+                        model.recordVideo(false)
+                    }
+                }
+            }
     }
 
 }

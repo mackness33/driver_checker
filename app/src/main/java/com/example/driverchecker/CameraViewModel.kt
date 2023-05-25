@@ -36,6 +36,14 @@ class CameraViewModel : ViewModel() {
     val imageUri: LiveData<Uri?>
         get() = _imageUri
 
+    private val _isRecording: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isRecording: LiveData<Boolean>
+        get() = _isRecording
+
+    private val _isEnabled: MutableLiveData<Boolean> = MutableLiveData(true)
+    val isEnabled: LiveData<Boolean>
+        get() = _isEnabled
+
     private val _path: MutableLiveData<String?> = MutableLiveData(null)
     val path: LiveData<String?>
         get() = _path
@@ -54,6 +62,14 @@ class CameraViewModel : ViewModel() {
 
     fun loadModel (path: String) {
         imageDetectionService.loadModel(path)
+    }
+
+    fun recordVideo (record: Boolean) {
+        _isRecording.value = record
+    }
+
+    fun enableVideo (enable: Boolean) {
+        _isEnabled.value = enable
     }
 
     fun setUrlModel (url: String) {

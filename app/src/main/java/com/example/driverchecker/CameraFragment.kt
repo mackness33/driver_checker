@@ -14,9 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageProxy
-import androidx.camera.video.Recorder
-import androidx.camera.video.Recording
-import androidx.camera.video.VideoCapture
+import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -29,6 +27,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
 
 //1
 class CameraFragment : Fragment() {
@@ -37,8 +36,6 @@ class CameraFragment : Fragment() {
     private val binding get() = _binding!!
     private val model: CameraViewModel by activityViewModels()
     private val cameraXHandler: CameraXHandler = CameraXHandler()
-    private var videoCapture: VideoCapture<Recorder>? = null
-    private var recording: Recording? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +61,8 @@ class CameraFragment : Fragment() {
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET)
         private val REQUIRED_PERMISSIONS_TAKE_PHOTO =
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.INTERNET)
+        private val REQUIRED_PERMISSIONS_RECORD_VIDEO =
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.INTERNET)
         private const val PICTURE_FILE_NAME: String = "driver_checker"
     }
 
@@ -78,7 +77,21 @@ class CameraFragment : Fragment() {
         }
         model.frame.observe(this.requireActivity(), resultObserver)
 
-        binding.btnTake.setOnClickListener {
+        val btn = binding.btnRecordVideo
+        val isEnabledObserver = Observer<Boolean?> { enable ->
+            Log.i("LiveData", "Recoding Button is ${if (enable) "not" else ""} enabled")
+            btn.isEnabled = enable
+        }
+        model.isEnabled.observe(this.requireActivity(), isEnabledObserver)
+
+        val isRecordingObserver = Observer<Boolean?> { isRecording ->
+            val record = isRecording ?: false
+            Log.i("LiveData", "Recoding Button ${if (record) "start" else "stop"} recording")
+            btn.text = getString(if (record) R.string.stop_capture else R.string.start_capture)
+        }
+        model.isRecording.observe(this.requireActivity(), isRecordingObserver)
+
+        binding.btnTakePhoto.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
             else {
@@ -88,11 +101,19 @@ class CameraFragment : Fragment() {
             }
         }
 
-        binding.btnChoose.setOnClickListener {
+        binding.btnChoosePhoto.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_CHOOSE_PHOTO)
             else{
-                chooseImageGallery()
+                chooseImageFromGallery()
+            }
+        }
+
+        binding.btnRecordVideo.setOnClickListener {
+            if (!hasPermissions(REQUIRED_PERMISSIONS_RECORD_VIDEO))
+                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_RECORD_VIDEO)
+            else{
+                cameraXHandler.captureVideo(this.requireContext(), FILENAME_FORMAT, model)
             }
         }
     }
@@ -239,7 +260,7 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private fun chooseImageGallery() {
+    private fun chooseImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         activityResultLauncher.launch(intent)
@@ -296,6 +317,7 @@ class CameraFragment : Fragment() {
         val imageBytes = out.toByteArray()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
+
 }
 
 fun View.showSnackbar(

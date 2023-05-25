@@ -8,4 +8,6 @@
     <string name="permission_granted">Permission has been granted</string>
     <string name="label_result">ResultFragment</string>
     <string name="label_camera">CameraFragment</string>
+    <string name="stop_capture">Stop Recording</string>
+    <string name="start_capture">Start Recording</string>
 </resources>
