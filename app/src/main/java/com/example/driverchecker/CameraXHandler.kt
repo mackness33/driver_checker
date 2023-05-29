@@ -51,7 +51,7 @@ class CameraXHandler (){
 //            imageAnalyzer = ImageAnalysis.Builder()
 //                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
 //                .build().apply {
-//                setAnalyzer(Executors.newFixedThreadPool(1), ImageDetectionAnalyzer (listener))}
+//                setAnalyzer(Executors.newSingleThreadExecutor(), ImageDetectionAnalyzer (listener))}
 //                    runBlocking {
 //                        val yBuffer = it.planes[0].buffer // Y
 //                        val vuBuffer = it.planes[2].buffer // VU

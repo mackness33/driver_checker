@@ -3,32 +3,34 @@ package com.example.driverchecker
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.*
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import kotlinx.coroutines.Dispatchers
 
-class CameraViewModel : ViewModel() {
-    private val imageDetectionService: ImageDetectionService = ImageDetectionService()
+class CameraViewModel (): ViewModel() {
+    private var imageDetectionRepository: ImageDetectionRepository? = null
+
+    constructor(repository: ImageDetectionRepository) : this() {
+        imageDetectionRepository = repository
+    }
 
     private val _frame: MutableLiveData<Bitmap?> = MutableLiveData(null)
     val frame: LiveData<String?>
         get() = _frame.switchMap { bitmap ->
-            liveData (Dispatchers.IO) {
+            liveData (Dispatchers.Default) {
                 if (bitmap == null)
                     emit ("Image not found")
-                else{
-                    val res = imageDetectionService.analyzeData(bitmap, false)
-                    emit (res)
-                }
-//                    emit(imageDetectionService.analyzeData(bitmap, false))
+                else
+                    emit(imageDetectionRepository?.instantClassification(bitmap)?.result)
             }
         }
 
     val result: LiveData<String>
         get() = _path.switchMap { path ->
-            liveData (Dispatchers.IO) {
+            liveData (Dispatchers.Default) {
                 if (path == null)
                     emit ("Image not found")
                 else
-                    emit(imageDetectionService.analyzeImagePath(path, false))
+                    emit(imageDetectionRepository?.instantClassification(path)?.result ?: "Image not found")
             }
         }
 
@@ -42,7 +44,7 @@ class CameraViewModel : ViewModel() {
 
     private val _isEnabled: MutableLiveData<Boolean> = MutableLiveData(true)
     val isEnabled: LiveData<Boolean>
-        get() = _isEnabled
+    get() = _isEnabled
 
     private val _path: MutableLiveData<String?> = MutableLiveData(null)
     val path: LiveData<String?>
@@ -60,8 +62,8 @@ class CameraViewModel : ViewModel() {
         _frame.postValue(bitmap)
     }
 
-    fun loadModel (path: String) {
-        imageDetectionService.loadModel(path)
+    fun loadLocalModel (path: String) {
+        imageDetectionRepository?.updateLocalModel(path)
     }
 
     fun recordVideo (record: Boolean) {
@@ -73,6 +75,20 @@ class CameraViewModel : ViewModel() {
     }
 
     fun setUrlModel (url: String) {
-        imageDetectionService.setUrlModel(url)
+        imageDetectionRepository?.updateRemoteModel(url)
+    }
+
+    fun setImageDetectionRepository (localUri: String?, remoteUri: String?) {
+        imageDetectionRepository = ImageDetectionRepository.getInstance(localUri, remoteUri)
+    }
+}
+
+class CameraViewModelFactory(private val repository: ImageDetectionRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ImageDetectionRepository::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return CameraViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class $modelClass")
     }
 }

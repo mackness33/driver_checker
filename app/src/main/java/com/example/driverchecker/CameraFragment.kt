@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.driverchecker.databinding.FragmentCameraBinding
@@ -35,6 +36,10 @@ class CameraFragment : Fragment() {
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
     private val model: CameraViewModel by activityViewModels()
+
+//    private val model: CameraViewModel by viewModels(
+//        ownerProducer = { requireParentFragment() }
+//    )
     private val cameraXHandler: CameraXHandler = CameraXHandler()
 
 
@@ -42,7 +47,7 @@ class CameraFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         layout = binding.root
-        model.loadModel(assetFilePath(this.requireContext(), "coco_detection_lite.ptl"))
+        model.setImageDetectionRepository(FileUtils.assetFilePath(this.requireContext(), "coco_detection_lite.ptl"), "somePath")
         return layout
     }
 

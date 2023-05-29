@@ -1,32 +1,31 @@
-package com.example.driverchecker
-
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
-import kotlinx.coroutines.*
-import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
-import java.io.InputStreamReader
-import java.net.URL
-import java.nio.charset.StandardCharsets
-import javax.net.ssl.HttpsURLConnection
-
-
-// todo: create the stream to show the boxes on live stream
-abstract class MLService<T> {
-    protected var pyModel: PyModel<T>? = null
-    protected var urlModel: URLModel<T>? = null
-
-    fun loadModel (path: String) {
-        pyModel?.loadModel(path)
-    }
-
-    fun setUrlModel (url: String) {
-        urlModel?.setUrl(url)
-    }
-
-    fun analyzeData (data: T, isOnline: Boolean) : String? {
-        return if (isOnline) urlModel?.analyzeData(data) else pyModel?.analyzeData(data)
-    }
-}
+//package com.example.driverchecker
+//
+//import com.example.driverchecker.machinelearning.general.MLModel
+//import kotlinx.coroutines.*
+//import java.util.concurrent.Callable
+//
+//
+//// todo: create the stream to show the boxes on live stream
+//abstract class MLService<Data, Result> (protected var mlModel: MLModel<Data, Result>){
+//
+//    open inner class EvaluationTask (private val input: Data) : Callable<Result> {
+//        override fun call(): Result? {
+//            return mlModel.processAndEvaluate(input)
+//        }
+//    }
+//
+//
+//
+//
+//    fun loadModel (path: String) {
+//        pyModel?.loadModel(path)
+//    }
+//
+//    fun setUrlModel (url: String) {
+//        urlModel?.setUrl(url)
+//    }
+//
+//    fun analyzeData (data: T, isOnline: Boolean) : String? {
+//        return if (isOnline) urlModel?.analyzeData(data) else pyModel?.analyzeData(data)
+//    }
+//}
