@@ -6,11 +6,11 @@ import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import kotlinx.coroutines.Dispatchers
 
-class CameraViewModel (): ViewModel() {
-    private var imageDetectionRepository: ImageDetectionRepository? = null
+class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepository? = null): ViewModel() {
 
-    constructor(repository: ImageDetectionRepository) : this() {
-        imageDetectionRepository = repository
+    init {
+        if (imageDetectionRepository == null)
+            imageDetectionRepository = ImageDetectionRepository()
     }
 
     private val _frame: MutableLiveData<Bitmap?> = MutableLiveData(null)
@@ -77,15 +77,11 @@ class CameraViewModel (): ViewModel() {
     fun setUrlModel (url: String) {
         imageDetectionRepository?.updateRemoteModel(url)
     }
-
-    fun setImageDetectionRepository (localUri: String?, remoteUri: String?) {
-        imageDetectionRepository = ImageDetectionRepository.getInstance(localUri, remoteUri)
-    }
 }
 
 class CameraViewModelFactory(private val repository: ImageDetectionRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ImageDetectionRepository::class.java)) {
+        if (modelClass.isAssignableFrom(CameraViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return CameraViewModel(repository) as T
         }

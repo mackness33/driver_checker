@@ -18,5 +18,5 @@ class DriverChecker : Application() {
     // rather than when the application starts
     val localRepository by lazy { ImageDetectionLocalRepository(ImageDetectionLocalModel(FileUtils.assetFilePath(this, "coco_detection_lite.ptl"))) }
     val remoteRepository by lazy { ImageDetectionRemoteRepository(ImageDetectionRemoteModel("somePath")) }
-    val repository by lazy { ImageDetectionRepository.getInstance(FileUtils.assetFilePath(this, "coco_detection_lite.ptl"), "somePath") }
+    val repository by lazy { ImageDetectionRepository.getInstance(FileUtils.assetFilePath(this, "coco_detection_lite.ptl"), "https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y") }
 }

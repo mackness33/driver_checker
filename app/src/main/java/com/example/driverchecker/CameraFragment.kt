@@ -47,7 +47,7 @@ class CameraFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         layout = binding.root
-        model.setImageDetectionRepository(FileUtils.assetFilePath(this.requireContext(), "coco_detection_lite.ptl"), "somePath")
+//        model.setImageDetectionRepository(FileUtils.assetFilePath(this.requireContext(), "coco_detection_lite.ptl"), "somePath")
         return layout
     }
 

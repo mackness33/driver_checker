@@ -21,20 +21,25 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class ImageDetectionRepository () : MLRepository<Bitmap, MLResult>() {
-    constructor(localUri: String? = null, remoteUri: String? = null) : this() {
-        when {
-            localUri != null && remoteUri != null ->
-                initializeRepos(ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri)), ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri)))
+class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<Bitmap, MLResult>() {
+//    constructor(localUri: String? = null, remoteUri: String? = null) : this() {
+//        when {
+//            localUri != null && remoteUri != null ->
+//                initializeRepos(ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri)), ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri)))
+//
+//            localUri != null ->
+//                initializeLocalRepo(ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri)))
+//
+//            remoteUri != null ->
+//                initializeRemoteRepo(ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri)))
+//
+//            else -> {}
+//        }
+//    }
 
-            localUri != null ->
-                initializeLocalRepo(ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri)))
-
-            remoteUri != null ->
-                initializeRemoteRepo(ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri)))
-
-            else -> {}
-        }
+    init {
+        local = ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri))
+        remote = ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri))
     }
 
     suspend fun instantClassification (path:String) : MLResult? {
@@ -67,7 +72,7 @@ class ImageDetectionRepository () : MLRepository<Bitmap, MLResult>() {
         @Volatile private var INSTANCE: ImageDetectionRepository? = null
 
         fun getInstance(localUri: String?, remoteUri: String?): ImageDetectionRepository =
-            INSTANCE ?: ImageDetectionRepository()
+            INSTANCE ?: ImageDetectionRepository(localUri, remoteUri)
 
     }
 }

@@ -20,9 +20,6 @@ class ResultFragment : Fragment() {
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
     private val model: CameraViewModel by activityViewModels()
-//    private val model: CameraViewModel by viewModels(
-//        ownerProducer = { requireParentFragment() }
-//    )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

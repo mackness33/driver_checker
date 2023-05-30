@@ -11,7 +11,7 @@ abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Resul
     protected var remote: MLRemoteRepository<Data, Result>? = null
 
     override suspend fun instantClassification(input: Data): Result? {
-        return if (isOnline) local?.instantClassification(input) else remote?.instantClassification(input)
+        return if (isOnline) remote?.instantClassification(input) else local?.instantClassification(input)
     }
 
     override suspend fun continuousClassification(input: List<Data>): Result? {
