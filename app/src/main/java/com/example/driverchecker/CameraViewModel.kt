@@ -6,8 +6,12 @@ import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import kotlinx.coroutines.Dispatchers
 
+data class StaticMedia (val path : String?, val isVideo: Boolean)
+
 class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepository? = null): ViewModel() {
 
+
+    private val mediaRepository : MediaRepository = MediaRepository()
     init {
         if (imageDetectionRepository == null)
             imageDetectionRepository = ImageDetectionRepository()
@@ -20,17 +24,22 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                 if (bitmap == null)
                     emit ("Image not found")
                 else
-                    emit(imageDetectionRepository?.instantClassification(bitmap)?.result)
+                    emit(imageDetectionRepository?.instantClassification(bitmap)?.result.toString())
             }
         }
 
     val result: LiveData<String>
-        get() = _path.switchMap { path ->
-            liveData (Dispatchers.Default) {
-                if (path == null)
-                    emit ("Image not found")
-                else
-                    emit(imageDetectionRepository?.instantClassification(path)?.result ?: "Image not found")
+        get() = _path.switchMap { media ->
+            liveData {
+                when {
+                    media.path == null -> emit ("Image not found")
+                    !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path)?.result.toString())
+                    media.isVideo -> {
+                        mediaRepository.extractVideo(media.path)
+                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!)?.result.toString()
+                        emit(res)
+                    }
+                }
             }
         }
 
@@ -46,16 +55,28 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val isEnabled: LiveData<Boolean>
     get() = _isEnabled
 
-    private val _path: MutableLiveData<String?> = MutableLiveData(null)
+    private val _path: MutableLiveData<StaticMedia> = MutableLiveData(null)
     val path: LiveData<String?>
-        get() = _path
+        get() = _path.switchMap { media ->
+            liveData {
+                emit(media.path)
+            }
+        }
+
+    private val _pathVideo: MutableLiveData<String?> = MutableLiveData(null)
+    val pathVideo: LiveData<String?>
+        get() = _pathVideo
 
     fun updateImageUri (uri: Uri?) {
         _imageUri.value = uri
     }
 
     fun updatePath (path: String?) {
-        _path.value = path
+        _path.value = StaticMedia(path, false)
+    }
+
+    fun updatePathVideo (path: String?) {
+        _path.value = StaticMedia(path, true)
     }
 
     fun nextFrame (bitmap: Bitmap?) {
@@ -66,6 +87,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         imageDetectionRepository?.updateLocalModel(path)
     }
 
+    // TODO: create the viewModel for the fragment
     fun recordVideo (record: Boolean) {
         _isRecording.value = record
     }

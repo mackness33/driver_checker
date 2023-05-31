@@ -21,33 +21,28 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<Bitmap, MLResult>() {
-//    constructor(localUri: String? = null, remoteUri: String? = null) : this() {
-//        when {
-//            localUri != null && remoteUri != null ->
-//                initializeRepos(ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri)), ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri)))
-//
-//            localUri != null ->
-//                initializeLocalRepo(ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri)))
-//
-//            remoteUri != null ->
-//                initializeRemoteRepo(ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri)))
-//
-//            else -> {}
-//        }
-//    }
+class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<Bitmap, MLResult<Float>>() {
 
     init {
         local = ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri))
         remote = ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri))
     }
 
-    suspend fun instantClassification (path:String) : MLResult? {
+    suspend fun instantClassification (path:String) : MLResult<Float>? {
         val bm = BitmapFactory.decodeFile(path)
         // the bitmap MUST BE SCALED, if it is too big the application is going ot crash
         val bmScaled = Bitmap.createScaledBitmap(bm, 500, (bm.height*500)/bm.width, true)
         return this.instantClassification(bmScaled)
     }
+
+//    suspend fun continuousClassification (path:String) : MLResult<Float>? {
+//        val bm = BitmapFactory.decodeFile(path)
+//        // the bitmap MUST BE SCALED, if it is too big the application is going ot crash
+//        val bmScaled = Bitmap.createScaledBitmap(bm, 500, (bm.height*500)/bm.width, true)
+//
+//
+//        return this.continuousClassification(bmScaled)
+//    }
 
     fun imageProxyToBitmap(image: ImageProxy): Bitmap {
         val yBuffer = image.planes[0].buffer // Y

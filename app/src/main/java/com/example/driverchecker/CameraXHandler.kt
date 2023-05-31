@@ -175,7 +175,7 @@ class CameraXHandler (){
     }
 
     // Implements VideoCapture use case, including start and stop capturing.
-    fun captureVideo(context: Context, fileFormat: String, model: CameraViewModel) {
+    fun captureVideo(context: Context, fileFormat: String, model: CameraViewModel, onFinalize: () -> Unit) {
         val videoCapture = this.videoCapture ?: return
 
 //        binding.btnRecordVideo.isEnabled = false
@@ -219,6 +219,11 @@ class CameraXHandler (){
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT)
                                 .show()
                             Log.d("CameraX/Video", msg)
+
+                            val path = FileUtils.getPath(recordEvent.outputResults.outputUri, context)
+                            model.updatePathVideo(path)
+
+                            onFinalize()
                         } else {
                             recording?.close()
                             recording = null

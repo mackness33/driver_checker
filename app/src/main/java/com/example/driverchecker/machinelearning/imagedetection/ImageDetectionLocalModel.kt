@@ -1,17 +1,18 @@
 package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.Bitmap
+import com.example.driverchecker.machinelearning.data.MLMetrics
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 
-class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLocalModel<Bitmap, MLResult>(modelPath){
+class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLocalModel<Bitmap, MLResult<Float>>(modelPath){
     override fun preProcess(data: Bitmap): Bitmap {
         return data
     }
 
-    override fun evaluateData(input: Bitmap): MLResult {
+    override fun evaluateData(input: Bitmap): MLResult<Float> {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input,
             TensorImageUtils.TORCHVISION_NORM_MEAN_RGB, TensorImageUtils.TORCHVISION_NORM_STD_RGB, MemoryFormat.CHANNELS_LAST)
@@ -34,10 +35,10 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
             index++
         }
 
-        return MLResult(maxScore.toString())
+        return MLResult(maxScore, MLMetrics())
     }
 
-    override fun postProcess(output: MLResult): MLResult {
+    override fun postProcess(output: MLResult<Float>): MLResult<Float> {
 //        TODO("Not yet implemented")
         return output
     }

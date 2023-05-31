@@ -5,6 +5,7 @@ import com.example.driverchecker.machinelearning.general.MLModel
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
 import java.io.IOException
+import java.util.concurrent.Callable
 
 abstract class MLLocalModel <Data, Result> (private val modelPath: String? = null) : MLModel<Data, Result>(modelPath){
     protected var module: Module? = null
@@ -18,5 +19,17 @@ abstract class MLLocalModel <Data, Result> (private val modelPath: String? = nul
         } catch (e: IOException) {
             Log.e("ImageDetection", "Error loading model!", e)
         }
+    }
+
+    inner class LocalEvalTask (private val input: Data) : Runnable {
+//        override fun call(): Result? {
+        override fun run() {
+//            TODO("Not yet implemented")
+            processAndEvaluate(input)
+        }
+    }
+
+    fun evaluate (input: Data) : LocalEvalTask {
+        return LocalEvalTask(input)
     }
 }

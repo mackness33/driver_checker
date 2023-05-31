@@ -16,8 +16,7 @@ abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Resul
 
     override suspend fun continuousClassification(input: List<Data>): Result? {
 //        TODO("Not yet implemented")
-
-        return null
+        return if (isOnline) remote?.continuousClassification(input) else local?.continuousClassification(input)
     }
 
     protected fun initializeRepos (localRepo: MLLocalRepository<Data, Result>, remoteRepo: MLRemoteRepository<Data, Result>) {

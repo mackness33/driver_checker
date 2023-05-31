@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.driverchecker.databinding.FragmentCameraBinding
@@ -29,6 +29,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
+
 
 //1
 class CameraFragment : Fragment() {
@@ -118,9 +119,15 @@ class CameraFragment : Fragment() {
             if (!hasPermissions(REQUIRED_PERMISSIONS_RECORD_VIDEO))
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_RECORD_VIDEO)
             else{
-                cameraXHandler.captureVideo(this.requireContext(), FILENAME_FORMAT, model)
+                cameraXHandler.captureVideo(this.requireContext(), FILENAME_FORMAT, model, ::onFinalize)
             }
         }
+    }
+
+    // TODO: Create callback to manage onStart and onFinalize
+    private fun onFinalize () : Unit {
+        cameraXHandler.pauseCamera()
+        this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
     }
 
     private val activityResultLauncher =
@@ -266,8 +273,8 @@ class CameraFragment : Fragment() {
     }
 
     private fun chooseImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/* video/*"
         activityResultLauncher.launch(intent)
     }
     
