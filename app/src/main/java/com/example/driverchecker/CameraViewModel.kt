@@ -9,9 +9,8 @@ import kotlinx.coroutines.Dispatchers
 data class StaticMedia (val path : String?, val isVideo: Boolean)
 
 class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepository? = null): ViewModel() {
-
-
     private val mediaRepository : MediaRepository = MediaRepository()
+
     init {
         if (imageDetectionRepository == null)
             imageDetectionRepository = ImageDetectionRepository()

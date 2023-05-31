@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.general.remote.MLRemoteModel
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteRepository
 
 abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Result> {
-    protected val isOnline: Boolean = false
+    protected val isOnline: Boolean = true
     protected var local: MLLocalRepository<Data, Result>? = null
     protected var remote: MLRemoteRepository<Data, Result>? = null
 
