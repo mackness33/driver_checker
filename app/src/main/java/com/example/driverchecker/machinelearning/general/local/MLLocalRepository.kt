@@ -4,10 +4,9 @@ import android.util.Log
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.MLModelInterface
 import com.example.driverchecker.machinelearning.general.MLRepositoryInterface
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
+import java.lang.Runnable
 import java.util.Arrays.asList
 import java.util.LinkedList
 import java.util.Queue
@@ -25,7 +24,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     private val MAX_POOL_SIZE = 3
     private val KEEP_ALIVE_TIME = 500L
 
-    protected val window: MLWindow<Result> = MLWindow<Result>()
+    protected var window: MLWindow<Result> = MLWindow()
 
 //    init {
 //        modelEvalQueue = LinkedBlockingQueue<Runnable>()
@@ -46,7 +45,39 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 //        TODO("Not yet implemented")
 //        return null
 //        return classificationThroughWindow(input.asFlow(), MLWindow<Result>())
-        return classificationThroughWindow(input, MLWindow<Result>())
+        return classificationThroughWindow(input, MLWindow())
+    }
+
+    override suspend fun continuousClassification(input: Flow<Data>): Result? {
+        return withContext(Dispatchers.Default) {
+            var result: Result? = null
+            val job = launch {
+                try {
+
+                        model?.processAndEvaluatesStream(input)
+                            ?.cancellable()
+                            ?.collect {
+                                if (it == null) cancel()
+
+                                window.add(it!!)
+                                // TODO: Pass the metrics and Result
+                                if (window.isSatisfied()) {
+                                    result = window.partialResult
+                                    cancel()
+                                }
+                            }
+                } catch (e: Throwable) {
+                    Log.d("FlowClassificationOutside", "Just caught this, ${e.message}")
+                } finally {
+                    Log.d("FlowClassificationWindow", "finally finished")
+                    window.clean()
+                }
+            }
+
+            job.join()
+
+            return@withContext result
+        }
     }
 
     protected suspend fun classificationThroughWindow (input: List<Data>, window: MLWindow<Result>) : Result? {
@@ -55,9 +86,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 
             try {
                 for (data in input) {
-                    val instantResult : Result? = model?.processAndEvaluate(data)
-
-                    if (instantResult == null) throw Error("The result is null")
+                    val instantResult : Result = model?.processAndEvaluate(data) ?: throw Error("The result is null")
 
                     window.add(instantResult!!)
                     // TODO: Pass the metrics and Result
@@ -68,9 +97,10 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                 }
 
             } catch (e: Throwable) {
-                Log.d("FlowClassificationOutside", "Just caught this, ${e.toString()}")
+                Log.d("FlowClassificationOutside", "Just caught this, ${e.message}")
             } finally {
                 Log.d("FlowClassificationWindow", "finally finished")
+                window.clean()
             }
 
             return@withContext result

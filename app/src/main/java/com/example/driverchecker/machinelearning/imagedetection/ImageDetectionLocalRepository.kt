@@ -10,18 +10,23 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 
 class ImageDetectionLocalRepository (override val model: MLLocalModel<Bitmap, MLResult<Float>>?) : MLLocalRepository<Bitmap, MLResult<Float>> (model) {
+
+    init {
+        window = ImageDetectionLocalWindow()
+    }
+
     private class ImageDetectionLocalWindow () : MLWindow<MLResult<Float>>() {
         override fun calculate(element: MLResult<Float>) {
             confidence += 5F
-            partialResult = MLResult<Float> (confidence)
+            partialResult = MLResult(confidence)
         }
     }
 
-    override suspend fun continuousClassification(input: List<Bitmap>): MLResult<Float>? {
-//        TODO("Not yet implemented")
-//        return null
-//        val inputAsFlow: Flow<Bitmap> =  input.asFlow().map { bitmap -> Bitmap.createScaledBitmap(bitmap, 299, (bitmap.height*299)/bitmap.width, true) }
-        val scaledInput: List<Bitmap> =  input.map { bitmap -> Bitmap.createScaledBitmap(bitmap, 299, (bitmap.height*299)/bitmap.width, true) }
-        return classificationThroughWindow(scaledInput, ImageDetectionLocalWindow())
-    }
+//    override suspend fun continuousClassification(input: List<Bitmap>): MLResult<Float>? {
+////        TODO("Not yet implemented")
+////        return null
+////        val inputAsFlow: Flow<Bitmap> =  input.asFlow().map { bitmap -> Bitmap.createScaledBitmap(bitmap, 299, (bitmap.height*299)/bitmap.width, true) }
+//        return classificationThroughWindow(input, ImageDetectionLocalWindow())
+//        return classificationThroughWindow(input, ImageDetectionLocalWindow())
+//    }
 }

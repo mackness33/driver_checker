@@ -9,7 +9,7 @@ import org.pytorch.torchvision.TensorImageUtils
 
 class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLocalModel<Bitmap, MLResult<Float>>(modelPath){
     override fun preProcess(data: Bitmap): Bitmap {
-        return data
+        return Bitmap.createScaledBitmap(data, 500, (data.height*500)/data.width, true)
     }
 
     override fun evaluateData(input: Bitmap): MLResult<Float> {

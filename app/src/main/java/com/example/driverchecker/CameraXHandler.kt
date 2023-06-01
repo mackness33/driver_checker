@@ -101,7 +101,6 @@ class CameraXHandler (){
         }, ContextCompat.getMainExecutor(context))
     }
 
-
     fun takePhoto(context: Context, fileFormat: String, fileName: String, model: CameraViewModel) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return

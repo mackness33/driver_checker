@@ -4,9 +4,11 @@ import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteModel
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 
 abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Result> {
-    protected val isOnline: Boolean = true
+    protected val isOnline: Boolean = false
     protected var local: MLLocalRepository<Data, Result>? = null
     protected var remote: MLRemoteRepository<Data, Result>? = null
 
@@ -15,22 +17,13 @@ abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Resul
     }
 
     override suspend fun continuousClassification(input: List<Data>): Result? {
-//        TODO("Not yet implemented")
+        return if (isOnline) remote?.continuousClassification(input) else local?.continuousClassification(input.asFlow())
+    }
+
+    override suspend fun continuousClassification(input: Flow<Data>): Result? {
         return if (isOnline) remote?.continuousClassification(input) else local?.continuousClassification(input)
     }
 
-    protected fun initializeRepos (localRepo: MLLocalRepository<Data, Result>, remoteRepo: MLRemoteRepository<Data, Result>) {
-        local = localRepo
-        remote = remoteRepo
-    }
-
-    protected fun initializeLocalRepo (localRepo: MLLocalRepository<Data, Result>) {
-        local = localRepo
-    }
-
-    protected fun initializeRemoteRepo (remoteRepo: MLRemoteRepository<Data, Result>) {
-        remote = remoteRepo
-    }
 
     fun updateRemoteModel (url: String) {
         remote?.updateRemoteUrl(url)

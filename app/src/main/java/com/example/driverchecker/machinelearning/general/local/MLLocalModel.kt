@@ -20,16 +20,4 @@ abstract class MLLocalModel <Data, Result> (private val modelPath: String? = nul
             Log.e("ImageDetection", "Error loading model!", e)
         }
     }
-
-    inner class LocalEvalTask (private val input: Data) : Runnable {
-//        override fun call(): Result? {
-        override fun run() {
-//            TODO("Not yet implemented")
-            processAndEvaluate(input)
-        }
-    }
-
-    fun evaluate (input: Data) : LocalEvalTask {
-        return LocalEvalTask(input)
-    }
 }
