@@ -14,6 +14,7 @@ import androidx.camera.video.*
 import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -21,7 +22,7 @@ import java.util.*
 import java.util.concurrent.Executors
 import javax.security.auth.callback.Callback
 
-typealias ImageDetectionListener = (image: ImageProxy) -> Unit
+typealias ImageDetectionListener = suspend (image: ImageProxy) -> Unit
 
 class CameraXHandler (){
     private var imageCapture: ImageCapture? = null
@@ -151,25 +152,28 @@ class CameraXHandler (){
         hasCameraStarted = false
     }
 
-    private class ImageDetectionAnalyzer(private val listener: ImageDetectionListener) : ImageAnalysis.Analyzer {
+    private class ImageDetectionAnalyzer(private val    listener: ImageDetectionListener) : ImageAnalysis.Analyzer {
 
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
-            val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
-        }
+//        private fun ByteBuffer.toByteArray(): ByteArray {
+//            rewind()    // Rewind the buffer to zero
+//            val data = ByteArray(remaining())
+//            get(data)   // Copy the buffer into a byte array
+//            return data // Return the byte array
+//        }
 
         override fun analyze(image: ImageProxy) {
+
+            runBlocking {
 
 //            val buffer = image.planes[0].buffer
 //            val data = buffer.toByteArray()
 //            val pixels = data.map { it.toInt() and 0xFF }
 //            val luma = pixels.average()
 //            Log.i("Analyze", "it is analyzing yess")
-            listener(image)
+                listener(image)
 //            Log.i("Analyze", image.format.toString())
-            image.close()
+                image.close()
+            }
         }
     }
 

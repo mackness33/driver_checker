@@ -4,14 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.map
 
-abstract class MLModel<Data, Result>  (private val modelPath: String? = null) : MLModelInterface<Data, Result> {
+abstract class MLModel<Data, Result>  () : MLModelInterface<Data, Result> {
     var isLoaded: Boolean = false
         protected set
-
-    init {
-        if (modelPath != null)
-            loadModel(modelPath)
-    }
 
     override fun processAndEvaluate (input: Data): Result? {
         val data: Data = preProcess(input)

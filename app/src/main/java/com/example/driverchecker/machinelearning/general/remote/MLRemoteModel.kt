@@ -7,10 +7,16 @@ import org.pytorch.Module
 import java.io.IOException
 import java.net.URL
 
-abstract class MLRemoteModel <Data, Result> (private val modelPath: String? = null) : MLModel<Data, Result>(modelPath){
+abstract class MLRemoteModel <Data, Result> (modelPath: String? = null) : MLModel<Data, Result>(){
     protected var externalURL: URL? = null
 
-    override fun loadModel(uri: String) {
+
+    init {
+        if (modelPath != null)
+            loadModel(modelPath)
+    }
+
+    final override fun loadModel(uri: String) {
         externalURL = URL(uri)
         isLoaded = true
     }
