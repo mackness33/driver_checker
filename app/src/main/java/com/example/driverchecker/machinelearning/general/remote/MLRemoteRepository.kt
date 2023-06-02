@@ -14,16 +14,6 @@ abstract class MLRemoteRepository <Data, Result> (protected open val model: MLRe
         }
     }
 
-    override suspend fun continuousClassification(input: List<Data>): Result? {
-        // TODO("Not yet implemented")
-        return null
-    }
-
-    override suspend fun continuousClassification(input: Flow<Data>): Result? {
-        // TODO("Not yet implemented")
-        return null
-    }
-
     fun updateRemoteUrl (path: String) {
         model?.loadModel(path)
     }

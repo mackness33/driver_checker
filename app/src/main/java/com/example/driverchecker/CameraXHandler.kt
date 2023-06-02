@@ -152,7 +152,7 @@ class CameraXHandler (){
         hasCameraStarted = false
     }
 
-    private class ImageDetectionAnalyzer(private val    listener: ImageDetectionListener) : ImageAnalysis.Analyzer {
+    private class ImageDetectionAnalyzer(private val listener: ImageDetectionListener) : ImageAnalysis.Analyzer {
 
 //        private fun ByteBuffer.toByteArray(): ByteArray {
 //            rewind()    // Rewind the buffer to zero

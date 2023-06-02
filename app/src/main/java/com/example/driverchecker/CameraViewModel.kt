@@ -2,9 +2,16 @@ package com.example.driverchecker
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 data class StaticMedia (val path : String?, val isVideo: Boolean)
 
@@ -35,7 +42,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                     !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path)?.result.toString())
                     media.isVideo -> {
                         mediaRepository.extractVideo(media.path)
-                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!)?.result.toString()
+                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow(), viewModelScope)?.result.toString()
                         emit(res)
                     }
                 }
@@ -66,6 +73,20 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val pathVideo: LiveData<String?>
         get() = _pathVideo
 
+    private val _liveImages: MutableSharedFlow<ImageProxy> = MutableSharedFlow (
+        replay = 0,
+        extraBufferCapacity = 0,
+        onBufferOverflow = BufferOverflow.SUSPEND
+    )
+    val liveImages: SharedFlow<ImageProxy>
+            get() = _liveImages.asSharedFlow()
+
+    suspend fun produceImage (image: ImageProxy) {
+        viewModelScope.launch {
+            _liveImages.emit(image)
+        }
+    }
+
     fun updateImageUri (uri: Uri?) {
         _imageUri.value = uri
     }
@@ -86,7 +107,6 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         imageDetectionRepository?.updateLocalModel(path)
     }
 
-    // TODO: create the viewModel for the fragment
     fun recordVideo (record: Boolean) {
         _isRecording.value = record
     }
