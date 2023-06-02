@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.general.local
 
-import android.graphics.Bitmap
 import android.util.Log
 import com.example.driverchecker.machinelearning.general.MLRepositoryInterface
 import kotlinx.coroutines.*
@@ -22,9 +21,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     }
 
     override suspend fun instantClassification(input: Data): Result? {
-        return withContext(Dispatchers.Default) {
-            model?.processAndEvaluate(input)
-        }
+        return withContext(Dispatchers.Default) { model?.processAndEvaluate(input) }
     }
 
     override suspend fun continuousClassification(input: List<Data>): Result? {

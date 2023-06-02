@@ -35,14 +35,14 @@ class ResultFragment : Fragment() {
         val resultObserver = Observer<String> { result ->
             txt.text = result
         }
-        model.result.observe(this.requireActivity(), resultObserver)
+        model.result.observe(viewLifecycleOwner, resultObserver)
 
         /* OBSERVE CHANGES ON THE URI*/
         val img = binding.imgView
         val imageObserver = Observer<Uri?> { uri ->
             img.setImageURI(uri)
         }
-        model.imageUri.observe(this.requireActivity(), imageObserver)
+        model.imageUri.observe(viewLifecycleOwner, imageObserver)
     }
 
 

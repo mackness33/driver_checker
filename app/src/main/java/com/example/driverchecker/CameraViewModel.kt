@@ -23,17 +23,6 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             imageDetectionRepository = ImageDetectionRepository()
     }
 
-    private val _frame: MutableLiveData<Bitmap?> = MutableLiveData(null)
-    val frame: LiveData<String?>
-        get() = _frame.switchMap { bitmap ->
-            liveData (Dispatchers.Default) {
-                if (bitmap == null)
-                    emit ("Image not found")
-                else
-                    emit(imageDetectionRepository?.instantClassification(bitmap)?.result.toString())
-            }
-        }
-
     val result: LiveData<String>
         get() = _path.switchMap { media ->
             liveData {
@@ -97,10 +86,6 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
 
     fun updatePathVideo (path: String?) {
         _path.value = StaticMedia(path, true)
-    }
-
-    fun nextFrame (bitmap: Bitmap?) {
-        _frame.postValue(bitmap)
     }
 
     fun loadLocalModel (path: String) {

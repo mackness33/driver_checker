@@ -37,10 +37,6 @@ class CameraFragment : Fragment() {
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
     private val model: CameraViewModel by activityViewModels()
-
-//    private val model: CameraViewModel by viewModels(
-//        ownerProducer = { requireParentFragment() }
-//    )
     private val cameraXHandler: CameraXHandler = CameraXHandler()
 
 
@@ -48,7 +44,6 @@ class CameraFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         layout = binding.root
-//        model.setImageDetectionRepository(FileUtils.assetFilePath(this.requireContext(), "coco_detection_lite.ptl"), "somePath")
         return layout
     }
 
@@ -76,26 +71,19 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
-        val txt = binding.txtResult
-        val resultObserver = Observer<String?> { result ->
-            Log.i("LiveData", result)
-            txt.text = result ?: "is null"
-        }
-        model.frame.observe(this.requireActivity(), resultObserver)
-
         val btn = binding.btnRecordVideo
         val isEnabledObserver = Observer<Boolean?> { enable ->
             Log.i("LiveData", "Recoding Button is ${if (enable) "not" else ""} enabled")
             btn.isEnabled = enable
         }
-        model.isEnabled.observe(this.requireActivity(), isEnabledObserver)
+        model.isEnabled.observe(viewLifecycleOwner, isEnabledObserver)
 
         val isRecordingObserver = Observer<Boolean?> { isRecording ->
             val record = isRecording ?: false
             Log.i("LiveData", "Recoding Button ${if (record) "start" else "stop"} recording")
             btn.text = getString(if (record) R.string.stop_capture else R.string.start_capture)
         }
-        model.isRecording.observe(this.requireActivity(), isRecordingObserver)
+        model.isRecording.observe(viewLifecycleOwner, isRecordingObserver)
 
         binding.btnTakePhoto.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
@@ -308,7 +296,6 @@ class CameraFragment : Fragment() {
         val bitmap = toBitmap(image)
 //        bitmap.recycle()
         // Do image analysis here if you need bitmap
-        model.nextFrame(bitmap)
     }
 
     private fun toBitmap(image: ImageProxy): Bitmap {

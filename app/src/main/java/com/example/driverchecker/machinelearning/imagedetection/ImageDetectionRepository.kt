@@ -1,25 +1,10 @@
 package com.example.driverchecker.machinelearning.imagedetection
 
-import android.content.ContentUris
-import android.content.Context
-import android.database.Cursor
 import android.graphics.*
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.text.TextUtils
 import androidx.camera.core.ImageProxy
-import com.example.driverchecker.FileUtils
 import com.example.driverchecker.machinelearning.general.MLRepository
 import com.example.driverchecker.machinelearning.data.MLResult
-import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
-import com.example.driverchecker.machinelearning.general.remote.MLRemoteRepository
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 
 class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<Bitmap, MLResult<Float>>() {
 
