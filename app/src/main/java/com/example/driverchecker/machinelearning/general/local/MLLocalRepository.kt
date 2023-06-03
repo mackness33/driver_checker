@@ -8,15 +8,16 @@ import kotlinx.coroutines.flow.*
 abstract class MLLocalRepository <Data, Result> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
     protected var window: MLWindow<Result> = MLWindow()
-    protected val _evalState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationStateInterface.Ready(false))
+    protected val _evalState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
     protected var liveClassificationJob: Job? = null
+    val subscribingScope = CoroutineScope(SupervisorJob())
 
-    val evalState: StateFlow<LiveEvaluationStateInterface<Result>>
+    override val evalState: StateFlow<LiveEvaluationStateInterface<Result>>?
             get() = _evalState.asStateFlow()
 
     init {
         if (model?.isLoaded == true) {
-            _evalState.value = LiveEvaluationStateInterface.Ready(true)
+            _evalState.value = LiveEvaluationState.Ready(true)
         }
     }
 
@@ -60,7 +61,8 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     }
 
     protected fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
-        return scope.launch {
+//        return
+        return subscribingScope.launch {
             try {
 
                 /*
@@ -69,25 +71,27 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                  * There wouldn't be any problem to merge these two in either the catch and onCompletion
                  * of the flow or in the try/catch/finally.
                  */
+//                _evalState.value = LiveEvaluationState.Loading(window.lastResult)
                 model?.processAndEvaluatesStream(input)
-                    ?.cancellable()
-                    ?.collect {
-                        if (it == null) cancel()
+                    ?.onEach {
+                        if (it == null) throw Error("The result is null")
 
-                        window.next(it!!)
-
-                        _evalState.value = LiveEvaluationStateInterface.Loading(window.lastResult!!)
+                        window.next(it)
+                      // TODO: subscribingScope.launch {
+                        _evalState.value = LiveEvaluationState.Loading(window.lastResult!!)
                         // TODO: Pass the metrics and Result
                         if (window.isSatisfied())
                             cancel()
                     }
+                    ?.cancellable()
+                    ?.collect()
             } catch (e: Throwable) {
                 Log.d("FlowClassificationOutside", "Just caught this, ${e.message}")
                 if (e !is CancellationException)
-                    _evalState.value = LiveEvaluationStateInterface.Error(e)
+                    _evalState.value = LiveEvaluationState.Error(e)
             } finally {
                 Log.d("FlowClassificationWindow", "finally finished")
-                _evalState.value = LiveEvaluationStateInterface.End(window.lastResult!!)
+                 _evalState.value = LiveEvaluationState.End(window.lastResult)
                 window.clean()
             }
         }
@@ -97,7 +101,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
         input: SharedFlow<Data>,
         scope: CoroutineScope
     ) {
-        if (_evalState.value == LiveEvaluationStateInterface.Ready(true)) {
+        if (_evalState.value == LiveEvaluationState.Ready(true)) {
             liveClassificationJob = jobClassification(input.buffer(2), scope)
         }
     }
@@ -148,17 +152,12 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 
 
 // Represents different states for the LatestNews screen
-sealed interface LiveEvaluationStateInterface<out Result> {
-    data class Ready(val isReady: Boolean) : LiveEvaluationStateInterface<Nothing>
-    data class Loading<Result>(val partialResult: Result) : LiveEvaluationStateInterface<Result>
-    data class Error(val exception: Throwable) : LiveEvaluationStateInterface<Nothing>
-    data class End<Result>(val result: Result) : LiveEvaluationStateInterface<Result>
-}
+sealed interface LiveEvaluationStateInterface<out Result> {}
 
 // Represents different states for the LatestNews screen
 sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
     data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
-    data class Loading<Result>(val partialResult: Result) : LiveEvaluationState<Result>()
+    data class Loading<Result>(val partialResult: Result?) : LiveEvaluationState<Result>()
     data class Error(val exception: Throwable) : LiveEvaluationState<Nothing>()
-    data class End<Result>(val result: Result) : LiveEvaluationState<Result>()
+    data class End<Result>(val result: Result?) : LiveEvaluationState<Result>()
 }

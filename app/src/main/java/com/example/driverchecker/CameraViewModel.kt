@@ -4,13 +4,13 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
+import com.example.driverchecker.machinelearning.data.MLResult
+import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
+import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class StaticMedia (val path : String?, val isVideo: Boolean)
@@ -37,6 +37,9 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                 }
             }
         }
+
+    val analysisState: StateFlow<LiveEvaluationStateInterface<MLResult<Float>>>?
+        get() = imageDetectionRepository?.evalState
 
     private val _imageUri: MutableLiveData<Uri?> = MutableLiveData(null)
     val imageUri: LiveData<Uri?>

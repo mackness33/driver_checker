@@ -22,7 +22,7 @@ import java.util.*
 import java.util.concurrent.Executors
 import javax.security.auth.callback.Callback
 
-typealias ImageDetectionListener = suspend (image: ImageProxy) -> Unit
+typealias ImageDetectionListener = (image: ImageProxy) -> Unit
 
 class CameraXHandler (){
     private var imageCapture: ImageCapture? = null
@@ -49,10 +49,10 @@ class CameraXHandler (){
 
             imageCapture = ImageCapture.Builder().build()
 
-//            imageAnalyzer = ImageAnalysis.Builder()
-//                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-//                .build().apply {
-//                setAnalyzer(Executors.newSingleThreadExecutor(), ImageDetectionAnalyzer (listener))}
+            imageAnalyzer = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build().apply {
+                setAnalyzer(Executors.newSingleThreadExecutor(), ImageDetectionAnalyzer(listener))}
 //                    runBlocking {
 //                        val yBuffer = it.planes[0].buffer // Y
 //                        val vuBuffer = it.planes[2].buffer // VU
@@ -73,7 +73,6 @@ class CameraXHandler (){
 //                        model.nextFrame(bitmap)
 //                    }
 //                })
-//            }
 
             val recorder = Recorder.Builder()
                 .setQualitySelector(QualitySelector.from(Quality.SD))
@@ -162,18 +161,7 @@ class CameraXHandler (){
 //        }
 
         override fun analyze(image: ImageProxy) {
-
-            runBlocking {
-
-//            val buffer = image.planes[0].buffer
-//            val data = buffer.toByteArray()
-//            val pixels = data.map { it.toInt() and 0xFF }
-//            val luma = pixels.average()
-//            Log.i("Analyze", "it is analyzing yess")
-                listener(image)
-//            Log.i("Analyze", image.format.toString())
-                image.close()
-            }
+            listener(image)
         }
     }
 

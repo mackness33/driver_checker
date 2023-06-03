@@ -2,6 +2,7 @@ package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.Bitmap
 import com.example.driverchecker.machinelearning.data.MLResult
+import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteModel
@@ -9,6 +10,7 @@ import com.example.driverchecker.machinelearning.general.remote.MLRemoteReposito
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class ImageDetectionRemoteRepository (override val model: MLRemoteModel<Bitmap, MLResult<Float>>?) : MLRemoteRepository<Bitmap, MLResult<Float>>(model) {
     override suspend fun continuousClassification(input: List<Bitmap>): MLResult<Float>? {
@@ -29,4 +31,7 @@ class ImageDetectionRemoteRepository (override val model: MLRemoteModel<Bitmap, 
     override suspend fun onStopLiveClassification() {
         TODO("Not yet implemented")
     }
+
+    override val evalState: StateFlow<LiveEvaluationStateInterface<MLResult<Float>>>?
+        get() = TODO("Not yet implemented")
 }

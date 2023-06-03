@@ -20,15 +20,6 @@ class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = n
         return this.instantClassification(bmScaled)
     }
 
-//    suspend fun continuousClassification (path:String) : MLResult<Float>? {
-//        val bm = BitmapFactory.decodeFile(path)
-//        // the bitmap MUST BE SCALED, if it is too big the application is going ot crash
-//        val bmScaled = Bitmap.createScaledBitmap(bm, 500, (bm.height*500)/bm.width, true)
-//
-//
-//        return this.continuousClassification(bmScaled)
-//    }
-
     fun imageProxyToBitmap(image: ImageProxy): Bitmap {
         val yBuffer = image.planes[0].buffer // Y
         val vuBuffer = image.planes[2].buffer // VU

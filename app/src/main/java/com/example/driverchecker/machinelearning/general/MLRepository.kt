@@ -1,10 +1,13 @@
 package com.example.driverchecker.machinelearning.general
 
+import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Result> {
     protected val isOnline: Boolean = false
@@ -12,10 +15,11 @@ abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Resul
     protected var local: MLLocalRepository<Data, Result>? = null
     protected var remote: MLRemoteRepository<Data, Result>? = null
 
+    override val evalState: StateFlow<LiveEvaluationStateInterface<Result>>?
+        get() = if (isOnline) remote?.evalState else local?.evalState
+
     override suspend fun instantClassification(input: Data): Result? {
-        return if (isOnline) remote?.instantClassification(input) else local?.instantClassification(
-            input
-        )
+        return if (isOnline) remote?.instantClassification(input) else local?.instantClassification(input)
     }
 
     override suspend fun continuousClassification(input: List<Data>): Result? {
