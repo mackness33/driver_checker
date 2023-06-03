@@ -1,18 +1,13 @@
 package com.example.driverchecker;
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 
 class ResultFragment : Fragment() {
     private lateinit var layout: View
@@ -51,7 +45,7 @@ class ResultFragment : Fragment() {
         }
         model.imageUri.observe(viewLifecycleOwner, imageObserver)
 
-        var i: Int = 0
+        var i = 0
         lifecycleScope.launchWhenCreated {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 model.analysisState?.collect { state ->
@@ -61,20 +55,20 @@ class ResultFragment : Fragment() {
                             Toast.makeText(context, "The Repo is ${if (!state.isReady) "not" else ""} ready!", Toast.LENGTH_SHORT)
                                 .show()
                         }
+                        is LiveEvaluationState.Start -> {
+                            // show ui
+                            Toast.makeText(context, "Start of flow", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                         is LiveEvaluationState.Loading<MLResult<Float>> -> {
                             // show ui
                             i++
                             Toast.makeText(context, "Loading: ${state.partialResult?.result} for the $i time", Toast.LENGTH_SHORT)
                                 .show()
                         }
-                        is LiveEvaluationState.Error -> {
-                            // show spinner
-                            Toast.makeText(context, "Error: ${state.exception.message}", Toast.LENGTH_SHORT)
-                                .show()
-                        }
                         is LiveEvaluationState.End<MLResult<Float>> -> {
                             // show error message
-                            Toast.makeText(context, "End: ${state.result}", Toast.LENGTH_SHORT)
+                            Toast.makeText(context, "End: error=${state.exception} & result=${state.result}", Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }

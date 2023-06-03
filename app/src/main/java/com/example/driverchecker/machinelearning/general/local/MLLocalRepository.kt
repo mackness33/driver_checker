@@ -16,9 +16,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
             get() = _evalState.asStateFlow()
 
     init {
-        if (model?.isLoaded == true) {
-            _evalState.value = LiveEvaluationState.Ready(true)
-        }
+        initializeProgressState()
     }
 
     override suspend fun instantClassification(input: Data): Result? {
@@ -53,46 +51,63 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     }
 
     override suspend fun continuousClassification(input: Flow<Data>, scope: CoroutineScope): Result? {
-        val job: Job = jobClassification(input, scope)
-
-        job.join()
+        jobClassification(input, scope).join()
 
         return window.lastResult
     }
 
-    protected fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
-//        return
-        return subscribingScope.launch {
-            try {
+    protected fun initializeProgressState () {
+        if (model?.isLoaded == true) {
+            _evalState.value = LiveEvaluationState.Ready(true)
+        }
+    }
 
-                /*
-                 * Just for easier visualization of the differences all the windows operation are
-                 * part of the flow. Instead the update of the state it is made outside of it.
-                 * There wouldn't be any problem to merge these two in either the catch and onCompletion
-                 * of the flow or in the try/catch/finally.
-                 */
-//                _evalState.value = LiveEvaluationState.Loading(window.lastResult)
+    protected fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
+        return subscribingScope.launch(Dispatchers.Default) {
+            /*
+             * Just for easier visualization of the differences all the windows operation are
+             * part of the flow. Instead the update of the state it is made outside of it.
+             * There wouldn't be any problem to merge these two in either the catch and onCompletion
+             * of the flow or in the try/catch/finally.
+             */
+            if (_evalState.compareAndSet(LiveEvaluationState.Ready(true), LiveEvaluationState.Start(null))) {
+                _evalState.value = LiveEvaluationState.Loading(null)
                 model?.processAndEvaluatesStream(input)
                     ?.onEach {
                         if (it == null) throw Error("The result is null")
 
                         window.next(it)
-                      // TODO: subscribingScope.launch {
-                        _evalState.value = LiveEvaluationState.Loading(window.lastResult!!)
+                        // TODO: subscribingScope.launch {è
+//                        _evalState.value = LiveEvaluationState.Loading(window.lastResult!!)
                         // TODO: Pass the metrics and Result
                         if (window.isSatisfied())
                             cancel()
+                        else
+                            _evalState.update { _ -> LiveEvaluationState.Loading(window.lastResult) }
                     }
+                    ?.flowOn(Dispatchers.Default)
                     ?.cancellable()
+                    ?.catch { cause ->
+                        Log.d("FlowClassificationOutside", "Just caught this, ${cause.message}")
+                    }
+                    ?.onCompletion { cause ->
+                        Log.d("FlowClassificationWindow", "finally finished")
+//                        if (cause is CancellationException) {
+//                            _evalState.value = LiveEvaluationState.End(null, window.lastResult)
+//                        } else {
+//                            _evalState.value = LiveEvaluationState.End(cause, window.lastResult)
+//                        }
+                        _evalState.value = LiveEvaluationState.End(
+                            if (cause !is CancellationException) cause else null,
+                            window.lastResult
+                        )
+
+                        window.clean()
+                    }
                     ?.collect()
-            } catch (e: Throwable) {
-                Log.d("FlowClassificationOutside", "Just caught this, ${e.message}")
-                if (e !is CancellationException)
-                    _evalState.value = LiveEvaluationState.Error(e)
-            } finally {
-                Log.d("FlowClassificationWindow", "finally finished")
-                 _evalState.value = LiveEvaluationState.End(window.lastResult)
-                window.clean()
+            } else {
+                _evalState.value = LiveEvaluationState.End(Throwable("The stream is not ready yet"), window.lastResult)
+                initializeProgressState()
             }
         }
     }
@@ -112,7 +127,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 
     // TODO: let the window take as parameter a handler (interface of callbacks to manage state and etc)
     protected open class MLWindow<Result> (val size: Int = 5, val confidence_threshold: Float = 80F) {
-        protected val window : MutableList<Result> = mutableListOf<Result>()
+        protected val window : MutableList<Result> = mutableListOf()
 
         var confidence: Float = 0F
             protected set
@@ -157,7 +172,7 @@ sealed interface LiveEvaluationStateInterface<out Result> {}
 // Represents different states for the LatestNews screen
 sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
     data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
-    data class Loading<Result>(val partialResult: Result?) : LiveEvaluationState<Result>()
-    data class Error(val exception: Throwable) : LiveEvaluationState<Nothing>()
-    data class End<Result>(val result: Result?) : LiveEvaluationState<Result>()
+    data class Loading<Result>(var partialResult: Result?) : LiveEvaluationState<Result>()
+    data class Start(val info: Nothing?) : LiveEvaluationState<Nothing>()
+    data class End<Result>(val exception: Throwable?, val result: Result?) : LiveEvaluationState<Result>()
 }
