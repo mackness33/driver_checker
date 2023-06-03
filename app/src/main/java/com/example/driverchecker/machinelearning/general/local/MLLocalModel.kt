@@ -20,7 +20,7 @@ abstract class MLLocalModel <Data, Result> (modelPath: String? = null) : MLModel
             // loading serialized torchscript module from packaged into app android asset model.pt,
             // app/src/model/assets/model.pt
             module = LiteModuleLoader.load(uri)
-            isLoaded = true
+            _isLoaded.value = true
         } catch (e: IOException) {
             Log.e("ImageDetection", e.message ?: "The model couldn't be loaded")
         }

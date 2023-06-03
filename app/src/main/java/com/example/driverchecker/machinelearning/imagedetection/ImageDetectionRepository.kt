@@ -4,6 +4,7 @@ import android.graphics.*
 import androidx.camera.core.ImageProxy
 import com.example.driverchecker.machinelearning.general.MLRepository
 import com.example.driverchecker.machinelearning.data.MLResult
+import kotlinx.coroutines.CoroutineScope
 import java.io.ByteArrayOutputStream
 
 class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<Bitmap, MLResult<Float>>() {
@@ -46,4 +47,7 @@ class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = n
             INSTANCE ?: ImageDetectionRepository(localUri, remoteUri)
 
     }
+
+    override val repositoryScope: CoroutineScope
+        get() = TODO("Not yet implemented")
 }

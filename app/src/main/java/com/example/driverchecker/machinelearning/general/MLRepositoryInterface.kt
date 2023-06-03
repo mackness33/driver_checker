@@ -15,7 +15,7 @@ interface MLRepositoryInterface<in Data, out Result> {
     suspend fun onStartLiveClassification (input: SharedFlow<Data>, scope: CoroutineScope)
     suspend fun onStopLiveClassification ()
 
-    val evalState: StateFlow<LiveEvaluationStateInterface<Result>>?
-
+    val analysisProgressState: StateFlow<LiveEvaluationStateInterface<Result>>?
+    val repositoryScope: CoroutineScope
 //    fun liveClassification (input: Flow<Data>): Result?
 }

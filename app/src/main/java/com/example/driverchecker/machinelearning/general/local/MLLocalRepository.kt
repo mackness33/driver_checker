@@ -8,15 +8,24 @@ import kotlinx.coroutines.flow.*
 abstract class MLLocalRepository <Data, Result> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
     protected var window: MLWindow<Result> = MLWindow()
-    protected val _evalState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
+    protected val _analysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
     protected var liveClassificationJob: Job? = null
-    val subscribingScope = CoroutineScope(SupervisorJob())
 
-    override val evalState: StateFlow<LiveEvaluationStateInterface<Result>>?
-            get() = _evalState.asStateFlow()
+    override val repositoryScope = CoroutineScope(SupervisorJob())
+
+    override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<Result>>?
+            get() = _analysisProgressState.asStateFlow()
 
     init {
-        initializeProgressState()
+        listenOnLoadingState()
+    }
+
+    protected fun listenOnLoadingState () {
+        repositoryScope.launch {
+            model?.isLoaded?.collect { state ->
+                _analysisProgressState.compareAndSet(LiveEvaluationState.Ready(!state), LiveEvaluationState.Ready(state))
+            }
+        }
     }
 
     override suspend fun instantClassification(input: Data): Result? {
@@ -56,22 +65,16 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
         return window.lastResult
     }
 
-    protected fun initializeProgressState () {
-        if (model?.isLoaded == true) {
-            _evalState.value = LiveEvaluationState.Ready(true)
-        }
-    }
-
     protected fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
-        return subscribingScope.launch(Dispatchers.Default) {
+        return repositoryScope.launch(Dispatchers.Default) {
             /*
              * Just for easier visualization of the differences all the windows operation are
              * part of the flow. Instead the update of the state it is made outside of it.
              * There wouldn't be any problem to merge these two in either the catch and onCompletion
              * of the flow or in the try/catch/finally.
              */
-            if (_evalState.compareAndSet(LiveEvaluationState.Ready(true), LiveEvaluationState.Start(null))) {
-                _evalState.value = LiveEvaluationState.Loading(null)
+            if (_analysisProgressState.compareAndSet(LiveEvaluationState.Ready(true), LiveEvaluationState.Start(null))) {
+                _analysisProgressState.value = LiveEvaluationState.Loading(null)
                 model?.processAndEvaluatesStream(input)
                     ?.onEach {
                         if (it == null) throw Error("The result is null")
@@ -83,7 +86,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                         if (window.isSatisfied())
                             cancel()
                         else
-                            _evalState.update { _ -> LiveEvaluationState.Loading(window.lastResult) }
+                            _analysisProgressState.update { _ -> LiveEvaluationState.Loading(window.lastResult) }
                     }
                     ?.flowOn(Dispatchers.Default)
                     ?.cancellable()
@@ -92,22 +95,19 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                     }
                     ?.onCompletion { cause ->
                         Log.d("FlowClassificationWindow", "finally finished")
-//                        if (cause is CancellationException) {
-//                            _evalState.value = LiveEvaluationState.End(null, window.lastResult)
-//                        } else {
-//                            _evalState.value = LiveEvaluationState.End(cause, window.lastResult)
-//                        }
-                        _evalState.value = LiveEvaluationState.End(
+                        _analysisProgressState.value = LiveEvaluationState.End(
                             if (cause !is CancellationException) cause else null,
                             window.lastResult
                         )
 
                         window.clean()
+
+                        _analysisProgressState.value = LiveEvaluationState.Ready(model?.isLoaded?.value ?: false)
                     }
                     ?.collect()
             } else {
-                _evalState.value = LiveEvaluationState.End(Throwable("The stream is not ready yet"), window.lastResult)
-                initializeProgressState()
+                _analysisProgressState.value = LiveEvaluationState.End(Throwable("The stream is not ready yet"), window.lastResult)
+                _analysisProgressState.value = LiveEvaluationState.Ready(model?.isLoaded?.value ?: false)
             }
         }
     }
@@ -116,7 +116,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
         input: SharedFlow<Data>,
         scope: CoroutineScope
     ) {
-        if (_evalState.value == LiveEvaluationState.Ready(true)) {
+        if (_analysisProgressState.value == LiveEvaluationState.Ready(true)) {
             liveClassificationJob = jobClassification(input.buffer(2), scope)
         }
     }

@@ -1,12 +1,12 @@
 package com.example.driverchecker.machinelearning.general
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.map
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.*
 
 abstract class MLModel<Data, Result>  () : MLModelInterface<Data, Result> {
-    var isLoaded: Boolean = false
-        protected set
+    protected val _isLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    override val isLoaded: StateFlow<Boolean>
+        get() = _isLoaded
 
     override fun processAndEvaluate (input: Data): Result? {
         val data: Data = preProcess(input)

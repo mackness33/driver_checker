@@ -18,6 +18,6 @@ abstract class MLRemoteModel <Data, Result> (modelPath: String? = null) : MLMode
 
     final override fun loadModel(uri: String) {
         externalURL = URL(uri)
-        isLoaded = true
+        _isLoaded.value = true
     }
 }

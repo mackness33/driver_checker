@@ -32,6 +32,8 @@ class ImageDetectionRemoteRepository (override val model: MLRemoteModel<Bitmap, 
         TODO("Not yet implemented")
     }
 
-    override val evalState: StateFlow<LiveEvaluationStateInterface<MLResult<Float>>>?
+    override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<MLResult<Float>>>?
+        get() = TODO("Not yet implemented")
+    override val repositoryScope: CoroutineScope
         get() = TODO("Not yet implemented")
 }

@@ -7,7 +7,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Result> {
     protected val isOnline: Boolean = false
@@ -15,8 +14,8 @@ abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Resul
     protected var local: MLLocalRepository<Data, Result>? = null
     protected var remote: MLRemoteRepository<Data, Result>? = null
 
-    override val evalState: StateFlow<LiveEvaluationStateInterface<Result>>?
-        get() = if (isOnline) remote?.evalState else local?.evalState
+    override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<Result>>?
+        get() = if (isOnline) remote?.analysisProgressState else local?.analysisProgressState
 
     override suspend fun instantClassification(input: Data): Result? {
         return if (isOnline) remote?.instantClassification(input) else local?.instantClassification(input)
