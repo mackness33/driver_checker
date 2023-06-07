@@ -80,8 +80,6 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                         if (it == null) throw Error("The result is null")
 
                         window.next(it)
-                        // TODO: subscribingScope.launch {è
-//                        _evalState.value = LiveEvaluationState.Loading(window.lastResult!!)
                         // TODO: Pass the metrics and Result
                         if (window.isSatisfied())
                             cancel()
@@ -90,9 +88,9 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                     }
                     ?.flowOn(Dispatchers.Default)
                     ?.cancellable()
-                    ?.catch { cause ->
-                        Log.d("FlowClassificationOutside", "Just caught this, ${cause.message}")
-                    }
+//                    ?.catch { cause ->
+//                        Log.d("FlowClassificationOutside", "Just caught this, ${cause.message}")
+//                    }
                     ?.onCompletion { cause ->
                         Log.d("FlowClassificationWindow", "finally finished")
                         _analysisProgressState.value = LiveEvaluationState.End(

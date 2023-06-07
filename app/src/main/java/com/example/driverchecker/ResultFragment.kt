@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.driverchecker.databinding.FragmentResultBinding
+import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
 
@@ -60,13 +61,13 @@ class ResultFragment : Fragment() {
                             Toast.makeText(context, "Start of flow", Toast.LENGTH_SHORT)
                                 .show()
                         }
-                        is LiveEvaluationState.Loading<MLResult<Float>> -> {
+                        is LiveEvaluationState.Loading<MLResult<ArrayList<ImageDetectionBox>>> -> {
                             // show ui
                             i++
                             Toast.makeText(context, "Loading: ${state.partialResult?.result} for the $i time", Toast.LENGTH_SHORT)
                                 .show()
                         }
-                        is LiveEvaluationState.End<MLResult<Float>> -> {
+                        is LiveEvaluationState.End<MLResult<ArrayList<ImageDetectionBox>>> -> {
                             // show error message
                             Toast.makeText(context, "End: error=${state.exception} & result=${state.result}", Toast.LENGTH_SHORT)
                                 .show()

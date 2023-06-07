@@ -3,6 +3,8 @@ package com.example.driverchecker
 import android.net.Uri
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
+import com.example.driverchecker.machinelearning.data.ImageDetectionBox
+import com.example.driverchecker.machinelearning.data.ImageDetectionInput
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
@@ -28,14 +30,14 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                     !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path)?.result.toString())
                     media.isVideo -> {
                         mediaRepository.extractVideo(media.path)
-                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow(), viewModelScope)?.result.toString()
+                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionInput(bitmap) }, viewModelScope)?.result.toString()
                         emit(res)
                     }
                 }
             }
         }
 
-    val analysisState: StateFlow<LiveEvaluationStateInterface<MLResult<Float>>>?
+    val analysisState: StateFlow<LiveEvaluationStateInterface<MLResult<ArrayList<ImageDetectionBox>>>>?
         get() = imageDetectionRepository?.analysisProgressState
 
     private val _imageUri: MutableLiveData<Uri?> = MutableLiveData(null)
