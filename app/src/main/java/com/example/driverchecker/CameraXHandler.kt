@@ -13,14 +13,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.runBlocking
-import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
+import com.example.driverchecker.media.FileUtils
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
-import javax.security.auth.callback.Callback
 
 typealias ImageDetectionListener = (image: ImageProxy) -> Unit
 

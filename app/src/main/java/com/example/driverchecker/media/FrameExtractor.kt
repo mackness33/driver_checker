@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.media
 
 import android.graphics.Bitmap
 import android.media.MediaCodec
@@ -279,7 +279,8 @@ class FrameExtractor(private val listener: FrameExtractorInterface) {
         }
         val totalSavedFrames = if ((MAX_FRAMES < decodeCount)) MAX_FRAMES else decodeCount
 
-        if (verbose) Log.d(TAG, ("Total saved frames: $totalSavedFrames  " +
+        if (verbose) Log.d(
+            TAG, ("Total saved frames: $totalSavedFrames  " +
                 "| Total time: ${totalSavingTimeNs / 1000000} ms  " +
                 "| Each frame took: ${(totalSavingTimeNs / totalSavedFrames / 1000)} us "))
 

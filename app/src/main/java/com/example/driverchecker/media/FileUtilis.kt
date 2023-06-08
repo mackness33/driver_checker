@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.media
 
 import android.content.ContentUris
 import android.content.Context

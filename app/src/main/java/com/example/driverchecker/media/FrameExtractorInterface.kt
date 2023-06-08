@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.media
 
 interface FrameExtractorInterface {
     fun onCurrentFrameExtracted(currentFrame: Frame)

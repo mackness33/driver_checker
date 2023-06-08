@@ -29,7 +29,11 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     }
 
     override suspend fun instantClassification(input: Data): Result? {
-        return withContext(Dispatchers.Default) { model?.processAndEvaluate(input) }
+        var result: Result? = null
+        val job = repositoryScope.launch(Dispatchers.Default) { result = model?.processAndEvaluate(input) }
+        job.join()
+
+        return result
     }
 
     override suspend fun continuousClassification(input: List<Data>): Result? {
@@ -88,9 +92,9 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                     }
                     ?.flowOn(Dispatchers.Default)
                     ?.cancellable()
-//                    ?.catch { cause ->
-//                        Log.d("FlowClassificationOutside", "Just caught this, ${cause.message}")
-//                    }
+                    ?.catch { cause ->
+                        Log.d("FlowClassificationOutside", "Just caught this, ${cause.message}")
+                    }
                     ?.onCompletion { cause ->
                         Log.d("FlowClassificationWindow", "finally finished")
                         _analysisProgressState.value = LiveEvaluationState.End(

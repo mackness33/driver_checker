@@ -1,16 +1,14 @@
-package com.example.driverchecker
+package com.example.driverchecker.media
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.DisplayMetrics
 import android.util.Log
-import android.widget.Toast
-import kotlinx.coroutines.CloseableCoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.ByteBuffer
 
-class MediaRepository : FrameExtractorInterface{
+class MediaRepository : FrameExtractorInterface {
     val video: MutableList<Bitmap>? = mutableListOf()
 
     suspend fun extractVideo (path: String) {

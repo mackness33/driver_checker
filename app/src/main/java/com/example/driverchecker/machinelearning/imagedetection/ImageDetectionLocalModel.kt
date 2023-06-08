@@ -1,18 +1,18 @@
 package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Rect
+import android.graphics.RectF
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionInput
-import com.example.driverchecker.machinelearning.data.MLMetrics
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 import java.util.*
-import kotlin.Comparator
-import kotlin.collections.ArrayList
 import kotlin.math.max
+
 
 class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLocalModel<ImageDetectionInput, MLResult<ArrayList<ImageDetectionBox>>>(modelPath){
     override fun preProcess(data: ImageDetectionInput): ImageDetectionInput {
@@ -23,10 +23,12 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
     override fun evaluateData(input: ImageDetectionInput): MLResult<ArrayList<ImageDetectionBox>> {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.image,
-            TensorImageUtils.TORCHVISION_NORM_MEAN_RGB, TensorImageUtils.TORCHVISION_NORM_STD_RGB, MemoryFormat.CHANNELS_LAST)
+            NO_MEAN_RGB, NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
 
         // running the model
-        val outputTensor: Tensor = module!!.forward(IValue.from(inputTensor)).toTensor()
+        val outputTuple: Array<IValue> = module!!.forward(IValue.from(inputTensor)).toTuple()
+        val outputTensor = outputTuple[0].toTensor()
+//        val outputTensor: Tensor = module!!.forward(IValue.from(inputTensor)).toTensor()
 
         val dtype = outputTensor.dtype()
         val shape = outputTensor.shape()
@@ -40,7 +42,8 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
 
     override fun postProcess(output: MLResult<ArrayList<ImageDetectionBox>>): MLResult<ArrayList<ImageDetectionBox>> {
 //        TODO("Not yet implemented")
-        return MLResult(nonMaxSuppression(output.result, threshold = mThreshold), output.metrics)
+        val resSuppressed = nonMaxSuppression(output.result, threshold = mThreshold)
+        return MLResult(resSuppressed, output.metrics)
     }
 
     companion object {
@@ -57,9 +60,9 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
 
     // model output is of size 25200*(num_of_class+5)
     private val mOutputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
-    private val mOutputColumn = 2 // left, top, right, bottom, score and 80 class probability
-    private val mThreshold = 0.30f // score above which a detection is generated
-    private val mNmsLimit = 15
+    private val mOutputColumn = 7 // left, top, right, bottom, score and 80 class probability
+    private val mThreshold = 0.10f // score above which a detection is generated
+    private val mNmsLimit = 5
 
 //    var mClasses: Array<String> = TODO()
 
@@ -79,7 +82,7 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
     ): ArrayList<ImageDetectionBox> {
 
         // Do an argsort on the confidence scores, from high to low.
-        boxes.sortWith(Comparator { o1, o2 -> o1.score.compareTo(o2.score) })
+        boxes.sortWith(Comparator { o1, o2 -> o2.score.compareTo(o1.score) })
         val selected: ArrayList<ImageDetectionBox> = ArrayList()
         val active = BooleanArray(boxes.size)
         Arrays.fill(active, true)
@@ -96,11 +99,12 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
             if (active[i]) {
                 val boxA = boxes[i]
                 selected.add(boxA)
-                if (selected.size >= limit) break
+                if (selected.size >= mNmsLimit) break
                 for (j in i + 1 until boxes.size) {
                     if (active[j]) {
                         val boxB = boxes[j]
-                        if (IOU(boxA.rect, boxB.rect) > threshold) {
+                        val iou = IOU(boxA.rect, boxB.rect)
+                        if (iou > threshold) {
                             active[j] = false
                             numActive -= 1
                             if (numActive <= 0) {
@@ -119,11 +123,13 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
     /**
      * Computes intersection-over-union overlap between two bounding boxes.
      */
-    open fun IOU(a: Rect, b: Rect): Float {
+    open fun IOU(a: RectF, b: RectF): Float {
         val areaA: Float = ((a.right - a.left) * (a.bottom - a.top)).toFloat()
         if (areaA <= 0.0) return 0.0f
+
         val areaB: Float = ((b.right - b.left) * (b.bottom - b.top)).toFloat()
         if (areaB <= 0.0) return 0.0f
+
         val intersectionMinX: Float = max(a.left, b.left).toFloat()
         val intersectionMinY: Float = max(a.top, b.top).toFloat()
         val intersectionMaxX: Float = kotlin.math.min(a.right, b.right).toFloat()
@@ -158,11 +164,11 @@ class ImageDetectionLocalModel (private val modelPath: String? = null) :  MLLoca
                         cls = j
                     }
                 }
-                val rect = Rect(
-                    (start.first + vector.first * left).toInt(),
-                    (start.second + top * vector.second).toInt(),
-                    (start.first + vector.first * right).toInt(),
-                    (start.second + vector.second * bottom).toInt()
+                val rect = RectF(
+                    start.first + vector.first * scale.first * (x - w / 2),
+                    start.second + scale.second * (y - h / 2) * vector.second,
+                    start.first + vector.first * scale.first * (x + w / 2),
+                    start.second + vector.second * scale.second * (y + h / 2)
                 )
                 val result = ImageDetectionBox(
                     cls,

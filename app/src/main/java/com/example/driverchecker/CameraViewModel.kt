@@ -8,11 +8,12 @@ import com.example.driverchecker.machinelearning.data.ImageDetectionInput
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
+import com.example.driverchecker.media.MediaRepository
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-data class StaticMedia (val path : String?, val isVideo: Boolean)
+data class StaticMedia (val path : String?, val isVideo: Boolean = false)
 
 class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepository? = null): ViewModel() {
     private val mediaRepository : MediaRepository = MediaRepository()
@@ -22,15 +23,15 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             imageDetectionRepository = ImageDetectionRepository()
     }
 
-    val result: LiveData<String>
+    val result: LiveData<ArrayList<ImageDetectionBox>?>
         get() = _path.switchMap { media ->
             liveData {
                 when {
-                    media.path == null -> emit ("Image not found")
-                    !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path)?.result.toString())
+                    media?.path == null -> emit (null)
+                    !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path)?.result)
                     media.isVideo -> {
                         mediaRepository.extractVideo(media.path)
-                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionInput(bitmap) }, viewModelScope)?.result.toString()
+                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionInput(bitmap) }, viewModelScope)?.result
                         emit(res)
                     }
                 }

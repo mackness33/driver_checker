@@ -34,8 +34,10 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         /* OBSERVE CHANGES ON THE RESULT*/
         val txt = binding.txtResult
-        val resultObserver = Observer<String> { result ->
-            txt.text = result
+        val resultObserver = Observer<ArrayList<ImageDetectionBox>?> { result ->
+            txt.text = result.toString()
+            binding.resultView.setResults(result)
+            binding.resultView.invalidate()
         }
         model.result.observe(viewLifecycleOwner, resultObserver)
 
@@ -75,6 +77,11 @@ class ResultFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        fun applyToUiAnalyzeImageResult(result: ArrayList<ImageDetectionBox>) {
+            binding.resultView.setResults(result)
+            binding.resultView.invalidate()
         }
 
     }

@@ -2,6 +2,7 @@ package com.example.driverchecker
 
 import android.app.Application
 import com.example.driverchecker.machinelearning.imagedetection.*
+import com.example.driverchecker.media.FileUtils
 
 class DriverChecker : Application() {
     // No need to cancel this scope as it'll be torn down with the process
