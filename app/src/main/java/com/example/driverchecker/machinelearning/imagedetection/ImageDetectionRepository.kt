@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.imagedetection
 
-import android.R.attr.bitmap
 import android.graphics.*
 import androidx.camera.core.ImageProxy
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
@@ -14,7 +13,7 @@ import java.io.ByteArrayOutputStream
 class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<ImageDetectionInput, MLResult<ArrayList<ImageDetectionBox>>>() {
 
     init {
-        local = ImageDetectionLocalRepository(ImageDetectionLocalModel(localUri))
+        local = ImageDetectionLocalRepository(YOLOModel(localUri))
         remote = ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri))
     }
 
