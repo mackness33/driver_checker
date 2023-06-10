@@ -45,20 +45,21 @@ class ResultView : View {
             path?.addRect(rect!!, Path.Direction.CW)
             paintText!!.color = Color.MAGENTA
             canvas.drawPath(path!!, paintText!!)
-//            paintText!!.color = Color.WHITE
-//            paintText!!.strokeWidth = 0f
-//            paintText!!.style = Paint.Style.FILL
-//            paintText!!.textSize = 32f
-//            canvas.drawText(
-//                String.format(
-//                    "%s %.2f",
+            paintText!!.color = Color.WHITE
+            paintText!!.strokeWidth = 0f
+            paintText!!.style = Paint.Style.FILL
+            paintText!!.textSize = 32f
+            canvas.drawText(
+                String.format(
+                    "%s %.2f",
 //                    PrePostProcessor.mClasses.get(result.classIndex),
-//                    result.score
-//                ),
-//                result.rect.left + TEXT_X,
-//                result.rect.top + TEXT_Y,
-//                paintText!!
-//            )
+                    "Not yet",
+                    result.score
+                ),
+                result.rect.left + TEXT_X,
+                result.rect.top + TEXT_Y,
+                paintText!!
+            )
         }
     }
 
