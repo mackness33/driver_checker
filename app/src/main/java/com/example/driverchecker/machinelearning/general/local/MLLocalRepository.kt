@@ -86,13 +86,15 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                                 window.index,
                                 window.lastResult
                             ) }
+
+                        Log.d("JobClassification", "Checked: ${window.index} with ${window.lastResult}")
                     }
                     ?.cancellable()
                     ?.catch { cause ->
-                        Log.d("FlowClassificationOutside", "Just caught this, ${cause.message}")
+                        Log.e("JobClassification", "Just caught this, ${cause.message}, cause")
                     }
                     ?.onCompletion { cause ->
-                        Log.d("FlowClassificationWindow", "finally finished")
+                        Log.d("JobClassification", "finally finished")
                         _analysisProgressState.update { _ ->
                             LiveEvaluationState.End(
                                 if (cause !is CancellationException) cause else null,
@@ -105,7 +107,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                     ?.collect()
 
             } else {
-                _analysisProgressState.update { _ -> LiveEvaluationState.End(Throwable("The stream is not ready yet"), window.lastResult)}
+                _analysisProgressState.update { _ -> LiveEvaluationState.End(Throwable("The stream is not ready yet"), null)}
             }
         }
     }

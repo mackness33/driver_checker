@@ -159,8 +159,9 @@ class CameraFragment : Fragment() {
                         }
                         is LiveEvaluationState.Loading<MLResult<ArrayList<ImageDetectionBox>>> -> {
                             // show ui
-                            Toast.makeText(context, "Loading: ${state.partialResult?.result} for the ${state.index} time", Toast.LENGTH_SHORT)
-                                .show()
+//                            Toast.makeText(context, "Loading: ${state.partialResult?.result} for the ${state.index} time", Toast.LENGTH_SHORT)
+//                                .show()
+                            Log.d("LiveEvaluationState", "Loading: ${state.partialResult?.result} for the ${state.index} time")
 
                             binding.txtResult.text = state.partialResult?.result.toString()
 
