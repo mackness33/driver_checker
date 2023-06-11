@@ -71,14 +71,8 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 
     protected fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
-            /*
-             * Just for easier visualization of the differences all the windows operation are
-             * part of the flow. Instead the update of the state it is made outside of it.
-             * There wouldn't be any problem to merge these two in either the catch and onCompletion
-             * of the flow or in the try/catch/finally.
-             */
+            // check if the repo is ready to make evaluations
             if (_analysisProgressState.compareAndSet(LiveEvaluationState.Ready(true), LiveEvaluationState.Start(null))) {
-                _analysisProgressState.value = LiveEvaluationState.Loading(null)
                 model?.processAndEvaluatesStream(input)
                     ?.onEach {
                         if (it == null) throw Error("The result is null")
@@ -88,28 +82,30 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                         if (window.isSatisfied())
                             cancel()
                         else
-                            _analysisProgressState.update { _ -> LiveEvaluationState.Loading(window.lastResult) }
+                            _analysisProgressState.update { _ -> LiveEvaluationState.Loading(
+                                window.index,
+                                window.lastResult
+                            ) }
                     }
-                    ?.flowOn(Dispatchers.Default)
                     ?.cancellable()
                     ?.catch { cause ->
                         Log.d("FlowClassificationOutside", "Just caught this, ${cause.message}")
                     }
                     ?.onCompletion { cause ->
                         Log.d("FlowClassificationWindow", "finally finished")
-                        _analysisProgressState.value = LiveEvaluationState.End(
-                            if (cause !is CancellationException) cause else null,
-                            window.lastResult
-                        )
+                        _analysisProgressState.update { _ ->
+                            LiveEvaluationState.End(
+                                if (cause !is CancellationException) cause else null,
+                                window.lastResult
+                            )
+                        }
 
                         window.clean()
-
-                        _analysisProgressState.value = LiveEvaluationState.Ready(model?.isLoaded?.value ?: false)
                     }
                     ?.collect()
+
             } else {
-                _analysisProgressState.value = LiveEvaluationState.End(Throwable("The stream is not ready yet"), window.lastResult)
-                _analysisProgressState.value = LiveEvaluationState.Ready(model?.isLoaded?.value ?: false)
+                _analysisProgressState.update { _ -> LiveEvaluationState.End(Throwable("The stream is not ready yet"), window.lastResult)}
             }
         }
     }
@@ -120,6 +116,9 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     ) {
         if (_analysisProgressState.value == LiveEvaluationState.Ready(true)) {
             liveClassificationJob = jobClassification(input.buffer(2), scope)
+            liveClassificationJob?.invokeOnCompletion {
+                _analysisProgressState.update { _ -> LiveEvaluationState.Ready(model?.isLoaded?.value ?: false)}
+            }
         }
     }
 
@@ -134,7 +133,10 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
         var confidence: Float = 0F
             protected set
 
-        fun totalNumber() : Int = if (window.size > size) window.size else 0
+        var index: Int = 0
+            protected set
+
+        fun totalNumber() : Int = if (window.size >= size) window.size else 0
 
         fun isSatisfied() : Boolean = confidence_threshold <= confidence
 
@@ -148,12 +150,14 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
                 window.removeFirst()
 
             lastResult = element
+            index++
             metricsCalculation()
         }
 
         fun clean () {
             window.clear()
             confidence = 0F
+            index = 0
         }
 
         // Is gonna return the confidence and other metrics
@@ -174,7 +178,7 @@ sealed interface LiveEvaluationStateInterface<out Result> {}
 // Represents different states for the LatestNews screen
 sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
     data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
-    data class Loading<Result>(var partialResult: Result?) : LiveEvaluationState<Result>()
+    data class Loading<Result>(val index: Int, val partialResult: Result?) : LiveEvaluationState<Result>()
     data class Start(val info: Nothing?) : LiveEvaluationState<Nothing>()
     data class End<Result>(val exception: Throwable?, val result: Result?) : LiveEvaluationState<Result>()
 }

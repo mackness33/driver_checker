@@ -1,5 +1,6 @@
 package com.example.driverchecker
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
@@ -9,9 +10,11 @@ import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import com.example.driverchecker.media.MediaRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 data class StaticMedia (val path : String?, val isVideo: Boolean = false)
 
@@ -53,6 +56,15 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val isEnabled: LiveData<Boolean>
     get() = _isEnabled
 
+
+    private val _isEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isEvaluating: LiveData<Boolean>
+        get() = _isEvaluating
+
+    private val _liveIsEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
+    val liveIsEnabled: LiveData<Boolean>
+        get() = _liveIsEnabled
+
     private val _path: MutableLiveData<StaticMedia> = MutableLiveData(null)
     val path: LiveData<String?>
         get() = _path.switchMap { media ->
@@ -65,17 +77,21 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val pathVideo: LiveData<String?>
         get() = _pathVideo
 
-    private val _liveImages: MutableSharedFlow<ImageProxy> = MutableSharedFlow (
+    private val _liveImages: MutableSharedFlow<ImageDetectionInput> = MutableSharedFlow (
         replay = 0,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
     )
-    val liveImages: SharedFlow<ImageProxy>
+    val liveImages: SharedFlow<ImageDetectionInput>
             get() = _liveImages.asSharedFlow()
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
-            _liveImages.emit(image)
+            val bitmap: Bitmap? = imageDetectionRepository?.imageProxyToBitmap(image)
+            if (bitmap != null) {
+                _liveImages.emit(ImageDetectionInput(bitmap))
+            }
+            image.close()
         }
     }
 
@@ -103,8 +119,30 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         _isEnabled.value = enable
     }
 
+    fun evaluateLive (record: Boolean) {
+        _isEvaluating.value = record
+    }
+
+    fun enableLive (enable: Boolean) {
+        _liveIsEnabled.value = enable
+    }
+
     fun setUrlModel (url: String) {
         imageDetectionRepository?.updateRemoteModel(url)
+    }
+
+    fun updateLiveClassification () {
+        runBlocking(Dispatchers.Default) {
+            when (_isEvaluating.value) {
+                false -> {
+                    imageDetectionRepository?.onStartLiveClassification(liveImages, viewModelScope)
+                }
+                true -> {
+                    imageDetectionRepository?.onStopLiveClassification()
+                }
+                else -> {}
+            }
+        }
     }
 }
 

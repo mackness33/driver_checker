@@ -49,26 +49,6 @@ class CameraXHandler (){
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build().apply {
                 setAnalyzer(Executors.newSingleThreadExecutor(), ImageDetectionAnalyzer(listener))}
-//                    runBlocking {
-//                        val yBuffer = it.planes[0].buffer // Y
-//                        val vuBuffer = it.planes[2].buffer // VU
-//
-//                        val ySize = yBuffer.remaining()
-//                        val vuSize = vuBuffer.remaining()
-//
-//                        val nv21 = ByteArray(ySize + vuSize)
-//
-//                        yBuffer.get(nv21, 0, ySize)
-//                        vuBuffer.get(nv21, ySize, vuSize)
-//
-//                        val yuvImage = YuvImage(nv21, ImageFormat.NV21, it.width, it.height, null)
-//                        val out = ByteArrayOutputStream()
-//                        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
-//                        val imageBytes = out.toByteArray()
-//                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-//                        model.nextFrame(bitmap)
-//                    }
-//                })
 
             val recorder = Recorder.Builder()
                 .setQualitySelector(QualitySelector.from(Quality.SD))
@@ -85,7 +65,7 @@ class CameraXHandler (){
 
                 if (context is AppCompatActivity) {
                     // Bind use cases to camera
-                    cameraProvider.bindToLifecycle(context, cameraSelector, preview, imageCapture, videoCapture);
+                    cameraProvider.bindToLifecycle(context, cameraSelector, preview, imageAnalyzer, videoCapture);
                 }
 
                 hasCameraStarted = true
@@ -148,14 +128,6 @@ class CameraXHandler (){
     }
 
     private class ImageDetectionAnalyzer(private val listener: ImageDetectionListener) : ImageAnalysis.Analyzer {
-
-//        private fun ByteBuffer.toByteArray(): ByteArray {
-//            rewind()    // Rewind the buffer to zero
-//            val data = ByteArray(remaining())
-//            get(data)   // Copy the buffer into a byte array
-//            return data // Return the byte array
-//        }
-
         override fun analyze(image: ImageProxy) {
             listener(image)
         }

@@ -78,12 +78,6 @@ class ResultFragment : Fragment() {
                 }
             }
         }
-
-        fun applyToUiAnalyzeImageResult(result: ArrayList<ImageDetectionBox>) {
-            binding.resultView.setResults(result)
-            binding.resultView.invalidate()
-        }
-
     }
 
 

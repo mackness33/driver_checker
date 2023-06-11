@@ -7,6 +7,8 @@ import com.example.driverchecker.machinelearning.data.ImageDetectionInput
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.MLRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.onEach
 import java.io.ByteArrayOutputStream
 
 
@@ -18,23 +20,8 @@ class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = n
     }
 
     suspend fun instantClassification (path:String) : MLResult<ArrayList<ImageDetectionBox>>? {
-//        val bm = BitmapFactory.decodeFile(path)
-        // the bitmap MUST BE SCALED, if it is too big the application is going ot crash
-//        val bmScaled = Bitmap.createScaledBitmap(bm, 500, (bm.height*500)/bm.width, true)
-//        val imgScaleX: Float = bitmap.getWidth() as Float / PrePostProcessor.mInputWidth
-//        val imgScaleY: Float = bitmap.getHeight() as Float / PrePostProcessor.mInputHeight
-//        val ivScaleX: Float = mResultView.getWidth() as Float / bitmap.getWidth()
-//        val ivScaleY: Float = mResultView.getHeight() as Float / bitmap.getHeight()
         return instantClassification(ImageDetectionInput(BitmapFactory.decodeFile(path)))
     }
-
-//    suspend fun continuousClassification (images: Flow<Bitmap>, scope: CoroutineScope) : MLResult<ArrayList<ImageDetectionBox>>? {
-////        val bm = BitmapFactory.decodeFile(path)
-//        // the bitmap MUST BE SCALED, if it is too big the application is going ot crash
-////        val bmScaled = Bitmap.createScaledBitmap(bm, 500, (bm.height*500)/bm.width, true)
-//        val flows = images.map { bitmap -> ImageDetectionInput(bitmap)}
-//        return continuousClassification(flows, scope)
-//    }
 
     fun imageProxyToBitmap(image: ImageProxy): Bitmap {
         val yBuffer = image.planes[0].buffer // Y

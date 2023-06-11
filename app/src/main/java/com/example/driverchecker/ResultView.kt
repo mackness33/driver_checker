@@ -31,7 +31,9 @@ class ResultView : View {
         super.onDraw(canvas)
         if (results == null) return
 
-        for (result: ImageDetectionBox in results!!) {
+        val res: ArrayList<ImageDetectionBox> = results!!
+
+        for (result: ImageDetectionBox in res) {
             paintRectangle!!.strokeWidth = 5f
             paintRectangle!!.style = Paint.Style.STROKE
             canvas.drawRect(result.rect, paintRectangle!!)

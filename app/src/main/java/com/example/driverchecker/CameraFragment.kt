@@ -12,17 +12,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageProxy
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.driverchecker.databinding.FragmentCameraBinding
+import com.example.driverchecker.machinelearning.data.ImageDetectionBox
+import com.example.driverchecker.machinelearning.data.MLResult
+import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
 import com.example.driverchecker.media.FileUtils
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 
 
@@ -33,7 +42,6 @@ class CameraFragment : Fragment() {
     private val binding get() = _binding!!
     private val model: CameraViewModel by activityViewModels()
     private val cameraXHandler: CameraXHandler = CameraXHandler()
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,9 +57,6 @@ class CameraFragment : Fragment() {
 
     // companion object
     companion object {
-        fun newInstance(): CameraFragment {
-            return CameraFragment()
-        }
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private val REQUIRED_PERMISSIONS_CHOOSE_PHOTO =
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET)
@@ -66,19 +71,33 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
-        val btn = binding.btnRecordVideo
+        val btnVideo = binding.btnRecordVideo
         val isEnabledObserver = Observer<Boolean?> { enable ->
             Log.i("LiveData", "Recoding Button is ${if (enable) "not" else ""} enabled")
-            btn.isEnabled = enable
+            btnVideo.isEnabled = enable
         }
         model.isEnabled.observe(viewLifecycleOwner, isEnabledObserver)
 
         val isRecordingObserver = Observer<Boolean?> { isRecording ->
             val record = isRecording ?: false
             Log.i("LiveData", "Recoding Button ${if (record) "start" else "stop"} recording")
-            btn.text = getString(if (record) R.string.stop_capture else R.string.start_capture)
+            btnVideo.text = getString(if (record) R.string.stop_capture else R.string.start_capture)
         }
         model.isRecording.observe(viewLifecycleOwner, isRecordingObserver)
+
+        val btnLive = binding.btnLive
+        val liveIsEnabledObserver = Observer<Boolean?> { enableLive ->
+            Log.i("LiveData - LiveBtn", "Live Button is ${if (enableLive) "not" else ""} enabled")
+            btnLive.isEnabled = enableLive
+        }
+        model.liveIsEnabled.observe(viewLifecycleOwner, liveIsEnabledObserver)
+
+        val liveIsRecordingObserver = Observer<Boolean?> { isEvaluating ->
+            val record = isEvaluating ?: false
+            Log.i("LiveData - LiveBtn", "Live Button ${if (record) "start" else "stop"} recording")
+            btnLive.text = getString(if (record) R.string.stop_live else R.string.start_live)
+        }
+        model.isEvaluating.observe(viewLifecycleOwner, liveIsRecordingObserver)
 
         binding.btnTakePhoto.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
@@ -103,6 +122,61 @@ class CameraFragment : Fragment() {
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_RECORD_VIDEO)
             else{
                 cameraXHandler.captureVideo(this.requireContext(), FILENAME_FORMAT, model, ::onFinalize)
+            }
+        }
+
+        binding.btnLive.setOnClickListener {
+            if (!hasPermissions(REQUIRED_PERMISSIONS_RECORD_VIDEO))
+                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_RECORD_VIDEO)
+            else{
+                model.updateLiveClassification()
+            }
+        }
+
+        val txt = binding.txtResult
+//        val resultView = binding.resultView
+//        val model = model
+
+        lifecycleScope.launchWhenCreated {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                model.analysisState?.collect { state ->
+                    when (state) {
+                        is LiveEvaluationState.Ready -> {
+                            // view gone
+                            Toast.makeText(context, "The Repo is ${if (!state.isReady) "not" else ""} ready!", Toast.LENGTH_SHORT)
+                                .show()
+
+                            model.enableLive(state.isReady)
+                            model.evaluateLive(false)
+                        }
+                        is LiveEvaluationState.Start -> {
+                            // show ui
+                            Toast.makeText(context, "Start of flow", Toast.LENGTH_SHORT)
+                                .show()
+
+                            model.enableLive(true)
+                            model.evaluateLive(true)
+                        }
+                        is LiveEvaluationState.Loading<MLResult<ArrayList<ImageDetectionBox>>> -> {
+                            // show ui
+                            Toast.makeText(context, "Loading: ${state.partialResult?.result} for the ${state.index} time", Toast.LENGTH_SHORT)
+                                .show()
+
+                            binding.txtResult.text = state.partialResult?.result.toString()
+
+                            binding.resultView.setResults(state.partialResult?.result)
+                            binding.resultView.invalidate()
+                        }
+                        is LiveEvaluationState.End<MLResult<ArrayList<ImageDetectionBox>>> -> {
+                            // show error message
+                            Toast.makeText(context, "End: error=${state.exception} & result=${state.result}", Toast.LENGTH_SHORT)
+                                .show()
+
+                            model.enableLive(false)
+                            model.evaluateLive(false)
+                        }
+                    }
+                }
             }
         }
     }
@@ -262,7 +336,9 @@ class CameraFragment : Fragment() {
     }
 
     private fun analyzeImage (image: ImageProxy) {
-
+        runBlocking(Dispatchers.Default) {
+            model.produceImage(image)
+        }
     }
 
     private fun toBitmap(image: ImageProxy): Bitmap {
