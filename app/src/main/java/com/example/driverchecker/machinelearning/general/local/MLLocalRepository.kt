@@ -1,13 +1,15 @@
 package com.example.driverchecker.machinelearning.general.local
 
 import android.util.Log
+import com.example.driverchecker.MLWindow
+import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.MLRepositoryInterface
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-abstract class MLLocalRepository <Data, Result> (protected open val model: MLLocalModel<Data, Result>? = null) :
+abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<Prediction>>> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
-    protected var window: MLWindow<Result> = MLWindow()
+    protected var window: MLWindow<Prediction, Result> = MLWindow()
     protected val _analysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
     protected var liveClassificationJob: Job? = null
 
@@ -126,50 +128,6 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 
     override suspend fun onStopLiveClassification() {
         liveClassificationJob?.cancel()
-    }
-
-    // TODO: let the window take as parameter a handler (interface of callbacks to manage state and etc)
-    protected open class MLWindow<Result> (val size: Int = 5, val confidence_threshold: Float = 80f) {
-        protected val window : MutableList<Result> = mutableListOf()
-
-        var confidence: Float = 0f
-            protected set
-
-        var index: Int = 0
-            protected set
-
-        fun totalNumber() : Int = if (window.size >= size) window.size else 0
-
-        fun isSatisfied() : Boolean = (window.size == size && confidence_threshold <= confidence)
-
-        var lastResult : Result? = null
-            protected set
-
-        fun next (element: Result) {
-            window.add(element)
-
-            if (window.size > size)
-                window.removeFirst()
-
-            lastResult = element
-            index++
-
-            confidenceCalculation()
-            metricsCalculation()
-        }
-
-        fun clean () {
-            window.clear()
-            confidence = 0f
-            index = 0
-        }
-
-        open fun confidenceCalculation () {
-            confidence += 5f
-        }
-
-        // Is gonna return the confidence and other metrics
-        open fun metricsCalculation () {}
     }
 
     fun updateLocalModel (path: String) {

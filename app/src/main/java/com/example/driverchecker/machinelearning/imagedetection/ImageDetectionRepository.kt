@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import java.io.ByteArrayOutputStream
 
 
-class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<ImageDetectionInput, ImageDetectionArrayResult>() {
+class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<ImageDetectionInput, ImageDetectionBox, ImageDetectionArrayResult>() {
 
     init {
         local = ImageDetectionLocalRepository(YOLOModel(localUri))

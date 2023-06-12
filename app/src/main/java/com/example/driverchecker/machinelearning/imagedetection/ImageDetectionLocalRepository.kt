@@ -9,4 +9,4 @@ import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-class ImageDetectionLocalRepository (override val model: MLLocalModel<ImageDetectionInput, ImageDetectionArrayResult>?) : MLLocalRepository<ImageDetectionInput, ImageDetectionArrayResult> (model) {}
+class ImageDetectionLocalRepository (override val model: MLLocalModel<ImageDetectionInput, ImageDetectionArrayResult>?) : MLLocalRepository<ImageDetectionInput, ImageDetectionBox, ImageDetectionArrayResult> (model) {}

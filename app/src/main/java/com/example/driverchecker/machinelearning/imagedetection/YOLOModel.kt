@@ -51,7 +51,7 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
     // model output is of size 25200*(num_of_class+5)
     protected val outputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
     protected val outputColumn = 7 // left, top, right, bottom, score and 80 class probability
-    protected val threshold = 0.30f // score above which a detection is generated
+    protected val threshold = 0.10f // score above which a detection is generated
     protected val maxPredictionsLimit = 5
 
 //    var mClasses: Array<String> = TODO()

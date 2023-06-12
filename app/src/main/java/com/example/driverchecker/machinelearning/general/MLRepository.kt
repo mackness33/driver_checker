@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.general
 
+import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteRepository
@@ -8,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class MLRepository<Data, Result> () : MLRepositoryInterface<Data, Result> {
+abstract class MLRepository<Data, Prediction, Result : ArrayList<MLResult<Prediction>>> () : MLRepositoryInterface<Data, Result> {
     protected val isOnline: Boolean = false
     // IDEA: can be transformed into a set of internal repositories
-    protected var local: MLLocalRepository<Data, Result>? = null
-    protected var remote: MLRemoteRepository<Data, Result>? = null
+    protected var local: MLLocalRepository<Data, Prediction, Result>? = null
+    protected var remote: MLRemoteRepository<Data, Prediction, Result>? = null
 
     override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<Result>>?
         get() = if (isOnline) remote?.analysisProgressState else local?.analysisProgressState

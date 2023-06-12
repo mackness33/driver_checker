@@ -3,7 +3,7 @@ package com.example.driverchecker
 import com.example.driverchecker.machinelearning.data.MLPrediction
 import com.example.driverchecker.machinelearning.data.MLResult
 
-open class MLWindow<Prediction, Result : ArrayList<MLResult<Prediction>>> (val size: Int = 5, val threshold: Float = 80f) : MLWindowInterface<Result> {
+open class MLWindow<Prediction, Result : ArrayList<MLResult<Prediction>>> (val size: Int = 3, val threshold: Float = 0.15f) : MLWindowInterface<Result> {
     protected val window : MutableList<Result> = mutableListOf()
 
     var confidence: Float = 0f
@@ -29,7 +29,7 @@ open class MLWindow<Prediction, Result : ArrayList<MLResult<Prediction>>> (val s
         index++
 
         confidence = calculateConfidence()
-//        metricsCalculation()
+        metricsCalculation()
     }
 
     override fun clean () {
@@ -52,5 +52,5 @@ open class MLWindow<Prediction, Result : ArrayList<MLResult<Prediction>>> (val s
     }
 
     // Is gonna return the confidence and other metrics
-//    open fun metricsCalculation () {}
+    open fun metricsCalculation () {}
 }

@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class ImageDetectionRemoteRepository (override val model: MLRemoteModel<ImageDetectionInput, ImageDetectionArrayResult>?) : MLRemoteRepository<ImageDetectionInput, ImageDetectionArrayResult>(model) {
+class ImageDetectionRemoteRepository (override val model: MLRemoteModel<ImageDetectionInput, ImageDetectionArrayResult>?) : MLRemoteRepository<ImageDetectionInput, ImageDetectionBox, ImageDetectionArrayResult>(model) {
     override suspend fun onStopLiveClassification() {
         TODO("Not yet implemented")
     }
