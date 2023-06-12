@@ -5,6 +5,8 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionResult
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.
@@ -16,7 +18,7 @@ class ResultView : View {
     private var paintText: Paint? = null
     private var path: Path? = null
     private var rect: RectF? = null
-    private var results: ArrayList<ImageDetectionBox>? = null
+    private var results: ImageDetectionArrayResult? = null
 
     constructor(context: Context?) : super(context) {}
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
@@ -31,18 +33,18 @@ class ResultView : View {
         super.onDraw(canvas)
         if (results == null) return
 
-        val res: ArrayList<ImageDetectionBox> = results!!
+        val res: ImageDetectionArrayResult = results!!
 
-        for (result: ImageDetectionBox in res) {
+        for (box: ImageDetectionResult in res) {
             paintRectangle!!.strokeWidth = 5f
             paintRectangle!!.style = Paint.Style.STROKE
-            canvas.drawRect(result.rect, paintRectangle!!)
+            canvas.drawRect(box.result.rect, paintRectangle!!)
             path?.reset()
             rect?.set(
-                result.rect.left.toFloat(),
-                result.rect.top.toFloat(),
-                (result.rect.left + TEXT_WIDTH).toFloat(),
-                (result.rect.top + TEXT_HEIGHT).toFloat()
+                box.result.rect.left.toFloat(),
+                box.result.rect.top.toFloat(),
+                (box.result.rect.left + TEXT_WIDTH).toFloat(),
+                (box.result.rect.top + TEXT_HEIGHT).toFloat()
             )
             path?.addRect(rect!!, Path.Direction.CW)
             paintText!!.color = Color.MAGENTA
@@ -56,16 +58,16 @@ class ResultView : View {
                     "%s %.2f",
 //                    PrePostProcessor.mClasses.get(result.classIndex),
                     "Not yet",
-                    result.score
+                    box.confidence
                 ),
-                result.rect.left + TEXT_X,
-                result.rect.top + TEXT_Y,
+                box.result.rect.left + TEXT_X,
+                box.result.rect.top + TEXT_Y,
                 paintText!!
             )
         }
     }
 
-    fun setResults(results: ArrayList<ImageDetectionBox>?) {
+    fun setResults(results: ImageDetectionArrayResult?) {
         this.results = results
     }
 

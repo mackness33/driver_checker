@@ -11,14 +11,16 @@ import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 import java.util.*
 
+typealias ImageDetectionResult = MLResult<ImageDetectionBox>
+typealias ImageDetectionArrayResult = ArrayList<ImageDetectionResult>
 
-open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<ImageDetectionInput, MLResult<ArrayList<ImageDetectionBox>>>(modelPath){
+open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<ImageDetectionInput, ImageDetectionArrayResult>(modelPath){
     override fun preProcess(data: ImageDetectionInput): ImageDetectionInput {
         val resizedBitmap = Bitmap.createScaledBitmap(data.image, mInputWidth, inputHeight, true)
         return ImageDetectionInput(resizedBitmap, data.scale, data.vector, data.start)
     }
 
-    override fun evaluateData(input: ImageDetectionInput): MLResult<ArrayList<ImageDetectionBox>> {
+    override fun evaluateData(input: ImageDetectionInput): ImageDetectionArrayResult {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.image,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
@@ -30,21 +32,16 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
         // getting tensor content as java array of floats
         val predictions: FloatArray = outputTuple[0].toTensor().dataAsFloatArray
 
-        return MLResult(
-            outputsToNMSPredictions(
+        return outputsToNMSPredictions(
                 predictions,
                 input.scale,
                 input.vector,
                 input.start
             )
-        )
     }
 
-    override fun postProcess(output: MLResult<ArrayList<ImageDetectionBox>>): MLResult<ArrayList<ImageDetectionBox>> {
-        return MLResult(
-            ImageDetectionUtils.nonMaxSuppression(output.result, maxPredictionsLimit, threshold),
-            output.metrics
-        )
+    override fun postProcess(output: ImageDetectionArrayResult): ImageDetectionArrayResult {
+        return ImageDetectionUtils.nonMaxSuppression(output, maxPredictionsLimit, threshold)
     }
 
     // model input image size
@@ -65,8 +62,8 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
         scale: Pair<Float, Float>,
         vector: Pair<Float, Float>,
         start: Pair<Float, Float>
-    ): ArrayList<ImageDetectionBox> {
-        val results: ArrayList<ImageDetectionBox> = ArrayList()
+    ): ImageDetectionArrayResult {
+        val results: ArrayList<MLResult<ImageDetectionBox>> = ArrayList()
         for (i in 0 until outputRow) {
             if (outputs[i * outputColumn + 4] > threshold) {
                 val x = outputs[i * outputColumn]
@@ -90,10 +87,15 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
                 )
                 val result = ImageDetectionBox(
                     cls,
-                    outputs[i * outputColumn + 4],
                     rect
                 )
-                results.add(result)
+                results.add(MLResult(
+                    ImageDetectionBox(
+                        cls,
+                        rect
+                    ),
+                    outputs[i * outputColumn + 4]
+                ))
             }
         }
         return results

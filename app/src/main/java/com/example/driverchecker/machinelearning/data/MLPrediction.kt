@@ -1,3 +1,3 @@
 package com.example.driverchecker.machinelearning.data
 
-data class ModelResult (val confidence: Float)
+data class MLPrediction<R> (val result: R, val confidence: Float)

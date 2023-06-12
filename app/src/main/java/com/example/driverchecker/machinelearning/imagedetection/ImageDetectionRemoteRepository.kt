@@ -14,24 +14,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class ImageDetectionRemoteRepository (override val model: MLRemoteModel<ImageDetectionInput, MLResult<ArrayList<ImageDetectionBox>>>?) : MLRemoteRepository<ImageDetectionInput, MLResult<ArrayList<ImageDetectionBox>>>(model) {
+class ImageDetectionRemoteRepository (override val model: MLRemoteModel<ImageDetectionInput, ImageDetectionArrayResult>?) : MLRemoteRepository<ImageDetectionInput, ImageDetectionArrayResult>(model) {
     override suspend fun onStopLiveClassification() {
         TODO("Not yet implemented")
     }
 
-    override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<MLResult<ArrayList<ImageDetectionBox>>>>?
+    override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<ImageDetectionArrayResult>>?
         get() = TODO("Not yet implemented")
     override val repositoryScope: CoroutineScope
         get() = TODO("Not yet implemented")
 
-    override suspend fun continuousClassification(input: List<ImageDetectionInput>): MLResult<ArrayList<ImageDetectionBox>>? {
+    override suspend fun continuousClassification(input: List<ImageDetectionInput>): ImageDetectionArrayResult? {
         TODO("Not yet implemented")
     }
 
     override suspend fun continuousClassification(
         input: Flow<ImageDetectionInput>,
         scope: CoroutineScope
-    ): MLResult<ArrayList<ImageDetectionBox>>? {
+    ): ImageDetectionArrayResult? {
         TODO("Not yet implemented")
     }
 

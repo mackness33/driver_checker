@@ -8,6 +8,7 @@ import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionInput
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import com.example.driverchecker.media.MediaRepository
 import kotlinx.coroutines.Dispatchers
@@ -26,22 +27,21 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             imageDetectionRepository = ImageDetectionRepository()
     }
 
-    val result: LiveData<ArrayList<ImageDetectionBox>?>
+    val result: LiveData<ImageDetectionArrayResult?>
         get() = _path.switchMap { media ->
             liveData {
                 when {
                     media?.path == null -> emit (null)
-                    !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path)?.result)
+                    !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path))
                     media.isVideo -> {
                         mediaRepository.extractVideo(media.path)
-                        val res = imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionInput(bitmap) }, viewModelScope)?.result
-                        emit(res)
+                        emit(imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionInput(bitmap) }, viewModelScope))
                     }
                 }
             }
         }
 
-    val analysisState: StateFlow<LiveEvaluationStateInterface<MLResult<ArrayList<ImageDetectionBox>>>>?
+    val analysisState: StateFlow<LiveEvaluationStateInterface<ImageDetectionArrayResult>>?
         get() = imageDetectionRepository?.analysisProgressState
 
     private val _imageUri: MutableLiveData<Uri?> = MutableLiveData(null)

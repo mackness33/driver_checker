@@ -14,7 +14,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     override val repositoryScope = CoroutineScope(SupervisorJob())
 
     override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<Result>>?
-            get() = _analysisProgressState.asStateFlow()
+        get() = _analysisProgressState.asStateFlow()
 
     init {
         listenOnLoadingState()
@@ -129,10 +129,10 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
     }
 
     // TODO: let the window take as parameter a handler (interface of callbacks to manage state and etc)
-    protected open class MLWindow<Result> (val size: Int = 5, val confidence_threshold: Float = 80F) {
+    protected open class MLWindow<Result> (val size: Int = 5, val confidence_threshold: Float = 80f) {
         protected val window : MutableList<Result> = mutableListOf()
 
-        var confidence: Float = 0F
+        var confidence: Float = 0f
             protected set
 
         var index: Int = 0
@@ -140,7 +140,7 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 
         fun totalNumber() : Int = if (window.size >= size) window.size else 0
 
-        fun isSatisfied() : Boolean = confidence_threshold <= confidence
+        fun isSatisfied() : Boolean = (window.size == size && confidence_threshold <= confidence)
 
         var lastResult : Result? = null
             protected set
@@ -153,19 +153,23 @@ abstract class MLLocalRepository <Data, Result> (protected open val model: MLLoc
 
             lastResult = element
             index++
+
+            confidenceCalculation()
             metricsCalculation()
         }
 
         fun clean () {
             window.clear()
-            confidence = 0F
+            confidence = 0f
             index = 0
         }
 
-        // Is gonna return the confidence and other metrics
-        open fun metricsCalculation () {
-            confidence += 5F
+        open fun confidenceCalculation () {
+            confidence += 5f
         }
+
+        // Is gonna return the confidence and other metrics
+        open fun metricsCalculation () {}
     }
 
     fun updateLocalModel (path: String) {

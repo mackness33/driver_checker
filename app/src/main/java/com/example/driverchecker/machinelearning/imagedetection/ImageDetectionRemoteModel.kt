@@ -1,32 +1,19 @@
 package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Rect
-import android.util.Base64
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionInput
 import com.example.driverchecker.machinelearning.data.MLMetrics
 import com.example.driverchecker.machinelearning.data.MLResult
-import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteModel
-import org.pytorch.*
-import org.pytorch.torchvision.TensorImageUtils
-import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
-import java.io.InputStreamReader
-import java.net.URL
-import java.nio.charset.StandardCharsets
-import javax.net.ssl.HttpsURLConnection
 
-class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRemoteModel<ImageDetectionInput, MLResult<ArrayList<ImageDetectionBox>>>(modelPath){
+class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRemoteModel<ImageDetectionInput, ImageDetectionArrayResult>(modelPath){
     override fun preProcess(data: ImageDetectionInput): ImageDetectionInput {
         val resizedBitmap = Bitmap.createScaledBitmap(data.image, 640, 640, true)
         return ImageDetectionInput(resizedBitmap, data.scale, data.vector, data.start)
     }
 
-    override fun evaluateData(input: ImageDetectionInput): MLResult<ArrayList<ImageDetectionBox>> {
+    override fun evaluateData(input: ImageDetectionInput): ImageDetectionArrayResult {
         // todo: get the url from the os
 //        val url = URL("https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y")
 //
@@ -66,10 +53,10 @@ class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRem
 //        reader.close()
 //        dataOutputStream.close()
 
-        return MLResult(ArrayList(), MLMetrics())
+        return ArrayList()
     }
 
-    override fun postProcess(output: MLResult<ArrayList<ImageDetectionBox>>): MLResult<ArrayList<ImageDetectionBox>> {
+    override fun postProcess(output: ImageDetectionArrayResult): ImageDetectionArrayResult {
 //        TODO("Not yet implemented")
         return output
     }

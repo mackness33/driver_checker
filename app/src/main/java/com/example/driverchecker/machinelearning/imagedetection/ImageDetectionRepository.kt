@@ -12,14 +12,14 @@ import kotlinx.coroutines.flow.onEach
 import java.io.ByteArrayOutputStream
 
 
-class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<ImageDetectionInput, MLResult<ArrayList<ImageDetectionBox>>>() {
+class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<ImageDetectionInput, ImageDetectionArrayResult>() {
 
     init {
         local = ImageDetectionLocalRepository(YOLOModel(localUri))
         remote = ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri))
     }
 
-    suspend fun instantClassification (path:String) : MLResult<ArrayList<ImageDetectionBox>>? {
+    suspend fun instantClassification (path:String) : ImageDetectionArrayResult? {
         return instantClassification(ImageDetectionInput(BitmapFactory.decodeFile(path)))
     }
 

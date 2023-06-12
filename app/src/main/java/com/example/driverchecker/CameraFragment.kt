@@ -28,6 +28,7 @@ import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
 import com.example.driverchecker.media.FileUtils
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
@@ -133,10 +134,6 @@ class CameraFragment : Fragment() {
             }
         }
 
-        val txt = binding.txtResult
-//        val resultView = binding.resultView
-//        val model = model
-
         lifecycleScope.launchWhenCreated {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 model.analysisState?.collect { state ->
@@ -157,18 +154,18 @@ class CameraFragment : Fragment() {
                             model.enableLive(true)
                             model.evaluateLive(true)
                         }
-                        is LiveEvaluationState.Loading<MLResult<ArrayList<ImageDetectionBox>>> -> {
+                        is LiveEvaluationState.Loading<ImageDetectionArrayResult> -> {
                             // show ui
 //                            Toast.makeText(context, "Loading: ${state.partialResult?.result} for the ${state.index} time", Toast.LENGTH_SHORT)
 //                                .show()
-                            Log.d("LiveEvaluationState", "Loading: ${state.partialResult?.result} for the ${state.index} time")
+                            Log.d("LiveEvaluationState", "Loading: ${state.partialResult} for the ${state.index} time")
 
-                            binding.txtResult.text = state.partialResult?.result.toString()
+                            binding.txtResult.text = state.partialResult?.toString()
 
-                            binding.resultView.setResults(state.partialResult?.result)
+                            binding.resultView.setResults(state.partialResult)
                             binding.resultView.invalidate()
                         }
-                        is LiveEvaluationState.End<MLResult<ArrayList<ImageDetectionBox>>> -> {
+                        is LiveEvaluationState.End<ImageDetectionArrayResult> -> {
                             // show error message
                             Toast.makeText(context, "End: error=${state.exception} & result=${state.result}", Toast.LENGTH_SHORT)
                                 .show()
