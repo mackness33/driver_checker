@@ -36,35 +36,47 @@ class ResultView : View {
         val res: ImageDetectionArrayResult = results!!
 
         for (box: ImageDetectionResult in res) {
-            paintRectangle!!.strokeWidth = 5f
-            paintRectangle!!.style = Paint.Style.STROKE
-            canvas.drawRect(box.result.rect, paintRectangle!!)
-            path?.reset()
-            rect?.set(
-                box.result.rect.left.toFloat(),
-                box.result.rect.top.toFloat(),
-                (box.result.rect.left + TEXT_WIDTH).toFloat(),
-                (box.result.rect.top + TEXT_HEIGHT).toFloat()
-            )
-            path?.addRect(rect!!, Path.Direction.CW)
-            paintText!!.color = Color.MAGENTA
-            canvas.drawPath(path!!, paintText!!)
-            paintText!!.color = Color.WHITE
-            paintText!!.strokeWidth = 0f
-            paintText!!.style = Paint.Style.FILL
-            paintText!!.textSize = 32f
-            canvas.drawText(
-                String.format(
-                    "%s %.2f",
-//                    PrePostProcessor.mClasses.get(result.classIndex),
-                    "Not yet",
-                    box.confidence
-                ),
-                box.result.rect.left + TEXT_X,
-                box.result.rect.top + TEXT_Y,
-                paintText!!
-            )
+            drawBox(canvas, box.result.rect)
+            drawPath(canvas, box)
+            drawText(canvas, box)
         }
+    }
+
+    private fun drawText (canvas: Canvas, box: ImageDetectionResult) {
+        paintText!!.color = Color.WHITE
+        paintText!!.strokeWidth = 0f
+        paintText!!.style = Paint.Style.FILL
+        paintText!!.textSize = 32f
+        canvas.drawText(
+            String.format(
+                "%s %.2f",
+//                    PrePostProcessor.mClasses.get(result.classIndex),
+                "Not yet",
+                box.confidence
+            ),
+            box.result.rect.left + TEXT_X,
+            box.result.rect.top + TEXT_Y,
+            paintText!!
+        )
+    }
+
+    private fun drawPath (canvas: Canvas, box: ImageDetectionResult) {
+        path?.reset()
+        rect?.set(
+            box.result.rect.left.toFloat(),
+            box.result.rect.top.toFloat(),
+            (box.result.rect.left + TEXT_WIDTH).toFloat(),
+            (box.result.rect.top + TEXT_HEIGHT).toFloat()
+        )
+        path?.addRect(rect!!, Path.Direction.CW)
+        paintText!!.color = Color.MAGENTA
+        canvas.drawPath(path!!, paintText!!)
+    }
+
+    private fun drawBox (canvas: Canvas, rect: RectF) {
+        paintRectangle!!.strokeWidth = 5f
+        paintRectangle!!.style = Paint.Style.STROKE
+        canvas.drawRect(rect, paintRectangle!!)
     }
 
     fun setResults(results: ImageDetectionArrayResult?) {
