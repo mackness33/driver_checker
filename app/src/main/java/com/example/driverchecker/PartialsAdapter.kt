@@ -1,33 +1,37 @@
 package com.example.driverchecker
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
+import kotlin.math.round
+import kotlin.math.sqrt
 
 
-class GridPartialsAdapter(var results : ArrayList<ArrayList<Int>?>) : RecyclerView.Adapter<GridPartialsAdapter.ViewHolder>() {
-    private val items: ArrayList<ArrayList<Int>?>? = null
+class PartialsAdapter(size: Int = 2, var sizeHolder: Int = 100) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
+    private val items: ImageDetectionArrayResult?
+    private val dimension: Int
+
+    init {
+        items = ImageDetectionArrayResult(size)
+        val square = round(sqrt(size.toDouble()))
+        dimension = (if (size % square > 0) square+1 else square).toInt()
+    }
+
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val recyclerView: RecyclerView = view.findViewById(R.id.rec_view)
-
-        init {
-            recyclerView.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
-        }
+        val predictionView: RectView = view.findViewById(R.id.rec_view)
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.grid_partials, viewGroup, false)
+            .inflate(R.layout.prediction_item, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -37,9 +41,12 @@ class GridPartialsAdapter(var results : ArrayList<ArrayList<Int>?>) : RecyclerVi
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.recyclerView.adapter = GridBoxesAdapter(arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN))
+        viewHolder.predictionView.updateDimensions(Pair(dimension, dimension))
+        viewHolder.predictionView.updateSize(Pair(sizeHolder, sizeHolder))
+
+        viewHolder.predictionView.invalidate()
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = results.size
+    override fun getItemCount() = items?.size ?: 0
 }

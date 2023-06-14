@@ -10,38 +10,30 @@ import android.view.View
 //
 // This source code is licensed under the BSD-style license found in the
 // LICENSE file in the root directory of this source tree.
-class RectView : View {
+class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private var paint: Paint
     var size: Pair<Int, Int>
     var maxItems: Int
+        private set
     var colors: List<Int>?
+        private set
     var dimensions: Pair<Int, Int>
+        private set
     private var size_item: Pair<Float, Float>
 //    private var offset_item: Pair<Int, Int>
 
-
-    constructor(context: Context?) : super(context) {
+    init {
         this.paint = Paint()
         this.size = Pair(0, 0)
-        this.maxItems = 1
-        this.colors = null
         this.dimensions = Pair(0, 0)
-        this.size_item = if (dimensions.first == 0 || dimensions.second == 0) Pair(0.0f, 0.0f) else Pair((size.first/dimensions.first).toFloat(), (size.second/dimensions.second).toFloat())
-//        this.offset_item = if (dimensions.first == 0 || dimensions.second == 0) Pair(0, 0) else Pair(size.first%dimensions.first, size.second%dimensions.second)
-
-    }
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        this.paint = Paint()
-        this.size = Pair(200, 200)
-        this.dimensions = Pair(5, 5)
-        this.maxItems = dimensions.first * dimensions.second
+        this.maxItems = 0
         val listColors = ArrayList<Int>()
         listColors.add(Color.BLUE)
         listColors.add(Color.RED)
         listColors.add(Color.GREEN)
         listColors.add(Color.YELLOW)
         this.colors = listColors.toList()
-        this.size_item = if (dimensions.first == 0 || dimensions.second == 0) Pair(0.0f, 0.0f) else Pair((size.first/dimensions.first).toFloat(), (size.second/dimensions.second).toFloat())
+        this.size_item = updateSizeItem()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -64,7 +56,18 @@ class RectView : View {
         }
     }
 
+    private fun updateSizeItem () : Pair<Float, Float> {
+        return if (dimensions.first == 0 || dimensions.second == 0) Pair(0.0f, 0.0f) else Pair((size.first/dimensions.first).toFloat(), (size.second/dimensions.second).toFloat())
+    }
+
+    fun updateDimensions (dim: Pair<Int, Int>) {
+        dimensions = dim
+        maxItems = dimensions.first * dimensions.second
+        size_item = updateSizeItem()
+    }
+
     fun updateSize(newSize: Pair<Int, Int>) {
         size = newSize
+        size_item = updateSizeItem()
     }
 }

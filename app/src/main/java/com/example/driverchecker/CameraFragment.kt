@@ -137,8 +137,8 @@ class CameraFragment : Fragment() {
         }
 
 //        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
-//        binding.gridResults.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
-//        binding.gridResults.adapter = GridBoxesAdapter(cube)
+        binding.partialsView.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
+        binding.partialsView.adapter = PartialsAdapter()
 
         lifecycleScope.launchWhenCreated {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

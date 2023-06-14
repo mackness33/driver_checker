@@ -38,7 +38,7 @@ class GridPredictionAdapter(var boxes : IntArray) : RecyclerView.Adapter<GridPre
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.boxesView[position].color = boxes[position]
+//        viewHolder.boxesView[position].color = boxes[position]
     }
 
     // Return the size of your dataset (invoked by the layout manager)
