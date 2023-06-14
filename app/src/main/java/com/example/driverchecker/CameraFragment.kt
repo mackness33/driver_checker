@@ -24,6 +24,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.MLResult
@@ -133,6 +135,10 @@ class CameraFragment : Fragment() {
                 model.updateLiveClassification()
             }
         }
+
+//        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
+//        binding.gridResults.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
+//        binding.gridResults.adapter = GridBoxesAdapter(cube)
 
         lifecycleScope.launchWhenCreated {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

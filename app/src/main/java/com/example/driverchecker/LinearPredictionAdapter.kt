@@ -28,7 +28,7 @@ class LinearPredictionAdapter(var boxes : IntArray) : RecyclerView.Adapter<Linea
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.grid_boxes, viewGroup, false)
+            .inflate(R.layout.linear_boxes, viewGroup, false)
 
         return ViewHolder(view)
     }

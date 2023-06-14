@@ -1,24 +1,26 @@
 package com.example.driverchecker
 
-import android.content.Context
+import android.graphics.Rect
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
-class GridAdapter(var boxes : IntArray) : RecyclerView.Adapter<GridAdapter.ViewHolder>() {
+// display a prediction
+class GridPredictionAdapter(var boxes : IntArray) : RecyclerView.Adapter<GridPredictionAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val rectView: RectView
+        val boxesView: MutableList<RectView> = mutableListOf<RectView>()
 
         init {
             // Define click listener for the ViewHolder's View
-            rectView = view.findViewById(R.id.rect_item)
+            boxesView.add(view.findViewById(R.id.rectView1))
+            boxesView.add(view.findViewById(R.id.rectView2))
+            boxesView.add(view.findViewById(R.id.rectView3))
+            boxesView.add(view.findViewById(R.id.rectView4))
         }
     }
 
@@ -26,7 +28,7 @@ class GridAdapter(var boxes : IntArray) : RecyclerView.Adapter<GridAdapter.ViewH
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.grid_partials, viewGroup, false)
+            .inflate(R.layout.grid_boxes, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -36,7 +38,7 @@ class GridAdapter(var boxes : IntArray) : RecyclerView.Adapter<GridAdapter.ViewH
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.rectView.color = boxes[position]
+        viewHolder.boxesView[position].color = boxes[position]
     }
 
     // Return the size of your dataset (invoked by the layout manager)

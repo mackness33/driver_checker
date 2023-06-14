@@ -1,24 +1,25 @@
 package com.example.driverchecker
 
-import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
+import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class GridPartialsAdapter(var boxes : IntArray) : RecyclerView.Adapter<GridPartialsAdapter.ViewHolder>() {
+
+class GridPartialsAdapter(var results : ArrayList<ArrayList<Int>?>) : RecyclerView.Adapter<GridPartialsAdapter.ViewHolder>() {
+    private val items: ArrayList<ArrayList<Int>?>? = null
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val rectView: RectView
+        val recyclerView: RecyclerView = view.findViewById(R.id.rec_view)
 
         init {
-            // Define click listener for the ViewHolder's View
-            rectView = view.findViewById(R.id.rect_item)
+            recyclerView.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
         }
     }
 
@@ -36,9 +37,9 @@ class GridPartialsAdapter(var boxes : IntArray) : RecyclerView.Adapter<GridParti
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.rectView.color = boxes[position]
+        viewHolder.recyclerView.adapter = GridBoxesAdapter(arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN))
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = boxes.size
+    override fun getItemCount() = results.size
 }
