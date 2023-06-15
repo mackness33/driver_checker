@@ -107,14 +107,14 @@ class CameraFragment : Fragment() {
         }
         model.isEvaluating.observe(viewLifecycleOwner, liveIsRecordingObserver)
 
-        model.onPartialResultsChanged.observe(viewLifecycleOwner) { itemIndex ->
+        model.onPartialResultsChanged.observe(viewLifecycleOwner) { size ->
             if (binding.partialsView.adapter is PartialsAdapter) {
                 when {
-                    itemIndex < -1 ->
+                    size < 0 ->
                         (binding.partialsView.adapter as PartialsAdapter).notifyDataSetChanged();
 
-                    itemIndex > -1 ->
-                        (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(itemIndex)
+                    size > 0 ->
+                        (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(size-1)
                     else -> {}
                 }
             }

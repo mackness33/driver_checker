@@ -5,30 +5,45 @@ import com.example.driverchecker.MLWindow
 import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.MLRepositoryInterface
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<Prediction>>> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
     protected var window: MLWindow<Prediction, Result> = MLWindow()
-    protected val _analysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
+    protected val _internalanalysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
+    protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
 
     override val repositoryScope = CoroutineScope(SupervisorJob())
 
-    override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<Result>>?
-        get() = _analysisProgressState.asStateFlow()
+    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
+        get() = _externalProgressState.asSharedFlow()
 
     init {
+        _externalProgressState.tryEmit(LiveEvaluationState.Ready(false))
+//        _externalProgressState.distinctUntilChanged()
+//        shareInternalState()
         listenOnLoadingState()
     }
 
     protected fun listenOnLoadingState () {
         repositoryScope.launch {
             model?.isLoaded?.collect { state ->
-                _analysisProgressState.compareAndSet(LiveEvaluationState.Ready(!state), LiveEvaluationState.Ready(state))
+                if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(!state))
+                    _externalProgressState.emit(LiveEvaluationState.Ready(state))
+//                _internalanalysisProgressState.compareAndSet(LiveEvaluationState.Ready(!state), LiveEvaluationState.Ready(state))
             }
         }
     }
+
+//    protected fun shareInternalState () {
+//        repositoryScope.launch {
+//            _internalanalysisProgressState.onEach { state ->
+//                _externalProgressState.emit(state)
+//            }
+//        }
+//    }
 
     override suspend fun instantClassification(input: Data): Result? {
         var result: Result? = null
@@ -74,20 +89,25 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
     protected fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
-            if (_analysisProgressState.compareAndSet(LiveEvaluationState.Ready(true), LiveEvaluationState.Start(null))) {
+            if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+                _externalProgressState.emit(LiveEvaluationState.Start(null))
+//            if (_internalanalysisProgressState.compareAndSet(LiveEvaluationState.Ready(true), LiveEvaluationState.Start(null))) {
                 model?.processAndEvaluatesStream(input)
                     ?.onEach {
                         if (it == null) throw Error("The result is null")
 
                         window.next(it)
+                        _externalProgressState.emit(LiveEvaluationState.Loading(
+                            window.index,
+                            window.lastResult
+                        ))
+//                        _internalanalysisProgressState.update { _ -> LiveEvaluationState.Loading(
+//                            window.index,
+//                            window.lastResult
+//                        ) }
                         // TODO: Pass the metrics and Result
                         if (window.isSatisfied())
                             cancel()
-                        else
-                            _analysisProgressState.update { _ -> LiveEvaluationState.Loading(
-                                window.index,
-                                window.lastResult
-                            ) }
 
                         Log.d("JobClassification", "Checked: ${window.index} with ${window.lastResult}")
                     }
@@ -97,19 +117,24 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
                     }
                     ?.onCompletion { cause ->
                         Log.d("JobClassification", "finally finished")
-                        _analysisProgressState.update { _ ->
+                        _externalProgressState.emit(
+//                            _internalanalysisProgressState.update { _ ->
                             LiveEvaluationState.End(
                                 if (cause !is CancellationException) cause else null,
                                 window.lastResult
                             )
-                        }
+//                        }
+                        )
 
                         window.clean()
+
+                        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
                     }
                     ?.collect()
 
             } else {
-                _analysisProgressState.update { _ -> LiveEvaluationState.End(Throwable("The stream is not ready yet"), null)}
+                _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
+//                _internalanalysisProgressState.update { _ -> LiveEvaluationState.End(Throwable("The stream is not ready yet"), null)}
             }
         }
     }
@@ -118,16 +143,14 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
         input: SharedFlow<Data>,
         scope: CoroutineScope
     ) {
-        if (_analysisProgressState.value == LiveEvaluationState.Ready(true)) {
+        if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
             liveClassificationJob = jobClassification(input.buffer(2), scope)
-            liveClassificationJob?.invokeOnCompletion {
-                _analysisProgressState.update { _ -> LiveEvaluationState.Ready(model?.isLoaded?.value ?: false)}
-            }
         }
     }
 
     override suspend fun onStopLiveClassification() {
         liveClassificationJob?.cancel()
+
     }
 
     fun updateLocalModel (path: String) {

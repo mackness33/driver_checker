@@ -15,7 +15,7 @@ abstract class MLRepository<Data, Prediction, Result : ArrayList<MLResult<Predic
     protected var local: MLLocalRepository<Data, Prediction, Result>? = null
     protected var remote: MLRemoteRepository<Data, Prediction, Result>? = null
 
-    override val analysisProgressState: StateFlow<LiveEvaluationStateInterface<Result>>?
+    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = if (isOnline) remote?.analysisProgressState else local?.analysisProgressState
 
     override suspend fun instantClassification(input: Data): Result? {

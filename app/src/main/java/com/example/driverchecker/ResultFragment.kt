@@ -37,7 +37,7 @@ class ResultFragment : Fragment() {
         /* OBSERVE CHANGES ON THE RESULT*/
         val txt = binding.txtResult
         val resultObserver = Observer<ImageDetectionArrayResult?> { result ->
-            txt.text = result.toString()
+            txt.text = if (result == null) result.toString() else "null"
             binding.resultView.setResults(result)
             binding.resultView.invalidate()
         }
