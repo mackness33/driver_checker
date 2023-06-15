@@ -9,12 +9,18 @@ import kotlin.math.round
 import kotlin.math.sqrt
 
 
-class PartialsAdapter(val items: List<ImageDetectionArrayResult>, private var sizeHolder: Int = 100) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
+class PartialsAdapter(val items: List<ImageDetectionArrayResult>, maxClasses:Int = 2, private var sizeHolder: Int = 50) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
 
     init {
-        val square = round(sqrt(items.size.toDouble()))
-        dimension = (if (items.size % square > 0) square+1 else square).toInt()
+        val square = round(sqrt(maxClasses.toDouble()))
+        dimension = when {
+            maxClasses <= 0 -> 0
+            maxClasses == 1 -> 1
+            maxClasses < 4 -> 2
+            maxClasses % square > 0 -> square+1
+            else -> square
+        }.toInt()
     }
 
     /**
@@ -41,7 +47,11 @@ class PartialsAdapter(val items: List<ImageDetectionArrayResult>, private var si
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.predictionView.updateDimensions(Pair(dimension, dimension))
-        viewHolder.predictionView.updateSize(Pair(sizeHolder, sizeHolder))
+//        val params = viewHolder.itemView.layoutParams
+        viewHolder.itemView.layoutParams = ViewGroup.LayoutParams(sizeHolder, sizeHolder)
+        viewHolder.predictionView.updateSize(
+            Pair(viewHolder.itemView.layoutParams.width, viewHolder.itemView.layoutParams.height)
+        )
     }
 
     // Return the size of your dataset (invoked by the layout manager)

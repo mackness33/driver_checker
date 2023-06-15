@@ -101,10 +101,6 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
                             window.index,
                             window.lastResult
                         ))
-//                        _internalanalysisProgressState.update { _ -> LiveEvaluationState.Loading(
-//                            window.index,
-//                            window.lastResult
-//                        ) }
                         // TODO: Pass the metrics and Result
                         if (window.isSatisfied())
                             cancel()

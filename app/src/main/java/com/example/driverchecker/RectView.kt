@@ -24,8 +24,8 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     init {
         this.paint = Paint()
-        this.size = Pair(0, 0)
-        this.dimensions = Pair(0, 0)
+        this.size = Pair(100, 100)
+        this.dimensions = Pair(2, 2)
         this.maxItems = 0
         val listColors = ArrayList<Int>()
         listColors.add(Color.BLUE)

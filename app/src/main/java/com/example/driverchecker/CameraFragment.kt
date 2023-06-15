@@ -76,7 +76,8 @@ class CameraFragment : Fragment() {
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
 //        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
-        binding.partialsView.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
+        binding.partialsView.layoutManager = GridLayoutManager(view.context, 5, RecyclerView.VERTICAL, true)
+        binding.partialsView.itemAnimator = null
         binding.partialsView.adapter = PartialsAdapter(model.list)
 
         val btnVideo = binding.btnRecordVideo
@@ -115,11 +116,15 @@ class CameraFragment : Fragment() {
         model.onPartialResultsChanged.observe(viewLifecycleOwner) { size ->
             if (binding.partialsView.adapter is PartialsAdapter) {
                 when {
-                    size < 0 ->
+                    size == 0 ->{
                         (binding.partialsView.adapter as PartialsAdapter).notifyDataSetChanged();
+                        Log.d("LiveEvaluationState", "CLEAR: ${size} deleting with array: ${model.list.size}")
+                    }
 
-                    size > 0 ->
+                    size > 0 -> {
                         (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(size-1)
+                        Log.d("LiveEvaluationState", "APPEND: ${size} inserting with array: ${model.list.size}")
+                    }
 
                     else -> {}
                 }

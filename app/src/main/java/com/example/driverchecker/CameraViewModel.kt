@@ -33,13 +33,15 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             analysisState?.collect { state ->
                 when (state) {
                     is LiveEvaluationState.Ready -> {
+                        array.clear()
+                        _onPartialResultsChanged.postValue(array.size)
                         _lastResult.postValue(null)
                         _isEvaluating.postValue(false)
                         _liveIsEnabled.postValue(state.isReady)
+                        Log.d("LiveEvaluationState", "READY: ${_onPartialResultsChanged.value} but array.size is ${array.size}")
                     }
                     is LiveEvaluationState.Start -> {
                         // add the partialResult to the resultsArray
-                        _onPartialResultsChanged.postValue(array.size)
                         _lastResult.postValue(null)
                         _isEvaluating.postValue(true)
                         _liveIsEnabled.postValue(true)
@@ -58,8 +60,6 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                     is LiveEvaluationState.End<ImageDetectionArrayResult> -> {
                         // update the UI with the text of the class
                         // save to the database the result with bulk of 10 and video
-                        array.clear()
-                        _onPartialResultsChanged.postValue(-1)
                         _isEvaluating.postValue(false)
                         _liveIsEnabled.postValue(false)
                         Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")

@@ -73,7 +73,7 @@
         android:id="@+id/partials_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="5dp"
+        android:elevation="6dp"
         app:layout_constraintBottom_toTopOf="@id/btnLive"
         />
 
