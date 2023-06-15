@@ -117,14 +117,16 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
                     }
                     ?.onCompletion { cause ->
                         Log.d("JobClassification", "finally finished")
-                        _externalProgressState.emit(
-//                            _internalanalysisProgressState.update { _ ->
-                            LiveEvaluationState.End(
-                                if (cause !is CancellationException) cause else null,
-                                window.lastResult
+
+                        if (cause != null && cause !is CancellationException) {
+                            _externalProgressState.emit(
+                                LiveEvaluationState.End(cause, null)
                             )
-//                        }
-                        )
+                        } else {
+                            _externalProgressState.emit(
+                                LiveEvaluationState.End(null, window.lastResult)
+                            )
+                        }
 
                         window.clean()
 
@@ -134,7 +136,7 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
 
             } else {
                 _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
-//                _internalanalysisProgressState.update { _ -> LiveEvaluationState.End(Throwable("The stream is not ready yet"), null)}
+                _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
             }
         }
     }
@@ -150,7 +152,6 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
 
     override suspend fun onStopLiveClassification() {
         liveClassificationJob?.cancel()
-
     }
 
     fun updateLocalModel (path: String) {

@@ -107,6 +107,11 @@ class CameraFragment : Fragment() {
         }
         model.isEvaluating.observe(viewLifecycleOwner, liveIsRecordingObserver)
 
+        model.lastResult.observe(viewLifecycleOwner) { partial ->
+            binding.resultView.setResults(partial)
+            binding.resultView.invalidate()
+        }
+
         model.onPartialResultsChanged.observe(viewLifecycleOwner) { size ->
             if (binding.partialsView.adapter is PartialsAdapter) {
                 when {
@@ -115,6 +120,7 @@ class CameraFragment : Fragment() {
 
                     size > 0 ->
                         (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(size-1)
+
                     else -> {}
                 }
             }
@@ -152,56 +158,6 @@ class CameraFragment : Fragment() {
                 onClickRequestPermissions(it, REQUIRED_PERMISSIONS_RECORD_VIDEO)
             else{
                 model.updateLiveClassification()
-            }
-        }
-
-
-        lifecycleScope.launchWhenCreated {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                model.analysisState?.collect { state ->
-                    when (state) {
-                        is LiveEvaluationState.Ready -> {
-                            // view gone
-                            Toast.makeText(context, "The Repo is ${if (!state.isReady) "not" else ""} ready!", Toast.LENGTH_SHORT)
-                                .show()
-
-                            // enable the start of the evaluation
-                            model.enableLive(state.isReady)
-                            model.evaluateLive(false)
-
-                            // clear the ResultView
-                            binding.resultView.setResults(null)
-                            binding.resultView.invalidate()
-                        }
-                        is LiveEvaluationState.Start -> {
-                            // show ui
-                            Toast.makeText(context, "Start of flow", Toast.LENGTH_SHORT)
-                                .show()
-
-                            model.enableLive(true)
-                            model.evaluateLive(true)
-                        }
-                        is LiveEvaluationState.Loading<ImageDetectionArrayResult> -> {
-                            // show ui
-//                            Toast.makeText(context, "Loading: ${state.partialResult?.result} for the ${state.index} time", Toast.LENGTH_SHORT)
-//                                .show()
-                            Log.d("LiveEvaluationState", "Loading: ${state.partialResult} for the ${state.index} time")
-
-                            binding.txtResult.text = state.partialResult?.toString()
-
-                            binding.resultView.setResults(state.partialResult)
-                            binding.resultView.invalidate()
-                        }
-                        is LiveEvaluationState.End<ImageDetectionArrayResult> -> {
-                            // show error message
-                            Toast.makeText(context, "End: error=${state.exception} & result=${state.result}", Toast.LENGTH_SHORT)
-                                .show()
-
-                            model.enableLive(false)
-                            model.evaluateLive(false)
-                        }
-                    }
-                }
             }
         }
     }

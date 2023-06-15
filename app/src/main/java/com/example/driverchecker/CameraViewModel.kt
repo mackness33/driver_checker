@@ -32,9 +32,17 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         viewModelScope.launch(Dispatchers.Default) {
             analysisState?.collect { state ->
                 when (state) {
+                    is LiveEvaluationState.Ready -> {
+                        _lastResult.postValue(null)
+                        _isEvaluating.postValue(false)
+                        _liveIsEnabled.postValue(state.isReady)
+                    }
                     is LiveEvaluationState.Start -> {
                         // add the partialResult to the resultsArray
                         _onPartialResultsChanged.postValue(array.size)
+                        _lastResult.postValue(null)
+                        _isEvaluating.postValue(true)
+                        _liveIsEnabled.postValue(true)
                         Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
 
                     }
@@ -43,6 +51,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                         if (state.partialResult != null) {
                             array.add(state.partialResult)
                             _onPartialResultsChanged.postValue(array.size)
+                            _lastResult.postValue(state.partialResult)
                             Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
                         }
                     }
@@ -51,9 +60,10 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                         // save to the database the result with bulk of 10 and video
                         array.clear()
                         _onPartialResultsChanged.postValue(-1)
+                        _isEvaluating.postValue(false)
+                        _liveIsEnabled.postValue(false)
                         Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")
                     }
-                    else -> {}
                 }
             }
         }
@@ -72,6 +82,11 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                 }
             }
         }
+
+
+    private val _lastResult: MutableLiveData<ImageDetectionArrayResult?> = MutableLiveData(null)
+    val lastResult: LiveData<ImageDetectionArrayResult?>
+        get() = _lastResult
 
     val analysisState: SharedFlow<LiveEvaluationStateInterface<ImageDetectionArrayResult>>?
         get() = imageDetectionRepository?.analysisProgressState
@@ -138,50 +153,6 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         private set
 
 
-    private fun jobClassification (): Job {
-        return viewModelScope.launch(Dispatchers.Default) {
-            analysisState?.collect { state ->
-                when (state) {
-                    is LiveEvaluationState.Start -> {
-                        // add the partialResult to the resultsArray
-                        _onPartialResultsChanged.postValue(array.size - 1)
-                        Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
-
-                    }
-                    is LiveEvaluationState.Loading<ImageDetectionArrayResult> -> {
-                        // add the partialResult to the resultsArray
-                        if (state.partialResult != null) {
-                            array.add(state.partialResult)
-                            _onPartialResultsChanged.postValue(_onPartialResultsChanged.value?.inc())
-                            Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
-                        }
-                    }
-                    is LiveEvaluationState.End<ImageDetectionArrayResult> -> {
-                        // update the UI with the text of the class
-                        // save to the database the result with bulk of 10 and video
-                        array.clear()
-                        _onPartialResultsChanged.postValue(_onPartialResultsChanged.value?.times(-1))
-                        Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")
-                    }
-                    else -> {}
-                }
-            }
-        }
-    }
-
-//    fun onStartEvaluation () {
-//        collectResultJob = jobClassification()
-//        collectResultJob?.invokeOnCompletion {
-//            // clear arrayResult
-//            array.clear()
-//            _onPartialResultsChanged.postValue(_onPartialResultsChanged.value?.times(-1))
-//        }
-//    }
-//
-//    fun onStopEvaluation () {
-//        collectResultJob?.cancel()
-//    }
-
     fun updateImageUri (uri: Uri?) {
         _imageUri.value = uri
     }
@@ -223,14 +194,9 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             when (_isEvaluating.value) {
                 false -> {
                     imageDetectionRepository?.onStartLiveClassification(liveImages, viewModelScope)
-                    // start collecting the state to update the internal list of results
-//                    onStartEvaluation()
                 }
                 true -> {
                     imageDetectionRepository?.onStopLiveClassification()
-                    // stop collecting the state of the internal list of results
-                    // and clear the list
-//                    onStopEvaluation()
                 }
                 else -> {}
             }
