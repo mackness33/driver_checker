@@ -28,7 +28,7 @@ class CameraXHandler (){
     var hasCameraStarted: Boolean = false
         private set
 
-    fun startCamera(context: Context, surfaceProvider: SurfaceProvider, listener: ImageDetectionListener, model: CameraViewModel) {
+    fun startCamera(context: Context, surfaceProvider: SurfaceProvider, listener: ImageDetectionListener) {
         hasCameraStarted = false
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 

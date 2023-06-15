@@ -2,8 +2,10 @@ package com.example.driverchecker
 
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionResult
 import java.util.*
 import kotlin.Comparator
+import kotlin.collections.ArrayList
 import kotlin.math.max
 
 object ImageDetectionUtils {
@@ -25,8 +27,8 @@ object ImageDetectionUtils {
     ): ImageDetectionArrayResult {
 
         // Do an argsort on the confidence scores, from high to low.
-        boxes.sortWith(Comparator { o1, o2 -> o2.confidence.compareTo(o1.confidence) })
-        val selected: ImageDetectionArrayResult = ArrayList()
+        boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
+        val selected: ArrayList<ImageDetectionResult> = ArrayList()
         val active = BooleanArray(boxes.size)
         Arrays.fill(active, true)
         var numActive = active.size

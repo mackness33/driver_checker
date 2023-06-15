@@ -1,5 +1,6 @@
 package com.example.driverchecker
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,10 @@ import kotlin.math.round
 import kotlin.math.sqrt
 
 
-class PartialsAdapter(val items: List<ImageDetectionArrayResult>, maxClasses:Int = 2, private var sizeHolder: Int = 50) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
+// items are a list of map with keys the number of the superclass and as value a list of all the classes found
+class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2, private var sizeHolder: Int = 50) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
+    private val colorClasses: Map<Int, List<Int>>
 
     init {
         val square = round(sqrt(maxClasses.toDouble()))
@@ -21,10 +24,11 @@ class PartialsAdapter(val items: List<ImageDetectionArrayResult>, maxClasses:Int
             maxClasses % square > 0 -> square+1
             else -> square
         }.toInt()
+        colorClasses = mapOf(1 to listOf(Color.GREEN, Color.CYAN, Color.BLUE))
     }
 
     /**
-//        viewHolder.predictionView.invalidate()
+//        viewHolder.predictionView.invalidate()first
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */
@@ -52,6 +56,8 @@ class PartialsAdapter(val items: List<ImageDetectionArrayResult>, maxClasses:Int
         viewHolder.predictionView.updateSize(
             Pair(viewHolder.itemView.layoutParams.width, viewHolder.itemView.layoutParams.height)
         )
+        viewHolder.predictionView.updateColors(colorClasses.getValue(items[position].first))
+        viewHolder.predictionView.updateSelectedClasses(items[position].second)
     }
 
     // Return the size of your dataset (invoked by the layout manager)

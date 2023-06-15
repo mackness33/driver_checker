@@ -3,12 +3,9 @@ package com.example.driverchecker
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionInput
-import com.example.driverchecker.machinelearning.data.MLResult
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
@@ -17,7 +14,6 @@ import com.example.driverchecker.media.MediaRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
-import kotlin.math.sign
 
 data class StaticMedia (val path : String?, val isVideo: Boolean = false)
 
@@ -33,7 +29,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             analysisState?.collect { state ->
                 when (state) {
                     is LiveEvaluationState.Ready -> {
-                        array.clear()
+                        clearPartialResults()
                         _onPartialResultsChanged.postValue(array.size)
                         _lastResult.postValue(null)
                         _isEvaluating.postValue(false)
@@ -51,7 +47,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                     is LiveEvaluationState.Loading<ImageDetectionArrayResult> -> {
                         // add the partialResult to the resultsArray
                         if (state.partialResult != null) {
-                            array.add(state.partialResult)
+                            insertPartialResult(state.partialResult)
                             _onPartialResultsChanged.postValue(array.size)
                             _lastResult.postValue(state.partialResult)
                             Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
@@ -152,6 +148,26 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     var list: List<ImageDetectionArrayResult> = array
         private set
 
+    protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
+    var listClassesPredictions: List<Pair<Int, List<Int>>> = arrayClassesPredictions
+        private set
+
+    protected fun insertPartialResult (partialResult: ImageDetectionArrayResult) {
+        array.add(partialResult)
+        arrayClassesPredictions.add(
+            Pair(
+                1,
+                partialResult
+                    .distinctBy { predictions -> predictions.result.classIndex }
+                    .map { prediction -> prediction.result.classIndex}
+            )
+        )
+    }
+
+    protected fun clearPartialResults () {
+        array.clear()
+        arrayClassesPredictions.clear()
+    }
 
     fun updateImageUri (uri: Uri?) {
         _imageUri.value = uri
@@ -201,6 +217,12 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                 else -> {}
             }
         }
+    }
+}
+
+fun <T> Array<T>.mapInPlace(transform: (T) -> T) {
+    for (i in this.indices) {
+        this[i] = transform(this[i])
     }
 }
 

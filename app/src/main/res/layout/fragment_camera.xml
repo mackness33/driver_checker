@@ -19,54 +19,54 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnTakePhoto"
-        android:layout_width="101dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="32dp"
-        android:elevation="10dp"
-        android:src="@mipmap/ic_launcher"
-        android:text="Take Photo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.500"
-        app:layout_constraintStart_toStartOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/btnTakePhoto"-->
+<!--        android:layout_width="101dp"-->
+<!--        android:layout_height="59dp"-->
+<!--        android:layout_marginBottom="32dp"-->
+<!--        android:elevation="10dp"-->
+<!--        android:src="@mipmap/ic_launcher"-->
+<!--        android:text="Take Photo"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.500"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
-    <Button
-        android:id="@+id/btnRecordVideo"
-        android:layout_width="101dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="32dp"
-        android:elevation="10dp"
-        android:src="@mipmap/ic_launcher"
-        android:text="Record Video"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.913"
-        app:layout_constraintStart_toStartOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/btnRecordVideo"-->
+<!--        android:layout_width="101dp"-->
+<!--        android:layout_height="59dp"-->
+<!--        android:layout_marginBottom="32dp"-->
+<!--        android:elevation="10dp"-->
+<!--        android:src="@mipmap/ic_launcher"-->
+<!--        android:text="Record Video"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.913"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
-    <Button
-        android:id="@+id/btnChoosePhoto"
-        android:layout_width="101dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="32dp"
-        android:elevation="10dp"
-        android:text="Choose Photo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.087"
-        app:layout_constraintStart_toStartOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/btnChoosePhoto"-->
+<!--        android:layout_width="101dp"-->
+<!--        android:layout_height="59dp"-->
+<!--        android:layout_marginBottom="32dp"-->
+<!--        android:elevation="10dp"-->
+<!--        android:text="Choose Photo"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.087"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
     <Button
         android:id="@+id/btnLive"
         android:layout_width="101dp"
         android:layout_height="59dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="40dp"
         android:elevation="10dp"
         android:text="Start Live"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.087"
+        app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -74,6 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="6dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/btnLive"
         />
 

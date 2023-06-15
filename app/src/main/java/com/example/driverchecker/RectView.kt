@@ -20,12 +20,14 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     var dimensions: Pair<Int, Int>
         private set
     private var size_item: Pair<Float, Float>
+    var selectedClasses: List<Int>?
+        private set
 //    private var offset_item: Pair<Int, Int>
 
     init {
         this.paint = Paint()
-        this.size = Pair(100, 100)
-        this.dimensions = Pair(2, 2)
+        this.size = Pair(0, 0)
+        this.dimensions = Pair(0, 0)
         this.maxItems = 0
         val listColors = ArrayList<Int>()
         listColors.add(Color.BLUE)
@@ -34,24 +36,42 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         listColors.add(Color.YELLOW)
         this.colors = listColors.toList()
         this.size_item = updateSizeItem()
+        this.selectedClasses = null
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         var colorIndex = 0
-        for (i: Int in 0 until dimensions.first) {
-            for (j: Int in 0 until dimensions.second) {
-                paint.color = this.colors!![colorIndex % (colors?.size ?: 1) ]
+//        for (i: Int in 0 until dimensions.first) {
+//            for (j: Int in 0 until dimensions.second) {
+//                paint.color = this.colors!![colorIndex % (colors?.size ?: 1) ]
+//                canvas.drawRect(
+//                    size_item.first * i,
+//                    size_item.second * j,
+//                    size_item.first * (i + 1),
+//                    size_item.second * (j + 1),
+//                    paint
+//                )
+//
+//                colorIndex++
+//            }
+//        }
+
+        if (selectedClasses != null && dimensions.first != 0 && dimensions.second != 0) {
+            var x = 0
+            var y = 0
+            for (predictionClass in selectedClasses!!) {
+                paint.color = this.colors!![predictionClass % (colors?.size ?: 1) ]
+                x = predictionClass % dimensions.first
+                y = (predictionClass / dimensions.first) % dimensions.second
                 canvas.drawRect(
-                    size_item.first * i,
-                    size_item.second * j,
-                    size_item.first * (i + 1),
-                    size_item.second * (j + 1),
+                    size_item.first * x ,
+                    size_item.second * y,
+                    size_item.first * (x + 1),
+                    size_item.second * (y + 1),
                     paint
                 )
-
-                colorIndex++
             }
         }
     }
@@ -69,5 +89,13 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     fun updateSize(newSize: Pair<Int, Int>) {
         size = newSize
         size_item = updateSizeItem()
+    }
+
+    fun updateColors(newColors: List<Int>) {
+        colors = newColors
+    }
+
+    fun updateSelectedClasses(newClasses: List<Int>) {
+        selectedClasses = newClasses
     }
 }

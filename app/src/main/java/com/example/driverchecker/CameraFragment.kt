@@ -78,35 +78,33 @@ class CameraFragment : Fragment() {
 //        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
         binding.partialsView.layoutManager = GridLayoutManager(view.context, 5, RecyclerView.VERTICAL, true)
         binding.partialsView.itemAnimator = null
-        binding.partialsView.adapter = PartialsAdapter(model.list)
+        binding.partialsView.adapter = PartialsAdapter(model.listClassesPredictions)
 
-        val btnVideo = binding.btnRecordVideo
-        val isEnabledObserver = Observer<Boolean?> { enable ->
-            Log.i("LiveData", "Recoding Button is ${if (enable) "not" else ""} enabled")
-            btnVideo.isEnabled = enable
-        }
-        model.isEnabled.observe(viewLifecycleOwner, isEnabledObserver)
+//        val btnVideo = binding.btnRecordVideo
+//        val isEnabledObserver = Observer<Boolean?> { enable ->
+//            Log.i("LiveData", "Recoding Button is ${if (enable) "not" else ""} enabled")
+//            btnVideo.isEnabled = enable
+//        }
+//        model.isEnabled.observe(viewLifecycleOwner, isEnabledObserver)
 
-        val isRecordingObserver = Observer<Boolean?> { isRecording ->
-            val record = isRecording ?: false
-            Log.i("LiveData", "Recoding Button ${if (record) "start" else "stop"} recording")
-            btnVideo.text = getString(if (record) R.string.stop_capture else R.string.start_capture)
-        }
-        model.isRecording.observe(viewLifecycleOwner, isRecordingObserver)
+//        val isRecordingObserver = Observer<Boolean?> { isRecording ->
+//            val record = isRecording ?: false
+//            Log.i("LiveData", "Recoding Button ${if (record) "start" else "stop"} recording")
+//            btnVideo.text = getString(if (record) R.string.stop_capture else R.string.start_capture)
+//        }
+//        model.isRecording.observe(viewLifecycleOwner, isRecordingObserver)
 
-        val btnLive = binding.btnLive
-        val liveIsEnabledObserver = Observer<Boolean?> { enableLive ->
+        model.liveIsEnabled.observe(viewLifecycleOwner) { enableLive ->
             Log.i("LiveData - LiveBtn", "Live Button is ${if (enableLive) "not" else ""} enabled")
-            btnLive.isEnabled = enableLive
+            binding.btnLive.isEnabled = enableLive
         }
-        model.liveIsEnabled.observe(viewLifecycleOwner, liveIsEnabledObserver)
 
-        val liveIsRecordingObserver = Observer<Boolean?> { isEvaluating ->
+        model.isEvaluating.observe(viewLifecycleOwner) { isEvaluating ->
             val record = isEvaluating ?: false
             Log.i("LiveData - LiveBtn", "Live Button ${if (record) "start" else "stop"} recording")
-            btnLive.text = getString(if (record) R.string.stop_live else R.string.start_live)
+            binding.btnLive.text =
+                getString(if (record) R.string.stop_live else R.string.start_live)
         }
-        model.isEvaluating.observe(viewLifecycleOwner, liveIsRecordingObserver)
 
         model.lastResult.observe(viewLifecycleOwner) { partial ->
             binding.resultView.setResults(partial)
@@ -118,12 +116,12 @@ class CameraFragment : Fragment() {
                 when {
                     size == 0 ->{
                         (binding.partialsView.adapter as PartialsAdapter).notifyDataSetChanged();
-                        Log.d("LiveEvaluationState", "CLEAR: ${size} deleting with array: ${model.list.size}")
+                        Log.d("LiveEvaluationState", "CLEAR: $size deleting with array: ${model.list.size}")
                     }
 
                     size > 0 -> {
                         (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(size-1)
-                        Log.d("LiveEvaluationState", "APPEND: ${size} inserting with array: ${model.list.size}")
+                        Log.d("LiveEvaluationState", "APPEND: $size inserting with array: ${model.list.size}")
                     }
 
                     else -> {}
@@ -132,31 +130,31 @@ class CameraFragment : Fragment() {
         }
 
 
-        binding.btnTakePhoto.setOnClickListener {
-            if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
-                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
-            else {
-                cameraXHandler.takePhoto(this.requireContext(), FILENAME_FORMAT, PICTURE_FILE_NAME, model)
-                cameraXHandler.pauseCamera()
-                this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
-            }
-        }
-
-        binding.btnChoosePhoto.setOnClickListener {
-            if (!hasPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO))
-                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_CHOOSE_PHOTO)
-            else{
-                chooseImageFromGallery()
-            }
-        }
-
-        binding.btnRecordVideo.setOnClickListener {
-            if (!hasPermissions(REQUIRED_PERMISSIONS_RECORD_VIDEO))
-                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_RECORD_VIDEO)
-            else{
-                cameraXHandler.captureVideo(this.requireContext(), FILENAME_FORMAT, model, ::onFinalize)
-            }
-        }
+//        binding.btnTakePhoto.setOnClickListener {
+//            if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
+//                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_TAKE_PHOTO)
+//            else {
+//                cameraXHandler.takePhoto(this.requireContext(), FILENAME_FORMAT, PICTURE_FILE_NAME, model)
+//                cameraXHandler.pauseCamera()
+//                this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
+//            }
+//        }
+//
+//        binding.btnChoosePhoto.setOnClickListener {
+//            if (!hasPermissions(REQUIRED_PERMISSIONS_CHOOSE_PHOTO))
+//                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_CHOOSE_PHOTO)
+//            else{
+//                chooseImageFromGallery()
+//            }
+//        }
+//
+//        binding.btnRecordVideo.setOnClickListener {
+//            if (!hasPermissions(REQUIRED_PERMISSIONS_RECORD_VIDEO))
+//                onClickRequestPermissions(it, REQUIRED_PERMISSIONS_RECORD_VIDEO)
+//            else{
+//                cameraXHandler.captureVideo(this.requireContext(), FILENAME_FORMAT, model, ::onFinalize)
+//            }
+//        }
 
         binding.btnLive.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_RECORD_VIDEO))
@@ -229,7 +227,7 @@ class CameraFragment : Fragment() {
 
     private fun runCamera() {
         if (hasPermissions(arrayOf(Manifest.permission.CAMERA)) && !cameraXHandler.hasCameraStarted)
-            cameraXHandler.startCamera(this.requireContext(), binding.viewFinder.surfaceProvider, this::analyzeImage, model)
+            cameraXHandler.startCamera(this.requireContext(), binding.viewFinder.surfaceProvider, this::analyzeImage)
     }
 
     private fun onClickRequestPermission(view: View, permission: String) {
@@ -326,26 +324,6 @@ class CameraFragment : Fragment() {
             model.produceImage(image)
         }
     }
-
-    private fun toBitmap(image: ImageProxy): Bitmap {
-        val yBuffer = image.planes[0].buffer // Y
-        val vuBuffer = image.planes[2].buffer // VU
-
-        val ySize = yBuffer.remaining()
-        val vuSize = vuBuffer.remaining()
-
-        val nv21 = ByteArray(ySize + vuSize)
-
-        yBuffer.get(nv21, 0, ySize)
-        vuBuffer.get(nv21, ySize, vuSize)
-
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
-        val imageBytes = out.toByteArray()
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-    }
-
 }
 
 fun View.showSnackbar(
