@@ -111,6 +111,14 @@ class CameraFragment : Fragment() {
             binding.resultView.invalidate()
         }
 
+        model.passengerInfo.observe(viewLifecycleOwner) { info ->
+            binding.txtPassenger.text = String.format("%s:%s", info.first, info.second)
+        }
+
+        model.driverInfo.observe(viewLifecycleOwner) { info ->
+            binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
+        }
+
         model.onPartialResultsChanged.observe(viewLifecycleOwner) { size ->
             if (binding.partialsView.adapter is PartialsAdapter) {
                 when {

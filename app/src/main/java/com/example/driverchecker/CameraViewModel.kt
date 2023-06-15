@@ -145,28 +145,42 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         get () = _onPartialResultsChanged
 
     protected val array = ArrayList<ImageDetectionArrayResult>()
-    var list: List<ImageDetectionArrayResult> = array
-        private set
+    val list: List<ImageDetectionArrayResult>
+        get() = array
 
     protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
-    var listClassesPredictions: List<Pair<Int, List<Int>>> = arrayClassesPredictions
-        private set
+    val listClassesPredictions: List<Pair<Int, List<Int>>>
+        get() = arrayClassesPredictions
+
+    protected val _passengerInfo = MutableLiveData(Pair(0, 0))
+    val passengerInfo: LiveData<Pair<Int, Int>>
+        get() = _passengerInfo
+
+    protected val _driverInfo = MutableLiveData(Pair(0, 0))
+    val driverInfo: LiveData<Pair<Int, Int>>
+        get() = _driverInfo
 
     protected fun insertPartialResult (partialResult: ImageDetectionArrayResult) {
-        array.add(partialResult)
-        arrayClassesPredictions.add(
-            Pair(
-                1,
-                partialResult
-                    .distinctBy { predictions -> predictions.result.classIndex }
-                    .map { prediction -> prediction.result.classIndex}
-            )
+        val classInfo: Pair<Int, List<Int>> = Pair(
+            1,
+            partialResult
+                .distinctBy { predictions -> predictions.result.classIndex }
+                .map { prediction -> prediction.result.classIndex}
         )
+
+        array.add(partialResult)
+        arrayClassesPredictions.add(classInfo)
+        when (classInfo.first) {
+            0 -> _passengerInfo.postValue(Pair((_passengerInfo.value?.first ?: 0) + classInfo.first, (_passengerInfo.value?.second ?: 0) + classInfo.second.count()))
+            1 -> _driverInfo.postValue(Pair((_driverInfo.value?.first ?: 0) + classInfo.first, (_driverInfo.value?.second ?: 0) + classInfo.second.count()))
+        }
     }
 
     protected fun clearPartialResults () {
         array.clear()
         arrayClassesPredictions.clear()
+        _passengerInfo.postValue(Pair(0, 0))
+        _driverInfo.postValue(Pair(0, 0))
     }
 
     fun updateImageUri (uri: Uri?) {
@@ -217,12 +231,6 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                 else -> {}
             }
         }
-    }
-}
-
-fun <T> Array<T>.mapInPlace(transform: (T) -> T) {
-    for (i in this.indices) {
-        this[i] = transform(this[i])
     }
 }
 

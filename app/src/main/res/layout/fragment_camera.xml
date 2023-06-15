@@ -11,8 +11,9 @@
         android:id="@+id/txtResult"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="25dp"
         android:textAlignment="center"
+        android:textSize="80sp"
         android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -59,15 +60,46 @@
 
     <Button
         android:id="@+id/btnLive"
-        android:layout_width="101dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="40dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="50dp"
         android:elevation="10dp"
         android:text="Start Live"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtDriver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:text="1:1"
+        android:textAlignment="center"
+        android:textSize="50sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/txtPassenger"
+        app:layout_constraintBottom_toBottomOf="@id/btnLive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.125"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnLive" />
+
+    <TextView
+        android:id="@+id/txtPassenger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_marginBottom="5dp"
+        android:textSize="50sp"
+        android:text="0:0"
+        android:elevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.875"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnLive"
+        app:layout_constraintBottom_toBottomOf="@id/btnLive"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/partials_view"
