@@ -34,6 +34,7 @@ import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionAr
 import com.example.driverchecker.media.FileUtils
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 
@@ -74,6 +75,10 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
+//        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
+        binding.partialsView.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
+        binding.partialsView.adapter = PartialsAdapter(model.list)
+
         val btnVideo = binding.btnRecordVideo
         val isEnabledObserver = Observer<Boolean?> { enable ->
             Log.i("LiveData", "Recoding Button is ${if (enable) "not" else ""} enabled")
@@ -101,6 +106,20 @@ class CameraFragment : Fragment() {
             btnLive.text = getString(if (record) R.string.stop_live else R.string.start_live)
         }
         model.isEvaluating.observe(viewLifecycleOwner, liveIsRecordingObserver)
+
+        model.onPartialResultsChanged.observe(viewLifecycleOwner) { itemIndex ->
+            if (binding.partialsView.adapter is PartialsAdapter) {
+                when {
+                    itemIndex < -1 ->
+                        (binding.partialsView.adapter as PartialsAdapter).notifyDataSetChanged();
+
+                    itemIndex > -1 ->
+                        (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(itemIndex)
+                    else -> {}
+                }
+            }
+        }
+
 
         binding.btnTakePhoto.setOnClickListener {
             if (!hasPermissions(REQUIRED_PERMISSIONS_TAKE_PHOTO))
@@ -136,9 +155,6 @@ class CameraFragment : Fragment() {
             }
         }
 
-//        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
-        binding.partialsView.layoutManager = GridLayoutManager(view.context, 2, RecyclerView.HORIZONTAL, false)
-        binding.partialsView.adapter = PartialsAdapter()
 
         lifecycleScope.launchWhenCreated {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -149,8 +165,13 @@ class CameraFragment : Fragment() {
                             Toast.makeText(context, "The Repo is ${if (!state.isReady) "not" else ""} ready!", Toast.LENGTH_SHORT)
                                 .show()
 
+                            // enable the start of the evaluation
                             model.enableLive(state.isReady)
                             model.evaluateLive(false)
+
+                            // clear the ResultView
+                            binding.resultView.setResults(null)
+                            binding.resultView.invalidate()
                         }
                         is LiveEvaluationState.Start -> {
                             // show ui

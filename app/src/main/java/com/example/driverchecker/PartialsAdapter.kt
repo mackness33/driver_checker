@@ -9,22 +9,21 @@ import kotlin.math.round
 import kotlin.math.sqrt
 
 
-class PartialsAdapter(size: Int = 2, var sizeHolder: Int = 100) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
-    private val items: ImageDetectionArrayResult?
+class PartialsAdapter(val items: List<ImageDetectionArrayResult>, private var sizeHolder: Int = 100) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
 
     init {
-        items = ImageDetectionArrayResult(size)
-        val square = round(sqrt(size.toDouble()))
-        dimension = (if (size % square > 0) square+1 else square).toInt()
+        val square = round(sqrt(items.size.toDouble()))
+        dimension = (if (items.size % square > 0) square+1 else square).toInt()
     }
 
     /**
+//        viewHolder.predictionView.invalidate()
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val predictionView: RectView = view.findViewById(R.id.rec_view)
+        val predictionView: RectView = view.findViewById(R.id.rect_item)
     }
 
     // Create new views (invoked by the layout manager)
@@ -43,10 +42,8 @@ class PartialsAdapter(size: Int = 2, var sizeHolder: Int = 100) : RecyclerView.A
         // contents of the view with that element
         viewHolder.predictionView.updateDimensions(Pair(dimension, dimension))
         viewHolder.predictionView.updateSize(Pair(sizeHolder, sizeHolder))
-
-        viewHolder.predictionView.invalidate()
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = items?.size ?: 0
+    override fun getItemCount() = items.size
 }

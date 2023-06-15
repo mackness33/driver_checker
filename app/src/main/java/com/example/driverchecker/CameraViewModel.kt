@@ -2,29 +2,34 @@ package com.example.driverchecker
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionInput
 import com.example.driverchecker.machinelearning.data.MLResult
+import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import com.example.driverchecker.media.MediaRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlin.math.sign
 
 data class StaticMedia (val path : String?, val isVideo: Boolean = false)
 
 class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepository? = null): ViewModel() {
     private val mediaRepository : MediaRepository = MediaRepository()
+    private var collectResultJob: Job?
 
     init {
         if (imageDetectionRepository == null)
             imageDetectionRepository = ImageDetectionRepository()
+
+        collectResultJob = null
     }
 
     val result: LiveData<ImageDetectionArrayResult?>
@@ -95,6 +100,57 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         }
     }
 
+
+
+    private val _onPartialResultsChanged: MutableLiveData<Int> = MutableLiveData(-1)
+    val onPartialResultsChanged: LiveData<Int>
+        get () = _onPartialResultsChanged
+
+    protected val array = ArrayList<ImageDetectionArrayResult>()
+    var list: List<ImageDetectionArrayResult> = array
+        private set
+
+
+    private fun jobClassification (): Job {
+        return viewModelScope.launch(Dispatchers.Default) {
+            analysisState?.collect { state ->
+                when (state) {
+                    is LiveEvaluationState.Start -> {
+                        // add the partialResult to the resultsArray
+                        _onPartialResultsChanged.postValue(array.size - 1)
+                    }
+                    is LiveEvaluationState.Loading<ImageDetectionArrayResult> -> {
+                        // add the partialResult to the resultsArray
+                        if (state.partialResult != null) {
+                            array.add(state.partialResult)
+                            _onPartialResultsChanged.postValue(_onPartialResultsChanged.value?.inc())
+                        }
+                    }
+                    is LiveEvaluationState.Ready -> {
+                        // update the UI with the text of the class
+                        // save to the database the result with bulk of 10 and video
+                        array.clear()
+                        _onPartialResultsChanged.postValue(-10)
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    fun onStartEvaluation () {
+        collectResultJob = jobClassification()
+        collectResultJob?.invokeOnCompletion {
+            // clear arrayResult
+            array.clear()
+            _onPartialResultsChanged.value?.times(-1)
+        }
+    }
+
+    fun onStopEvaluation () {
+        collectResultJob?.cancel()
+    }
+
     fun updateImageUri (uri: Uri?) {
         _imageUri.value = uri
     }
@@ -136,9 +192,14 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             when (_isEvaluating.value) {
                 false -> {
                     imageDetectionRepository?.onStartLiveClassification(liveImages, viewModelScope)
+                    // start collecting the state to update the internal list of results
+                    onStartEvaluation()
                 }
                 true -> {
                     imageDetectionRepository?.onStopLiveClassification()
+                    // stop collecting the state of the internal list of results
+                    // and clear the list
+                    onStopEvaluation()
                 }
                 else -> {}
             }
