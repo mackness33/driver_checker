@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,31 +11,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageProxy
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.databinding.FragmentCameraBinding
-import com.example.driverchecker.machinelearning.data.ImageDetectionBox
-import com.example.driverchecker.machinelearning.data.MLResult
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
 import com.example.driverchecker.media.FileUtils
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.runBlocking
-import java.io.ByteArrayOutputStream
 
 
 //1
@@ -78,7 +66,7 @@ class CameraFragment : Fragment() {
 //        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
         binding.partialsView.layoutManager = GridLayoutManager(view.context, 5, RecyclerView.VERTICAL, true)
         binding.partialsView.itemAnimator = null
-        binding.partialsView.adapter = PartialsAdapter(model.listClassesPredictions)
+        binding.partialsView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
 
 //        val btnVideo = binding.btnRecordVideo
 //        val isEnabledObserver = Observer<Boolean?> { enable ->

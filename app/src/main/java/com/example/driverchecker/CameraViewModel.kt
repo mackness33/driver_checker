@@ -46,7 +46,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                     }
                     is LiveEvaluationState.Loading<ImageDetectionArrayResult> -> {
                         // add the partialResult to the resultsArray
-                        if (state.partialResult != null) {
+                        if (!state.partialResult.isNullOrEmpty()) {
                             insertPartialResult(state.partialResult)
                             _onPartialResultsChanged.postValue(array.size)
                             _lastResult.postValue(state.partialResult)
@@ -149,7 +149,10 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         get() = array
 
     protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
-    val listClassesPredictions: List<Pair<Int, List<Int>>>
+    val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
+        get() = arrayClassesPredictions
+
+    val predictionsGroupByClasses: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions
 
     protected val _passengerInfo = MutableLiveData(Pair(0, 0))
@@ -233,6 +236,8 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         }
     }
 }
+
+data class Prediction (val classes: List<Int>, val superClass: Int, val bitmap: Bitmap)
 
 class CameraViewModelFactory(private val repository: ImageDetectionRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

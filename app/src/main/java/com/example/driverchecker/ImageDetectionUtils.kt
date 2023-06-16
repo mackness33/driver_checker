@@ -27,7 +27,7 @@ object ImageDetectionUtils {
     ): ImageDetectionArrayResult {
 
         // Do an argsort on the confidence scores, from high to low.
-        boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
+        boxes.sortWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
         val selected: ArrayList<ImageDetectionResult> = ArrayList()
         val active = BooleanArray(boxes.size)
         Arrays.fill(active, true)
