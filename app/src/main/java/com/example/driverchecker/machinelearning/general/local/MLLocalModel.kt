@@ -17,7 +17,7 @@ abstract class MLLocalModel <Data, Result> (modelPath: String? = null) : MLModel
             loadModel(modelPath)
     }
 
-    final override fun loadModel(uri: String) {
+    override fun loadModel(uri: String) {
         try {
             // loading serialized torchscript module from packaged into app android asset model.pt,
             // app/src/model/assets/model.pt

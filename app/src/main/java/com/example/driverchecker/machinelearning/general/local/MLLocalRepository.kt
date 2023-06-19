@@ -22,8 +22,6 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
 
     init {
         _externalProgressState.tryEmit(LiveEvaluationState.Ready(false))
-//        _externalProgressState.distinctUntilChanged()
-//        shareInternalState()
         listenOnLoadingState()
     }
 
@@ -32,18 +30,9 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
             model?.isLoaded?.collect { state ->
                 if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(!state))
                     _externalProgressState.emit(LiveEvaluationState.Ready(state))
-//                _internalanalysisProgressState.compareAndSet(LiveEvaluationState.Ready(!state), LiveEvaluationState.Ready(state))
             }
         }
     }
-
-//    protected fun shareInternalState () {
-//        repositoryScope.launch {
-//            _internalanalysisProgressState.onEach { state ->
-//                _externalProgressState.emit(state)
-//            }
-//        }
-//    }
 
     override suspend fun instantClassification(input: Data): Result? {
         var result: Result? = null
@@ -91,7 +80,6 @@ abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<
             // check if the repo is ready to make evaluations
             if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 _externalProgressState.emit(LiveEvaluationState.Start(null))
-//            if (_internalanalysisProgressState.compareAndSet(LiveEvaluationState.Ready(true), LiveEvaluationState.Start(null))) {
                 model?.processAndEvaluatesStream(input)
                     ?.onEach {
                         if (it == null) throw Error("The result is null")

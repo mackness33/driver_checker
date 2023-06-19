@@ -1,3 +1,5 @@
 package com.example.driverchecker.machinelearning.data
 
-data class MLResult<R>(val result: R, val confidence: Float)
+import android.graphics.Bitmap
+
+data class MLResult<R>(val result: R, val confidence: Float, val classes: List<Int>, val bitmap: Bitmap)

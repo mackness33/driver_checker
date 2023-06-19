@@ -10,13 +10,14 @@ import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 import java.util.*
+import kotlin.collections.ArrayList
 
 typealias ImageDetectionResult = MLResult<ImageDetectionBox>
 typealias ImageDetectionArrayResult = ArrayList<ImageDetectionResult>
 
 open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<ImageDetectionInput, ImageDetectionArrayResult>(modelPath){
     override fun preProcess(data: ImageDetectionInput): ImageDetectionInput {
-        val resizedBitmap = Bitmap.createScaledBitmap(data.image, mInputWidth, inputHeight, true)
+        val resizedBitmap = Bitmap.createScaledBitmap(data.image, inputWidth, inputHeight, true)
         return ImageDetectionInput(resizedBitmap, data.scale, data.vector, data.start)
     }
 
@@ -28,7 +29,6 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
         // running the model
         val outputTuple: Array<IValue> = module!!.forward(IValue.from(inputTensor)).toTuple()
 
-
         // getting tensor content as java array of floats
         val predictions: FloatArray = outputTuple[0].toTensor().dataAsFloatArray
 
@@ -36,7 +36,8 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
                 predictions,
                 input.scale,
                 input.vector,
-                input.start
+                input.start,
+                input.image
             )
     }
 
@@ -45,23 +46,29 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
     }
 
     // model input image size
-    protected val mInputWidth = 640
+    protected val inputWidth = 640
     protected val inputHeight = 640
 
     // model output is of size 25200*(num_of_class+5)
     protected val outputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
-    protected val outputColumn = 7 // left, top, right, bottom, score and 80 class probability
+    protected val outputColumn = 5 // left, top, right, bottom, score and 80 class probability
     protected val threshold = 0.10f // score above which a detection is generated
     protected val maxPredictionsLimit = 5
 
-//    var mClasses: Array<String> = TODO()
+    protected val classes: ArrayList<String>? = null
+
+    fun loadModel(modulePath: String, classesPath: Pair<Int, String>) {
+        loadModel(modulePath)
+
+    }
 
     // The two methods nonMaxSuppression and IOU below are ported from https://github.com/hollance/YOLO-CoreML-MPSNNGraph/blob/master/Common/Helpers.swift
     open fun outputsToNMSPredictions(
         outputs: FloatArray,
         scale: Pair<Float, Float>,
         vector: Pair<Float, Float>,
-        start: Pair<Float, Float>
+        start: Pair<Float, Float>,
+        image: Bitmap
     ): ImageDetectionArrayResult {
         val results: ArrayList<MLResult<ImageDetectionBox>> = ArrayList()
         for (i in 0 until outputRow) {
@@ -94,10 +101,16 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<Ima
                         cls,
                         rect
                     ),
-                    outputs[i * outputColumn + 4]
+                    outputs[i * outputColumn + 4],
+                    listOf(1),
+                    image
                 ))
             }
         }
         return results
     }
+}
+
+data class ModelClasses (val name: String, val index: Int, ) {
+
 }
