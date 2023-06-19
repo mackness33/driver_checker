@@ -1,7 +1,5 @@
 package com.example.driverchecker
 
-import com.example.driverchecker.machinelearning.data.MLPrediction
-
 interface MLWindowInterface<Element>{
     fun totalNumber() : Int
 

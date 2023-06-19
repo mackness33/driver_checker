@@ -4,9 +4,10 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import com.example.driverchecker.machinelearning.data.IImageDetectionWithInput
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionResult
+import com.example.driverchecker.machinelearning.data.ImageDetectionOutput
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.
@@ -18,7 +19,7 @@ class ResultView : View {
     private var paintText: Paint? = null
     private var path: Path? = null
     private var rect: RectF? = null
-    private var results: ImageDetectionArrayResult? = null
+    private var results: ImageDetectionArrayListOutput? = null
 
     constructor(context: Context?) : super(context) {}
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
@@ -33,16 +34,16 @@ class ResultView : View {
         super.onDraw(canvas)
         if (results == null) return
 
-        val res: ImageDetectionArrayResult = results!!
+        val res: ImageDetectionArrayListOutput = results!!
 
-        for (box: ImageDetectionResult in res) {
+        for (box: IImageDetectionWithInput in res) {
             drawBox(canvas, box.result.rect)
             drawPath(canvas, box)
             drawText(canvas, box)
         }
     }
 
-    private fun drawText (canvas: Canvas, box: ImageDetectionResult) {
+    private fun drawText (canvas: Canvas, box: IImageDetectionWithInput) {
         paintText!!.color = Color.WHITE
         paintText!!.strokeWidth = 0f
         paintText!!.style = Paint.Style.FILL
@@ -60,7 +61,7 @@ class ResultView : View {
         )
     }
 
-    private fun drawPath (canvas: Canvas, box: ImageDetectionResult) {
+    private fun drawPath (canvas: Canvas, box: IImageDetectionWithInput) {
         path?.reset()
         rect?.set(
             box.result.rect.left.toFloat(),
@@ -79,7 +80,7 @@ class ResultView : View {
         canvas.drawRect(rect, paintRectangle!!)
     }
 
-    fun setResults(results: ImageDetectionArrayResult?) {
+    fun setResults(results: ImageDetectionArrayListOutput?) {
         this.results = results
     }
 

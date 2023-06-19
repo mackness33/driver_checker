@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 import kotlin.math.round
 import kotlin.math.sqrt
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
 class PredictionsAdapter(
-    val items: List<ImageDetectionArrayResult>,
+    val items: List<ImageDetectionArrayListOutput>,
     private var maxClasses:Int = 2,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64)
 ) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {

@@ -1,7 +1,8 @@
 package com.example.driverchecker
 
+import com.example.driverchecker.machinelearning.data.IImageDetectionBox
+import com.example.driverchecker.machinelearning.data.IImageDetectionData
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionResult
 
-class ImageDetectionWindow : MLWindow<ImageDetectionBox, ImageDetectionArrayResult>() {}
+class ImageDetectionWindow : MLWindow<IImageDetectionData, IImageDetectionBox, ImageDetectionArrayListOutput>() {}

@@ -1,28 +1,58 @@
 package com.example.driverchecker.machinelearning.data
 
-interface IMachineLearningResult<Result> {
-    val result: Result
-    val confidence: Float
-    val classes: List<Int>
+import android.graphics.Bitmap
+import android.graphics.RectF
+
+
+// ---------------------------------- INPUT ----------------------------------
+
+//interface IImageDetectionData :  IMachineLearningData<Bitmap>
+typealias IImageDetectionData =  IMachineLearningData<Bitmap>
+
+data class ImageDetectionBaseInput  (
+    override val data: Bitmap
+) : IImageDetectionData
+
+
+// ---------------------------------- OUTPUT ----------------------------------
+
+typealias IImageDetectionResult = IMachineLearningResult<IImageDetectionBox>
+
+typealias IImageDetectionWithInput = IMachineLearningResultWithInput<IImageDetectionData, IImageDetectionBox>
+
+interface IImageDetectionBox {
+    var classIndex: Int
+    var rect: RectF
 }
 
-interface IMachineLearningResultWithInput<Data, Result> : IMachineLearningResult<Result> {
-    val data: Data
-}
-
-interface IMachineLearningMetrics<Result> : IMachineLearningResult<Result> {}
-
-data class MachineLearningBaseOutput<Result>(
-    override val result: Result,
+data class ImageDetectionBaseOutput(
+    override val result: IImageDetectionBox,
     override val confidence: Float,
     override val classes: List<Int>
-) : IMachineLearningResult<Result>
+) : IImageDetectionResult
 
-data class MachineLearningOutput<Data, Result>(
-    override val result: Result,
+data class ImageDetectionOutput(
+    override val result: IImageDetectionBox,
     override val confidence: Float,
-    override val data: Data,
+    override val data: IImageDetectionData,
     override val classes: List<Int>
-) : IMachineLearningResultWithInput<Data, Result>
+) : IImageDetectionWithInput
+
+data class ImageDetectionBox (override var classIndex: Int, override var rect: RectF) : IImageDetectionBox
+
+
+// ---------------------------------- TYPE ALIASES ----------------------------------
+
+typealias ImageDetectionArrayOutput = MachineLearningArrayOutput<IImageDetectionData, IImageDetectionBox>
+typealias ImageDetectionArrayBaseOutput = MachineLearningArrayBaseOutput<ImageDetectionBox>
+
+typealias ImageDetectionListOutput = MachineLearningListOutput<IImageDetectionData, IImageDetectionBox>
+typealias ImageDetectionListBaseOutput = MachineLearningListBaseOutput<IImageDetectionBox>
+
+
+typealias ImageDetectionArrayListOutput = MachineLearningArrayListOutput<IImageDetectionData, IImageDetectionBox>
+typealias ImageDetectionArrayListBaseOutput = MachineLearningArrayListBaseOutput<IImageDetectionBox>
+
+
 
 // data class MachineLearningWindowOutput<Data, Result>(override val result: Result, override val confidence: Float, val classes: List<Int>, val data: Data) : IMachineLearningResult<Result>

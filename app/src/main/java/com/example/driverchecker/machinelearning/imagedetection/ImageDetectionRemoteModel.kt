@@ -1,19 +1,19 @@
 package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.Bitmap
-import com.example.driverchecker.machinelearning.data.ImageDetectionBox
-import com.example.driverchecker.machinelearning.data.ImageDetectionInput
-import com.example.driverchecker.machinelearning.data.MLMetrics
-import com.example.driverchecker.machinelearning.data.MLResult
+import com.example.driverchecker.machinelearning.data.IImageDetectionBox
+import com.example.driverchecker.machinelearning.data.IImageDetectionData
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteModel
 
-class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRemoteModel<ImageDetectionInput, ImageDetectionArrayResult>(modelPath){
-    override fun preProcess(data: ImageDetectionInput): ImageDetectionInput {
-        val resizedBitmap = Bitmap.createScaledBitmap(data.image, 640, 640, true)
-        return ImageDetectionInput(resizedBitmap, data.scale, data.vector, data.start)
+class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRemoteModel<IImageDetectionData, ImageDetectionArrayListOutput>(modelPath){
+    override fun preProcess(data: IImageDetectionData): ImageDetectionBaseInput {
+        val resizedBitmap = Bitmap.createScaledBitmap(data.data, 640, 640, true)
+        return ImageDetectionBaseInput(resizedBitmap)
     }
 
-    override fun evaluateData(input: ImageDetectionInput): ImageDetectionArrayResult {
+    override fun evaluateData(input: IImageDetectionData): ImageDetectionArrayListOutput {
         // todo: get the url from the os
 //        val url = URL("https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y")
 //
@@ -56,7 +56,7 @@ class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRem
         return ArrayList()
     }
 
-    override fun postProcess(output: ImageDetectionArrayResult): ImageDetectionArrayResult {
+    override fun postProcess(output: ImageDetectionArrayListOutput): ImageDetectionArrayListOutput {
 //        TODO("Not yet implemented")
         return output
     }

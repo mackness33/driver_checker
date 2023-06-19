@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
 import kotlin.math.round
 import kotlin.math.sqrt
 

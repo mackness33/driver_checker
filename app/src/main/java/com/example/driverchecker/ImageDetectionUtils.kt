@@ -1,8 +1,9 @@
 package com.example.driverchecker
 
 import android.graphics.RectF
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionResult
+import com.example.driverchecker.machinelearning.data.IImageDetectionWithInput
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayOutput
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
@@ -21,14 +22,14 @@ object ImageDetectionUtils {
      * - threshold: used to decide whether boxes overlap too much
      */
     fun nonMaxSuppression(
-        boxes: ImageDetectionArrayResult,
+        boxes: ImageDetectionArrayListOutput,
         limit: Int = Int.MAX_VALUE,
         threshold: Float
-    ): ImageDetectionArrayResult {
+    ): ImageDetectionArrayListOutput {
 
         // Do an argsort on the confidence scores, from high to low.
         boxes.sortWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
-        val selected: ArrayList<ImageDetectionResult> = ArrayList()
+        val selected: ImageDetectionArrayListOutput = ImageDetectionArrayListOutput()
         val active = BooleanArray(boxes.size)
         Arrays.fill(active, true)
         var numActive = active.size

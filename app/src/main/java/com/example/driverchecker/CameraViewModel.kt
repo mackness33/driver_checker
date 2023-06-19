@@ -5,10 +5,10 @@ import android.net.Uri
 import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.example.driverchecker.machinelearning.data.ImageDetectionInput
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
 import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionArrayResult
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import com.example.driverchecker.media.MediaRepository
 import kotlinx.coroutines.*
@@ -44,7 +44,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                         Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
 
                     }
-                    is LiveEvaluationState.Loading<ImageDetectionArrayResult> -> {
+                    is LiveEvaluationState.Loading<ImageDetectionArrayListOutput> -> {
                         // add the partialResult to the resultsArray
                         if (!state.partialResult.isNullOrEmpty()) {
                             insertPartialResult(state.partialResult)
@@ -53,7 +53,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                             Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
                         }
                     }
-                    is LiveEvaluationState.End<ImageDetectionArrayResult> -> {
+                    is LiveEvaluationState.End<ImageDetectionArrayListOutput> -> {
                         // update the UI with the text of the class
                         // save to the database the result with bulk of 10 and video
                         _isEvaluating.postValue(false)
@@ -65,7 +65,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         }
     }
 
-    val result: LiveData<ImageDetectionArrayResult?>
+    val result: LiveData<ImageDetectionArrayListOutput?>
         get() = _path.switchMap { media ->
             liveData {
                 when {
@@ -73,18 +73,20 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                     !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path))
                     media.isVideo -> {
                         mediaRepository.extractVideo(media.path)
-                        emit(imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionInput(bitmap) }, viewModelScope))
+                        emit(imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionBaseInput(
+                            bitmap
+                        ) }, viewModelScope))
                     }
                 }
             }
         }
 
 
-    private val _lastResult: MutableLiveData<ImageDetectionArrayResult?> = MutableLiveData(null)
-    val lastResult: LiveData<ImageDetectionArrayResult?>
+    private val _lastResult: MutableLiveData<ImageDetectionArrayListOutput?> = MutableLiveData(null)
+    val lastResult: LiveData<ImageDetectionArrayListOutput?>
         get() = _lastResult
 
-    val analysisState: SharedFlow<LiveEvaluationStateInterface<ImageDetectionArrayResult>>?
+    val analysisState: SharedFlow<LiveEvaluationStateInterface<ImageDetectionArrayListOutput>>?
         get() = imageDetectionRepository?.analysisProgressState
 
     private val _imageUri: MutableLiveData<Uri?> = MutableLiveData(null)
@@ -120,19 +122,19 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val pathVideo: LiveData<String?>
         get() = _pathVideo
 
-    private val _liveImages: MutableSharedFlow<ImageDetectionInput> = MutableSharedFlow (
+    private val _liveImages: MutableSharedFlow<ImageDetectionBaseInput> = MutableSharedFlow (
         replay = 0,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
     )
-    val liveImages: SharedFlow<ImageDetectionInput>
+    val liveImages: SharedFlow<ImageDetectionBaseInput>
             get() = _liveImages.asSharedFlow()
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
             val bitmap: Bitmap? = imageDetectionRepository?.imageProxyToBitmap(image)
             if (bitmap != null) {
-                _liveImages.emit(ImageDetectionInput(bitmap))
+                _liveImages.emit(ImageDetectionBaseInput(bitmap))
             }
             image.close()
         }
@@ -144,8 +146,8 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val onPartialResultsChanged: LiveData<Int>
         get () = _onPartialResultsChanged
 
-    protected val array = ArrayList<ImageDetectionArrayResult>()
-    val list: List<ImageDetectionArrayResult>
+    protected val array = ArrayList<ImageDetectionArrayListOutput>()
+    val list: List<ImageDetectionArrayListOutput>
         get() = array
 
     protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
@@ -163,7 +165,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val driverInfo: LiveData<Pair<Int, Int>>
         get() = _driverInfo
 
-    protected fun insertPartialResult (partialResult: ImageDetectionArrayResult) {
+    protected fun insertPartialResult (partialResult: ImageDetectionArrayListOutput) {
         val classInfo: Pair<Int, List<Int>> = Pair(
             1,
             partialResult

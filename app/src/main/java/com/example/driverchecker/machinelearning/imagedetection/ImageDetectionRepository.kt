@@ -2,25 +2,21 @@ package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.*
 import androidx.camera.core.ImageProxy
-import com.example.driverchecker.machinelearning.data.ImageDetectionBox
-import com.example.driverchecker.machinelearning.data.ImageDetectionInput
-import com.example.driverchecker.machinelearning.data.MLResult
+import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.general.MLRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.onEach
 import java.io.ByteArrayOutputStream
 
 
-class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<ImageDetectionInput, ImageDetectionBox, ImageDetectionArrayResult>() {
+class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<IImageDetectionData, IImageDetectionBox, ImageDetectionArrayListOutput>() {
 
     init {
         local = ImageDetectionLocalRepository(YOLOModel(localUri))
         remote = ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri))
     }
 
-    suspend fun instantClassification (path:String) : ImageDetectionArrayResult? {
-        return instantClassification(ImageDetectionInput(BitmapFactory.decodeFile(path)))
+    suspend fun instantClassification (path:String) : ImageDetectionArrayListOutput? {
+        return instantClassification(ImageDetectionBaseInput(BitmapFactory.decodeFile(path)))
     }
 
     fun imageProxyToBitmap(image: ImageProxy): Bitmap {

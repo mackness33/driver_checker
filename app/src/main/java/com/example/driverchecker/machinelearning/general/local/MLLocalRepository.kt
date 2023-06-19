@@ -2,15 +2,15 @@ package com.example.driverchecker.machinelearning.general.local
 
 import android.util.Log
 import com.example.driverchecker.MLWindow
-import com.example.driverchecker.machinelearning.data.MLResult
+import com.example.driverchecker.machinelearning.data.MachineLearningArrayListOutput
 import com.example.driverchecker.machinelearning.general.MLRepositoryInterface
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class MLLocalRepository <Data, Prediction, Result : ArrayList<MLResult<Prediction>>> (protected open val model: MLLocalModel<Data, Result>? = null) :
+abstract class MLLocalRepository <Data, Prediction, Result : MachineLearningArrayListOutput<Data, Prediction>> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
-    protected var window: MLWindow<Prediction, Result> = MLWindow()
+    protected var window: MLWindow<Data, Prediction, Result> = MLWindow()
     protected val _internalanalysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
