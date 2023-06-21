@@ -4,12 +4,23 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.general.IClassifier
+import com.example.driverchecker.machinelearning.general.IClassifierModel
+import com.example.driverchecker.machinelearning.general.MutableClassifier
 import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 import kotlin.collections.ArrayList
 
-open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<IImageDetectionData, ImageDetectionArrayListOutput>(modelPath){
+open class YOLOModel (modelPath: String? = null) :
+    MLLocalModel<IImageDetectionData, ImageDetectionArrayListOutput>(modelPath),
+    IClassifierModel<IImageDetectionData, ImageDetectionArrayListOutput, Boolean>
+{
+    val _classifier = MutableClassifier<Boolean>(null)
+    val classifier: IClassifier<Boolean>
+        get() = _classifier
+
+
     override fun preProcess(data: IImageDetectionData): IImageDetectionData {
         val resizedBitmap = Bitmap.createScaledBitmap(data.data, inputWidth, inputHeight, true)
         return ImageDetectionBaseInput(resizedBitmap)
@@ -97,5 +108,9 @@ open class YOLOModel (private val modelPath: String? = null) :  MLLocalModel<IIm
             }
         }
         return results
+    }
+
+    override fun loadClassifications(newClassifications: ClassificationSuperclassMap<Boolean>?) : Boolean {
+        return _classifier.load(newClassifications)
     }
 }

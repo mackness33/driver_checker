@@ -2,11 +2,35 @@ package com.example.driverchecker.machinelearning.general
 
 import com.example.driverchecker.machinelearning.data.*
 
-open class MutableClassifier<Superclass : Comparable<Superclass>> : IClassifier<Superclass> {
-    protected val _superclasses = mutableMapOf<Superclass, MutableSet<IClassification<Superclass>>>()
+open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClassifier<Superclass> {
+    protected val _superclasses: MutableMap<Superclass, MutableSet<IClassification<Superclass>>>
+
+    constructor (newDataset: ClassificationSuperclassMap<Superclass>?) {
+        _superclasses = mutableMapOf<Superclass, MutableSet<IClassification<Superclass>>>()
+
+        load(newDataset)
+    }
+
+    constructor (newClassifier: IClassifier<Superclass>) {
+        _superclasses = mutableMapOf<Superclass, MutableSet<IClassification<Superclass>>>()
+
+        load(newClassifier.superclasses)
+    }
 
     override val superclasses : ClassificationSuperclassMap<Superclass>
         get() = _superclasses
+
+
+    override fun load(newDataset: ClassificationSuperclassMap<Superclass>?) : Boolean {
+        if (newDataset != null) {
+            for ((group, set) in newDataset.entries)
+                _superclasses[group] = set.toMutableSet()
+
+            return true
+        }
+
+        return false
+    }
 
     override fun add(name: String, group: Superclass) {
         if (!exist(name)) {
