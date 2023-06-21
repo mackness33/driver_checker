@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.general
 
 import com.example.driverchecker.machinelearning.data.*
 
-open class Classifier<Superclass : Comparable<Superclass>> : IClassifier<Superclass> {
+open class MutableClassifier<Superclass : Comparable<Superclass>> : IClassifier<Superclass> {
     protected val _superclasses = mutableMapOf<Superclass, MutableSet<IClassification<Superclass>>>()
 
     override val superclasses : ClassificationSuperclassMap<Superclass>
@@ -11,13 +11,13 @@ open class Classifier<Superclass : Comparable<Superclass>> : IClassifier<Supercl
     override fun add(name: String, group: Superclass) {
         if (!exist(name)) {
             _superclasses.putIfAbsent(group, mutableSetOf())
-            _superclasses[group]!!.add(Classification(name, _superclasses[group]!!.size, group))
+            _superclasses[group]!!.add(Classification(name, size(), group))
         }
     }
 
     override fun append(name: String, group: Superclass) {
         if (!exist(name) && _superclasses.contains(group)) {
-            _superclasses[group]!!.add(Classification(name, _superclasses[group]!!.size, group))
+            _superclasses[group]!!.add(Classification(name, size(), group))
         }
     }
 
@@ -161,5 +161,13 @@ open class Classifier<Superclass : Comparable<Superclass>> : IClassifier<Supercl
 
     override fun getSuperclass(group: Superclass): ClassificationSet<Superclass>? {
         return _superclasses[group]
+    }
+
+    override fun size(): Int {
+        return _superclasses.values.fold(0) { size, set -> size + set.size }
+    }
+
+    override fun sizeSuperClass(): Int {
+        return _superclasses.size
     }
 }
