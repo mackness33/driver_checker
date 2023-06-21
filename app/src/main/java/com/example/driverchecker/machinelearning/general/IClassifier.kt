@@ -1,31 +1,35 @@
 package com.example.driverchecker.machinelearning.general
 
-import com.example.driverchecker.machinelearning.data.Classification
+import com.example.driverchecker.machinelearning.data.*
 
-interface IClassifier {
-    fun add(name: String)
+interface IClassifier<Superclass> {
+    val superclasses : ClassificationSuperclassMap<Superclass>
 
-    fun asList() : List<Classification>
-    fun asSortedList() : List<Classification>
+    fun add(name: String, group: Superclass)
+    fun append(name: String, group: Superclass)
 
-    fun checkName(name: String) : Boolean
-    fun checkIndex(index: Int) : Boolean
-    fun check(classification: Classification) : Boolean
+    fun put(newSuperclass: Set<IClassification<Superclass>>, group: Superclass)
+    fun putIfAbsent(newSuperclass: Set<IClassification<Superclass>>, group: Superclass)
 
-    fun clean(superclass: Boolean?)
+    fun asList(outerComparator: Comparator<ClassificationSet<Superclass>>?, innerComparator: Comparator<IClassification<Superclass>>?) : ClassificationList<Superclass>
+    fun asSortedList(listComparator: Comparator<IClassification<Superclass>>?) : ClassificationList<Superclass>
+    fun asUnsortedList() : ClassificationList<Superclass>
 
-    fun remove (name: String)
-    fun remove (index: Int)
+    fun clear(group: Superclass?)
 
-    fun getIndex (name: String) : Int
-    fun getName (index: Int) : String
+    fun remove (name: String) : Boolean
+    fun remove (index: Int) : Boolean
 
-    fun getClassification (name: String) : Classification
-    fun getClassification (index: Int) : Classification
+    fun delete (name: String) : Boolean
+    fun delete (index: Int) : Boolean
+
+    fun get (name: String) : IClassification<Superclass>?
+    fun get (index: Int) : IClassification<Superclass>?
+    fun get (classification: IClassification<Superclass>) : IClassification<Superclass>?
 
     fun exist (name: String) : Boolean
     fun exist (index: Int) : Boolean
-    fun exist (classification: Classification) : Boolean
+    fun exist (classification: IClassification<Superclass>) : Boolean
 
-    fun getSuperclass (isDriver: Boolean) : List<Classification>
+    fun getSuperclass (group: Superclass) : ClassificationSet<Superclass>?
 }
