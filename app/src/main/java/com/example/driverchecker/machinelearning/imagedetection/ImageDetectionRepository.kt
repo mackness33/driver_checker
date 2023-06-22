@@ -8,12 +8,16 @@ import kotlinx.coroutines.CoroutineScope
 import java.io.ByteArrayOutputStream
 
 
-class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null) : MLRepository<IImageDetectionData, IImageDetectionBox, ImageDetectionArrayListOutput>() {
+class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null, classificationJson: String?) : MLRepository<IImageDetectionData, IImageDetectionBox, ImageDetectionArrayListOutput>() {
 
     init {
-        local = ImageDetectionLocalRepository(YOLOModel(localUri))
+        local = ImageDetectionLocalRepository(YOLOModel(localUri, classificationJson))
         remote = ImageDetectionRemoteRepository(ImageDetectionRemoteModel(remoteUri))
     }
+
+//    constructor (localUri: String? = null, remoteUri: String? = null, classificationJson: String?) : this (localUri, remoteUri) {
+//
+//    }
 
     suspend fun instantClassification (path:String) : ImageDetectionArrayListOutput? {
         return instantClassification(ImageDetectionBaseInput(BitmapFactory.decodeFile(path)))
@@ -41,8 +45,11 @@ class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = n
     companion object {
         @Volatile private var INSTANCE: ImageDetectionRepository? = null
 
-        fun getInstance(localUri: String?, remoteUri: String?): ImageDetectionRepository =
-            INSTANCE ?: ImageDetectionRepository(localUri, remoteUri)
+//        fun getInstance(localUri: String?, remoteUri: String?): ImageDetectionRepository =
+//            INSTANCE ?: ImageDetectionRepository(localUri, remoteUri)
+
+        fun getInstance(localUri: String?, remoteUri: String?, classificationJson: String?): ImageDetectionRepository =
+            INSTANCE ?: ImageDetectionRepository(localUri, remoteUri, classificationJson)
 
     }
 

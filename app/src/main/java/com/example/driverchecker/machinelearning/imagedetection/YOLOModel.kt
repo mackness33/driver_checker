@@ -2,22 +2,32 @@ package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.Bitmap
 import android.graphics.RectF
-import com.example.driverchecker.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.general.IClassifier
 import com.example.driverchecker.machinelearning.general.IClassifierModel
 import com.example.driverchecker.machinelearning.general.MutableClassifier
 import com.example.driverchecker.machinelearning.general.local.MLLocalModel
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 import kotlin.collections.ArrayList
 
 open class YOLOModel (modelPath: String? = null) :
     MLLocalModel<IImageDetectionData, ImageDetectionArrayListOutput>(modelPath),
-    IClassifierModel<IImageDetectionData, ImageDetectionArrayListOutput, Boolean>
+    IClassifierModel<IImageDetectionData, ImageDetectionArrayListOutput, String>
 {
-    val _classifier = MutableClassifier<Boolean>(null)
-    val classifier: IClassifier<Boolean>
+    constructor(modelPath: String? = null, classificationsJson: String? = null) : this(modelPath) {
+        loadClassifications(classificationsJson)
+    }
+
+    constructor(modelPath: String? = null, newClassifications: ClassificationSuperclassMap<String>? = null) : this(modelPath) {
+        loadClassifications(newClassifications)
+    }
+
+    val _classifier = MutableClassifier<String>(null)
+    val classifier: IClassifier<String>
         get() = _classifier
 
 
@@ -110,7 +120,17 @@ open class YOLOModel (modelPath: String? = null) :
         return results
     }
 
-    override fun loadClassifications(newClassifications: ClassificationSuperclassMap<Boolean>?) : Boolean {
+    override fun loadClassifications(newClassifications: ClassificationSuperclassMap<String>?) : Boolean {
         return _classifier.load(newClassifications)
+    }
+
+    override fun loadClassifications(json: String?) : Boolean {
+        if (json.isNullOrBlank())
+            return false
+
+        val importedJson = Json.decodeFromString<BaseClassifier<String>>(json)
+        val res = _classifier.load(importedJson)
+
+        return res
     }
 }

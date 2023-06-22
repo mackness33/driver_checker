@@ -18,4 +18,6 @@ interface IMutableClassifier<Superclass> : IClassifier<Superclass> {
     fun delete (index: Int) : Boolean
 
     fun load(newDataset: ClassificationSuperclassMap<Superclass>?) : Boolean
+
+    fun load(importedJson: BaseClassifier<Superclass>?) : Boolean
 }

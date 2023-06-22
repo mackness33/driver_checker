@@ -1,12 +1,8 @@
-package com.example.driverchecker
+package com.example.driverchecker.machinelearning.imagedetection
 
 import android.graphics.RectF
-import com.example.driverchecker.machinelearning.data.IImageDetectionWithInput
 import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayOutput
 import java.util.*
-import kotlin.Comparator
-import kotlin.collections.ArrayList
 import kotlin.math.max
 
 object ImageDetectionUtils {
@@ -27,7 +23,7 @@ object ImageDetectionUtils {
         threshold: Float
     ): ImageDetectionArrayListOutput {
 
-        // Do an argsort on the confidence scores, from high to low.
+        // Do an argument sort on the confidence scores, from high to low.
         boxes.sortWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
         val selected: ImageDetectionArrayListOutput = ImageDetectionArrayListOutput()
         val active = BooleanArray(boxes.size)
@@ -49,7 +45,7 @@ object ImageDetectionUtils {
                 for (j in i + 1 until boxes.size) {
                     if (active[j]) {
                         val boxB = boxes[j]
-                        val iou = intersactionOverUnion(boxA.result.rect, boxB.result.rect)
+                        val iou = intersectionOverUnion(boxA.result.rect, boxB.result.rect)
                         if (iou > threshold) {
                             active[j] = false
                             numActive -= 1
@@ -69,7 +65,7 @@ object ImageDetectionUtils {
     /**
      * Computes intersection-over-union overlap between two bounding boxes.
      */
-    fun intersactionOverUnion(a: RectF, b: RectF): Float {
+    fun intersectionOverUnion(a: RectF, b: RectF): Float {
         val areaA: Float = ((a.right - a.left) * (a.bottom - a.top)).toFloat()
         if (areaA <= 0.0) return 0.0f
 

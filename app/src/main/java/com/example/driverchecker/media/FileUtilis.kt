@@ -345,10 +345,13 @@ class FileUtils() {
                         val column_index =
                             cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                         if (cursor?.moveToFirst() == true) {
-                            return cursor?.getString(column_index!!)
+                            return cursor.getString(column_index!!)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
+                    }
+                    finally {
+                        cursor?.close()
                     }
                 }
             }
@@ -379,6 +382,20 @@ class FileUtils() {
                 }
                 return file.absolutePath
             }
+        }
+
+        /**
+         * Copies specified asset to the file in /files app directory and returns this file absolute path.
+         *
+         * @return absolute file path
+         */
+        @Throws(IOException::class)
+        fun assetLoadJson(context: Context, assetName: String?): String {
+            if (!assetName.isNullOrBlank()) {
+                return context.assets.open(assetName).bufferedReader().use { it.readText() }
+            }
+
+            return ""
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.general
 
+import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 
 open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClassifier<Superclass> {
@@ -25,6 +26,25 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         if (newDataset != null) {
             for ((group, set) in newDataset.entries)
                 _superclasses[group] = set.toMutableSet()
+
+            return true
+        }
+
+        return false
+    }
+
+    override fun load(importedJson: BaseClassifier<Superclass>?) : Boolean {
+        if (importedJson != null) {
+            try {
+                for ((group, set) in importedJson.value.entries)
+                    for (name in set)
+                        add(name, group)
+            } catch (e: Throwable) {
+                Log.e("ImportJsonToClassifier", e.message.toString())
+
+                return false
+            }
+
 
             return true
         }
@@ -172,15 +192,15 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
     }
 
     override fun exist(name: String): Boolean {
-        return _superclasses.values.find { set -> set.any { classification -> classification.name == name } } == null
+        return _superclasses.values.find { set -> set.any { classification -> classification.name == name } } != null
     }
 
     override fun exist(index: Int): Boolean {
-        return _superclasses.values.find { set -> set.any { classification -> classification.index == index } } == null
+        return _superclasses.values.find { set -> set.any { classification -> classification.index == index } } != null
     }
 
     override fun exist(classification: IClassification<Superclass>): Boolean {
-        return _superclasses.values.find { supergroup -> supergroup.contains(classification) } == null
+        return _superclasses.values.find { supergroup -> supergroup.contains(classification) } != null
     }
 
     override fun getSuperclass(group: Superclass): ClassificationSet<Superclass>? {

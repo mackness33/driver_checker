@@ -4,4 +4,5 @@ import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMa
 
 interface IClassifierModel<Data, Result, Superclass> : MLModelInterface<Data, Result> {
     fun loadClassifications(newClassifications: ClassificationSuperclassMap<Superclass>?) : Boolean
+    fun loadClassifications(json: Superclass?) : Boolean
 }

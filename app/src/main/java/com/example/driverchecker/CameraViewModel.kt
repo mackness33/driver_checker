@@ -22,9 +22,6 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
 //    private var collectResultJob: Job?
 
     init {
-        if (imageDetectionRepository == null)
-            imageDetectionRepository = ImageDetectionRepository()
-
         viewModelScope.launch(Dispatchers.Default) {
             analysisState?.collect { state ->
                 when (state) {
