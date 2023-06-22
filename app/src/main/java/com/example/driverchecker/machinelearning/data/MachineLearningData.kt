@@ -13,38 +13,38 @@ data class MachineLearningBaseInput<Data>(
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IMachineLearningResult<Result> {
+interface IMachineLearningResult<Result, Superclass> {
     val result: Result
     val confidence: Float
-    val classes: List<Int>
+    val group: IClassification<Superclass>
 }
 
-interface IMachineLearningResultWithInput<Data, Result> : IMachineLearningResult<Result>, IMachineLearningData<Data>
+interface IMachineLearningResultWithInput<Data, Result, Superclass> : IMachineLearningResult<Result, Superclass>, IMachineLearningData<Data>
 
-data class MachineLearningBaseOutput<Result>(
+data class MachineLearningBaseOutput<Result, Superclass>(
     override val result: Result,
     override val confidence: Float,
-    override val classes: List<Int>
-) : IMachineLearningResult<Result>
+    override val group: IClassification<Superclass>
+) : IMachineLearningResult<Result, Superclass>
 
-data class MachineLearningOutput<Data, Result>(
+data class MachineLearningOutput<Data, Result, Superclass>(
     override val result: Result,
     override val confidence: Float,
     override val data: Data,
-    override val classes: List<Int>
-) : IMachineLearningResultWithInput<Data, Result>
+    override val group: IClassification<Superclass>
+) : IMachineLearningResultWithInput<Data, Result, Superclass>
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias MachineLearningArrayOutput<Data, Result> = Array<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningArrayBaseOutput<Result> = Array<IMachineLearningResult<Result>>
+typealias MachineLearningArrayOutput<Data, Result, Superclass> = Array<IMachineLearningResultWithInput<Data, Result, Superclass>>
+typealias MachineLearningArrayBaseOutput<Result, Superclass> = Array<IMachineLearningResult<Result, Superclass>>
 
-typealias MachineLearningListOutput<Data, Result> = List<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningListBaseOutput<Result> = List<IMachineLearningResult<Result>>
+typealias MachineLearningListOutput<Data, Result, Superclass> = List<IMachineLearningResultWithInput<Data, Result, Superclass>>
+typealias MachineLearningListBaseOutput<Result, Superclass> = List<IMachineLearningResult<Result, Superclass>>
 
-typealias MachineLearningArrayListOutput<Data, Result> = ArrayList<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningArrayListBaseOutput<Result> = ArrayList<IMachineLearningResult<Result>>
+typealias MachineLearningArrayListOutput<Data, Result, Superclass> = ArrayList<IMachineLearningResultWithInput<Data, Result, Superclass>>
+typealias MachineLearningArrayListBaseOutput<Result, Superclass> = ArrayList<IMachineLearningResult<Result, Superclass>>
 
 // interface IMachineLearningMetrics<Result> : IMachineLearningResult<Result>
 

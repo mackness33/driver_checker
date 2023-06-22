@@ -13,7 +13,7 @@ import kotlin.math.sqrt
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
 class PredictionsAdapter(
-    val items: List<ImageDetectionArrayListOutput>,
+    val items: List<ImageDetectionArrayListOutput<String>>,
     private var maxClasses:Int = 2,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64)
 ) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {

@@ -4,4 +4,4 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.general.local.MLLocalModel
 import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
 
-class ImageDetectionLocalRepository (override val model: MLLocalModel<IImageDetectionData, ImageDetectionArrayListOutput>?) : MLLocalRepository<IImageDetectionData, IImageDetectionBox, ImageDetectionArrayListOutput> (model) {}
+class ImageDetectionLocalRepository (override val model: MLLocalModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>?) : MLLocalRepository<IImageDetectionData, IImageDetectionBox, String, ImageDetectionArrayListOutput<String>> (model) {}

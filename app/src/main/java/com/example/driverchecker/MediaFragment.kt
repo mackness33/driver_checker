@@ -34,7 +34,7 @@ class MediaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         /* OBSERVE CHANGES ON THE RESULT*/
         val txt = binding.txtResult
-        val resultObserver = Observer<ImageDetectionArrayListOutput?> { result ->
+        val resultObserver = Observer<ImageDetectionArrayListOutput<String>?> { result ->
             txt.text = if (result == null) result.toString() else "null"
             binding.resultView.setResults(result)
             binding.resultView.invalidate()
@@ -67,7 +67,7 @@ class MediaFragment : Fragment() {
                             Toast.makeText(context, "Start of flow", Toast.LENGTH_SHORT)
                                 .show()
                         }
-                        is LiveEvaluationState.Loading<ImageDetectionArrayListOutput> -> {
+                        is LiveEvaluationState.Loading<ImageDetectionArrayListOutput<String>> -> {
                             // show ui
 //                            Toast.makeText(context, "Loading: ${state.partialResult?.result} for the ${state.index} time", Toast.LENGTH_SHORT)
 //                                .show()
@@ -81,7 +81,7 @@ class MediaFragment : Fragment() {
                             binding.resultView.setResults(state.partialResult)
                             binding.resultView.invalidate()
                         }
-                        is LiveEvaluationState.End<ImageDetectionArrayListOutput> -> {
+                        is LiveEvaluationState.End<ImageDetectionArrayListOutput<String>> -> {
                             // show error message
                             Toast.makeText(
                                 context,

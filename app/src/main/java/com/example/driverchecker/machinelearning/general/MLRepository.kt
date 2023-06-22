@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class MLRepository<Data, Prediction, Result : MachineLearningArrayListOutput<Data, Prediction>> () : MLRepositoryInterface<Data, Result> {
+abstract class MLRepository<Data, Prediction, Superclass, Result : MachineLearningArrayListOutput<Data, Prediction, Superclass>> () : MLRepositoryInterface<Data, Result> {
     protected val isOnline: Boolean = false
     // IDEA: can be transformed into a set of internal repositories
-    protected var local: MLLocalRepository<Data, Prediction, Result>? = null
-    protected var remote: MLRemoteRepository<Data, Prediction, Result>? = null
+    protected var local: MLLocalRepository<Data, Prediction, Superclass, Result>? = null
+    protected var remote: MLRemoteRepository<Data, Prediction, Superclass, Result>? = null
 
     override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = if (isOnline) remote?.analysisProgressState else local?.analysisProgressState

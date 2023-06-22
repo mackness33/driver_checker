@@ -41,7 +41,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                         Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
 
                     }
-                    is LiveEvaluationState.Loading<ImageDetectionArrayListOutput> -> {
+                    is LiveEvaluationState.Loading<ImageDetectionArrayListOutput<String>> -> {
                         // add the partialResult to the resultsArray
                         if (!state.partialResult.isNullOrEmpty()) {
                             insertPartialResult(state.partialResult)
@@ -50,7 +50,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
                             Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
                         }
                     }
-                    is LiveEvaluationState.End<ImageDetectionArrayListOutput> -> {
+                    is LiveEvaluationState.End<ImageDetectionArrayListOutput<String>> -> {
                         // update the UI with the text of the class
                         // save to the database the result with bulk of 10 and video
                         _isEvaluating.postValue(false)
@@ -62,7 +62,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         }
     }
 
-    val result: LiveData<ImageDetectionArrayListOutput?>
+    val result: LiveData<ImageDetectionArrayListOutput<String>?>
         get() = _path.switchMap { media ->
             liveData {
                 when {
@@ -79,11 +79,11 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         }
 
 
-    private val _lastResult: MutableLiveData<ImageDetectionArrayListOutput?> = MutableLiveData(null)
-    val lastResult: LiveData<ImageDetectionArrayListOutput?>
+    private val _lastResult: MutableLiveData<ImageDetectionArrayListOutput<String>?> = MutableLiveData(null)
+    val lastResult: LiveData<ImageDetectionArrayListOutput<String>?>
         get() = _lastResult
 
-    val analysisState: SharedFlow<LiveEvaluationStateInterface<ImageDetectionArrayListOutput>>?
+    val analysisState: SharedFlow<LiveEvaluationStateInterface<ImageDetectionArrayListOutput<String>>>?
         get() = imageDetectionRepository?.analysisProgressState
 
     private val _imageUri: MutableLiveData<Uri?> = MutableLiveData(null)
@@ -143,8 +143,8 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val onPartialResultsChanged: LiveData<Int>
         get () = _onPartialResultsChanged
 
-    protected val array = ArrayList<ImageDetectionArrayListOutput>()
-    val list: List<ImageDetectionArrayListOutput>
+    protected val array = ArrayList<ImageDetectionArrayListOutput<String>>()
+    val list: List<ImageDetectionArrayListOutput<String>>
         get() = array
 
     protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
@@ -162,7 +162,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
     val driverInfo: LiveData<Pair<Int, Int>>
         get() = _driverInfo
 
-    protected fun insertPartialResult (partialResult: ImageDetectionArrayListOutput) {
+    protected fun insertPartialResult (partialResult: ImageDetectionArrayListOutput<String>) {
         val classInfo: Pair<Int, List<Int>> = Pair(
             1,
             partialResult

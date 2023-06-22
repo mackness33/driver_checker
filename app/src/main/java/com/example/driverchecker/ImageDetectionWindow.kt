@@ -5,4 +5,4 @@ import com.example.driverchecker.machinelearning.data.IImageDetectionData
 import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 
-class ImageDetectionWindow : MLWindow<IImageDetectionData, IImageDetectionBox, ImageDetectionArrayListOutput>() {}
+class ImageDetectionWindow : MLWindow<IImageDetectionData, IImageDetectionBox, String, ImageDetectionArrayListOutput<String>>() {}

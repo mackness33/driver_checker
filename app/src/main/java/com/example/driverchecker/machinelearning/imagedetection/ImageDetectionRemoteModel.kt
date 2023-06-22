@@ -7,13 +7,13 @@ import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOut
 import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
 import com.example.driverchecker.machinelearning.general.remote.MLRemoteModel
 
-class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRemoteModel<IImageDetectionData, ImageDetectionArrayListOutput>(modelPath){
+class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRemoteModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>(modelPath){
     override fun preProcess(data: IImageDetectionData): ImageDetectionBaseInput {
         val resizedBitmap = Bitmap.createScaledBitmap(data.data, 640, 640, true)
         return ImageDetectionBaseInput(resizedBitmap)
     }
 
-    override fun evaluateData(input: IImageDetectionData): ImageDetectionArrayListOutput {
+    override fun evaluateData(input: IImageDetectionData): ImageDetectionArrayListOutput<String> {
         // todo: get the url from the os
 //        val url = URL("https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y")
 //
@@ -56,7 +56,7 @@ class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRem
         return ArrayList()
     }
 
-    override fun postProcess(output: ImageDetectionArrayListOutput): ImageDetectionArrayListOutput {
+    override fun postProcess(output: ImageDetectionArrayListOutput<String>): ImageDetectionArrayListOutput<String> {
 //        TODO("Not yet implemented")
         return output
     }

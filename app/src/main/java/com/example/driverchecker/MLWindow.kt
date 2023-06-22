@@ -2,7 +2,7 @@ package com.example.driverchecker
 
 import com.example.driverchecker.machinelearning.data.*
 
-open class MLWindow<Data, Prediction, Result : MachineLearningArrayListOutput<Data, Prediction>> (val size: Int = 3, val threshold: Float = 0.15f) : MLWindowInterface<Result> {
+open class MLWindow<Data, Prediction, Superclass, Result : MachineLearningArrayListOutput<Data, Prediction, Superclass>> (val size: Int = 3, val threshold: Float = 0.15f) : MLWindowInterface<Result> {
     protected val window : MutableList<Result> = mutableListOf()
 
     var confidence: Float = 0f

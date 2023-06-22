@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import java.io.ByteArrayOutputStream
 
 
-class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null, classificationJson: String?) : MLRepository<IImageDetectionData, IImageDetectionBox, ImageDetectionArrayListOutput>() {
+class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = null, classificationJson: String?) : MLRepository<IImageDetectionData, IImageDetectionBox, String, ImageDetectionArrayListOutput<String>>() {
 
     init {
         local = ImageDetectionLocalRepository(YOLOModel(localUri, classificationJson))
@@ -19,7 +19,7 @@ class ImageDetectionRepository (localUri: String? = null, remoteUri: String? = n
 //
 //    }
 
-    suspend fun instantClassification (path:String) : ImageDetectionArrayListOutput? {
+    suspend fun instantClassification (path:String) : ImageDetectionArrayListOutput<String>? {
         return instantClassification(ImageDetectionBaseInput(BitmapFactory.decodeFile(path)))
     }
 

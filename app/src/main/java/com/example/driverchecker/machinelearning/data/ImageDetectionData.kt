@@ -6,9 +6,6 @@ import android.graphics.RectF
 
 // ---------------------------------- INPUT ----------------------------------
 
-//interface IImageDetectionData :  IMachineLearningData<Bitmap>
-typealias IImageDetectionData =  IMachineLearningData<Bitmap>
-
 data class ImageDetectionBaseInput  (
     override val data: Bitmap
 ) : IImageDetectionData
@@ -16,42 +13,44 @@ data class ImageDetectionBaseInput  (
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-typealias IImageDetectionResult = IMachineLearningResult<IImageDetectionBox>
-
-typealias IImageDetectionWithInput = IMachineLearningResultWithInput<IImageDetectionData, IImageDetectionBox>
-
 interface IImageDetectionBox {
     var classIndex: Int
     var rect: RectF
 }
 
-data class ImageDetectionBaseOutput(
+data class ImageDetectionBaseOutput<Superclass>(
     override val result: IImageDetectionBox,
     override val confidence: Float,
-    override val classes: List<Int>
-) : IImageDetectionResult
+    override val group: IClassification<Superclass>
+) : IImageDetectionResult<Superclass>
 
-data class ImageDetectionOutput(
+data class ImageDetectionOutput<Superclass>(
     override val result: IImageDetectionBox,
     override val confidence: Float,
     override val data: IImageDetectionData,
-    override val classes: List<Int>
-) : IImageDetectionWithInput
+    override val group: IClassification<Superclass>
+) : IImageDetectionWithInput<Superclass>
 
 data class ImageDetectionBox (override var classIndex: Int, override var rect: RectF) : IImageDetectionBox
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias ImageDetectionArrayOutput = MachineLearningArrayOutput<IImageDetectionData, IImageDetectionBox>
-typealias ImageDetectionArrayBaseOutput = MachineLearningArrayBaseOutput<ImageDetectionBox>
-
-typealias ImageDetectionListOutput = MachineLearningListOutput<IImageDetectionData, IImageDetectionBox>
-typealias ImageDetectionListBaseOutput = MachineLearningListBaseOutput<IImageDetectionBox>
+typealias IImageDetectionData =  IMachineLearningData<Bitmap>
 
 
-typealias ImageDetectionArrayListOutput = MachineLearningArrayListOutput<IImageDetectionData, IImageDetectionBox>
-typealias ImageDetectionArrayListBaseOutput = MachineLearningArrayListBaseOutput<IImageDetectionBox>
+typealias IImageDetectionResult<Superclass> = IMachineLearningResult<IImageDetectionBox, Superclass>
+typealias IImageDetectionWithInput<Superclass> = IMachineLearningResultWithInput<IImageDetectionData, IImageDetectionBox, Superclass>
+
+
+typealias ImageDetectionArrayOutput<Superclass> = MachineLearningArrayOutput<IImageDetectionData, IImageDetectionBox, Superclass>
+typealias ImageDetectionArrayBaseOutput<Superclass> = MachineLearningArrayBaseOutput<ImageDetectionBox, Superclass>
+
+typealias ImageDetectionListOutput<Superclass> = MachineLearningListOutput<IImageDetectionData, IImageDetectionBox, Superclass>
+typealias ImageDetectionListBaseOutput<Superclass> = MachineLearningListBaseOutput<IImageDetectionBox, Superclass>
+
+typealias ImageDetectionArrayListOutput<Superclass> = MachineLearningArrayListOutput<IImageDetectionData, IImageDetectionBox, Superclass>
+typealias ImageDetectionArrayListBaseOutput<Superclass> = MachineLearningArrayListBaseOutput<IImageDetectionBox, Superclass>
 
 
 

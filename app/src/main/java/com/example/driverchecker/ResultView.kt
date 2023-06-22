@@ -19,7 +19,7 @@ class ResultView : View {
     private var paintText: Paint? = null
     private var path: Path? = null
     private var rect: RectF? = null
-    private var results: ImageDetectionArrayListOutput? = null
+    private var results: ImageDetectionArrayListOutput<String>? = null
 
     constructor(context: Context?) : super(context) {}
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
@@ -34,16 +34,16 @@ class ResultView : View {
         super.onDraw(canvas)
         if (results == null) return
 
-        val res: ImageDetectionArrayListOutput = results!!
+        val res: ImageDetectionArrayListOutput<String> = results!!
 
-        for (box: IImageDetectionWithInput in res) {
+        for (box: IImageDetectionWithInput<String> in res) {
             drawBox(canvas, box.result.rect)
             drawPath(canvas, box)
             drawText(canvas, box)
         }
     }
 
-    private fun drawText (canvas: Canvas, box: IImageDetectionWithInput) {
+    private fun drawText (canvas: Canvas, box: IImageDetectionWithInput<String>) {
         paintText!!.color = Color.WHITE
         paintText!!.strokeWidth = 0f
         paintText!!.style = Paint.Style.FILL
@@ -61,7 +61,7 @@ class ResultView : View {
         )
     }
 
-    private fun drawPath (canvas: Canvas, box: IImageDetectionWithInput) {
+    private fun drawPath (canvas: Canvas, box: IImageDetectionWithInput<String>) {
         path?.reset()
         rect?.set(
             box.result.rect.left.toFloat(),
@@ -80,7 +80,7 @@ class ResultView : View {
         canvas.drawRect(rect, paintRectangle!!)
     }
 
-    fun setResults(results: ImageDetectionArrayListOutput?) {
+    fun setResults(results: ImageDetectionArrayListOutput<String>?) {
         this.results = results
     }
 

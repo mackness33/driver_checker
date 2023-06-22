@@ -8,9 +8,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class MLLocalRepository <Data, Prediction, Result : MachineLearningArrayListOutput<Data, Prediction>> (protected open val model: MLLocalModel<Data, Result>? = null) :
+abstract class MLLocalRepository <Data, Prediction, Superclass, Result : MachineLearningArrayListOutput<Data, Prediction, Superclass>> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
-    protected var window: MLWindow<Data, Prediction, Result> = MLWindow()
+    protected var window: MLWindow<Data, Prediction, Superclass, Result> = MLWindow()
     protected val _internalanalysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null

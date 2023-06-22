@@ -17,15 +17,15 @@ object ImageDetectionUtils {
      * - limit: the maximum number of boxes that will be selected
      * - threshold: used to decide whether boxes overlap too much
      */
-    fun nonMaxSuppression(
-        boxes: ImageDetectionArrayListOutput,
+    fun <Superclass> nonMaxSuppression(
+        boxes: ImageDetectionArrayListOutput<Superclass>,
         limit: Int = Int.MAX_VALUE,
         threshold: Float
-    ): ImageDetectionArrayListOutput {
+    ): ImageDetectionArrayListOutput<Superclass> {
 
         // Do an argument sort on the confidence scores, from high to low.
         boxes.sortWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
-        val selected: ImageDetectionArrayListOutput = ImageDetectionArrayListOutput()
+        val selected: ImageDetectionArrayListOutput<Superclass> = ImageDetectionArrayListOutput()
         val active = BooleanArray(boxes.size)
         Arrays.fill(active, true)
         var numActive = active.size
