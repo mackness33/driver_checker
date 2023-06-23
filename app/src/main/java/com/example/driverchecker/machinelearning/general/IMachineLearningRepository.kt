@@ -17,5 +17,4 @@ interface IMachineLearningRepository<in Data, out Result> {
 
     val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
     val repositoryScope: CoroutineScope
-//    fun liveClassification (input: Flow<Data>): Result?
 }
