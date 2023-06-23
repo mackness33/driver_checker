@@ -76,20 +76,22 @@ open class YOLOModel (modelPath: String? = null) :
             val offset = i * outputColumn
             if (outputs[offset + 4] > threshold) {
                 val (x, y, width, height) = outputs.slice(offset..offset + 3)
-                var max = outputs[offset]
+                var max = outputs[offset + 5]
                 var clsIndex = 0
-                for (j in 0 until _classifier.size()) {
-                    if (outputs[offset + 5 + j] > max) {
-                        max = outputs[offset + 5 + j]
-                        clsIndex = j
-                    }
-                }
                 val rect = RectF(
                     scaleX * (x - width / 2),
                     scaleY * (y - height / 2),
                     scaleX * (x + width / 2),
                     scaleY * (y + height / 2)
                 )
+
+                for (j in 0 until _classifier.size()) {
+                    if (outputs[offset + 5 + j] > max) {
+                        max = outputs[offset + 5 + j]
+                        clsIndex = j
+                    }
+                }
+
                 results.add(
                     ImageDetectionOutput(
                         ImageDetectionBox(
