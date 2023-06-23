@@ -8,11 +8,9 @@ open class MLWindow<Data, Prediction, Superclass, Result : MachineLearningArrayL
     var confidence: Float = 0f
         protected set
 
-    var index: Int = 0
-        protected set
+    protected var numEvaluationDone: Int = 0
 
-    var lastResult : Result? = null
-        protected set
+    protected var last : Result? = null
 
     override fun totalNumber() : Int = if (window.size >= size) window.size else 0
 
@@ -24,17 +22,18 @@ open class MLWindow<Data, Prediction, Superclass, Result : MachineLearningArrayL
         if (window.size > size)
             window.removeFirst()
 
-        lastResult = element
-        index++
+        last = element
+        numEvaluationDone++
 
         confidence = calculateConfidence()
         metricsCalculation()
     }
 
+    // TODO: Clean also the last evaluation done
     override fun clean () {
         window.clear()
         confidence = 0f
-        index = 0
+        numEvaluationDone = 0
     }
 
     protected open fun calculateConfidence () : Float {
@@ -52,4 +51,8 @@ open class MLWindow<Data, Prediction, Superclass, Result : MachineLearningArrayL
 
     // Is gonna return the confidence and other metrics
     open fun metricsCalculation () {}
+
+    override fun getIndex(): Int = numEvaluationDone
+
+    override fun getLastResult(): Result? = last
 }

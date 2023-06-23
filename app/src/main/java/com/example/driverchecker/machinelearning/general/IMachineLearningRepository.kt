@@ -15,6 +15,8 @@ interface IMachineLearningRepository<in Data, out Result> {
     suspend fun onStartLiveClassification (input: SharedFlow<Data>, scope: CoroutineScope)
     suspend fun onStopLiveClassification ()
 
+    fun <ModelInit> updateModel (init: ModelInit)
+
     val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
     val repositoryScope: CoroutineScope
 }

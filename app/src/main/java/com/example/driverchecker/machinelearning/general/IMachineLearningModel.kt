@@ -8,7 +8,7 @@ interface IMachineLearningModel <Data, Result> {
 
     fun processAndEvaluatesStream (input: Flow<Data>): Flow<Result>?
 
-    fun loadModel (uri: String)
+    fun <ModelInit> loadModel (init: ModelInit)
 
     val isLoaded: StateFlow<Boolean>
 }
