@@ -5,11 +5,11 @@ import android.net.Uri
 import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
+import com.example.driverchecker.machinelearning_old.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning_old.data.ImageDetectionBaseInput
+import com.example.driverchecker.machinelearning_old.general.local.LiveEvaluationState
+import com.example.driverchecker.machinelearning_old.general.local.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning_old.imagedetection.ImageDetectionRepository
 import com.example.driverchecker.media.MediaRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow

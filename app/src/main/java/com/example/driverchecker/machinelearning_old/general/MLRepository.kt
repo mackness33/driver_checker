@@ -1,15 +1,14 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning_old.general
 
-import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
-import com.example.driverchecker.machinelearning.general.remote.MLRemoteRepository
+import com.example.driverchecker.machinelearning_old.data.*
+import com.example.driverchecker.machinelearning_old.general.local.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning_old.general.local.MLLocalRepository
+import com.example.driverchecker.machinelearning_old.general.remote.MLRemoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 
-abstract class MLRepository<Data, Prediction, Superclass, Result : MachineLearningArrayListOutput<Data, Prediction, Superclass>> () : MLRepositoryInterface<Data, Result> {
+abstract class MLRepository<Data, Prediction, Superclass, Result : MachineLearningArrayListOutputOld<Data, Prediction, Superclass>> () : MLRepositoryInterface<Data, Result> {
     protected val isOnline: Boolean = false
     // IDEA: can be transformed into a set of internal repositories
     protected var local: MLLocalRepository<Data, Prediction, Superclass, Result>? = null

@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning_old.general
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow

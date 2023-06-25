@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.general
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.flow.*
 
-abstract class MachineLearningModel<Data, Result>  () : MLModelInterface<Data, Result> {
+abstract class MachineLearningModel<Data, Result>  () : IMachineLearningModel<Data, Result> {
     protected val _isLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     protected val loadingMap: Map<String, Boolean> = mutableMapOf()
     override val isLoaded: StateFlow<Boolean>

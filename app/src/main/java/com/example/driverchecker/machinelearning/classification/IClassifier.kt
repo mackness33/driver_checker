@@ -1,6 +1,9 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.classification
 
-import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.data.ClassificationList
+import com.example.driverchecker.machinelearning.data.ClassificationSet
+import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
+import com.example.driverchecker.machinelearning.data.IClassification
 
 interface IClassifier<Superclass> {
     val superclasses : ClassificationSuperclassMap<Superclass>

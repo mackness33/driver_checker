@@ -14,8 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.driverchecker.databinding.FragmentMediaBinding
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationState
+import com.example.driverchecker.machinelearning_old.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning_old.general.local.LiveEvaluationState
 
 class MediaFragment : Fragment() {
     private lateinit var layout: View

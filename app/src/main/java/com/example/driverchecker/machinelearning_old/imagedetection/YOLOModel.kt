@@ -1,12 +1,16 @@
-package com.example.driverchecker.machinelearning.imagedetection
+package com.example.driverchecker.machinelearning_old.imagedetection
 
 import android.graphics.Bitmap
 import android.graphics.RectF
-import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.general.IClassifier
-import com.example.driverchecker.machinelearning.general.IClassifierModel
-import com.example.driverchecker.machinelearning.general.MutableClassifier
-import com.example.driverchecker.machinelearning.general.local.MLLocalModel
+import com.example.driverchecker.machinelearning_old.data.*
+import com.example.driverchecker.machinelearning.classification.IClassifier
+import com.example.driverchecker.machinelearning.classification.IClassifierModel
+import com.example.driverchecker.machinelearning.classification.MutableClassifier
+import com.example.driverchecker.machinelearning.data.ImportClassifier
+import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
+import com.example.driverchecker.machinelearning.data.ImageDetectionBox
+import com.example.driverchecker.machinelearning.data.ImageDetectionOutput
+import com.example.driverchecker.machinelearning_old.general.local.MLLocalModel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.pytorch.*
@@ -116,7 +120,7 @@ open class YOLOModel (modelPath: String? = null) :
         if (json.isNullOrBlank())
             return false
 
-        val importedJson = Json.decodeFromString<BaseClassifier<String>>(json)
+        val importedJson = Json.decodeFromString<ImportClassifier<String>>(json)
         val res = _classifier.load(importedJson)
 
         return res

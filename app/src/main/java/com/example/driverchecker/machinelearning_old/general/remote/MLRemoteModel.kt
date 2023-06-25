@@ -1,10 +1,6 @@
-package com.example.driverchecker.machinelearning.general.remote
+package com.example.driverchecker.machinelearning_old.general.remote
 
-import android.util.Log
-import com.example.driverchecker.machinelearning.general.MLModel
-import org.pytorch.LiteModuleLoader
-import org.pytorch.Module
-import java.io.IOException
+import com.example.driverchecker.machinelearning_old.general.MLModel
 import java.net.URL
 
 abstract class MLRemoteModel <Data, Result> (modelPath: String? = null) : MLModel<Data, Result>(){

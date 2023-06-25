@@ -1,8 +1,9 @@
-package com.example.driverchecker
+package com.example.driverchecker.machinelearning.general
 
-import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning_old.data.*
 
-open class MLWindow<Data, Prediction, Superclass, Result : MachineLearningArrayListOutput<Data, Prediction, Superclass>> (val size: Int = 3, val threshold: Float = 0.15f) : MLWindowInterface<Result> {
+open class MachineLearningWindow<Data, Result> (val size: Int = 3, val threshold: Float = 0.15f) :
+    IMachineLearningWindow<Result> {
     protected val window : MutableList<Result> = mutableListOf()
 
     var confidence: Float = 0f
@@ -36,15 +37,16 @@ open class MLWindow<Data, Prediction, Superclass, Result : MachineLearningArrayL
         numEvaluationDone = 0
     }
 
+    // TODO: Change the calculation of the confidence
     protected open fun calculateConfidence () : Float {
         var sum = 0f
-        for (prediction in window) {
-            var sumPrediction = 0f
-            for (box in prediction) {
-                sumPrediction += box.confidence
-            }
-            sum += (sumPrediction / prediction.size)
-        }
+//        for (prediction in window) {
+//            var sumPrediction = 0f
+//            for (box in prediction) {
+//                sumPrediction += box.confidence
+//            }
+//            sum += (sumPrediction / prediction.size)
+//        }
 
         return sum / window.size
     }

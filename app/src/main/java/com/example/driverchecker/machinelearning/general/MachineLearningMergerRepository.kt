@@ -1,23 +1,26 @@
 package com.example.driverchecker.machinelearning.general
 
 import android.net.Uri
-import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.general.local.MLLocalRepository
-import com.example.driverchecker.machinelearning.general.remote.MLRemoteRepository
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
+import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.data.MachineLearningArrayListOutput
+import com.example.driverchecker.machinelearning_old.data.*
+import com.example.driverchecker.machinelearning_old.imagedetection.YOLOModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 
-abstract class MachineLearningMergerRepository<Data, Prediction, Superclass, Result : MachineLearningArrayListOutput<Data, Prediction, Superclass>> : IMachineLearningRepository<Data, Result> {
+open class MachineLearningMergerRepository<Data, Result>
+    (initializers: Map<String, Uri>?) : IMachineLearningRepository<Data, Result> {
     protected var activeKey: String? = null
     protected var repositories: MutableMap<String, IMachineLearningRepository<Data, Result>> = mutableMapOf()
+    override val repositoryScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
-    constructor (initializers: Map<String, Uri>) {
+    init {
         repositories.putIfAbsent("Local", MachineLearningRepository())
         repositories.putIfAbsent("Remote", MachineLearningRepository())
+
+        //        repositories["local"].updateModel()
     }
 
     override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?

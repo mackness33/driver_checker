@@ -1,13 +1,10 @@
-package com.example.driverchecker.machinelearning.general.local
+package com.example.driverchecker.machinelearning_old.general.local
 
-import android.graphics.Rect
 import android.util.Log
-import com.example.driverchecker.machinelearning.general.MLModel
+import com.example.driverchecker.machinelearning_old.general.MLModel
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
 import java.io.IOException
-import java.util.*
-import kotlin.math.max
 
 abstract class MLLocalModel <Data, Result> (modelPath: String? = null) : MLModel<Data, Result>(){
     protected var module: Module? = null

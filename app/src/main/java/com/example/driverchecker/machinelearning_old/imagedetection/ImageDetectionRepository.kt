@@ -1,9 +1,10 @@
-package com.example.driverchecker.machinelearning.imagedetection
+package com.example.driverchecker.machinelearning_old.imagedetection
 
 import android.graphics.*
 import androidx.camera.core.ImageProxy
-import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.general.MLRepository
+import com.example.driverchecker.machinelearning.data.IImageDetectionBox
+import com.example.driverchecker.machinelearning_old.data.*
+import com.example.driverchecker.machinelearning_old.general.MLRepository
 import kotlinx.coroutines.CoroutineScope
 import java.io.ByteArrayOutputStream
 

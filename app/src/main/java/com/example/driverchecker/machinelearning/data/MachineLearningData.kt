@@ -1,5 +1,8 @@
 package com.example.driverchecker.machinelearning.data
 
+import com.example.driverchecker.machinelearning_old.data.IMachineLearningResultOld
+import com.example.driverchecker.machinelearning_old.data.IMachineLearningResultWithInputOld
+
 // ---------------------------------- INPUT ----------------------------------
 
 interface IMachineLearningData<Data> {
@@ -13,39 +16,51 @@ data class MachineLearningBaseInput<Data>(
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IMachineLearningResult<Result, Superclass> {
+interface IMachineLearningResult<Result> {
     val result: Result
     val confidence: Float
-    val group: IClassification<Superclass>
 }
 
-interface IMachineLearningResultWithInput<Data, Result, Superclass> : IMachineLearningResult<Result, Superclass>, IMachineLearningData<Data>
+interface IMachineLearningResultWithInput<Data, Result> : IMachineLearningResult<Result>,
+    IMachineLearningData<Data>
 
 data class MachineLearningBaseOutput<Result, Superclass>(
     override val result: Result,
     override val confidence: Float,
     override val group: IClassification<Superclass>
-) : IMachineLearningResult<Result, Superclass>
+) : IMachineLearningResultOld<Result, Superclass>
 
 data class MachineLearningOutput<Data, Result, Superclass>(
     override val result: Result,
     override val confidence: Float,
     override val data: Data,
     override val group: IClassification<Superclass>
-) : IMachineLearningResultWithInput<Data, Result, Superclass>
+) : IMachineLearningResultWithInputOld<Data, Result, Superclass>
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias MachineLearningArrayOutput<Data, Result, Superclass> = Array<IMachineLearningResultWithInput<Data, Result, Superclass>>
-typealias MachineLearningArrayBaseOutput<Result, Superclass> = Array<IMachineLearningResult<Result, Superclass>>
+typealias MachineLearningArrayOutput<Data, Result> = Array<IMachineLearningResultWithInput<Data, Result>>
+typealias MachineLearningArrayBaseOutput<Result> = Array<IMachineLearningResult<Result>>
 
-typealias MachineLearningListOutput<Data, Result, Superclass> = List<IMachineLearningResultWithInput<Data, Result, Superclass>>
-typealias MachineLearningListBaseOutput<Result, Superclass> = List<IMachineLearningResult<Result, Superclass>>
+typealias MachineLearningListOutput<Data, Result> = List<IMachineLearningResultWithInput<Data, Result>>
+typealias MachineLearningListBaseOutput<Result> = List<IMachineLearningResult<Result>>
 
-typealias MachineLearningArrayListOutput<Data, Result, Superclass> = ArrayList<IMachineLearningResultWithInput<Data, Result, Superclass>>
-typealias MachineLearningArrayListBaseOutput<Result, Superclass> = ArrayList<IMachineLearningResult<Result, Superclass>>
+typealias MachineLearningArrayListOutput<Data, Result> = ArrayList<IMachineLearningResultWithInput<Data, Result>>
+typealias MachineLearningArrayListBaseOutput<Result> = ArrayList<IMachineLearningResult<Result>>
 
 // interface IMachineLearningMetrics<Result> : IMachineLearningResult<Result>
 
 // data class MachineLearningWindowOutput<Data, Result>(override val result: Result, override val confidence: Float, val classes: List<Int>, val data: Data) : IMachineLearningResult<Result>
+
+
+// Represents different states for the LatestNews screen
+sealed interface LiveEvaluationStateInterface<out Result>
+
+// Represents different states for the LatestNews screen
+sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
+    data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
+    data class Loading<Result>(val index: Int, val partialResult: Result?) : LiveEvaluationState<Result>()
+    class Start(val info: Nothing?) : LiveEvaluationState<Nothing>()
+    data class End<Result>(val exception: Throwable?, val result: Result?) : LiveEvaluationState<Result>()
+}

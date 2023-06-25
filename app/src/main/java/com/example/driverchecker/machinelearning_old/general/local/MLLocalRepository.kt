@@ -1,16 +1,18 @@
-package com.example.driverchecker.machinelearning.general.local
+package com.example.driverchecker.machinelearning_old.general.local
 
 import android.util.Log
-import com.example.driverchecker.MLWindow
-import com.example.driverchecker.machinelearning.data.MachineLearningArrayListOutput
-import com.example.driverchecker.machinelearning.general.MLRepositoryInterface
+import com.example.driverchecker.machinelearning.data.LiveEvaluationState
+import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.general.MachineLearningWindow
+import com.example.driverchecker.machinelearning_old.data.MachineLearningArrayListOutputOld
+import com.example.driverchecker.machinelearning_old.general.MLRepositoryInterface
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class MLLocalRepository <Data, Prediction, Superclass, Result : MachineLearningArrayListOutput<Data, Prediction, Superclass>> (protected open val model: MLLocalModel<Data, Result>? = null) :
+abstract class MLLocalRepository <Data, Prediction, Superclass, Result : MachineLearningArrayListOutputOld<Data, Prediction, Superclass>> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
-    protected var window: MLWindow<Data, Prediction, Superclass, Result> = MLWindow()
+    protected var window: MachineLearningWindow<Data, Result> = MachineLearningWindow()
     protected val _internalanalysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
@@ -141,16 +143,4 @@ abstract class MLLocalRepository <Data, Prediction, Superclass, Result : Machine
     fun updateLocalModel (path: String) {
         model?.loadModel(path)
     }
-}
-
-
-// Represents different states for the LatestNews screen
-sealed interface LiveEvaluationStateInterface<out Result> {}
-
-// Represents different states for the LatestNews screen
-sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
-    data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
-    data class Loading<Result>(val index: Int, val partialResult: Result?) : LiveEvaluationState<Result>()
-    data class Start(val info: Nothing?) : LiveEvaluationState<Nothing>()
-    data class End<Result>(val exception: Throwable?, val result: Result?) : LiveEvaluationState<Result>()
 }

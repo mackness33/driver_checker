@@ -1,6 +1,6 @@
-package com.example.driverchecker
+package com.example.driverchecker.machinelearning.general
 
-interface MLWindowInterface<Element>{
+interface IMachineLearningWindow<Element>{
     fun getIndex() : Int
     fun getLastResult() : Element?
 

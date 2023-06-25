@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.classification
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
@@ -7,13 +7,13 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
     protected val _superclasses: MutableMap<Superclass, MutableSet<IClassification<Superclass>>>
 
     constructor (newDataset: ClassificationSuperclassMap<Superclass>?) {
-        _superclasses = mutableMapOf<Superclass, MutableSet<IClassification<Superclass>>>()
+        _superclasses = mutableMapOf()
 
         load(newDataset)
     }
 
     constructor (newClassifier: IClassifier<Superclass>) {
-        _superclasses = mutableMapOf<Superclass, MutableSet<IClassification<Superclass>>>()
+        _superclasses = mutableMapOf()
 
         load(newClassifier.superclasses)
     }
@@ -33,7 +33,7 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         return false
     }
 
-    override fun load(importedJson: BaseClassifier<Superclass>?) : Boolean {
+    override fun load(importedJson: ImportClassifier<Superclass>?) : Boolean {
         if (importedJson != null) {
             try {
                 for ((group, set) in importedJson.value.entries)

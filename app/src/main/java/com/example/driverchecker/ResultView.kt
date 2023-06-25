@@ -4,10 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import com.example.driverchecker.machinelearning.data.IImageDetectionWithInput
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning.data.ImageDetectionBox
-import com.example.driverchecker.machinelearning.data.ImageDetectionOutput
+import com.example.driverchecker.machinelearning_old.data.IImageDetectionWithInput
+import com.example.driverchecker.machinelearning_old.data.ImageDetectionArrayListOutput
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.

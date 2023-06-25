@@ -1,11 +1,10 @@
-package com.example.driverchecker.machinelearning.imagedetection
+package com.example.driverchecker.machinelearning_old.imagedetection
 
 import android.graphics.Bitmap
-import com.example.driverchecker.machinelearning.data.IImageDetectionBox
-import com.example.driverchecker.machinelearning.data.IImageDetectionData
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
-import com.example.driverchecker.machinelearning.general.remote.MLRemoteModel
+import com.example.driverchecker.machinelearning_old.data.IImageDetectionData
+import com.example.driverchecker.machinelearning_old.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning_old.data.ImageDetectionBaseInput
+import com.example.driverchecker.machinelearning_old.general.remote.MLRemoteModel
 
 class ImageDetectionRemoteModel (private val modelPath: String? = null) :  MLRemoteModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>(modelPath){
     override fun preProcess(data: IImageDetectionData): ImageDetectionBaseInput {

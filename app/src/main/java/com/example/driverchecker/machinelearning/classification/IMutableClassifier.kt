@@ -1,6 +1,8 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.classification
 
-import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.data.ImportClassifier
+import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
+import com.example.driverchecker.machinelearning.data.IClassification
 
 interface IMutableClassifier<Superclass> : IClassifier<Superclass> {
     fun add(name: String, group: Superclass)
@@ -19,5 +21,5 @@ interface IMutableClassifier<Superclass> : IClassifier<Superclass> {
 
     fun load(newDataset: ClassificationSuperclassMap<Superclass>?) : Boolean
 
-    fun load(importedJson: BaseClassifier<Superclass>?) : Boolean
+    fun load(importedJson: ImportClassifier<Superclass>?) : Boolean
 }

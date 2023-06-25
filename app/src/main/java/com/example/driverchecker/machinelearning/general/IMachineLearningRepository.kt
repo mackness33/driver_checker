@@ -1,6 +1,6 @@
 package com.example.driverchecker.machinelearning.general
 
-import com.example.driverchecker.machinelearning.general.local.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning_old.general.local.LiveEvaluationStateInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
