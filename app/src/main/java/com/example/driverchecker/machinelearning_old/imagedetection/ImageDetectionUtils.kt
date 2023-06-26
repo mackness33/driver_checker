@@ -1,7 +1,7 @@
 package com.example.driverchecker.machinelearning_old.imagedetection
 
 import android.graphics.RectF
-import com.example.driverchecker.machinelearning_old.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 import java.util.*
 import kotlin.math.max
 

@@ -1,7 +1,5 @@
 package com.example.driverchecker.machinelearning.general
 
-import com.example.driverchecker.machinelearning_old.data.*
-
 open class MachineLearningWindow<Data, Result> (val size: Int = 3, val threshold: Float = 0.15f) :
     IMachineLearningWindow<Result> {
     protected val window : MutableList<Result> = mutableListOf()

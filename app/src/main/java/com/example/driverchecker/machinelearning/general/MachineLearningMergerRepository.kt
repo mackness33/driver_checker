@@ -2,9 +2,6 @@ package com.example.driverchecker.machinelearning.general
 
 import android.net.Uri
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.data.MachineLearningArrayListOutput
-import com.example.driverchecker.machinelearning_old.data.*
-import com.example.driverchecker.machinelearning_old.imagedetection.YOLOModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow

@@ -1,8 +1,5 @@
 package com.example.driverchecker.machinelearning.data
 
-import com.example.driverchecker.machinelearning_old.data.IMachineLearningResultOld
-import com.example.driverchecker.machinelearning_old.data.IMachineLearningResultWithInputOld
-
 // ---------------------------------- INPUT ----------------------------------
 
 interface IMachineLearningData<Data> {
@@ -24,18 +21,16 @@ interface IMachineLearningResult<Result> {
 interface IMachineLearningResultWithInput<Data, Result> : IMachineLearningResult<Result>,
     IMachineLearningData<Data>
 
-data class MachineLearningBaseOutput<Result, Superclass>(
+data class MachineLearningBaseOutput<Result>(
     override val result: Result,
-    override val confidence: Float,
-    override val group: IClassification<Superclass>
-) : IMachineLearningResultOld<Result, Superclass>
+    override val confidence: Float
+) : IMachineLearningResult<Result>
 
-data class MachineLearningOutput<Data, Result, Superclass>(
+data class MachineLearningOutput<Data, Result>(
     override val result: Result,
     override val confidence: Float,
     override val data: Data,
-    override val group: IClassification<Superclass>
-) : IMachineLearningResultWithInputOld<Data, Result, Superclass>
+) : IMachineLearningResultWithInput<Data, Result>
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------

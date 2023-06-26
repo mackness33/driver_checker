@@ -2,9 +2,6 @@ package com.example.driverchecker.machinelearning.data
 
 import android.graphics.Bitmap
 import android.graphics.RectF
-import com.example.driverchecker.machinelearning_old.data.*
-import com.example.driverchecker.machinelearning_old.data.IImageDetectionBox
-import com.example.driverchecker.machinelearning_old.data.ImageDetectionBox
 
 
 // ---------------------------------- INPUT ----------------------------------
@@ -19,8 +16,8 @@ interface IImageDetectionBox {
     var rect: RectF
 }
 
-typealias ImageDetectionBaseOutput<Superclass> = IClassificationResult<IImageDetectionBox, Superclass>
-typealias ImageDetectionOutput<Superclass> = IClassificationResultWithInput<IImageDetectionData, IImageDetectionBox, Superclass>
+typealias ImageDetectionBaseOutput<Superclass> = ClassificationBaseOutput<IImageDetectionBox, Superclass>
+typealias ImageDetectionOutput<Superclass> = ClassificationOutput<IImageDetectionData, IImageDetectionBox, Superclass>
 
 data class ImageDetectionBox (override var classIndex: Int, override var rect: RectF) : IImageDetectionBox
 

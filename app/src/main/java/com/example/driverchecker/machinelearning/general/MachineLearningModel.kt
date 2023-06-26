@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.general
 
-import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.flow.*
 
 abstract class MachineLearningModel<Data, Result>  () : IMachineLearningModel<Data, Result> {

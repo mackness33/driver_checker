@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.classification.IClassifier
 import com.example.driverchecker.machinelearning.classification.MutableClassifier
-import com.example.driverchecker.machinelearning_old.data.IMachineLearningResultOld
 import kotlinx.serialization.Serializable
 // ---------------------------------- CLASSES ----------------------------------
 

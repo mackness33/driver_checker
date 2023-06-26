@@ -3,14 +3,13 @@ package com.example.driverchecker.machinelearning.general
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.data.MachineLearningArrayListOutput
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 open class MachineLearningRepository<Data, Result> () :
     IMachineLearningRepository<Data, Result> {
-    protected var window: IMachineLearningWindow<Result> = MachineLearningWindow<Data, Result>()
+    protected open var window: IMachineLearningWindow<Result> = MachineLearningWindow<Data, Result>()
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
     protected open var model: IMachineLearningModel<Data, Result>? = null
@@ -79,9 +78,9 @@ open class MachineLearningRepository<Data, Result> () :
         return window.getLastResult()
     }
 
-    protected fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
+    protected open fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
-            // check if the repo is ready to make evaluations
+            // check if the repo is ready to make evaluPrediction, Superclass, ations
             if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 _externalProgressState.emit(LiveEvaluationState.Start(null))
 
