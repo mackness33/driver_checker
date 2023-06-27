@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning_old.general.local
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.general.MachineLearningWindow
+import com.example.driverchecker.machinelearning.windows.MachineLearningWindow
 import com.example.driverchecker.machinelearning_old.data.MachineLearningArrayListOutputOld
 import com.example.driverchecker.machinelearning_old.general.MLRepositoryInterface
 import kotlinx.coroutines.*
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.*
 
 abstract class MLLocalRepository <Data, Prediction, Superclass, Result : MachineLearningArrayListOutputOld<Data, Prediction, Superclass>> (protected open val model: MLLocalModel<Data, Result>? = null) :
     MLRepositoryInterface<Data, Result> {
-    protected var window: MachineLearningWindow<Data, Result> = MachineLearningWindow()
+    protected var window: MachineLearningWindow<Result> = MachineLearningWindow()
     protected val _internalanalysisProgressState: MutableStateFlow<LiveEvaluationStateInterface<Result>> = MutableStateFlow(LiveEvaluationState.Ready(false))
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null

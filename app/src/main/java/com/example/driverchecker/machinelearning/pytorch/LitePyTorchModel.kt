@@ -1,18 +1,18 @@
-package com.example.driverchecker.machinelearning.models
+package com.example.driverchecker.machinelearning.pytorch
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.general.MachineLearningModel
-import com.example.driverchecker.machinelearning_old.general.MLModel
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
-import java.io.IOException
 
 abstract class LitePyTorchModel <Data, Result> () : MachineLearningModel<Data, Result>(){
     protected var module: Module? = null
 
     constructor(modelPath: String? = null) : this() {
-        if (modelPath != null) loadModel(modelPath)
+        if (modelPath != null) initModel(modelPath)
     }
+
+    protected fun initModel(json: String?) = if (!json.isNullOrEmpty()) loadModel(json) else null
 
     override fun <String> loadModel (init: String) {
         try {

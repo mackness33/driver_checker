@@ -3,13 +3,16 @@ package com.example.driverchecker.machinelearning.general
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.data.WithConfidence
+import com.example.driverchecker.machinelearning.windows.IMachineLearningWindow
+import com.example.driverchecker.machinelearning.windows.MachineLearningWindow
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-open class MachineLearningRepository<Data, Result> () :
+open class MachineLearningRepository<Data, Result : WithConfidence> () :
     IMachineLearningRepository<Data, Result> {
-    protected open var window: IMachineLearningWindow<Result> = MachineLearningWindow<Data, Result>()
+    protected open var window: IMachineLearningWindow<Result> = MachineLearningWindow()
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
     protected open var model: IMachineLearningModel<Data, Result>? = null

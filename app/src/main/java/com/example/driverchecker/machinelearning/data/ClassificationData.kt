@@ -59,11 +59,9 @@ data class ClassificationOutput<Data, Result, Superclass>(
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias ClassificationArrayOutput<Data, Result, Superclass> = Array<IClassificationResultWithInput<Data, Result, Superclass>>
-typealias ClassificationArrayBaseOutput<Result, Superclass> = Array<IClassificationResult<Result, Superclass>>
 
-typealias ClassificationListOutput<Data, Result, Superclass> = List<IClassificationResultWithInput<Data, Result, Superclass>>
-typealias ClassificationListBaseOutput<Result, Superclass> = List<IClassificationResult<Result, Superclass>>
+typealias ClassificationListOutput<Data, Result, Superclass> = MachineLearningResultList<IClassificationResultWithInput<Data, Result, Superclass>>
+typealias ClassificationListBaseOutput<Result, Superclass> = MachineLearningResultList<IClassificationResult<Result, Superclass>>
 
-typealias ClassificationArrayListOutput<Data, Result, Superclass> = ArrayList<IClassificationResultWithInput<Data, Result, Superclass>>
-typealias ClassificationArrayListBaseOutput<Result, Superclass> = ArrayList<IClassificationResult<Result, Superclass>>
+typealias ClassificationArrayListOutput<Data, Result, Superclass> = MachineLearningResultArrayList<Result, IClassificationResultWithInput<Data, Result, Superclass>>
+typealias ClassificationArrayListBaseOutput<Result, Superclass> = MachineLearningResultArrayList<Result, IClassificationResult<Result, Superclass>>

@@ -1,9 +1,7 @@
-package com.example.driverchecker.machinelearning.models
+package com.example.driverchecker.machinelearning.pytorch
 
-import android.util.Log
 import com.example.driverchecker.machinelearning.classification.IClassificationModel
 import com.example.driverchecker.machinelearning.classification.IClassifier
-import com.example.driverchecker.machinelearning.classification.IClassifierModel
 import com.example.driverchecker.machinelearning.classification.MutableClassifier
 import com.example.driverchecker.machinelearning.data.*
 import kotlinx.serialization.decodeFromString
@@ -18,31 +16,30 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
     constructor() : super()
 
     constructor(modelPath: String? = null, classificationsJson: String? = null) : super(modelPath) {
-        if (classificationsJson != null) initLoadClassification(classificationsJson)
+        if (classificationsJson != null) initClassifier(classificationsJson)
     }
 
     constructor(modelPath: String? = null, newClassifications: ClassificationSuperclassMap<Superclass>? = null) : super(modelPath) {
-        if (newClassifications != null) initLoadClassification(newClassifications)
+        if (newClassifications != null) initClassifier(newClassifications)
     }
 
     protected val _classifier = MutableClassifier<Superclass>(null)
     val classifier: IClassifier<Superclass>
         get() = _classifier
 
-    private fun initLoadClassification(json: String?) : Boolean = this.loadClassifications(json)
-    private fun initLoadClassification(newClassifications: ClassificationSuperclassMap<Superclass>?) : Boolean = this.loadClassifications(newClassifications)
+    private fun initClassifier(json: String?) : Boolean = loadClassifications(json)
+    private fun initClassifier(newClassifications: ClassificationSuperclassMap<Superclass>?) : Boolean = loadClassifications(newClassifications)
 
     override fun <ModelInit : ClassificationSuperclassMap<Superclass>> loadClassifications(init: ModelInit?): Boolean {
         return _classifier.load(init)
     }
 
-    override fun loadClassifications(json: String?) : Boolean {
+    override fun loadClassifications(json: String?): Boolean {
         if (json.isNullOrBlank())
             return false
 
         val importedJson = Json.decodeFromString<ImportClassifier<Superclass>>(json)
-        val res = _classifier.load(importedJson)
 
-        return res
+        return _classifier.load(importedJson)
     }
 }

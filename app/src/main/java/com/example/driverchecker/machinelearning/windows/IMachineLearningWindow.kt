@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.windows
 
 interface IMachineLearningWindow<Element>{
     fun getIndex() : Int

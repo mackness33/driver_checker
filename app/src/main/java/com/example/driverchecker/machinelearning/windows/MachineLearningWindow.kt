@@ -1,7 +1,13 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.windows
 
-open class MachineLearningWindow<Data, Result> (val size: Int = 3, val threshold: Float = 0.15f) :
-    IMachineLearningWindow<Result> {
+import android.os.Parcel
+import android.os.Parcelable
+import com.example.driverchecker.machinelearning.data.IMachineLearningResult
+import com.example.driverchecker.machinelearning.data.MachineLearningResultList
+import com.example.driverchecker.machinelearning.data.WithConfidence
+
+open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 3, open val threshold: Float = 0.15f) :
+    IMachineLearningWindow<Result>{
     protected val window : MutableList<Result> = mutableListOf()
 
     var confidence: Float = 0f
@@ -37,16 +43,7 @@ open class MachineLearningWindow<Data, Result> (val size: Int = 3, val threshold
 
     // TODO: Change the calculation of the confidence
     protected open fun calculateConfidence () : Float {
-        var sum = 0f
-//        for (prediction in window) {
-//            var sumPrediction = 0f
-//            for (box in prediction) {
-//                sumPrediction += box.confidence
-//            }
-//            sum += (sumPrediction / prediction.size)
-//        }
-
-        return sum / window.size
+        return window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
     }
 
     // Is gonna return the confidence and other metrics

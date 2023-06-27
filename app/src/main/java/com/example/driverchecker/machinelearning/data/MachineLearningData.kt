@@ -13,9 +13,8 @@ data class MachineLearningBaseInput<Data>(
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IMachineLearningResult<Result> {
+interface IMachineLearningResult<Result> : WithConfidence{
     val result: Result
-    val confidence: Float
 }
 
 interface IMachineLearningResultWithInput<Data, Result> : IMachineLearningResult<Result>,
@@ -35,14 +34,11 @@ data class MachineLearningOutput<Data, Result>(
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias MachineLearningArrayOutput<Data, Result> = Array<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningArrayBaseOutput<Result> = Array<IMachineLearningResult<Result>>
+typealias MachineLearningListOutput<Data, Result> = MachineLearningResultList<IMachineLearningResultWithInput<Data, Result>>
+typealias MachineLearningListBaseOutput<Result> = MachineLearningResultList<IMachineLearningResult<Result>>
 
-typealias MachineLearningListOutput<Data, Result> = List<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningListBaseOutput<Result> = List<IMachineLearningResult<Result>>
-
-typealias MachineLearningArrayListOutput<Data, Result> = ArrayList<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningArrayListBaseOutput<Result> = ArrayList<IMachineLearningResult<Result>>
+typealias MachineLearningArrayListOutput<Data, Result> = MachineLearningResultArrayList<IMachineLearningResultWithInput<Data, Result>>
+typealias MachineLearningArrayListBaseOutput<Result> = MachineLearningResultArrayList<IMachineLearningResult<Result>>
 
 // interface IMachineLearningMetrics<Result> : IMachineLearningResult<Result>
 
