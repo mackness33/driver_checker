@@ -43,6 +43,9 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
 
     // TODO: Change the calculation of the confidence
     protected open fun calculateConfidence () : Float {
+        if (window.size == 0) {
+            return 0.0f
+        }
         return window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
     }
 
