@@ -45,12 +45,12 @@ abstract class GeneralMachineLearningRepository
         return null
     }
 
-    override suspend fun onStartLiveClassification(input: SharedFlow<IMachineLearningData<Any?>>, scope: CoroutineScope) {
+    override fun onStartLiveClassification(input: SharedFlow<IMachineLearningData<Any?>>, scope: CoroutineScope) {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             repositories[activeKey]?.onStartLiveClassification(input, scope)
     }
 
-    override suspend fun onStopLiveClassification() {
+    override fun onStopLiveClassification() {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             repositories[activeKey]?.onStopLiveClassification()
     }

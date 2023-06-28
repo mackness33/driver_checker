@@ -9,14 +9,17 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
     constructor (newDataset: ClassificationSuperclassMap<Superclass>?) {
         _superclasses = mutableMapOf()
 
-        load(newDataset)
+        initClassifier(newDataset)
     }
 
     constructor (newClassifier: IClassifier<Superclass>) {
         _superclasses = mutableMapOf()
 
-        load(newClassifier.superclasses)
+        initClassifier(newClassifier.superclasses)
     }
+
+    private fun initClassifier (newDataset: ClassificationSuperclassMap<Superclass>?) = load(newDataset)
+    private fun initClassifier (importedJson: ImportClassifier<Superclass>?) = load(importedJson)
 
     override val superclasses : ClassificationSuperclassMap<Superclass>
         get() = _superclasses

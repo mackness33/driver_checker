@@ -10,21 +10,17 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-open class MachineLearningRepository<Data, Result : WithConfidence> () :
+open class MachineLearningRepository<Data, Result : WithConfidence> (importedModel: IMachineLearningModel<Data, Result>?) :
     IMachineLearningRepository<Data, Result> {
     protected open var window: IMachineLearningWindow<Result> = MachineLearningWindow()
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
-    protected open var model: IMachineLearningModel<Data, Result>? = null
+    protected open var model: IMachineLearningModel<Data, Result>? = importedModel
 
     override val repositoryScope = CoroutineScope(SupervisorJob())
 
     override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = _externalProgressState.asSharedFlow()
-
-    constructor (importedModel: IMachineLearningModel<Data, Result>) : this() {
-        model = importedModel
-    }
 
     init {
         _externalProgressState.tryEmit(LiveEvaluationState.Ready(false))
@@ -132,7 +128,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> () :
         }
     }
 
-    override suspend fun onStartLiveClassification(
+    override fun onStartLiveClassification(
         input: SharedFlow<Data>,
         scope: CoroutineScope
     ) {
@@ -141,7 +137,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> () :
         }
     }
 
-    override suspend fun onStopLiveClassification() {
+    override fun onStopLiveClassification() {
         liveClassificationJob?.cancel()
     }
 

@@ -5,11 +5,12 @@ import android.net.Uri
 import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.example.driverchecker.machinelearning_old.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning_old.data.ImageDetectionBaseInput
-import com.example.driverchecker.machinelearning_old.general.local.LiveEvaluationState
-import com.example.driverchecker.machinelearning_old.general.local.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning_old.imagedetection.ImageDetectionRepository
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
+import com.example.driverchecker.machinelearning.data.LiveEvaluationState
+import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionFactoryRepository
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionUtils
 import com.example.driverchecker.media.MediaRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.*
 
 data class StaticMedia (val path : String?, val isVideo: Boolean = false)
 
-class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepository? = null): ViewModel() {
+class CameraViewModel (private var imageDetectionRepository: ImageDetectionFactoryRepository? = null): ViewModel() {
     private val mediaRepository : MediaRepository = MediaRepository()
 //    private var collectResultJob: Job?
 
@@ -67,7 +68,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
             liveData {
                 when {
                     media?.path == null -> emit (null)
-                    !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path))
+//                    !media.isVideo -> emit(imageDetectionRepository?.instantClassification(media.path))
                     media.isVideo -> {
                         mediaRepository.extractVideo(media.path)
                         emit(imageDetectionRepository?.continuousClassification(mediaRepository.video!!.asFlow().map { bitmap -> ImageDetectionBaseInput(
@@ -129,10 +130,8 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
-            val bitmap: Bitmap? = imageDetectionRepository?.imageProxyToBitmap(image)
-            if (bitmap != null) {
-                _liveImages.emit(ImageDetectionBaseInput(bitmap))
-            }
+            val bitmap: Bitmap = ImageDetectionUtils.imageProxyToBitmap(image)
+            _liveImages.emit(ImageDetectionBaseInput(bitmap))
             image.close()
         }
     }
@@ -197,9 +196,9 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         _path.value = StaticMedia(path, true)
     }
 
-    fun loadLocalModel (path: String) {
-        imageDetectionRepository?.updateLocalModel(path)
-    }
+//    fun loadLocalModel (path: String) {
+//        imageDetectionRepository?.updateLocalModel(path)
+//    }
 
     fun recordVideo (record: Boolean) {
         _isRecording.value = record
@@ -217,9 +216,9 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
         _liveIsEnabled.value = enable
     }
 
-    fun setUrlModel (url: String) {
-        imageDetectionRepository?.updateRemoteModel(url)
-    }
+//    fun setUrlModel (url: String) {
+//        imageDetectionRepository?.updateRemoteModel(url)
+//    }
 
     fun updateLiveClassification () {
         runBlocking(Dispatchers.Default) {
@@ -238,7 +237,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionRepos
 
 data class Prediction (val classes: List<Int>, val superClass: Int, val bitmap: Bitmap)
 
-class CameraViewModelFactory(private val repository: ImageDetectionRepository) : ViewModelProvider.Factory {
+class CameraViewModelFactory(private val repository: ImageDetectionFactoryRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CameraViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

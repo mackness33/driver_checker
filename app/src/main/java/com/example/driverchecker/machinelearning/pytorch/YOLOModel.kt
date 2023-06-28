@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionOutput
-import com.example.driverchecker.machinelearning_old.imagedetection.ImageDetectionUtils
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionUtils
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 
@@ -44,17 +44,13 @@ open class YOLOModel :
         // getting tensor content as java array of floats
         val predictions: FloatArray = outputTuple[0].toTensor().dataAsFloatArray
 
-        return outputsToNMSPredictions(
-                predictions,
-                input
-            )
+        return outputsToNMSPredictions(predictions, input)
     }
 
     override fun postProcess(output: ImageDetectionArrayListOutput<String>): ImageDetectionArrayListOutput<String> {
         return ImageDetectionUtils.nonMaxSuppression(output, maxPredictionsLimit, threshold)
     }
 
-    // The two methods nonMaxSuppression and IOU below are ported from https://github.com/hollance/YOLO-CoreML-MPSNNGraph/blob/master/Common/Helpers.swift
     open fun outputsToNMSPredictions(
         outputs: FloatArray,
         image: IImageDetectionData

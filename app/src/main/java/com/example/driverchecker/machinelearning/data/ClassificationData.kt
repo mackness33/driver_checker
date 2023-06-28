@@ -2,6 +2,8 @@ package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.classification.IClassifier
 import com.example.driverchecker.machinelearning.classification.MutableClassifier
+import com.example.driverchecker.machinelearning.general.MachineLearningRepository
+import com.example.driverchecker.machinelearning.pytorch.ClassifierTorchModel
 import kotlinx.serialization.Serializable
 // ---------------------------------- CLASSES ----------------------------------
 
@@ -63,5 +65,7 @@ data class ClassificationOutput<Data, Result, Superclass>(
 typealias ClassificationListOutput<Data, Result, Superclass> = MachineLearningResultList<IClassificationResultWithInput<Data, Result, Superclass>>
 typealias ClassificationListBaseOutput<Result, Superclass> = MachineLearningResultList<IClassificationResult<Result, Superclass>>
 
-typealias ClassificationArrayListOutput<Data, Result, Superclass> = MachineLearningResultArrayList<Result, IClassificationResultWithInput<Data, Result, Superclass>>
-typealias ClassificationArrayListBaseOutput<Result, Superclass> = MachineLearningResultArrayList<Result, IClassificationResult<Result, Superclass>>
+typealias ClassificationArrayListOutput<Data, Result, Superclass> = MachineLearningResultArrayList<IClassificationResultWithInput<Data, Result, Superclass>>
+typealias ClassificationArrayListBaseOutput<Result, Superclass> = MachineLearningResultArrayList<IClassificationResult<Result, Superclass>>
+
+typealias ClassificationRepository<Data, Result, Superclass> = MachineLearningRepository<IMachineLearningData<Data>, ClassificationArrayListOutput<Data, Result, Superclass>>

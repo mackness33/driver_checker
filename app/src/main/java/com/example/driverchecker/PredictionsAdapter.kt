@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.machinelearning_old.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found

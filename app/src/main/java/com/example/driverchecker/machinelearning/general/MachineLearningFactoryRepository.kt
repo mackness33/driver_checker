@@ -1,89 +1,18 @@
 package com.example.driverchecker.machinelearning.general
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.pytorch.YOLOModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
 
-abstract class ImageDetectionRepository
-    : IMachineLearningRepository<IImageDetectionData, ImageDetectionArrayListOutput<Any?>> {
-    protected var activeKey: String? = null
-    protected var repositories: MutableMap<String, IMachineLearningRepository<IImageDetectionData, ImageDetectionArrayListOutput<Any?>>> = mutableMapOf()
-    override val repositoryScope: CoroutineScope = CoroutineScope(SupervisorJob())
+abstract class MachineLearningFactoryRepository<Data, Result : WithConfidence>
+    : MachineLearningRepository<Data, Result>, MachineLearningFactory<Data, Result> {
 
-//    constructor(initializers: Map<String, >?) {
-//
-//        repositories.putIfAbsent("Local", MachineLearningRepository())
-//        repositories.putIfAbsent("Remote", MachineLearningRepository())
-//    }
+    constructor() : super(null)
 
-
-    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<ImageDetectionArrayListOutput<Any?>>>?
-        get() = if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey)) repositories[activeKey]?.analysisProgressState else null
-
-    override suspend fun instantClassification(input: IImageDetectionData): ImageDetectionArrayListOutput<Any?>? {
-        if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
-            return repositories[activeKey]?.instantClassification(input)
-
-        return null
+    constructor(modelName: String, modelInit: Map<String, Any?>) : super(null){
+        initUseRepo(modelName, modelInit)
     }
 
-    override suspend fun continuousClassification(input: List<IImageDetectionData>): ImageDetectionArrayListOutput<Any?>? {
-        return null
-    }
-
-    override suspend fun continuousClassification(input: Flow<IImageDetectionData>, scope: CoroutineScope): ImageDetectionArrayListOutput<Any?>? {
-        if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
-            return repositories[activeKey]?.continuousClassification(input, scope)
-
-        return null
-    }
-
-    override suspend fun onStartLiveClassification(input: SharedFlow<IImageDetectionData>, scope: CoroutineScope) {
-        if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
-            repositories[activeKey]?.onStartLiveClassification(input, scope)
-    }
-
-    override suspend fun onStopLiveClassification() {
-        if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
-            repositories[activeKey]?.onStopLiveClassification()
-    }
-
-    override fun <ModelInit> updateModel(init: ModelInit) {
-        if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
-            repositories[activeKey]?.updateModel(init)
-    }
-
-    fun activate (model: String) {
-        activeKey = if (repositories.containsKey(model)) model else activeKey
-    }
-
-    fun use (modelName: String, modelInit: Map<String, Any?>) : Any? {
-        try {
-            when (modelName){
-                "YoloV5" -> {
-                    val path: String by modelInit
-                    val classifications: String by modelInit
-                    return MachineLearningRepository(YOLOModel(path, classifications))
-                }
-            }
-        } catch (e : Throwable) {
-            Log.e("ModelManager", e.message ?: "Error on the exposition of the model $modelName")
-        }
-        return null
-    }
-
-//    companion object {
-//        @Volatile private var INSTANCE: MachineLearningMergerRepository? = null
-//
-////        fun getInstance(localUri: String?, remoteUri: String?): ImageDetectionRepository =
-////            INSTANCE ?: ImageDetectionRepository(localUri, remoteUri)
-//
-//        fun getInstance(config: String): MachineLearningMergerRepository =
-//            INSTANCE ?: MachineLearningMergerRepository(config)
-//
-//    }
+    protected fun initUseRepo (modelName: String, modelInit: Map<String, Any?>) = use (modelName, modelInit)
 }

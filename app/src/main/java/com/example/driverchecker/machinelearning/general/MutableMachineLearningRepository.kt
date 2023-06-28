@@ -1,10 +1,10 @@
 package com.example.driverchecker.machinelearning.general
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
-import com.example.driverchecker.machinelearning.data.IMachineLearningData
-import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.data.MachineLearningArrayListBaseOutput
+import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
 import com.example.driverchecker.machinelearning.pytorch.YOLOModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -17,12 +17,13 @@ abstract class MutableMachineLearningRepository
     protected var repositories: MutableMap<String, IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>>> = mutableMapOf()
     override val repositoryScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
+    protected var repo: IMachineLearningRepository<IMachineLearningData<Bitmap>, MachineLearningArrayListBaseOutput<*>>? = null
+
 //    constructor(initializers: Map<String, >?) {
 //
 //        repositories.putIfAbsent("Local", MachineLearningRepository())
 //        repositories.putIfAbsent("Remote", MachineLearningRepository())
 //    }
-
 
     override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<MachineLearningArrayListBaseOutput<Any?>>>?
         get() = if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey)) repositories[activeKey]?.analysisProgressState else null
@@ -45,12 +46,12 @@ abstract class MutableMachineLearningRepository
         return null
     }
 
-    override suspend fun onStartLiveClassification(input: SharedFlow<IMachineLearningData<Any?>>, scope: CoroutineScope) {
+    override fun onStartLiveClassification(input: SharedFlow<IMachineLearningData<Any?>>, scope: CoroutineScope) {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             repositories[activeKey]?.onStartLiveClassification(input, scope)
     }
 
-    override suspend fun onStopLiveClassification() {
+    override fun onStopLiveClassification() {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             repositories[activeKey]?.onStopLiveClassification()
     }
@@ -60,9 +61,9 @@ abstract class MutableMachineLearningRepository
             repositories[activeKey]?.updateModel(init)
     }
 
-    fun activate (model: String) {
-        activeKey = if (repositories.containsKey(model)) model else activeKey
-    }
+//    fun activate (model: String) {
+//        activeKey = if (repositories.containsKey(model)) model else activeKey
+//    }
 
     fun use (modelName: String, modelInit: Map<String, Any?>) : Any? {
         try {
@@ -70,7 +71,7 @@ abstract class MutableMachineLearningRepository
                 "YoloV5" -> {
                     val path: String by modelInit
                     val classifications: String by modelInit
-                    return MachineLearningRepository(YOLOModel(path, classifications))
+//                    repo = ImageDetectionRepository(YOLOModel(path, classifications))
                 }
             }
         } catch (e : Throwable) {

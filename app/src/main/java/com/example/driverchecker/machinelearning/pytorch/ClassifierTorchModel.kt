@@ -7,8 +7,6 @@ import com.example.driverchecker.machinelearning.data.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-typealias ImageDetectionTorchModel<Superclass> = ClassifierTorchModel<IImageDetectionData, ImageDetectionArrayListOutput<Superclass>, Superclass>
-
 abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superclass>> :
     LitePyTorchModel<Data, Result>,
     IClassificationModel<Data, Result, Superclass>

@@ -1,52 +1,56 @@
 package com.example.driverchecker.machinelearning.general
 
 import android.net.Uri
+import android.util.Log
+import com.example.driverchecker.machinelearning.data.IMachineLearningData
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.data.MachineLearningArrayListBaseOutput
+import com.example.driverchecker.machinelearning.pytorch.YOLOModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
-open class MachineLearningMergerRepository<Data, Result>
-    (initializers: Map<String, Uri>?) : IMachineLearningRepository<Data, Result> {
+abstract class MachineLearningMergerRepository
+    : IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>> {
     protected var activeKey: String? = null
-    protected var repositories: MutableMap<String, IMachineLearningRepository<Data, Result>> = mutableMapOf()
+    protected var repositories: MutableMap<String, IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>>> = mutableMapOf()
     override val repositoryScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
-    init {
-        repositories.putIfAbsent("Local", MachineLearningRepository())
-        repositories.putIfAbsent("Remote", MachineLearningRepository())
+//    constructor(initializers: Map<String, >?) {
+//
+//        repositories.putIfAbsent("Local", MachineLearningRepository())
+//        repositories.putIfAbsent("Remote", MachineLearningRepository())
+//    }
 
-        //        repositories["local"].updateModel()
-    }
 
-    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
+    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<MachineLearningArrayListBaseOutput<Any?>>>?
         get() = if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey)) repositories[activeKey]?.analysisProgressState else null
 
-    override suspend fun instantClassification(input: Data): Result? {
+    override suspend fun instantClassification(input: IMachineLearningData<Any?>): MachineLearningArrayListBaseOutput<Any?>? {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             return repositories[activeKey]?.instantClassification(input)
 
         return null
     }
 
-    override suspend fun continuousClassification(input: List<Data>): Result? {
+    override suspend fun continuousClassification(input: List<IMachineLearningData<Any?>>): MachineLearningArrayListBaseOutput<Any?>? {
         return null
     }
 
-    override suspend fun continuousClassification(input: Flow<Data>, scope: CoroutineScope): Result? {
+    override suspend fun continuousClassification(input: Flow<IMachineLearningData<Any?>>, scope: CoroutineScope): MachineLearningArrayListBaseOutput<Any?>? {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             return repositories[activeKey]?.continuousClassification(input, scope)
 
         return null
     }
 
-    override suspend fun onStartLiveClassification(input: SharedFlow<Data>, scope: CoroutineScope) {
+    override fun onStartLiveClassification(input: SharedFlow<IMachineLearningData<Any?>>, scope: CoroutineScope) {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             repositories[activeKey]?.onStartLiveClassification(input, scope)
     }
 
-    override suspend fun onStopLiveClassification() {
+    override fun onStopLiveClassification() {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             repositories[activeKey]?.onStopLiveClassification()
     }
@@ -56,7 +60,33 @@ open class MachineLearningMergerRepository<Data, Result>
             repositories[activeKey]?.updateModel(init)
     }
 
-    fun activate (mode: String) {
-        activeKey = if (repositories.containsKey(mode)) mode else activeKey
+    fun activate (model: String) {
+        activeKey = if (repositories.containsKey(model)) model else activeKey
     }
+
+    fun use (modelName: String, modelInit: Map<String, Any?>) : Any? {
+        try {
+            when (modelName){
+                "YoloV5" -> {
+                    val path: String by modelInit
+                    val classifications: String by modelInit
+                    return MachineLearningRepository(YOLOModel(path, classifications))
+                }
+            }
+        } catch (e : Throwable) {
+            Log.e("ModelManager", e.message ?: "Error on the exposition of the model $modelName")
+        }
+        return null
+    }
+
+//    companion object {
+//        @Volatile private var INSTANCE: MachineLearningMergerRepository? = null
+//
+////        fun getInstance(localUri: String?, remoteUri: String?): ImageDetectionRepository =
+////            INSTANCE ?: ImageDetectionRepository(localUri, remoteUri)
+//
+//        fun getInstance(config: String): MachineLearningMergerRepository =
+//            INSTANCE ?: MachineLearningMergerRepository(config)
+//
+//    }
 }

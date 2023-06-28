@@ -1,7 +1,7 @@
 package com.example.driverchecker
 
 import android.app.Application
-import com.example.driverchecker.machinelearning_old.imagedetection.*
+import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionFactoryRepository
 import com.example.driverchecker.media.FileUtils
 
 class DriverChecker : Application() {
@@ -11,5 +11,9 @@ class DriverChecker : Application() {
 
     // Using by lazy so the database and the repository are only created when they're needed
     // rather than when the application starts
-    val repository by lazy { ImageDetectionRepository.getInstance(FileUtils.assetFilePath(this, "two_classes.ptl"), "https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y", FileUtils.assetLoadJson(this, "classification_example.json")) }
+    val defaultModel: Map<String, String> = mapOf(
+        "path" to FileUtils.assetFilePath(this, "two_classes.ptl"),
+        "classification" to FileUtils.assetLoadJson(this, "classification_example.json")
+    )
+    val repository by lazy { ImageDetectionFactoryRepository.getInstance("YoloV5", defaultModel) }
 }

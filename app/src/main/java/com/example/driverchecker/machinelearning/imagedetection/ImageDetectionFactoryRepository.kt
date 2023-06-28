@@ -1,12 +1,12 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.imagedetection
 
-import android.graphics.Bitmap
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.general.MachineLearningFactoryRepository
 import com.example.driverchecker.machinelearning.pytorch.YOLOModel
 
 class ImageDetectionFactoryRepository
-    : MachineLearningFactoryRepository<IImageDetectionData, ImageDetectionArrayListOutput<String>>{
+    : MachineLearningFactoryRepository<IImageDetectionData, ImageDetectionArrayListOutput<String>> {
 
     constructor() : super()
 

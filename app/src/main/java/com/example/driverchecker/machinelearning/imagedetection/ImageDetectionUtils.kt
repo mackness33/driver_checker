@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.math.max
 
+// The two methods nonMaxSuppression and IOU below are ported from https://github.com/hollance/YOLO-CoreML-MPSNNGraph/blob/master/Common/Helpers.swift
 object ImageDetectionUtils {
     val NO_MEAN_RGB = floatArrayOf(0.0f, 0.0f, 0.0f)
     val NO_STD_RGB = floatArrayOf(1.0f, 1.0f, 1.0f)

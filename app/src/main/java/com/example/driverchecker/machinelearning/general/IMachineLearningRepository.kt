@@ -11,8 +11,8 @@ interface IMachineLearningRepository<in Data, out Result> {
     suspend fun continuousClassification (input: List<Data>): Result?
     suspend fun continuousClassification (input: Flow<Data>, scope: CoroutineScope): Result?
 
-    suspend fun onStartLiveClassification (input: SharedFlow<Data>, scope: CoroutineScope)
-    suspend fun onStopLiveClassification ()
+    fun onStartLiveClassification (input: SharedFlow<Data>, scope: CoroutineScope)
+    fun onStopLiveClassification ()
 
     fun <ModelInit> updateModel (init: ModelInit)
 
