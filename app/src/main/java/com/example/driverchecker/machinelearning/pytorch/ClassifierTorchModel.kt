@@ -36,6 +36,7 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
         if (json.isNullOrBlank())
             return false
 
+        // TODO: For now ImportClassifier can "understand" only String for simplicity
         val importedJson = Json.decodeFromString<ImportClassifier<Superclass>>(json)
 
         return _classifier.load(importedJson)

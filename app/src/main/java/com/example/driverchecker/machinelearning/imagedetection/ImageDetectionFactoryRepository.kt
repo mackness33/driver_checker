@@ -1,7 +1,10 @@
 package com.example.driverchecker.machinelearning.imagedetection
 
+import android.graphics.ColorSpace.Model
 import android.util.Log
+import com.example.driverchecker.machinelearning.classification.IClassifierModel
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.general.IMachineLearningModel
 import com.example.driverchecker.machinelearning.general.MachineLearningFactoryRepository
 import com.example.driverchecker.machinelearning.pytorch.YOLOModel
 
@@ -10,26 +13,29 @@ class ImageDetectionFactoryRepository
 
     constructor() : super()
 
-    constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit){
-        initUseRepo(modelName, modelInit)
-    }
+    constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
         try {
-            return when (modelName){
-                "YoloV5" -> {
-                    val path: String by modelInit
-                    val classifications: String by modelInit
-                    model = YOLOModel(path, classifications)
-                    onStopLiveClassification()
-                    true
-                }
-                else -> false
-            }
+            onStopLiveClassification()
+            model = factory(modelName, modelInit)
+            listenOnLoadingState()
+            return model?.isLoaded?.value ?: false
         } catch (e : Throwable) {
             Log.e("ModelManager", e.message ?: "Error on the exposition of the model $modelName")
         }
         return false
+    }
+
+    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IMachineLearningModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>? {
+        return when (modelName){
+            "YoloV5" -> {
+                val path = modelInit["path"] as String?
+                val classifications = modelInit["classification"] as String?
+                YOLOModel(path, classifications)
+            }
+            else -> null
+        }
     }
 
     companion object {

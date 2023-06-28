@@ -15,6 +15,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
     protected open var window: IMachineLearningWindow<Result> = MachineLearningWindow()
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
+    protected var loadingModelJob: Job? = null
     protected open var model: IMachineLearningModel<Data, Result>? = importedModel
 
     override val repositoryScope = CoroutineScope(SupervisorJob())
@@ -28,7 +29,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
     }
 
     protected open fun listenOnLoadingState () {
-        repositoryScope.launch {
+        loadingModelJob = repositoryScope.launch {
             model?.isLoaded?.collect { state ->
                 if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(!state))
                     _externalProgressState.emit(LiveEvaluationState.Ready(state))

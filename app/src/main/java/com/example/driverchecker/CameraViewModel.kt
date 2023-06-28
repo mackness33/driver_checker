@@ -32,7 +32,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionFacto
                         _lastResult.postValue(null)
                         _isEvaluating.postValue(false)
                         _liveIsEnabled.postValue(state.isReady)
-                        Log.d("LiveEvaluationState", "READY: ${_onPartialResultsChanged.value} but array.size is ${array.size}")
+                        Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_onPartialResultsChanged.value} but array.size is ${array.size}")
                     }
                     is LiveEvaluationState.Start -> {
                         // add the partialResult to the resultsArray

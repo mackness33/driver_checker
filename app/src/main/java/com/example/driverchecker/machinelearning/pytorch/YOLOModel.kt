@@ -7,6 +7,8 @@ import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMa
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionOutput
 import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionUtils
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 
@@ -93,5 +95,15 @@ open class YOLOModel :
             }
         }
         return results
+    }
+
+    override fun loadClassifications(json: String?): Boolean {
+        if (json.isNullOrBlank())
+            return false
+
+        // TODO: For now ImportClassifier can "understand" only String for simplicity
+        val importedJson = Json.decodeFromString<ImportClassifier<String>>(json)
+
+        return _classifier.load(importedJson)
     }
 }

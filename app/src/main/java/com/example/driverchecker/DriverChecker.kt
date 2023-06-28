@@ -11,9 +11,9 @@ class DriverChecker : Application() {
 
     // Using by lazy so the database and the repository are only created when they're needed
     // rather than when the application starts
-    val defaultModel: Map<String, String> = mapOf(
+//    val defaultModel: Map<String, String> =
+    val repository by lazy { ImageDetectionFactoryRepository.getInstance("YoloV5", mapOf(
         "path" to FileUtils.assetFilePath(this, "two_classes.ptl"),
         "classification" to FileUtils.assetLoadJson(this, "classification_example.json")
-    )
-    val repository by lazy { ImageDetectionFactoryRepository.getInstance("YoloV5", defaultModel) }
+    )) }
 }
