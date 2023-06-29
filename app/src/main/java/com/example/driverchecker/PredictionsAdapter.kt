@@ -13,15 +13,8 @@ class PredictionsAdapter(
     val items: List<ImageDetectionArrayListOutput<String>>,
     private var maxClasses:Int = 2,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64)
-) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {
-    private val colorClasses: Map<Int, List<Int>>
-
-    init {
-        colorClasses = mapOf(1 to listOf(Color.GREEN, Color.CYAN, Color.BLUE))
-    }
-
+) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
     /**
-//        viewHolder.predictionView.invalidate()first
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */

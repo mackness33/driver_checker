@@ -15,7 +15,7 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     var size: Pair<Int, Int>
     var maxItems: Int
         private set
-    var colors: List<Int>?
+    var colors: IColorScale?
         private set
     var dimensions: Pair<Int, Int>
         private set
@@ -29,12 +29,12 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         this.size = Pair(0, 0)
         this.dimensions = Pair(0, 0)
         this.maxItems = 0
-        val listColors = ArrayList<Int>()
-        listColors.add(Color.BLUE)
-        listColors.add(Color.RED)
-        listColors.add(Color.GREEN)
-        listColors.add(Color.YELLOW)
-        this.colors = listColors.toList()
+        this.colors = ColorScale(listOf (
+            Color.BLUE,
+            Color.RED,
+            Color.GREEN,
+            Color.YELLOW
+        ))
         this.size_item = updateSizeItem()
         this.selectedClasses = null
     }
@@ -62,7 +62,8 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             var x = 0
             var y = 0
             for (predictionClass in selectedClasses!!) {
-                paint.color = this.colors!![predictionClass % (colors?.size ?: 1) ]
+                paint.color = colors!!.scale[predictionClass % (colors?.scale?.size ?: 1) ]
+//                paint.color = Color.toArgb(Color.BLUE.toLong())
                 x = predictionClass % dimensions.first
                 y = (predictionClass / dimensions.first) % dimensions.second
                 canvas.drawRect(
@@ -91,7 +92,7 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         size_item = updateSizeItem()
     }
 
-    fun updateColors(newColors: List<Int>) {
+    fun updateColors(newColors: IColorScale) {
         colors = newColors
     }
 

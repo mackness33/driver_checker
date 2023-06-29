@@ -10,7 +10,7 @@ import kotlin.math.sqrt
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
-class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2, private var sizeHolder: Int = 50) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
+class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2, private var sizeHolder: Int = 50) : ColoredAdapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
     private val colorClasses: Map<Int, List<Int>>
 
@@ -55,7 +55,7 @@ class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2,
         viewHolder.predictionView.updateSize(
             Pair(viewHolder.itemView.layoutParams.width, viewHolder.itemView.layoutParams.height)
         )
-        viewHolder.predictionView.updateColors(colorClasses.getValue(items[position].first))
+        viewHolder.predictionView.updateColors(colorManager.listColor[items[position].first])
         viewHolder.predictionView.updateSelectedClasses(items[position].second)
     }
 
