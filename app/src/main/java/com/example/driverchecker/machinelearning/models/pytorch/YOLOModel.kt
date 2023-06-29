@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.pytorch
+package com.example.driverchecker.machinelearning.models.pytorch
 
 import android.graphics.Bitmap
 import android.graphics.RectF
@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
 import com.example.driverchecker.machinelearning.data.ImageDetectionBox
 import com.example.driverchecker.machinelearning.data.ImageDetectionOutput
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionUtils
+import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.pytorch.*

@@ -1,7 +1,7 @@
 package com.example.driverchecker
 
 import android.app.Application
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionFactoryRepository
+import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.media.FileUtils
 
 class DriverChecker : Application() {

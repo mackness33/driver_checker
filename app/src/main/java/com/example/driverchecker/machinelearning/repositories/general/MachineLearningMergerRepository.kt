@@ -1,29 +1,29 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.repositories.general
 
-import android.graphics.Bitmap
-import android.net.Uri
 import android.util.Log
-import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionRepository
-import com.example.driverchecker.machinelearning.pytorch.YOLOModel
+import com.example.driverchecker.machinelearning.data.IMachineLearningData
+import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.data.MachineLearningArrayListBaseOutput
+import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
+import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
-abstract class MutableMachineLearningRepository
-    : IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>> {
+abstract class MachineLearningMergerRepository
+    :
+    IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>> {
     protected var activeKey: String? = null
     protected var repositories: MutableMap<String, IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>>> = mutableMapOf()
     override val repositoryScope: CoroutineScope = CoroutineScope(SupervisorJob())
-
-    protected var repo: IMachineLearningRepository<IMachineLearningData<Bitmap>, MachineLearningArrayListBaseOutput<*>>? = null
 
 //    constructor(initializers: Map<String, >?) {
 //
 //        repositories.putIfAbsent("Local", MachineLearningRepository())
 //        repositories.putIfAbsent("Remote", MachineLearningRepository())
 //    }
+
 
     override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<MachineLearningArrayListBaseOutput<Any?>>>?
         get() = if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey)) repositories[activeKey]?.analysisProgressState else null
@@ -61,9 +61,9 @@ abstract class MutableMachineLearningRepository
             repositories[activeKey]?.updateModel(init)
     }
 
-//    fun activate (model: String) {
-//        activeKey = if (repositories.containsKey(model)) model else activeKey
-//    }
+    fun activate (model: String) {
+        activeKey = if (repositories.containsKey(model)) model else activeKey
+    }
 
     fun use (modelName: String, modelInit: Map<String, Any?>) : Any? {
         try {
@@ -71,7 +71,7 @@ abstract class MutableMachineLearningRepository
                 "YoloV5" -> {
                     val path: String by modelInit
                     val classifications: String by modelInit
-//                    repo = ImageDetectionRepository(YOLOModel(path, classifications))
+                    return MachineLearningRepository(YOLOModel(path, classifications))
                 }
             }
         } catch (e : Throwable) {

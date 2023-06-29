@@ -9,8 +9,8 @@ import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOut
 import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionFactoryRepository
-import com.example.driverchecker.machinelearning.imagedetection.ImageDetectionUtils
+import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
+import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.media.MediaRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow

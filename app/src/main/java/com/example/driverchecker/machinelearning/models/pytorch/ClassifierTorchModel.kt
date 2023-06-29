@@ -1,8 +1,8 @@
-package com.example.driverchecker.machinelearning.pytorch
+package com.example.driverchecker.machinelearning.models.pytorch
 
-import com.example.driverchecker.machinelearning.classification.IClassificationModel
-import com.example.driverchecker.machinelearning.classification.IClassifier
-import com.example.driverchecker.machinelearning.classification.MutableClassifier
+import com.example.driverchecker.machinelearning.models.IClassificationModel
+import com.example.driverchecker.machinelearning.helpers.classification.IClassifier
+import com.example.driverchecker.machinelearning.helpers.classification.MutableClassifier
 import com.example.driverchecker.machinelearning.data.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json

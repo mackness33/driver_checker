@@ -1,7 +1,6 @@
-package com.example.driverchecker.machinelearning.classification
+package com.example.driverchecker.machinelearning.models
 
 import com.example.driverchecker.machinelearning.data.IClassification
-import com.example.driverchecker.machinelearning.general.IMachineLearningModel
 
 interface IClassificationModel <Data, Result, Superclass> : IMachineLearningModel<Data, Result> {
     fun <ModelInit : Map<Superclass, Set<IClassification<Superclass>>>> loadClassifications (init: ModelInit?) : Boolean

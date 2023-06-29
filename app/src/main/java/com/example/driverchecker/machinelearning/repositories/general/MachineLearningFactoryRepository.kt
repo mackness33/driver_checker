@@ -1,12 +1,10 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.repositories.general
 
-import android.graphics.Bitmap
-import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.pytorch.YOLOModel
+import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 
 abstract class MachineLearningFactoryRepository<Data, Result : WithConfidence>
-    : MachineLearningRepository<Data, Result>, MachineLearningFactory<Data, Result> {
+    : MachineLearningRepository<Data, Result>, IMachineLearningFactory<Data, Result> {
 
     constructor() : super(null)
 

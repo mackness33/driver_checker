@@ -2,7 +2,8 @@ package com.example.driverchecker.machinelearning.data
 
 import android.graphics.Bitmap
 import android.graphics.RectF
-import com.example.driverchecker.machinelearning.pytorch.ClassifierTorchModel
+import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchModel
+import com.example.driverchecker.machinelearning.repositories.general.MachineLearningRepository
 
 
 // ---------------------------------- INPUT ----------------------------------

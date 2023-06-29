@@ -1,13 +1,9 @@
-package com.example.driverchecker.machinelearning.windows
+package com.example.driverchecker.machinelearning.helpers.windows
 
-import android.os.Parcel
-import android.os.Parcelable
-import com.example.driverchecker.machinelearning.data.IMachineLearningResult
-import com.example.driverchecker.machinelearning.data.MachineLearningResultList
 import com.example.driverchecker.machinelearning.data.WithConfidence
 
 open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 3, open val threshold: Float = 0.15f) :
-    IMachineLearningWindow<Result>{
+    IMachineLearningWindow<Result> {
     protected val window : MutableList<Result> = mutableListOf()
 
     var confidence: Float = 0f

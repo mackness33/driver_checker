@@ -1,6 +1,4 @@
-package com.example.driverchecker.machinelearning.classification
-
-import com.example.driverchecker.machinelearning.general.IMachineLearningRepository
+package com.example.driverchecker.machinelearning.repositories
 
 interface IClassificationRepository<in Data, out Result> :
     IMachineLearningRepository<Data, Result> {

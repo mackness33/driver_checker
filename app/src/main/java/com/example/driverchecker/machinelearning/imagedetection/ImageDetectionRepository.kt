@@ -1,8 +1,0 @@
-package com.example.driverchecker.machinelearning.imagedetection
-
-import com.example.driverchecker.machinelearning.classification.IClassificationModel
-import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.general.IMachineLearningModel
-import com.example.driverchecker.machinelearning.general.MachineLearningRepository
-
-typealias ImageDetectionRepository = MachineLearningRepository<IImageDetectionData, ImageDetectionArrayListOutput<String>>

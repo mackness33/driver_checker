@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.imagedetection
+package com.example.driverchecker.machinelearning.helpers
 
 import android.graphics.*
 import androidx.camera.core.ImageProxy

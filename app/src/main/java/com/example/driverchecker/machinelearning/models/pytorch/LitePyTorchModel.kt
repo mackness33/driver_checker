@@ -1,7 +1,7 @@
-package com.example.driverchecker.machinelearning.pytorch
+package com.example.driverchecker.machinelearning.models.pytorch
 
 import android.util.Log
-import com.example.driverchecker.machinelearning.general.MachineLearningModel
+import com.example.driverchecker.machinelearning.models.MachineLearningModel
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
 

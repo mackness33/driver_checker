@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.repositories
 
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
 import kotlinx.coroutines.CoroutineScope

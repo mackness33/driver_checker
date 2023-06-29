@@ -1,12 +1,10 @@
-package com.example.driverchecker.machinelearning.imagedetection
+package com.example.driverchecker.machinelearning.repositories
 
-import android.graphics.ColorSpace.Model
 import android.util.Log
-import com.example.driverchecker.machinelearning.classification.IClassifierModel
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.general.IMachineLearningModel
-import com.example.driverchecker.machinelearning.general.MachineLearningFactoryRepository
-import com.example.driverchecker.machinelearning.pytorch.YOLOModel
+import com.example.driverchecker.machinelearning.models.IMachineLearningModel
+import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
+import com.example.driverchecker.machinelearning.repositories.general.MachineLearningFactoryRepository
 
 class ImageDetectionFactoryRepository
     : MachineLearningFactoryRepository<IImageDetectionData, ImageDetectionArrayListOutput<String>> {
@@ -22,7 +20,7 @@ class ImageDetectionFactoryRepository
             listenOnLoadingState()
             return model?.isLoaded?.value ?: false
         } catch (e : Throwable) {
-            Log.e("ModelManager", e.message ?: "Error on the exposition of the model $modelName")
+            Log.e("ImageDetectionFactoryRepository", e.message ?: "Error on the exposition of the model $modelName")
         }
         return false
     }
@@ -40,9 +38,6 @@ class ImageDetectionFactoryRepository
 
     companion object {
         @Volatile private var INSTANCE: ImageDetectionFactoryRepository? = null
-
-//        fun getInstance(localUri: String?, remoteUri: String?): ImageDetectionRepository =
-//            INSTANCE ?: ImageDetectionRepository(localUri, remoteUri)
 
         fun getInstance(modelName: String, modelInit: Map<String, Any?>): ImageDetectionFactoryRepository =
             INSTANCE ?: ImageDetectionFactoryRepository(modelName, modelInit)

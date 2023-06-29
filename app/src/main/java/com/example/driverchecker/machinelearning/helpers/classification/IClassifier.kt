@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.classification
+package com.example.driverchecker.machinelearning.helpers.classification
 
 import com.example.driverchecker.machinelearning.data.ClassificationList
 import com.example.driverchecker.machinelearning.data.ClassificationSet

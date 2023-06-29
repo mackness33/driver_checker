@@ -1,11 +1,13 @@
-package com.example.driverchecker.machinelearning.general
+package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.data.WithConfidence
-import com.example.driverchecker.machinelearning.windows.IMachineLearningWindow
-import com.example.driverchecker.machinelearning.windows.MachineLearningWindow
+import com.example.driverchecker.machinelearning.models.IMachineLearningModel
+import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
+import com.example.driverchecker.machinelearning.helpers.windows.MachineLearningWindow
+import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*

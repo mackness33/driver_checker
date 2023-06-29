@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.windows
+package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 import com.example.driverchecker.machinelearning.data.ImageDetectionListOutput

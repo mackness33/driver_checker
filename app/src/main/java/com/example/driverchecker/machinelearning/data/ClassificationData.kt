@@ -1,9 +1,8 @@
 package com.example.driverchecker.machinelearning.data
 
-import com.example.driverchecker.machinelearning.classification.IClassifier
-import com.example.driverchecker.machinelearning.classification.MutableClassifier
-import com.example.driverchecker.machinelearning.general.MachineLearningRepository
-import com.example.driverchecker.machinelearning.pytorch.ClassifierTorchModel
+import com.example.driverchecker.machinelearning.helpers.classification.IClassifier
+import com.example.driverchecker.machinelearning.helpers.classification.MutableClassifier
+import com.example.driverchecker.machinelearning.repositories.general.MachineLearningRepository
 import kotlinx.serialization.Serializable
 // ---------------------------------- CLASSES ----------------------------------
 
