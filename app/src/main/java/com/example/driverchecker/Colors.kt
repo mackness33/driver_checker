@@ -11,7 +11,7 @@ interface IColorScale {
     var indexMain: Int
 }
 
-data class ColorScale (override val scale: List<Int>, override var indexMain: Int = 3) : IColorScale{
+data class ColorScale (override val scale: List<Int>, override var indexMain: Int = 2) : IColorScale{
     override val main: Int?
         get() = if (scale.isNotEmpty() && scale.size <= indexMain) scale[indexMain] else null
     override val scaleWithoutMain: List<Int>
@@ -138,20 +138,21 @@ open class ColorManager () {
 
     init {
         colorClasses = mapOf(
+            "transparent" to ColorScale(emptyList()),
+            "orange" to ColorScale(orange),
+            "pink" to ColorScale(pink),
+            "brown" to ColorScale(brown),
             "red" to ColorScale(red),
             "green" to ColorScale(green),
             "lime" to ColorScale(lime),
             "yellow" to ColorScale(yellow),
-            "orange" to ColorScale(orange),
             "blue" to ColorScale(blue),
             "grey" to ColorScale(grey),
             "blue_gray" to ColorScale(blueGray),
-            "brown" to ColorScale(brown),
             "cyan" to ColorScale(cyan),
             "teal" to ColorScale(teal),
             "indigo" to ColorScale(indigo),
             "purple" to ColorScale(purple),
-            "pink" to ColorScale(pink),
         )
     }
 
