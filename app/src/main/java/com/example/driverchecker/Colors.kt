@@ -135,6 +135,21 @@ open class ColorManager () {
         Color.parseColor("#880E4F")
     )
 
+    protected val black: List<Int> = listOf(
+        Color.parseColor("#000000"),
+        Color.parseColor("#000000"),
+        Color.parseColor("#000000"),
+        Color.parseColor("#000000"),
+        Color.parseColor("#000000")
+    )
+
+    protected val white: List<Int> = listOf(
+        Color.parseColor("#FFFFFF"),
+        Color.parseColor("#FFFFFF"),
+        Color.parseColor("#FFFFFF"),
+        Color.parseColor("#FFFFFF"),
+        Color.parseColor("#FFFFFF")
+    )
 
     init {
         colorClasses = mapOf(
@@ -153,6 +168,8 @@ open class ColorManager () {
             "teal" to ColorScale(teal),
             "indigo" to ColorScale(indigo),
             "purple" to ColorScale(purple),
+            "black" to ColorScale(black),
+            "white" to ColorScale(white),
         )
     }
 
