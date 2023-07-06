@@ -19,9 +19,23 @@ data class ColorScale (override val scale: List<Int>, override var indexMain: In
 }
 
 open class ColorManager () {
-    val colorClasses: Map<String, IColorScale>
-    val listColor: List<IColorScale>
-        get() = colorClasses.values.toList()
+    val mapNonScalableColors: Map<String, IColorScale>
+    val listNonScalableColors: List<IColorScale>
+        get() = mapNonScalableColors.values.toList()
+
+    val mapColors: Map<String, IColorScale>
+    val listColors: List<IColorScale>
+        get() = mapColors.values.toList()
+
+    val mapFullColors: Map<String, IColorScale>
+        get() = mapColors.plus(mapNonScalableColors)
+    val listFullColors: List<IColorScale>
+        get() = mapFullColors.values.toList()
+
+    val mapMainColors: Map<String, Int?>
+        get() = mapFullColors.mapValues { scaledColor -> scaledColor.value.main }
+    val listMainColors: List<Int?>
+        get() = mapMainColors.values.toList()
 
     protected val red: List<Int> = listOf(
         Color.parseColor("#FFCDD2"),
@@ -152,8 +166,7 @@ open class ColorManager () {
     )
 
     init {
-        colorClasses = mapOf(
-            "transparent" to ColorScale(emptyList()),
+        mapColors = mapOf(
             "orange" to ColorScale(orange),
             "pink" to ColorScale(pink),
             "brown" to ColorScale(brown),
@@ -167,9 +180,12 @@ open class ColorManager () {
             "cyan" to ColorScale(cyan),
             "teal" to ColorScale(teal),
             "indigo" to ColorScale(indigo),
-            "purple" to ColorScale(purple),
+            "purple" to ColorScale(purple)
+        )
+        mapNonScalableColors = mapOf(
+            "transparent" to ColorScale(emptyList()),
             "black" to ColorScale(black),
-            "white" to ColorScale(white),
+            "white" to ColorScale(white)
         )
     }
 

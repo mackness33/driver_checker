@@ -90,6 +90,7 @@ class MediaFragment : Fragment() {
                             )
                                 .show()
                         }
+                        else -> {}
                     }
                 }
             }

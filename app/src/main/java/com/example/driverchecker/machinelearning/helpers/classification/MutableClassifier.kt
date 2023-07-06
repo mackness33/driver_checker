@@ -217,4 +217,6 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
     override fun sizeSuperClass(): Int {
         return _superclasses.size
     }
+
+    override fun maxClassesInGroup(): Int = _superclasses.values.maxOf { set -> set.size }
 }

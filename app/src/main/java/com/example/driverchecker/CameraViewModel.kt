@@ -5,10 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning.data.ImageDetectionBaseInput
-import com.example.driverchecker.machinelearning.data.LiveEvaluationState
-import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.media.MediaRepository
@@ -34,13 +31,12 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionFacto
                         _liveIsEnabled.postValue(state.isReady)
                         Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_onPartialResultsChanged.value} but array.size is ${array.size}")
                     }
-                    is LiveEvaluationState.Start -> {
+                    is LiveClassificationState.Start -> {
                         // add the partialResult to the resultsArray
                         _lastResult.postValue(null)
                         _isEvaluating.postValue(true)
                         _liveIsEnabled.postValue(true)
-                        Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
-
+                        Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex and max classes: ${state.maxClassesPerGroup}")
                     }
                     is LiveEvaluationState.Loading<ImageDetectionArrayListOutput<String>> -> {
                         // add the partialResult to the resultsArray
@@ -58,6 +54,7 @@ class CameraViewModel (private var imageDetectionRepository: ImageDetectionFacto
                         _liveIsEnabled.postValue(false)
                         Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")
                     }
+                    else -> {}
                 }
             }
         }

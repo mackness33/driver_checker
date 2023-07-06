@@ -22,7 +22,7 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
     }
 
     protected val _classifier = MutableClassifier<Superclass>(null)
-    val classifier: IClassifier<Superclass>
+    override val classifier: IClassifier<Superclass>
         get() = _classifier
 
     private fun initClassifier(json: String?) : Boolean = loadClassifications(json)

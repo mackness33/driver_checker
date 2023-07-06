@@ -39,7 +39,7 @@ class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2,
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.prediction_item, viewGroup, false)
+            .inflate(R.layout.partial_item, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -55,7 +55,7 @@ class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2,
         viewHolder.predictionView.updateSize(
             Pair(viewHolder.itemView.layoutParams.width, viewHolder.itemView.layoutParams.height)
         )
-        viewHolder.predictionView.updateColors(colorManager.listColor[items[position].first])
+        viewHolder.predictionView.updateColors(colorManager.listFullColors[items[position].first])
         viewHolder.predictionView.updateSelectedClasses(items[position].second)
     }
 

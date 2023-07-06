@@ -35,7 +35,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
             model?.isLoaded?.collect { state ->
                 if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(!state))
                     _externalProgressState.emit(LiveEvaluationState.Ready(state))
-            }
+            }x
         }
     }
 
@@ -82,53 +82,56 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
 
     protected open fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
-            // check if the repo is ready to make evaluPrediction, Superclass, ations
+            // check if the repo is ready to make evaluations
             if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-                _externalProgressState.emit(LiveEvaluationState.Start(null))
+                _externalProgressState.emit(LiveEvaluationState.Start())
 
-                model?.processAndEvaluatesStream(input)
-                    ?.onEach {
-                        window.next(it)
-
-                        _externalProgressState.emit(
-                            LiveEvaluationState.Loading(
-                            window.getIndex(),
-                            window.getLastResult()
-                        ))
-                        // TODO: Pass the metrics and Result
-                        if (window.isSatisfied())
-                            cancel()
-
-                        Log.d("JobClassification", "Checked: ${window.getIndex()} with ${window.getLastResult()}")
-                    }
-                    ?.cancellable()
-                    ?.catch { cause ->
-                        Log.e("JobClassification", "Just caught this, ${cause.message}, cause")
-                    }
-                    ?.onCompletion { cause ->
-                        Log.d("JobClassification", "finally finished")
-
-                        if (cause != null && cause !is CancellationException) {
-                            _externalProgressState.emit(
-                                LiveEvaluationState.End(cause, null)
-                            )
-                        } else {
-                            _externalProgressState.emit(
-                                LiveEvaluationState.End(null, window.getLastResult())
-                            )
-                        }
-
-                        window.clean()
-
-                        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
-                    }
-                    ?.collect()
+                flowClassification(input, ::cancel)?.collect()
 
             } else {
                 _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
                 _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
             }
         }
+    }
+
+    protected open fun flowClassification (input: Flow<Data>, onConditionSatisfied: () -> Unit): Flow<Result>? {
+        return model?.processAndEvaluatesStream(input)
+                ?.onEach {
+                    window.next(it)
+
+                    _externalProgressState.emit(
+                        LiveEvaluationState.Loading(
+                            window.getIndex(),
+                            window.getLastResult()
+                        ))
+                    // TODO: Pass the metrics and Result
+                    if (window.isSatisfied())
+                        onConditionSatisfied()
+
+                    Log.d("JobClassification", "Checked: ${window.getIndex()} with ${window.getLastResult()}")
+                }
+                ?.cancellable()
+                ?.catch { cause ->
+                    Log.e("JobClassification", "Just caught this: ${cause.message}")
+                }
+                ?.onCompletion { cause ->
+                    Log.d("JobClassification", "finally finished")
+
+                    if (cause != null && cause !is CancellationException) {
+                        _externalProgressState.emit(
+                            LiveEvaluationState.End(cause, null)
+                        )
+                    } else {
+                        _externalProgressState.emit(
+                            LiveEvaluationState.End(null, window.getLastResult())
+                        )
+                    }
+
+                    window.clean()
+
+                    _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+                }
     }
 
     override fun onStartLiveClassification(

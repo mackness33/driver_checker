@@ -20,28 +20,24 @@
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_weight="2"
-        android:id="@+id/txtClass"
+        android:id="@+id/txtGroup"
         android:textAlignment="center"
         android:textSize="30sp"
         />
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/color_class_view"
         android:layout_width="120dp"
         android:layout_height="64dp"
-        android:layout_weight="0"
-        >
-        <com.example.driverchecker.RectView
-            android:id="@+id/rect_item"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
+        />
+
 
     <ImageView
+        android:id="@+id/imgInput"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_weight="0"
-        android:contentDescription="user">
-
-    </ImageView>
+        android:contentDescription="user"
+        />
 
 </LinearLayout>

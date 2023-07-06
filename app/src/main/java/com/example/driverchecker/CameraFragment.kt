@@ -63,24 +63,9 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
-//        val cube: Array<Int> = arrayOf(Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN)
         binding.partialsView.layoutManager = GridLayoutManager(view.context, 5, RecyclerView.VERTICAL, true)
         binding.partialsView.itemAnimator = null
         binding.partialsView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
-
-//        val btnVideo = binding.btnRecordVideo
-//        val isEnabledObserver = Observer<Boolean?> { enable ->
-//            Log.i("LiveData", "Recoding Button is ${if (enable) "not" else ""} enabled")
-//            btnVideo.isEnabled = enable
-//        }
-//        model.isEnabled.observe(viewLifecycleOwner, isEnabledObserver)
-
-//        val isRecordingObserver = Observer<Boolean?> { isRecording ->
-//            val record = isRecording ?: false
-//            Log.i("LiveData", "Recoding Button ${if (record) "start" else "stop"} recording")
-//            btnVideo.text = getString(if (record) R.string.stop_capture else R.string.start_capture)
-//        }
-//        model.isRecording.observe(viewLifecycleOwner, isRecordingObserver)
 
         model.liveIsEnabled.observe(viewLifecycleOwner) { enableLive ->
             Log.i("LiveData - LiveBtn", "Live Button is ${if (enableLive) "not" else ""} enabled")

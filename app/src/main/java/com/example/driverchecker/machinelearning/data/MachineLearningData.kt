@@ -52,6 +52,11 @@ sealed interface LiveEvaluationStateInterface<out Result>
 sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
     data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
     data class Loading<Result>(val index: Int, val partialResult: Result?) : LiveEvaluationState<Result>()
-    class Start(val info: Nothing?) : LiveEvaluationState<Nothing>()
+    class Start() : LiveEvaluationState<Nothing>()
     data class End<Result>(val exception: Throwable?, val result: Result?) : LiveEvaluationState<Result>()
+}
+
+// Represents different states for the LatestNews screen
+sealed class LiveClassificationState<out Result> : LiveEvaluationState<Result>() {
+    data class Start(val maxClassesPerGroup: Int) : LiveEvaluationState<Nothing>()
 }

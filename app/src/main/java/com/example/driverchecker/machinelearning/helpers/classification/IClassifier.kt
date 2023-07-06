@@ -24,4 +24,6 @@ interface IClassifier<Superclass> {
 
     fun size () : Int
     fun sizeSuperClass () : Int
+
+    fun maxClassesInGroup () : Int
 }
