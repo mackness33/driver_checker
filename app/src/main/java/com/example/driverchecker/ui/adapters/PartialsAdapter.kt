@@ -1,10 +1,12 @@
-package com.example.driverchecker
+package com.example.driverchecker.ui.adapters
 
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.R
+import com.example.driverchecker.ui.views.RectView
 import kotlin.math.round
 import kotlin.math.sqrt
 

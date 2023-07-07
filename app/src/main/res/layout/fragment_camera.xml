@@ -110,7 +110,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnLive"
         />
 
-<!--    <com.example.driverchecker.RectView-->
+<!--    <com.example.driverchecker.ui.views.RectView-->
 <!--        android:id="@+id/rect_item"-->
 <!--        android:layout_width="200dp"-->
 <!--        android:layout_height="200dp"-->
@@ -122,7 +122,7 @@
 <!--        app:layout_constraintBottom_toBottomOf="parent" />-->
 
 
-    <com.example.driverchecker.ResultView
+    <com.example.driverchecker.ui.views.ResultView
         android:id="@+id/resultView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

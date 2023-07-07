@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.utils
 
 import android.content.ContentValues
 import android.content.Context
@@ -13,6 +13,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
+import com.example.driverchecker.data.CameraViewModel
 import com.example.driverchecker.media.FileUtils
 import java.text.SimpleDateFormat
 import java.util.*

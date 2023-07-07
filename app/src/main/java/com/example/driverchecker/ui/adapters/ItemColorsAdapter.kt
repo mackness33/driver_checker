@@ -1,9 +1,11 @@
-package com.example.driverchecker
+package com.example.driverchecker.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.ui.views.ClassView
+import com.example.driverchecker.R
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 // this adapter is actually the itemColorRecyclerView of the item in predictionAdapter.
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
+// items are a list long as the max number of classes with the color and the
 class ItemColorsAdapter(
     private val items: List<Boolean>,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64),
@@ -44,6 +47,7 @@ class ItemColorsAdapter(
             Pair(viewHolder.itemView.layoutParams.width.toFloat(), viewHolder.itemView.layoutParams.height.toFloat())
         )
         viewHolder.colorView.updateColors(colorManager.listFullColors[superclass].scale[position])
+        viewHolder.colorView.activate(showColor = items[position])
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.data
 
 import android.graphics.Bitmap
 import android.net.Uri

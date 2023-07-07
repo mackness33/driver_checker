@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.ui.views
 
 import android.content.Context
 import android.graphics.*

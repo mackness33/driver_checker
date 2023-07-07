@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.ui.adapters
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.R
 import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 
 
@@ -20,7 +21,7 @@ import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOut
 class PredictionsAdapter(
     val items: List<ImageDetectionArrayListOutput<String>>,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64),
-    private val superclass: Int = 0
+    private val maxClassesPerSuperclass: Int = 0
 ) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
@@ -53,6 +54,10 @@ class PredictionsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 
+        val indexFoundClass = items[position]
+            .distinctBy { predictions -> predictions.result.classIndex }
+            .map { prediction -> prediction.result.classIndex}
+        val foundClass: List<Boolean> = MutableList(maxClassesPerSuperclass) { index -> indexFoundClass.contains(index) }
         viewHolder.textIndex.text = items[position].first().group.index.toString()
         viewHolder.textGroup.text = items[position].first().group.superclass
         viewHolder.textGroup.setTextColor(colorManager.listFullColors[1].main ?: Color.BLACK)
@@ -64,8 +69,7 @@ class PredictionsAdapter(
                 true
             )
         )
-//        viewHolder.colorGroupView.adapter = ItemColorsAdapter(items[position].mapTo())
-
+        viewHolder.colorGroupView.adapter = ItemColorsAdapter(foundClass)
 //        viewHolder.itemView.layoutParams = ViewGroup.LayoutParams(sizeHolder.first, sizeHolder.second)
 //        viewHolder.predictionView.updateSize(
 //            Pair(viewHolder.itemView.layoutParams.width.toFloat(), viewHolder.itemView.layoutParams.height.toFloat())

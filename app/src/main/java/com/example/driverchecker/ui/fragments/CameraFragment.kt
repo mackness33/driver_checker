@@ -1,4 +1,4 @@
-package com.example.driverchecker
+package com.example.driverchecker.ui.fragments
 
 import android.Manifest
 import android.app.Activity
@@ -20,8 +20,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.R
+import com.example.driverchecker.data.CameraViewModel
 import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.example.driverchecker.media.FileUtils
+import com.example.driverchecker.showSnackbar
+import com.example.driverchecker.ui.adapters.PartialsAdapter
+import com.example.driverchecker.utils.CameraXHandler
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -36,7 +41,7 @@ class CameraFragment : Fragment() {
     private val cameraXHandler: CameraXHandler = CameraXHandler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         layout = binding.root
         return layout
@@ -304,22 +309,5 @@ class CameraFragment : Fragment() {
         runBlocking(Dispatchers.Default) {
             model.produceImage(image)
         }
-    }
-}
-
-fun View.showSnackbar(
-    view: View,
-    msg: String,
-    length: Int,
-    actionMessage: CharSequence?,
-    action: (View) -> Unit
-) {
-    val snackbar = Snackbar.make(view, msg, length)
-    if (actionMessage != null) {
-        snackbar.setAction(actionMessage) {
-            action(this)
-        }.show()
-    } else {
-        snackbar.show()
     }
 }

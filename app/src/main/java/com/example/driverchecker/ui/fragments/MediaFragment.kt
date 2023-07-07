@@ -1,4 +1,4 @@
-package com.example.driverchecker;
+package com.example.driverchecker.ui.fragments;
 
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.driverchecker.data.CameraViewModel
 import com.example.driverchecker.databinding.FragmentMediaBinding
 import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState

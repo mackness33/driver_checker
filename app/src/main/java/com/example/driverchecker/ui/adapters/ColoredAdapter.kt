@@ -1,7 +1,7 @@
-package com.example.driverchecker
+package com.example.driverchecker.ui.adapters
 
-import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.ColorManager
 
 abstract class ColoredAdapter<ViewHolder : RecyclerView.ViewHolder?> : RecyclerView.Adapter<ViewHolder>() {
     val colorManager: ColorManager = ColorManager()

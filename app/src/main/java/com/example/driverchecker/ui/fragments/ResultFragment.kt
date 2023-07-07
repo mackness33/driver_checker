@@ -1,4 +1,4 @@
-package com.example.driverchecker;
+package com.example.driverchecker.ui.fragments;
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.data.CameraViewModel
+import com.example.driverchecker.ui.adapters.PartialsAdapter
 import com.example.driverchecker.databinding.FragmentResultBinding
 
 class ResultFragment : Fragment() {

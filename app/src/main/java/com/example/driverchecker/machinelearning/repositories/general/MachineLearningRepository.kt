@@ -35,7 +35,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
             model?.isLoaded?.collect { state ->
                 if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(!state))
                     _externalProgressState.emit(LiveEvaluationState.Ready(state))
-            }x
+            }
         }
     }
 

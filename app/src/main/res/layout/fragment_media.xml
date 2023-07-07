@@ -27,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:contentDescription="Image View" />
 
-    <com.example.driverchecker.ResultView
+    <com.example.driverchecker.ui.views.ResultView
         android:id="@+id/resultView"
         android:layout_width="0dp"
         android:layout_height="0dp"

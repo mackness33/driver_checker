@@ -6,12 +6,12 @@
     app:startDestination="@id/cameraFragment">
     <fragment
         android:id="@+id/resultFragment"
-        android:name="com.example.driverchecker.ResultFragment"
+        android:name="com.example.driverchecker.ui.fragments.ResultFragment"
         android:label="@string/label_result"
         tools:layout="@layout/fragment_result" />
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.example.driverchecker.CameraFragment"
+        android:name="com.example.driverchecker.ui.fragments.CameraFragment"
         android:label="@string/label_camera"
         tools:layout="@layout/fragment_camera" >
         <action

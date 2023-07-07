@@ -1,9 +1,11 @@
-package com.example.driverchecker
+package com.example.driverchecker.ui.views
 
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import com.example.driverchecker.ColorScale
+import com.example.driverchecker.IColorScale
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.
