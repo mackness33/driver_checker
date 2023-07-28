@@ -29,7 +29,6 @@ class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2,
     }
 
     /**
-//        viewHolder.predictionView.invalidate()first
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */

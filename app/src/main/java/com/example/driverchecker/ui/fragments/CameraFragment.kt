@@ -82,6 +82,8 @@ class CameraFragment : Fragment() {
             Log.i("LiveData - LiveBtn", "Live Button ${if (record) "start" else "stop"} recording")
             binding.btnLive.text =
                 getString(if (record) R.string.stop_live else R.string.start_live)
+
+//            if (record) findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
         }
 
         model.lastResult.observe(viewLifecycleOwner) { partial ->
@@ -169,7 +171,6 @@ class CameraFragment : Fragment() {
                         model.updateImageUri(data.data)
                         model.updatePath(path)
                         cameraXHandler.pauseCamera()
-                        findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
                     }
                 }
             }
@@ -196,7 +197,7 @@ class CameraFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissionsGranted ->
             for (grant in permissionsGranted) {
                 if (grant.value) {
-                    // Permission is granted. ContiimageDetectionService.analyzeData(bitmap, false)nue the action or workflow in your
+                    // Permission is granted. Continue the action or workflow in your
                     // app.
                     Log.i("Permission ${grant.key}: ", "Granted")
                     if (grant.key == Manifest.permission.CAMERA) runCamera()
@@ -299,11 +300,11 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private fun chooseImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.type = "image/* video/*"
-        activityResultLauncher.launch(intent)
-    }
+//    private fun chooseImageFromGallery() {
+//        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//        intent.type = "image/* video/*"
+//        activityResultLauncher.launch(intent)
+//    }
 
     private fun analyzeImage (image: ImageProxy) {
         runBlocking(Dispatchers.Default) {

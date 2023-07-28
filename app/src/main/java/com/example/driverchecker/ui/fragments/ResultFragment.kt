@@ -16,7 +16,7 @@ class ResultFragment : Fragment() {
     private lateinit var layout: View
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
-    private val model: CameraViewModel by activityViewModels()
+//    private val model: CameraViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -27,14 +27,14 @@ class ResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.txtResult.text = "DRIVER"
-
-        binding.txtDriver.text = String.format("%s:%s", model.driverInfo.value?.first, model.driverInfo.value?.second)
-        binding.txtPassenger.text = String.format("%s:%s", model.passengerInfo.value?.first, model.passengerInfo.value?.second)
-
-        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, false)
-        binding.recyclerView.itemAnimator = null
-        binding.recyclerView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
+//        binding.txtResult.text = "DRIVER"
+//
+//        binding.txtDriver.text = String.format("%s:%s", model.driverInfo.value?.first, model.driverInfo.value?.second)
+//        binding.txtPassenger.text = String.format("%s:%s", model.passengerInfo.value?.first, model.passengerInfo.value?.second)
+//
+//        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, false)
+//        binding.recyclerView.itemAnimator = null
+//        binding.recyclerView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
     }
 
 
