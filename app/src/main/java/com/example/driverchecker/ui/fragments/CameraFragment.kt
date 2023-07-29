@@ -72,7 +72,7 @@ class CameraFragment : Fragment() {
         binding.partialsView.itemAnimator = null
         binding.partialsView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
 
-        model.liveIsEnabled.observe(viewLifecycleOwner) { enableLive ->
+        model.isEnabled.observe(viewLifecycleOwner) { enableLive ->
             Log.i("LiveData - LiveBtn", "Live Button is ${if (enableLive) "not" else ""} enabled")
             binding.btnLive.isEnabled = enableLive
         }
@@ -159,22 +159,22 @@ class CameraFragment : Fragment() {
         this.findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
     }
 
-    private val activityResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                // There are no request codes
-                val data: Intent? = result.data
-                if (data != null && data.data != null && data.data is Uri) {
-                    val path: String? = FileUtils.getPath(data.data as Uri, this.requireActivity())
-
-                    if (path != null) {
-                        model.updateImageUri(data.data)
-                        model.updatePath(path)
-                        cameraXHandler.pauseCamera()
-                    }
-                }
-            }
-        }
+//    private val activityResultLauncher =
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            if (result.resultCode == Activity.RESULT_OK) {
+//                // There are no request codes
+//                val data: Intent? = result.data
+//                if (data != null && data.data != null && data.data is Uri) {
+//                    val path: String? = FileUtils.getPath(data.data as Uri, this.requireActivity())
+//
+//                    if (path != null) {
+//                        model.updateImageUri(data.data)
+//                        model.updatePath(path)
+//                        cameraXHandler.pauseCamera()
+//                    }
+//                }
+//            }
+//        }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->

@@ -21,19 +21,19 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
     val analysisState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = machineLearningRepository?.analysisProgressState
 
-    private val _lastResult: MutableLiveData<Result?> = MutableLiveData(null)
+    protected val _lastResult: MutableLiveData<Result?> = MutableLiveData(null)
     val lastResult: LiveData<Result?>
         get() = _lastResult
 
-    private val _isEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
+    protected val _isEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
     val isEvaluating: LiveData<Boolean>
         get() = _isEvaluating
 
-    private val _isEnabled: MutableLiveData<Boolean> = MutableLiveData(true)
+    protected val _isEnabled: MutableLiveData<Boolean> = MutableLiveData(true)
     val isEnabled: LiveData<Boolean>
         get() = _isEnabled
 
-    private val _liveData: MutableSharedFlow<Data> = MutableSharedFlow (
+    protected val _liveData: MutableSharedFlow<Data> = MutableSharedFlow (
         replay = 0,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
@@ -41,7 +41,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
     val liveData: SharedFlow<Data>
         get() = _liveData.asSharedFlow()
 
-    private val _onPartialResultsChanged: MutableLiveData<Int> = MutableLiveData(-1)
+    protected val _onPartialResultsChanged: MutableLiveData<Int> = MutableLiveData(-1)
     val onPartialResultsChanged: LiveData<Int>
         get () = _onPartialResultsChanged
 
@@ -55,14 +55,6 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
 
     val predictionsGroupByClasses: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions
-
-    protected val _passengerInfo = MutableLiveData(Pair(0, 0))
-    val passengerInfo: LiveData<Pair<Int, Int>>
-        get() = _passengerInfo
-
-    protected val _driverInfo = MutableLiveData(Pair(0, 0))
-    val driverInfo: LiveData<Pair<Int, Int>>
-        get() = _driverInfo
 
     protected fun listenToLiveClassification () {
         viewModelScope.launch(Dispatchers.Default) {
@@ -105,27 +97,13 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
         }
     }
 
-    protected fun insertPartialResult (partialResult: Result) {
-        val classInfo: Pair<Int, List<Int>> = Pair(
-            1,
-            partialResult
-                .distinctBy { predictions -> predictions.result.classIndex }
-                .map { prediction -> prediction.result.classIndex}
-        )
-
+    protected open fun insertPartialResult (partialResult: Result) {
         array.add(partialResult)
-        arrayClassesPredictions.add(classInfo)
-        when (classInfo.first) {
-            0 -> _passengerInfo.postValue(Pair((_passengerInfo.value?.first ?: 0) + classInfo.first, (_passengerInfo.value?.second ?: 0) + classInfo.second.count()))
-            1 -> _driverInfo.postValue(Pair((_driverInfo.value?.first ?: 0) + classInfo.first, (_driverInfo.value?.second ?: 0) + classInfo.second.count()))
-        }
     }
 
-    protected fun clearPartialResults () {
+    protected open fun clearPartialResults () {
         array.clear()
         arrayClassesPredictions.clear()
-        _passengerInfo.postValue(Pair(0, 0))
-        _driverInfo.postValue(Pair(0, 0))
     }
 
     fun enable (enable: Boolean) {
@@ -148,15 +126,5 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
                 else -> {}
             }
         }
-    }
-}
-
-class BaseViewModelFactory(private val repository: ImageDetectionFactoryRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(BaseViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return CameraViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class $modelClass")
     }
 }
