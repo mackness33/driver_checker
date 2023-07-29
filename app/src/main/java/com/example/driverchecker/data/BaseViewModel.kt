@@ -13,11 +13,6 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machineLearningRepository: IMachineLearningFactory<Data, Result>? = null): ViewModel() {
-
-    init {
-        listenToLiveClassification ()
-    }
-
     val analysisState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = machineLearningRepository?.analysisProgressState
 
@@ -56,45 +51,55 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
     val predictionsGroupByClasses: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions
 
-    protected fun listenToLiveClassification () {
+    protected open fun listenToLiveClassification() {
         viewModelScope.launch(Dispatchers.Default) {
-            analysisState?.collect { state ->
-                when (state) {
-                    is LiveEvaluationState.Ready -> {
-                        clearPartialResults()
-                        _onPartialResultsChanged.postValue(array.size)
-                        _lastResult.postValue(null)
-                        _isEvaluating.postValue(false)
-                        _isEnabled.postValue(state.isReady)
-                        Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_onPartialResultsChanged.value} but array.size is ${array.size}")
-                    }
-                    is LiveClassificationState.Start -> {
-                        // add the partialResult to the resultsArray
-                        _lastResult.postValue(null)
-                        _isEvaluating.postValue(true)
-                        _isEnabled.postValue(true)
-                        Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex and max classes: ${state.maxClassesPerGroup}")
-                    }
-                    is LiveEvaluationState.Loading<Result> -> {
-                        // add the partialResult to the resultsArray
-                        if (state.partialResult != null) {
-                            insertPartialResult(state.partialResult)
-                            _onPartialResultsChanged.postValue(array.size)
-                            _lastResult.postValue(state.partialResult)
-                            Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
-                        }
-                    }
-                    is LiveEvaluationState.End<Result> -> {
-                        // update the UI with the text of the class
-                        // save to the database the result with bulk of 10 and video
-                        _isEvaluating.postValue(false)
-                        _isEnabled.postValue(false)
-                        Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")
-                    }
-                    else -> {}
-                }
-            }
+            analysisState?.collect {state -> collectLiveClassification(state)}
         }
+    }
+
+    protected open suspend fun collectLiveClassification (state: LiveEvaluationStateInterface<Result>) {
+        when (state) {
+            is LiveEvaluationState.Ready -> onLiveEvaluationReady(state)
+            is LiveClassificationState.Start -> onLiveClassificationStart(state)
+            is LiveEvaluationState.Loading<Result> -> onLiveEvaluationLoading(state)
+            is LiveEvaluationState.End<Result> -> onLiveEvaluationEnd(state)
+            else -> {}
+        }
+    }
+
+    protected open fun onLiveEvaluationReady (state: LiveEvaluationState.Ready) {
+        clearPartialResults()
+        _onPartialResultsChanged.postValue(array.size)
+        _lastResult.postValue(null)
+        _isEvaluating.postValue(false)
+        _isEnabled.postValue(state.isReady)
+        Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_onPartialResultsChanged.value} but array.size is ${array.size}")
+    }
+
+    protected open fun onLiveClassificationStart (state: LiveClassificationState.Start) {
+        // add the partialResult to the resultsArray
+        _lastResult.postValue(null)
+        _isEvaluating.postValue(true)
+        _isEnabled.postValue(true)
+        Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex and max classes: ${state.maxClassesPerGroup}")
+    }
+
+    protected open fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<Result>) {
+        // add the partialResult to the resultsArray
+        if (state.partialResult != null) {
+            insertPartialResult(state.partialResult)
+            _onPartialResultsChanged.postValue(array.size)
+            _lastResult.postValue(state.partialResult)
+            Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
+        }
+    }
+
+    protected open fun onLiveEvaluationEnd (state: LiveEvaluationState.End<Result>) {
+        // update the UI with the text of the class
+        // save to the database the result with bulk of 10 and video
+        _isEvaluating.postValue(false)
+        _isEnabled.postValue(false)
+        Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")
     }
 
     protected open fun insertPartialResult (partialResult: Result) {
