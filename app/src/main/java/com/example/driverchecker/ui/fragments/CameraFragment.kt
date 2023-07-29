@@ -1,12 +1,8 @@
 package com.example.driverchecker.ui.fragments
 
 import android.Manifest
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,10 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.data.CameraViewModel
 import com.example.driverchecker.databinding.FragmentCameraBinding
-import com.example.driverchecker.media.FileUtils
-import com.example.driverchecker.showSnackbar
 import com.example.driverchecker.ui.adapters.PartialsAdapter
 import com.example.driverchecker.utils.CameraXHandler
+import com.example.driverchecker.utils.showSnackbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
