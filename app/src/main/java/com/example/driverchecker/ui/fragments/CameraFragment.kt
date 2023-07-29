@@ -99,12 +99,12 @@ class CameraFragment : Fragment() {
                 when {
                     size == 0 ->{
                         (binding.partialsView.adapter as PartialsAdapter).notifyDataSetChanged();
-                        Log.d("LiveEvaluationState", "CLEAR: $size deleting with array: ${model.list.size}")
+                        Log.d("LiveEvaluationState", "CLEAR: $size deleting with array: ${model.evaluatedItemsList.size}")
                     }
 
                     size > 0 -> {
                         (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(size-1)
-                        Log.d("LiveEvaluationState", "APPEND: $size inserting with array: ${model.list.size}")
+                        Log.d("LiveEvaluationState", "APPEND: $size inserting with array: ${model.evaluatedItemsList.size}")
                     }
 
                     else -> {}
