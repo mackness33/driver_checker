@@ -15,6 +15,10 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         listenToLiveClassification ()
     }
 
+    private val _showResults: BooleanModel = BooleanModel()
+    val showResults: StateFlow<Boolean>
+        get() = _showResults.counter
+
     private val _passengerInfo = MutableLiveData(Pair(0, 0))
     val passengerInfo: LiveData<Pair<Int, Int>>
         get() = _passengerInfo
@@ -22,7 +26,6 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
     private val _driverInfo = MutableLiveData(Pair(0, 0))
     val driverInfo: LiveData<Pair<Int, Int>>
         get() = _driverInfo
-
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
@@ -49,6 +52,11 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         }
     }
 
+    override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<ImageDetectionArrayListOutput<String>>) {
+//        _showResults.update(state.result != null)
+        super.onLiveEvaluationEnd(state)
+    }
+
     override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<ImageDetectionArrayListOutput<String>>) {
         // add the partialResult to the resultsArray
         if (!state.partialResult.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
@@ -58,5 +66,16 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         super.clearPartialResults()
         _passengerInfo.postValue(Pair(0, 0))
         _driverInfo.postValue(Pair(0, 0))
+//        _showResults.update(false)
+    }
+
+    inner class BooleanModel (initialValue: Boolean = false) {
+        private val _counter = MutableStateFlow(initialValue) // private mutable state flow
+        val counter = _counter.asStateFlow() // publicly exposed as read-only state flow
+
+        fun update(nextValue: Boolean) {
+            _counter.compareAndSet(!nextValue, nextValue)
+//            _counter.update { bool -> !bool } // atomic, safe for concurrent use
+        }
     }
 }

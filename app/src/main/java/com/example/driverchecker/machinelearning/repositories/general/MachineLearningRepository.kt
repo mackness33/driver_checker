@@ -87,7 +87,6 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
                 _externalProgressState.emit(LiveEvaluationState.Start())
 
                 flowClassification(input, ::cancel)?.collect()
-
             } else {
                 _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
                 _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
@@ -95,43 +94,43 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
         }
     }
 
-    protected open fun flowClassification (input: Flow<Data>, onConditionSatisfied: () -> Unit): Flow<Result>? {
+    protected open fun flowClassification (input: Flow<Data>, onConditionSatisfied: (CancellationException) -> Unit): Flow<Result>? {
         return model?.processAndEvaluatesStream(input)
-                ?.onEach {
-                    window.next(it)
+                    ?.onEach {
+                        window.next(it)
 
-                    _externalProgressState.emit(
-                        LiveEvaluationState.Loading(
-                            window.getIndex(),
-                            window.getLastResult()
-                        ))
-                    // TODO: Pass the metrics and Result
-                    if (window.isSatisfied())
-                        onConditionSatisfied()
-
-                    Log.d("JobClassification", "Checked: ${window.getIndex()} with ${window.getLastResult()}")
-                }
-                ?.cancellable()
-                ?.catch { cause ->
-                    Log.e("JobClassification", "Just caught this: ${cause.message}")
-                }
-                ?.onCompletion { cause ->
-                    Log.d("JobClassification", "finally finished")
-
-                    if (cause != null && cause !is CancellationException) {
                         _externalProgressState.emit(
-                            LiveEvaluationState.End(cause, null)
-                        )
-                    } else {
-                        _externalProgressState.emit(
-                            LiveEvaluationState.End(null, window.getLastResult())
-                        )
+                            LiveEvaluationState.Loading(
+                                window.getIndex(),
+                                window.getLastResult()
+                            ))
+                        // TODO: Pass the metrics and Result
+                        if (window.isSatisfied())
+                            onConditionSatisfied(CorrectCancellationException())
+
+                        Log.d("JobClassification", "Checked: ${window.getIndex()} with ${window.getLastResult()}")
                     }
+                    ?.cancellable()
+                    ?.catch { cause ->
+                        Log.e("JobClassification", "Just caught this: ${cause.message}")
+                    }
+                    ?.onCompletion { cause ->
+                        Log.d("JobClassification", "finally finished")
 
-                    window.clean()
+                        if (cause != null && cause !is CorrectCancellationException) {
+                            _externalProgressState.emit(
+                                LiveEvaluationState.End(cause, null)
+                            )
+                        } else {
+                            _externalProgressState.emit(
+                                LiveEvaluationState.End(null, window.getLastResult())
+                            )
+                        }
 
-                    _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
-                }
+                        window.clean()
+
+                        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+                    }
     }
 
     override fun onStartLiveClassification(
@@ -143,11 +142,14 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
         }
     }
 
-    override fun onStopLiveClassification() {
-        liveClassificationJob?.cancel()
+    override fun onStopLiveClassification(externalCause: CancellationException?) {
+        liveClassificationJob?.cancel(cause = externalCause ?: ExternalCancellationException())
     }
 
     override fun <ModelInit> updateModel(init: ModelInit) {
         model?.loadModel(init)
     }
 }
+
+class ExternalCancellationException : CancellationException ()
+class CorrectCancellationException : CancellationException ()

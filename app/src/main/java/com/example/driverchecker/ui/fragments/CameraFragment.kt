@@ -13,6 +13,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,8 +29,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-
-//1
 class CameraFragment : Fragment() {
     private lateinit var layout: View
     private var _binding: FragmentCameraBinding? = null
@@ -44,6 +45,7 @@ class CameraFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        cameraXHandler.pauseCamera()
         _binding = null
     }
 
@@ -77,9 +79,31 @@ class CameraFragment : Fragment() {
             Log.i("LiveData - LiveBtn", "Live Button ${if (record) "start" else "stop"} recording")
             binding.btnLive.text =
                 getString(if (record) R.string.stop_live else R.string.start_live)
-
-//            if (record) findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
         }
+
+        model.showResults.
+
+
+        lifecycleScope.launchWhenCreated {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                model.showResults.collect { state ->
+                    Log.i("LiveData - showResults", "Evaluation ${if (state) "correctly ended" else "failed to end"}")
+                    if (state) {
+                        cameraXHandler.pauseCamera()
+                        findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
+                    }
+                }
+            }
+        }
+
+        model.showResults.flowWithLifecycle()
+
+//        model.showResults.observe(viewLifecycleOwner) { show ->
+//            if (show) {
+//                cameraXHandler.pauseCamera()
+//                findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
+//            }
+//        }
 
         model.lastResult.observe(viewLifecycleOwner) { partial ->
             binding.resultView.setResults(partial)

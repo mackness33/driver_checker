@@ -8,7 +8,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machineLearningRepository: IMachineLearningFactory<Data, Result>? = null): ViewModel() {
+abstract class BaseViewModel<Data, Result : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<Data, Result>? = null): ViewModel() {
     // SHARED FLOWS
 
     // producer flow of the data in input of mlRepository
@@ -23,6 +23,8 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
     // progress flow of the evaluation by the mlRepository
     val analysisState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = machineLearningRepository?.analysisProgressState
+
+
 
     // LIVE DATA
 
@@ -60,7 +62,10 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (protected var machi
     val predictionsGroupByClasses: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions
 
+
+
     // FUNCTION
+
     // listening of the live evaluation of the mlRepo
     protected open fun listenToLiveClassification() {
         viewModelScope.launch(Dispatchers.Default) {

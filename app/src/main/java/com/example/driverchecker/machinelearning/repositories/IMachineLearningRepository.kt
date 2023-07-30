@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.repositories
 
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -12,7 +13,7 @@ interface IMachineLearningRepository<in Data, out Result> {
     suspend fun continuousClassification (input: Flow<Data>, scope: CoroutineScope): Result?
 
     fun onStartLiveClassification (input: SharedFlow<Data>, scope: CoroutineScope)
-    fun onStopLiveClassification ()
+    fun onStopLiveClassification (externalCause: CancellationException? = null)
 
     fun <ModelInit> updateModel (init: ModelInit)
 

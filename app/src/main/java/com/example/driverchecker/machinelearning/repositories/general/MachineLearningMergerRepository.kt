@@ -6,6 +6,7 @@ import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterfa
 import com.example.driverchecker.machinelearning.data.MachineLearningArrayListBaseOutput
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
@@ -51,9 +52,9 @@ abstract class MachineLearningMergerRepository
             repositories[activeKey]?.onStartLiveClassification(input, scope)
     }
 
-    override fun onStopLiveClassification() {
+    override fun onStopLiveClassification(externalCause: CancellationException?) {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
-            repositories[activeKey]?.onStopLiveClassification()
+            repositories[activeKey]?.onStopLiveClassification(externalCause)
     }
 
     override fun <ModelInit> updateModel(init: ModelInit) {
