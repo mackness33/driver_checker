@@ -81,22 +81,25 @@ class CameraFragment : Fragment() {
                 getString(if (record) R.string.stop_live else R.string.start_live)
         }
 
-        model.showResults.
-
-
-        lifecycleScope.launchWhenCreated {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                model.showResults.collect { state ->
-                    Log.i("LiveData - showResults", "Evaluation ${if (state) "correctly ended" else "failed to end"}")
-                    if (state) {
-                        cameraXHandler.pauseCamera()
-                        findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
-                    }
-                }
+        model.showResults.observe(viewLifecycleOwner) { show ->
+            Log.i("LiveData - showResults", "Evaluation ${if (show == true) "correctly ended" else "failed to end"}")
+            if (show == true) {
+                cameraXHandler.pauseCamera()
+                findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
             }
         }
 
-        model.showResults.flowWithLifecycle()
+//        lifecycleScope.launchWhenCreated {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                model.showResults.collect { state ->
+//                    Log.i("LiveData - showResults", "Evaluation ${if (state) "correctly ended" else "failed to end"}")
+//                    if (state) {
+//                        cameraXHandler.pauseCamera()
+//                        findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
+//                    }
+//                }
+//            }
+//        }
 
 //        model.showResults.observe(viewLifecycleOwner) { show ->
 //            if (show) {

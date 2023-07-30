@@ -74,7 +74,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     }
 
     // collection of the live evaluation of the mlRepo
-    protected open suspend fun collectLiveClassification (state: LiveEvaluationStateInterface<Result>) {
+    protected open fun collectLiveClassification (state: LiveEvaluationStateInterface<Result>) {
         when (state) {
             is LiveEvaluationState.Ready -> onLiveEvaluationReady(state)
             is LiveClassificationState.Start -> onLiveClassificationStart(state)
