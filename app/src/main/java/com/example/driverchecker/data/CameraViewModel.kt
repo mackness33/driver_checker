@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
+import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -70,76 +71,5 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         _passengerInfo.postValue(Pair(0, 0))
         _driverInfo.postValue(Pair(0, 0))
         _showResults.tryUpdate(false)
-    }
-
-    inner class BooleanModel (initialValue: Boolean = false) {
-        private val _counter = MutableStateFlow(initialValue) // private mutable state flow
-        val counter = _counter.asStateFlow() // publicly exposed as read-only state flow
-
-        fun update(nextValue: Boolean) {
-            _counter.compareAndSet(!nextValue, nextValue)
-//            _counter.update { bool -> !bool } // atomic, safe for concurrent use
-        }
-    }
-
-    inner class DelayedLiveData<T> (private val interval: Long, initialValue: T?) {
-        private val waiting = MutableSharedFlow<T>(0, 5, BufferOverflow.SUSPEND) // private mutable state flow
-        private val _liveData = MutableLiveData<T>()
-        val asLiveData : LiveData<T>
-            get() = _liveData
-
-        init {
-//            if (initialValue != null) waiting.tryEmit(initialValue)
-
-            viewModelScope.launch {
-                waiting.collect { value ->
-                    _liveData.postValue(value)
-                    delay(interval)
-                }
-            }
-        }
-
-        fun tryUpdate(nextValue: T) {
-//            _counter.compareAndSet(!nextValue, nextValue)
-//            _counter.update { bool -> !bool } // atomic, safe for concurrent use
-            waiting.tryEmit(nextValue)
-        }
-
-        suspend fun update(nextValue: T) {
-            waiting.emit(nextValue)
-        }
-    }
-
-    inner class AtomicLiveData<T> (private val interval: Long, initialValue: T?) {
-        private val mutex = Mutex(false) // private mutable state flow
-        private val _liveData = MutableLiveData<T?>(null)
-        val asLiveData : LiveData<T?>
-            get() = _liveData
-
-        init {
-            if (initialValue != null) tryUpdate(initialValue)
-        }
-
-        fun tryUpdate(nextValue: T) {
-            if (mutex.tryLock()) {
-                runBlocking {
-                    launch {
-                        apply(nextValue)
-                        mutex.unlock()
-                    }
-                }
-            }
-        }
-
-        private suspend fun apply (next: T) {
-            _liveData.postValue(next)
-            delay(interval)
-        }
-
-        suspend fun update(nextValue: T) {
-            mutex.tryLock()
-            apply(nextValue)
-            mutex.unlock()
-        }
     }
 }

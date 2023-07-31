@@ -64,7 +64,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
 
 
-    // FUNCTION
+    // FUNCTIONS
 
     // listening of the live evaluation of the mlRepo
     protected open fun listenToLiveClassification() {
