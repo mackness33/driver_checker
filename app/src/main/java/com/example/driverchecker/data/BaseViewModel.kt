@@ -29,7 +29,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // LISTENERS
 
-    protected open val evaluationListener: MachineLearningListener<Data, Result> = EvaluationListener()
+    protected open val evaluationListener: EvaluationListener = EvaluationListener()
 
 
 
@@ -72,13 +72,6 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
 
     // FUNCTIONS
-
-    // listening of the live evaluation of the mlRepo
-    protected open fun listenToLiveClassification() {
-        viewModelScope.launch(Dispatchers.Default) {
-            analysisState?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
-        }
-    }
 
     // handling the add of a partial result to the main array
     protected open fun insertPartialResult (partialResult: Result) {

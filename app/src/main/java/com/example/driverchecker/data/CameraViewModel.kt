@@ -24,10 +24,10 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
     val driverInfo: LiveData<Pair<Int, Int>>
         get() = _driverInfo
 
-    override val evaluationListener: ClassificationListener<IImageDetectionData, ImageDetectionArrayListOutput<String>> = EvaluationClassificationListener()
+    override val evaluationListener: EvaluationListener = EvaluationClassificationListener()
 
     init {
-        listenToLiveClassification ()
+        evaluationListener.listen(viewModelScope, analysisState)
     }
 
     suspend fun produceImage (image: ImageProxy) {
