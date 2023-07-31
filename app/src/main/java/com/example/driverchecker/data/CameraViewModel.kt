@@ -7,6 +7,8 @@ import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
+import com.example.driverchecker.machinelearning.listeners.ClassificationListener
+import com.example.driverchecker.machinelearning.listeners.MachineLearningListener
 import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
@@ -26,6 +28,8 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
     private val _driverInfo = MutableLiveData(Pair(0, 0))
     val driverInfo: LiveData<Pair<Int, Int>>
         get() = _driverInfo
+
+    override val evaluationListener: ClassificationListener<IImageDetectionData, ImageDetectionArrayListOutput<String>> = EvaluationClassificationListener()
 
     init {
         listenToLiveClassification ()
@@ -56,20 +60,33 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         }
     }
 
-    override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<ImageDetectionArrayListOutput<String>>) {
-        _showResults.tryUpdate(state.result != null)
-        super.onLiveEvaluationEnd(state)
-    }
-
-    override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<ImageDetectionArrayListOutput<String>>) {
-        // add the partialResult to the resultsArray
-        if (!state.partialResult.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
-    }
-
     override fun clearPartialResults () {
         super.clearPartialResults()
         _passengerInfo.postValue(Pair(0, 0))
         _driverInfo.postValue(Pair(0, 0))
         _showResults.tryUpdate(false)
+    }
+
+    // INNER CLASSES
+    private open inner class EvaluationClassificationListener :
+        ClassificationListener<IImageDetectionData, ImageDetectionArrayListOutput<String>>,
+        EvaluationListener() {
+        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<ImageDetectionArrayListOutput<String>>) {
+            _showResults.tryUpdate(state.result != null)
+            super.onLiveEvaluationEnd(state)
+        }
+
+        override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<ImageDetectionArrayListOutput<String>>) {
+            // add the partialResult to the resultsArray
+            if (!state.partialResult.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
+        }
+
+        override fun onLiveEvaluationStart() {}
+
+        override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
+            super.onLiveEvaluationStart()
+            Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
+        }
+
     }
 }

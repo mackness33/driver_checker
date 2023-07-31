@@ -3,6 +3,7 @@ package com.example.driverchecker.data
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.listeners.MachineLearningListener
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
@@ -23,6 +24,11 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     // progress flow of the evaluation by the mlRepository
     val analysisState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = machineLearningRepository?.analysisProgressState
+
+
+
+    // LISTENERS
+    protected open val evaluationListener: MachineLearningListener<Data, Result> = EvaluationListener()
 
 
 
@@ -69,58 +75,8 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     // listening of the live evaluation of the mlRepo
     protected open fun listenToLiveClassification() {
         viewModelScope.launch(Dispatchers.Default) {
-            analysisState?.collect {state -> collectLiveClassification(state)}
+            analysisState?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
         }
-    }
-
-    // collection of the live evaluation of the mlRepo
-    protected open fun collectLiveClassification (state: LiveEvaluationStateInterface<Result>) {
-        when (state) {
-            is LiveEvaluationState.Ready -> onLiveEvaluationReady(state)
-            is LiveClassificationState.Start -> onLiveClassificationStart(state)
-            is LiveEvaluationState.Loading<Result> -> onLiveEvaluationLoading(state)
-            is LiveEvaluationState.End<Result> -> onLiveEvaluationEnd(state)
-            else -> {}
-        }
-    }
-
-    // handler of mlRepo in ready
-    protected open fun onLiveEvaluationReady (state: LiveEvaluationState.Ready) {
-        clearPartialResults()
-        _onPartialResultsChanged.postValue(evaluatedItemsArray.size)
-        _lastResult.postValue(null)
-        _isEvaluating.postValue(false)
-        _isEnabled.postValue(state.isReady)
-        Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_onPartialResultsChanged.value} but array.size is ${evaluatedItemsArray.size}")
-    }
-
-    // handler of mlRepo in start (as a classification)
-    protected open fun onLiveClassificationStart (state: LiveClassificationState.Start) {
-        // add the partialResult to the resultsArray
-        _lastResult.postValue(null)
-        _isEvaluating.postValue(true)
-        _isEnabled.postValue(true)
-        Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex and max classes: ${state.maxClassesPerGroup}")
-    }
-
-    // handler of mlRepo in loading
-    protected open fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<Result>) {
-        // add the partialResult to the resultsArray
-        if (state.partialResult != null) {
-            insertPartialResult(state.partialResult)
-            _onPartialResultsChanged.postValue(evaluatedItemsArray.size)
-            _lastResult.postValue(state.partialResult)
-            Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
-        }
-    }
-
-    // handler of mlRepo on end
-    protected open fun onLiveEvaluationEnd (state: LiveEvaluationState.End<Result>) {
-        // update the UI with the text of the class
-        // save to the database the result with bulk of 10 and video
-        _isEvaluating.postValue(false)
-        _isEnabled.postValue(false)
-        Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")
     }
 
     // handling the add of a partial result to the main array
@@ -156,6 +112,50 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
                 }
                 else -> {}
             }
+        }
+    }
+
+    // INNER CLASSES
+    protected open inner class EvaluationListener : MachineLearningListener<Data, Result> {
+        fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface<Result>>?) {
+            scope.launch(Dispatchers.Default) {
+                evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
+            }
+        }
+
+        override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
+            clearPartialResults()
+            _onPartialResultsChanged.postValue(evaluatedItemsArray.size)
+            _lastResult.postValue(null)
+            _isEvaluating.postValue(false)
+            _isEnabled.postValue(state.isReady)
+            Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_onPartialResultsChanged.value} but array.size is ${evaluatedItemsArray.size}")
+        }
+
+        override fun onLiveEvaluationStart() {
+            // add the partialResult to the resultsArray
+            _lastResult.postValue(null)
+            _isEvaluating.postValue(true)
+            _isEnabled.postValue(true)
+            Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
+        }
+
+        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading<Result>) {
+            // add the partialResult to the resultsArray
+            if (state.partialResult != null) {
+                insertPartialResult(state.partialResult)
+                _onPartialResultsChanged.postValue(evaluatedItemsArray.size)
+                _lastResult.postValue(state.partialResult)
+                Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_onPartialResultsChanged.value} time")
+            }
+        }
+
+        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<Result>) {
+            // update the UI with the text of the class
+            // save to the database the result with bulk of 10 and video
+            _isEvaluating.postValue(false)
+            _isEnabled.postValue(false)
+            Log.d("LiveEvaluationState", "END: ${state.result} for the ${_onPartialResultsChanged.value} time")
         }
     }
 }
