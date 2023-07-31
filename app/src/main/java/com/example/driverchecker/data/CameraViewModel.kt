@@ -8,13 +8,8 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.listeners.ClassificationListener
-import com.example.driverchecker.machinelearning.listeners.MachineLearningListener
 import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.sync.Mutex
-import java.util.concurrent.TimeUnit
 
 class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>(imageDetectionRepository) {
     private val _showResults = AtomicLiveData(100, false)
@@ -85,7 +80,7 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
 
         override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
             super.onLiveEvaluationStart()
-            Log.d("LiveEvaluationState", "START: ${_onPartialResultsChanged.value} initialIndex")
+            Log.d("LiveEvaluationState", "START: ${_PartialResultEvent.value} initialIndex")
         }
 
     }

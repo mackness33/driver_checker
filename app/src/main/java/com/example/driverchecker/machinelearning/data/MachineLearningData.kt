@@ -52,11 +52,21 @@ sealed interface LiveEvaluationStateInterface<out Result>
 sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
     data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
     data class Loading<Result>(val index: Int, val partialResult: Result?) : LiveEvaluationState<Result>()
-    class Start() : LiveEvaluationState<Nothing>()
+    object Start : LiveEvaluationState<Nothing>()
     data class End<Result>(val exception: Throwable?, val result: Result?) : LiveEvaluationState<Result>()
 }
 
 // Represents different states for the LatestNews screen
 sealed class LiveClassificationState<out Result> : LiveEvaluationState<Result>() {
     data class Start(val maxClassesPerGroup: Int) : LiveEvaluationState<Nothing>()
+}
+
+// Represents different states for the LatestNews screen
+sealed interface PartialEvaluationStateInterface
+
+// Represents different states for the LatestNews screen
+sealed class PartialEvaluationState : PartialEvaluationStateInterface {
+    data class Insert(val index: Int) : PartialEvaluationState()
+    object Clear : PartialEvaluationState()
+    object Init : PartialEvaluationState()
 }

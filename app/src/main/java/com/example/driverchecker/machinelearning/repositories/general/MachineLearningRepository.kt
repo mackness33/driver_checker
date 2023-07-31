@@ -84,7 +84,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-                _externalProgressState.emit(LiveEvaluationState.Start())
+                _externalProgressState.emit(LiveEvaluationState.Start)
 
                 flowClassification(input, ::cancel)?.collect()
             } else {

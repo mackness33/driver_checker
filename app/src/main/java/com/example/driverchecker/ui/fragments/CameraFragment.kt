@@ -13,15 +13,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.data.CameraViewModel
 import com.example.driverchecker.databinding.FragmentCameraBinding
+import com.example.driverchecker.machinelearning.data.PartialEvaluationState
 import com.example.driverchecker.ui.adapters.PartialsAdapter
 import com.example.driverchecker.utils.CameraXHandler
 import com.example.driverchecker.utils.showSnackbar
@@ -121,20 +119,20 @@ class CameraFragment : Fragment() {
             binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
         }
 
-        model.onPartialResultsChanged.observe(viewLifecycleOwner) { size ->
+        model.PartialResultEvent.observe(viewLifecycleOwner) { state ->
             if (binding.partialsView.adapter is PartialsAdapter) {
-                when {
-                    size == 0 ->{
+                when (state){
+                    is PartialEvaluationState.Clear -> {
                         (binding.partialsView.adapter as PartialsAdapter).notifyDataSetChanged();
-                        Log.d("LiveEvaluationState", "CLEAR: $size deleting with array: ${model.evaluatedItemsList.size}")
+                        Log.d("LiveEvaluationState", "CLEAR: deleting with array: ${model.evaluatedItemsList.size}")
                     }
 
-                    size > 0 -> {
-                        (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(size-1)
-                        Log.d("LiveEvaluationState", "APPEND: $size inserting with array: ${model.evaluatedItemsList.size}")
+                    is PartialEvaluationState.Insert -> {
+                        (binding.partialsView.adapter as PartialsAdapter).notifyItemInserted(state.index)
+                        Log.d("LiveEvaluationState", "APPEND: ${state.index} inserting with array: ${model.evaluatedItemsList.size}")
                     }
 
-                    else -> {}
+                    is PartialEvaluationState.Init -> {}
                 }
             }
         }
