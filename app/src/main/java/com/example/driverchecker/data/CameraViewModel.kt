@@ -7,27 +7,35 @@ import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
-import com.example.driverchecker.machinelearning.listeners.ClassificationListener
+import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
+import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
+import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
+import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
+import com.example.driverchecker.machinelearning.manipulators.MachineLearningClient
 import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.*
 
 class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>(imageDetectionRepository) {
+    override val client: IClassificationClient<IImageDetectionData, ImageDetectionArrayListOutput<String>> = ImageDetectionClient(imageDetectionRepository)
+
     private val _showResults = AtomicLiveData(100, false)
     val showResults: LiveData<Boolean?>
-        get() = _showResults.asLiveData
+        get() = client.hasEnded
 
     private val _passengerInfo = MutableLiveData(Pair(0, 0))
     val passengerInfo: LiveData<Pair<Int, Int>>
-        get() = _passengerInfo
+        get() = client.passengerInfo
 
     private val _driverInfo = MutableLiveData(Pair(0, 0))
     val driverInfo: LiveData<Pair<Int, Int>>
-        get() = _driverInfo
+        get() = client.driverInfo
+
 
     override val evaluationListener: EvaluationListener = EvaluationClassificationListener()
 
     init {
         evaluationListener.listen(viewModelScope, analysisState)
+        client.listen(viewModelScope, analysisState)
     }
 
     suspend fun produceImage (image: ImageProxy) {

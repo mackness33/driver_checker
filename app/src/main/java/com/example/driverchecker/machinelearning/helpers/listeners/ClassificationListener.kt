@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.listeners
+package com.example.driverchecker.machinelearning.helpers.listeners
 
 import com.example.driverchecker.machinelearning.data.LiveClassificationState
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface

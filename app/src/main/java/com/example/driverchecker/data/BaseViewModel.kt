@@ -3,7 +3,10 @@ package com.example.driverchecker.data
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.listeners.MachineLearningListener
+import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
+import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
+import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
+import com.example.driverchecker.machinelearning.manipulators.MachineLearningClient
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
@@ -33,12 +36,16 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
 
 
+    // CLIENTS
+
+    protected open val client: IMachineLearningClient<Data, Result> = MachineLearningClient(machineLearningRepository)
+
     // LIVE DATA
 
     // last result evaluated by the mlRepo
     protected val _lastResult: MutableLiveData<Result?> = MutableLiveData(null)
     val lastResult: LiveData<Result?>
-        get() = _lastResult
+        get() = client.lastResult
 
     // bool to check if the mlRepo is evaluating
     protected val _isEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -53,12 +60,12 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     // the index of the partialResult
     protected val _PartialResultEvent: MutableLiveData<PartialEvaluationStateInterface> = MutableLiveData(PartialEvaluationState.Init)
     val PartialResultEvent: LiveData<PartialEvaluationStateInterface>
-        get () = _PartialResultEvent
+        get () = client.partialResultEvent
 
     // array of evaluated items by the mlRepo
     protected val evaluatedItemsArray = ArrayList<Result>()
     val evaluatedItemsList: List<Result>
-        get() = evaluatedItemsArray
+        get() = client.evaluatedItemsList
 
     // REFACTOR: move this array/function to the mlRepo
     protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
@@ -111,7 +118,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // INNER CLASSES
     protected open inner class EvaluationListener : MachineLearningListener<Data, Result> {
-        fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface<Result>>?) {
+        override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface<Result>>?) {
             scope.launch(Dispatchers.Default) {
                 evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
             }
