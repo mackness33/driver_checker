@@ -5,14 +5,12 @@ import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
-import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
-import com.example.driverchecker.machinelearning.manipulators.MachineLearningClient
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class BaseViewModel<Data, Result : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<Data, Result>? = null): ViewModel() {
+abstract class BaseViewModel<Data, Result : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<Data, Result>? = null): ViewModel(){
     // SHARED FLOWS
 
     // producer flow of the data in input of mlRepository
@@ -29,12 +27,9 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
         get() = machineLearningRepository?.analysisProgressState
 
 
-
     // LISTENERS
 
-    protected open val evaluationListener: EvaluationListener = EvaluationListener()
-
-
+    protected open val evaluationListener: MachineLearningListener<Data, Result> = EvaluationListener()
 
     // CLIENTS
 
@@ -43,7 +38,6 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     // LIVE DATA
 
     // last result evaluated by the mlRepo
-    protected val _lastResult: MutableLiveData<Result?> = MutableLiveData(null)
     val lastResult: LiveData<Result?>
         get() = client.lastResult
 
@@ -58,38 +52,16 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
         get() = _isEnabled
 
     // the index of the partialResult
-    protected val _PartialResultEvent: MutableLiveData<PartialEvaluationStateInterface> = MutableLiveData(PartialEvaluationState.Init)
-    val PartialResultEvent: LiveData<PartialEvaluationStateInterface>
+    val partialResultEvent: LiveData<PartialEvaluationStateInterface>
         get () = client.partialResultEvent
 
     // array of evaluated items by the mlRepo
-    protected val evaluatedItemsArray = ArrayList<Result>()
     val evaluatedItemsList: List<Result>
         get() = client.evaluatedItemsList
-
-    // REFACTOR: move this array/function to the mlRepo
-    protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
-    val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
-        get() = arrayClassesPredictions
-
-    // REFACTOR: move this array/function to the mlRepo
-    val predictionsGroupByClasses: List<Pair<Int, List<Int>>>
-        get() = arrayClassesPredictions
 
 
 
     // FUNCTIONS
-
-    // handling the add of a partial result to the main array
-    protected open fun insertPartialResult (partialResult: Result) {
-        evaluatedItemsArray.add(partialResult)
-    }
-
-    // handling the clearing of the main array
-    protected open fun clearPartialResults () {
-        evaluatedItemsArray.clear()
-        arrayClassesPredictions.clear()
-    }
 
     // enabling the button to start/stop the evaluation of the ml
     fun enable (enable: Boolean) {
@@ -125,30 +97,14 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
         }
 
         override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
-            clearPartialResults()
-            _PartialResultEvent.postValue(PartialEvaluationState.Clear)
-            _lastResult.postValue(null)
             _isEvaluating.postValue(false)
             _isEnabled.postValue(state.isReady)
-            Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_PartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
         }
 
         override fun onLiveEvaluationStart() {
             // add the partialResult to the resultsArray
-            _lastResult.postValue(null)
             _isEvaluating.postValue(true)
             _isEnabled.postValue(true)
-            Log.d("LiveEvaluationState", "START: ${_PartialResultEvent.value} initialIndex")
-        }
-
-        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading<Result>) {
-            // add the partialResult to the resultsArray
-            if (state.partialResult != null) {
-                insertPartialResult(state.partialResult)
-                _PartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
-                _lastResult.postValue(state.partialResult)
-                Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_PartialResultEvent.value} time")
-            }
         }
 
         override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<Result>) {
@@ -156,7 +112,8 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
             // save to the database the result with bulk of 10 and video
             _isEvaluating.postValue(false)
             _isEnabled.postValue(false)
-            Log.d("LiveEvaluationState", "END: ${state.result} for the ${_PartialResultEvent.value} time")
         }
+
+        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading<Result>) {}
     }
 }

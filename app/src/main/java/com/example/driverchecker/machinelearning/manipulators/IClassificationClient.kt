@@ -10,4 +10,5 @@ interface IClassificationClient<D, R : WithConfidence> : IMachineLearningClient<
 
     val driverInfo: LiveData<Pair<Int, Int>>
 
+    val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
 }

@@ -119,7 +119,7 @@ class CameraFragment : Fragment() {
             binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
         }
 
-        model.PartialResultEvent.observe(viewLifecycleOwner) { state ->
+        model.partialResultEvent.observe(viewLifecycleOwner) { state ->
             if (binding.partialsView.adapter is PartialsAdapter) {
                 when (state){
                     is PartialEvaluationState.Clear -> {

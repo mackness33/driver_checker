@@ -24,11 +24,7 @@ class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepos
 
     // REFACTOR: move this array/function to the mlRepo
     private val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
-    val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
-        get() = arrayClassesPredictions
-
-    // REFACTOR: move this array/function to the mlRepo
-    val predictionsGroupByClasses: List<Pair<Int, List<Int>>>
+    override val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions
 
 
