@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-open class MachineLearningClient<D, R : WithConfidence> (machineLearningRepo: IMachineLearningFactory<D, R>? = null) : IMachineLearningClient<D, R>{
+abstract class MachineLearningClient<D, R : WithConfidence> (machineLearningRepo: IMachineLearningFactory<D, R>? = null) : IMachineLearningClient<D, R>{
     // LIVE DATA
 
     protected val _hasEnded = AtomicLiveData(100, false)

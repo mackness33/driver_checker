@@ -38,7 +38,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // CLIENTS
 
-    protected open val client: IMachineLearningClient<Data, Result> = MachineLearningClient(machineLearningRepository)
+    protected abstract val client: IMachineLearningClient<Data, Result>
 
     // LIVE DATA
 
