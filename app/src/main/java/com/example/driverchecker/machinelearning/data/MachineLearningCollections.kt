@@ -1,8 +1,5 @@
 package com.example.driverchecker.machinelearning.data
 
-class MachineLearningCollections {
-}
-
 interface WithConfidence {
     val confidence: Float
 }

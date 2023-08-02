@@ -19,7 +19,7 @@ interface IMachineLearningClient<D, R : WithConfidence> {
     val partialResultEvent: LiveData<PartialEvaluationStateInterface>
 
     // array of evaluated items by the mlRepo
-    val evaluatedItemsList: List<R>
+    val currentResultsList: List<R>
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface<R>>?)
 }

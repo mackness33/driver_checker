@@ -31,7 +31,7 @@ abstract class MachineLearningClient<D, R : WithConfidence> (machineLearningRepo
 
     // array of evaluated items by the mlRepo
     protected val evaluatedItemsArray = ArrayList<R>()
-    override val evaluatedItemsList: List<R>
+    override val currentResultsList: List<R>
         get() = evaluatedItemsArray
 
 

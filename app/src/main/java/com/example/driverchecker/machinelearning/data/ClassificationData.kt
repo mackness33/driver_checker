@@ -60,7 +60,6 @@ data class ClassificationOutput<Data, Result, Superclass>(
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-
 typealias ClassificationListOutput<Data, Result, Superclass> = MachineLearningResultList<IClassificationResultWithInput<Data, Result, Superclass>>
 typealias ClassificationListBaseOutput<Result, Superclass> = MachineLearningResultList<IClassificationResult<Result, Superclass>>
 

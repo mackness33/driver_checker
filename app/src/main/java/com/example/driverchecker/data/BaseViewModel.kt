@@ -1,6 +1,5 @@
 package com.example.driverchecker.data
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
@@ -57,7 +56,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // array of evaluated items by the mlRepo
     val evaluatedItemsList: List<Result>
-        get() = client.evaluatedItemsList
+        get() = client.currentResultsList
 
 
 
