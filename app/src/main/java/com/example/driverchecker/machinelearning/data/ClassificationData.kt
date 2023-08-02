@@ -38,32 +38,36 @@ typealias StringClassifier = IClassifier<String>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IClassificationResult<Result, Superclass> : IMachineLearningResult<Result> {
+interface IClassificationBasicItem<Result, Superclass> : IMachineLearningBasicItem<Result> {
     val group: IClassification<Superclass>
 }
 
-interface IClassificationResultWithInput<Data, Result, Superclass> : IClassificationResult<Result, Superclass>, IMachineLearningData<Data>
+interface IClassificationBasicItemWithInput<Data, Result, Superclass> : IClassificationBasicItem<Result, Superclass>, IMachineLearningInput<Data>
 
-data class ClassificationBaseOutput<Result, Superclass>(
-    override val result: Result,
-    override val confidence: Float,
-    override val group: IClassification<Superclass>
-) : IClassificationResult<Result, Superclass>
 
-data class ClassificationOutput<Data, Result, Superclass>(
-    override val result: Result,
-    override val confidence: Float,
-    override val data: Data,
-    override val group: IClassification<Superclass>
-) : IClassificationResultWithInput<Data, Result, Superclass>
+interface IClassificationResult<D, R : WithConfidence, S> : IMachineLearningResult<D, R> {
+    val group: IClassification<S>
+}
+
+interface IClassificationOutput<D, R : WithConfidence, S> : IMachineLearningOutput<D, R>
+
+data class ClassificationResult<D, R : WithConfidence, S>(
+    override val group: IClassification<S>,
+    override val data: D,
+    override val listItems: MachineLearningResultList<R>
+) : IClassificationResult<D, R, S>
+
+data class ClassificationOutput<D, R : WithConfidence, S>(
+    override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
+) : IClassificationOutput<D, R, S>
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias ClassificationListOutput<Data, Result, Superclass> = MachineLearningResultList<IClassificationResultWithInput<Data, Result, Superclass>>
-typealias ClassificationListBaseOutput<Result, Superclass> = MachineLearningResultList<IClassificationResult<Result, Superclass>>
+typealias ClassificationListOutput<Data, Result, Superclass> = MachineLearningResultList<IClassificationBasicItemWithInput<Data, Result, Superclass>>
+typealias ClassificationListBaseOutput<Result, Superclass> = MachineLearningResultList<IClassificationBasicItem<Result, Superclass>>
 
-typealias ClassificationArrayListOutput<Data, Result, Superclass> = MachineLearningResultArrayList<IClassificationResultWithInput<Data, Result, Superclass>>
-typealias ClassificationArrayListBaseOutput<Result, Superclass> = MachineLearningResultArrayList<IClassificationResult<Result, Superclass>>
+typealias ClassificationArrayListOutput<Data, Result, Superclass> = MachineLearningResultArrayList<IClassificationBasicItemWithInput<Data, Result, Superclass>>
+typealias ClassificationArrayListBaseOutput<Result, Superclass> = MachineLearningResultArrayList<IClassificationBasicItem<Result, Superclass>>
 
-typealias ClassificationRepository<Data, Result, Superclass> = MachineLearningRepository<IMachineLearningData<Data>, ClassificationArrayListOutput<Data, Result, Superclass>>
+typealias ClassificationRepository<Data, Result, Superclass> = MachineLearningRepository<IMachineLearningInput<Data>, ClassificationArrayListOutput<Data, Result, Superclass>>

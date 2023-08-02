@@ -2,43 +2,50 @@ package com.example.driverchecker.machinelearning.data
 
 // ---------------------------------- INPUT ----------------------------------
 
-interface IMachineLearningData<Data> {
-    val data: Data
+interface IMachineLearningInput<D> {
+    val data: D
 }
 
-data class MachineLearningBaseInput<Data>(
-    override val data: Data,
-) : IMachineLearningData<Data>
+data class MachineLearningInput<D>(
+    override val data: D,
+) : IMachineLearningInput<D>
 
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IMachineLearningResult<Result> : WithConfidence{
-    val result: Result
+interface IMachineLearningBasicItem<R> : WithConfidence{
+    val result: R
 }
 
-interface IMachineLearningResultWithInput<Data, Result> : IMachineLearningResult<Result>,
-    IMachineLearningData<Data>
+interface IMachineLearningResult<D, R : WithConfidence>{
+    val data: D
+    val listItems: MachineLearningResultList<R>
+}
 
-data class MachineLearningBaseOutput<Result>(
-    override val result: Result,
-    override val confidence: Float
-) : IMachineLearningResult<Result>
+interface IMachineLearningOutput<D, R : WithConfidence>{
+    val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
+}
 
-data class MachineLearningOutput<Data, Result>(
-    override val result: Result,
-    override val confidence: Float,
-    override val data: Data,
-) : IMachineLearningResultWithInput<Data, Result>
+interface IMachineLearningBasicItemWithInput<Data, Result> : IMachineLearningBasicItem<Result>,
+    IMachineLearningInput<Data>
+
+data class MachineLearningResult <D, R : WithConfidence>(
+    override val listItems: MachineLearningResultList<R>,
+    override val data: D
+) : IMachineLearningResult<D, R>
+
+data class MachineLearningOutput <D, R: WithConfidence> (
+    override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
+) : IMachineLearningOutput<D, R>
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias MachineLearningListOutput<Data, Result> = MachineLearningResultList<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningListBaseOutput<Result> = MachineLearningResultList<IMachineLearningResult<Result>>
+typealias MachineLearningListOutput<Data, Result> = MachineLearningResultList<IMachineLearningBasicItemWithInput<Data, Result>>
+typealias MachineLearningListBaseOutput<Result> = MachineLearningResultList<IMachineLearningBasicItem<Result>>
 
-typealias MachineLearningArrayListOutput<Data, Result> = MachineLearningResultArrayList<IMachineLearningResultWithInput<Data, Result>>
-typealias MachineLearningArrayListBaseOutput<Result> = MachineLearningResultArrayList<IMachineLearningResult<Result>>
+typealias MachineLearningArrayListOutput<Data, Result> = MachineLearningResultArrayList<IMachineLearningBasicItemWithInput<Data, Result>>
+typealias MachineLearningArrayListBaseOutput<Result> = MachineLearningResultArrayList<IMachineLearningBasicItem<Result>>
 
 // interface IMachineLearningMetrics<Result> : IMachineLearningResult<Result>
 

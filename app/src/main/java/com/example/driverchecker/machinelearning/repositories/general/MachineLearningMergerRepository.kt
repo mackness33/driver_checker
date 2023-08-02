@@ -1,7 +1,7 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
-import com.example.driverchecker.machinelearning.data.IMachineLearningData
+import com.example.driverchecker.machinelearning.data.IMachineLearningInput
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.data.MachineLearningArrayListBaseOutput
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.SharedFlow
 
 abstract class MachineLearningMergerRepository
     :
-    IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>> {
+    IMachineLearningRepository<IMachineLearningInput<Any?>, MachineLearningArrayListBaseOutput<Any?>> {
     protected var activeKey: String? = null
-    protected var repositories: MutableMap<String, IMachineLearningRepository<IMachineLearningData<Any?>, MachineLearningArrayListBaseOutput<Any?>>> = mutableMapOf()
+    protected var repositories: MutableMap<String, IMachineLearningRepository<IMachineLearningInput<Any?>, MachineLearningArrayListBaseOutput<Any?>>> = mutableMapOf()
     override val repositoryScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
 //    constructor(initializers: Map<String, >?) {
@@ -29,25 +29,25 @@ abstract class MachineLearningMergerRepository
     override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<MachineLearningArrayListBaseOutput<Any?>>>?
         get() = if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey)) repositories[activeKey]?.analysisProgressState else null
 
-    override suspend fun instantClassification(input: IMachineLearningData<Any?>): MachineLearningArrayListBaseOutput<Any?>? {
+    override suspend fun instantClassification(input: IMachineLearningInput<Any?>): MachineLearningArrayListBaseOutput<Any?>? {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             return repositories[activeKey]?.instantClassification(input)
 
         return null
     }
 
-    override suspend fun continuousClassification(input: List<IMachineLearningData<Any?>>): MachineLearningArrayListBaseOutput<Any?>? {
+    override suspend fun continuousClassification(input: List<IMachineLearningInput<Any?>>): MachineLearningArrayListBaseOutput<Any?>? {
         return null
     }
 
-    override suspend fun continuousClassification(input: Flow<IMachineLearningData<Any?>>, scope: CoroutineScope): MachineLearningArrayListBaseOutput<Any?>? {
+    override suspend fun continuousClassification(input: Flow<IMachineLearningInput<Any?>>, scope: CoroutineScope): MachineLearningArrayListBaseOutput<Any?>? {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             return repositories[activeKey]?.continuousClassification(input, scope)
 
         return null
     }
 
-    override fun onStartLiveClassification(input: SharedFlow<IMachineLearningData<Any?>>, scope: CoroutineScope) {
+    override fun onStartLiveClassification(input: SharedFlow<IMachineLearningInput<Any?>>, scope: CoroutineScope) {
         if (!activeKey.isNullOrBlank() && repositories.containsKey(activeKey))
             repositories[activeKey]?.onStartLiveClassification(input, scope)
     }

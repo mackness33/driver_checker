@@ -3,30 +3,33 @@ package com.example.driverchecker.machinelearning.data
 import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchModel
-import com.example.driverchecker.machinelearning.repositories.general.MachineLearningRepository
 
 
 // ---------------------------------- INPUT ----------------------------------
 
-typealias ImageDetectionBaseInput = MachineLearningBaseInput<Bitmap>
-typealias IImageDetectionData = IMachineLearningData<Bitmap>
+typealias ImageDetectionBaseInput = MachineLearningInput<Bitmap>
+typealias IImageDetectionData = IMachineLearningInput<Bitmap>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IImageDetectionBox {
+interface IImageDetectionBox : WithConfidence{
     var classIndex: Int
     var rect: RectF
 }
 
-typealias ImageDetectionBaseOutput<Superclass> = ClassificationBaseOutput<IImageDetectionBox, Superclass>
+typealias ImageDetectionResult<Superclass> = ClassificationResult<IImageDetectionData, IImageDetectionBox, Superclass>
 typealias ImageDetectionOutput<Superclass> = ClassificationOutput<IImageDetectionData, IImageDetectionBox, Superclass>
 
-data class ImageDetectionBox (override var classIndex: Int, override var rect: RectF) : IImageDetectionBox
+data class ImageDetectionBox (
+    override var classIndex: Int,
+    override var rect: RectF,
+    override val confidence: Float
+) : IImageDetectionBox
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias IImageDetectionResult<Superclass> = IClassificationResult<IImageDetectionBox, Superclass>
-typealias IImageDetectionWithInput<Superclass> = IClassificationResultWithInput<IImageDetectionData, IImageDetectionBox, Superclass>
+typealias IImageDetectionResult<Superclass> = IClassificationBasicItem<IImageDetectionBox, Superclass>
+typealias IImageDetectionWithInput<Superclass> = IClassificationBasicItemWithInput<IImageDetectionData, IImageDetectionBox, Superclass>
 
 
 typealias ImageDetectionListOutput<Superclass> = ClassificationListOutput<IImageDetectionData, IImageDetectionBox, Superclass>
