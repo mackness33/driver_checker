@@ -4,8 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
-import com.example.driverchecker.machinelearning.data.ImageDetectionBox
-import com.example.driverchecker.machinelearning.data.ImageDetectionOutput
+import com.example.driverchecker.machinelearning.data.ImageDetectionItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -35,7 +34,7 @@ open class YOLOModel :
         return ImageDetectionBaseInput(resizedBitmap)
     }
 
-    override fun evaluateData(input: IImageDetectionData): ImageDetectionArrayListOutput<String> {
+    override fun evaluateData(input: IImageDetectionData): IImageDetectionResult<String> {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.data,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
@@ -49,15 +48,22 @@ open class YOLOModel :
         return outputsToNMSPredictions(predictions, input)
     }
 
-    override fun postProcess(output: ImageDetectionArrayListOutput<String>): ImageDetectionArrayListOutput<String> {
-        return ImageDetectionUtils.nonMaxSuppression(output, maxPredictionsLimit, threshold)
+    override fun postProcess(output: IImageDetectionResult<String>): IImageDetectionResult<String> {
+        ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
+
+        return ImageDetectionResult(
+            output.groups,
+            output.data,
+            ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
+        )
     }
 
     open fun outputsToNMSPredictions(
         outputs: FloatArray,
         image: IImageDetectionData
-    ): ImageDetectionArrayListOutput<String> {
-        val results: ImageDetectionArrayListOutput<String> = ImageDetectionArrayListOutput()
+    ): IImageDetectionResult<String> {
+        val results: MachineLearningResultArrayList<IImageDetectionItem<String>> = MachineLearningResultArrayList()
+        val groupsFound: MutableSet<String> = mutableSetOf()
         val (scaleX, scaleY) = image.data.width/inputWidth to image.data.height/inputHeight
         val outputColumn = _classifier.size() + 5 // left, top, right, bottom, score and class probability
 
@@ -82,19 +88,22 @@ open class YOLOModel :
                 }
 
                 results.add(
-                    ImageDetectionOutput(
-                        ImageDetectionBox(
-                            clsIndex,
-                            rect
-                        ),
+                    ImageDetectionItem(
+                        clsIndex,
+                        rect,
                         outputs[i * outputColumn + 4],
-                        image,
-                        _classifier.get(clsIndex) ?: throw Throwable("Classifier didn't find any suitable class")
+                        _classifier.get(clsIndex) ?: throw Throwable("Classifier didn't find any suitable class"),
                     )
                 )
+
+                groupsFound.add(_classifier.get(clsIndex)!!.supergroup)
             }
         }
-        return results
+        return ImageDetectionResult(
+            groupsFound,
+            image,
+            results
+        )
     }
 
     override fun loadClassifications(json: String?): Boolean {

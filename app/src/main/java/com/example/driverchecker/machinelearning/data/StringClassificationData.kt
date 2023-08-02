@@ -9,7 +9,7 @@ typealias IStringClassification = IClassification<String>
 data class StringClassification (
     override val name: String,
     override val index: Int,
-    override val superclass: String
+    override val supergroup: String
 ) : IStringClassification
 
 

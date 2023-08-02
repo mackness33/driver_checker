@@ -1,9 +1,5 @@
 package com.example.driverchecker.machinelearning.data
 
-interface WithConfidence {
-    val confidence: Float
-}
-
 interface MachineLearningResultList<Result> : List<Result>,  WithConfidence
 
 open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<Result>, MachineLearningResultList<Result> {

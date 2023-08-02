@@ -1,5 +1,11 @@
 package com.example.driverchecker.machinelearning.data
 
+// ---------------------------------- CLASSES ----------------------------------
+
+interface WithConfidence {
+    val confidence: Float
+}
+
 // ---------------------------------- INPUT ----------------------------------
 
 interface IMachineLearningInput<D> {

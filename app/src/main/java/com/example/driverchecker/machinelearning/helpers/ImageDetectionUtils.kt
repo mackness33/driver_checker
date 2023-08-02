@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.helpers
 
 import android.graphics.*
 import androidx.camera.core.ImageProxy
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
+import com.example.driverchecker.machinelearning.data.*
 import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.math.max
@@ -20,16 +20,17 @@ object ImageDetectionUtils {
      * - limit: the maximum number of boxes that will be selected
      * - threshold: used to decide whether boxes overlap too much
      */
-    fun <Superclass> nonMaxSuppression(
-        boxes: ImageDetectionArrayListOutput<Superclass>,
+    fun <S> nonMaxSuppression(
+        boxes: MachineLearningResultList<IImageDetectionItem<S>>,
         limit: Int = Int.MAX_VALUE,
         threshold: Float
-    ): ImageDetectionArrayListOutput<Superclass> {
+    ): MachineLearningResultList<IImageDetectionItem<S>> {
 
         // Do an argument sort on the confidence scores, from high to low.
-        boxes.sortWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
-        val selected: ImageDetectionArrayListOutput<Superclass> = ImageDetectionArrayListOutput(10)
-        val active = BooleanArray(boxes.size)
+//        val res = boxes.listItems.sort { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
+        val sortedBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
+        val selected: MachineLearningResultArrayList<IImageDetectionItem<S>> = MachineLearningResultArrayList(10)
+        val active = BooleanArray(sortedBoxes.size)
         Arrays.fill(active, true)
         var numActive = active.size
 
@@ -40,15 +41,15 @@ object ImageDetectionUtils {
         // or the limit has been reached.
         var done = false
         var i = 0
-        while (i < boxes.size && !done) {
+        while (i < sortedBoxes.size && !done) {
             if (active[i]) {
-                val boxA = boxes[i]
+                val boxA = sortedBoxes[i]
                 selected.add(boxA)
                 if (selected.size >= limit) break
-                for (j in i + 1 until boxes.size) {
+                for (j in i + 1 until sortedBoxes.size) {
                     if (active[j]) {
-                        val boxB = boxes[j]
-                        val iou = intersectionOverUnion(boxA.result.rect, boxB.result.rect)
+                        val boxB = sortedBoxes[j]
+                        val iou = intersectionOverUnion(boxA.rect, boxB.rect)
                         if (iou > threshold) {
                             active[j] = false
                             numActive -= 1
