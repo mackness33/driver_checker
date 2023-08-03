@@ -15,8 +15,8 @@ import com.example.driverchecker.machinelearning.manipulators.MachineLearningCli
 import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.*
 
-class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>(imageDetectionRepository) {
-    override val client: IClassificationClient<IImageDetectionData, ImageDetectionArrayListOutput<String>> = ImageDetectionClient(imageDetectionRepository)
+class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, IImageDetectionResult<String>>(imageDetectionRepository) {
+    override val client: IClassificationClient<IImageDetectionData, IImageDetectionResult<String>> = ImageDetectionClient(imageDetectionRepository)
 
     val showResults: LiveData<Boolean?>
         get() = client.hasEnded
@@ -33,7 +33,7 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         get() = client.simpleListClassesPredictions
 
 
-    override val evaluationListener: ClassificationListener<IImageDetectionData, ImageDetectionArrayListOutput<String>> = EvaluationClassificationListener()
+    override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>> = EvaluationClassificationListener()
 
 
     init {
@@ -51,7 +51,7 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
 
     // INNER CLASSES
     private open inner class EvaluationClassificationListener :
-        ClassificationListener<IImageDetectionData, ImageDetectionArrayListOutput<String>>,
+        ClassificationListener<IImageDetectionData, IImageDetectionResult<String>>,
         EvaluationListener() {
         override fun onLiveEvaluationStart() {}
 

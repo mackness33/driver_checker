@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
+import com.example.driverchecker.machinelearning.data.IImageDetectionResult
 import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 
 
@@ -19,7 +20,7 @@ import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOut
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
 class PredictionsAdapter(
-    val items: List<ImageDetectionArrayListOutput<String>>,
+    private val items: List<IImageDetectionResult<String>>,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64),
     private val maxClassesPerSuperclass: Int = 0
 ) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
@@ -54,16 +55,16 @@ class PredictionsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 
-        val indexFoundClass = items[position]
-            .distinctBy { predictions -> predictions.result.classIndex }
-            .map { prediction -> prediction.result.classIndex}
+        val indexFoundClass = items[position].listItems
+            .distinctBy { predictions -> predictions.classIndex }
+            .map { prediction -> prediction.classIndex}
         val foundClass: List<Boolean> = MutableList(maxClassesPerSuperclass) { index -> indexFoundClass.contains(index) }
-        viewHolder.textIndex.text = items[position].first().group.index.toString()
-        viewHolder.textGroup.text = items[position].first().group.superclass
+        viewHolder.textIndex.text = items[position].listItems.first().group.index.toString()
+        viewHolder.textGroup.text = items[position].groups.first()
         viewHolder.textGroup.setTextColor(colorManager.listFullColors[1].main ?: Color.BLACK)
         viewHolder.imageInput.setImageBitmap(
             Bitmap.createScaledBitmap(
-                items[position].first().data.data,
+                items[position].data.data,
                 viewHolder.imageInput.maxWidth,
                 viewHolder.imageInput.maxHeight,
                 true

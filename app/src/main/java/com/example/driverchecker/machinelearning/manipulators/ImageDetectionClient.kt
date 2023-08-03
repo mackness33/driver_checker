@@ -4,15 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.data.BaseViewModel
-import com.example.driverchecker.machinelearning.data.IImageDetectionData
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
-import com.example.driverchecker.machinelearning.data.LiveClassificationState
-import com.example.driverchecker.machinelearning.data.LiveEvaluationState
+import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.utils.AtomicLiveData
 
-class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : MachineLearningClient<IImageDetectionData, ImageDetectionArrayListOutput<String>> (imageDetectionRepository), IClassificationClient<IImageDetectionData, ImageDetectionArrayListOutput<String>> {
+class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>> (imageDetectionRepository), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>> {
     // LIVE DATA
     private val _passengerInfo = MutableLiveData(Pair(0, 0))
     override val passengerInfo: LiveData<Pair<Int, Int>>
@@ -28,20 +25,20 @@ class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepos
         get() = arrayClassesPredictions
 
 
-    override val evaluationListener: ClassificationListener<IImageDetectionData, ImageDetectionArrayListOutput<String>> = EvaluationClassificationListener()
+    override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>> = EvaluationClassificationListener()
 
 
     // FUNCTIONS
 
     // handling the add of a partial result to the main array
-    override fun insertPartialResult (partialResult: ImageDetectionArrayListOutput<String>) {
+    override fun insertPartialResult (partialResult: IImageDetectionResult<String>) {
         evaluatedItemsArray.add(partialResult)
 
         val classInfo: Pair<Int, List<Int>> = Pair(
             1,
-            partialResult
-                .distinctBy { predictions -> predictions.result.classIndex }
-                .map { prediction -> prediction.result.classIndex}
+            partialResult.listItems
+                .distinctBy { predictions -> predictions.classIndex }
+                .map { prediction -> prediction.classIndex}
         )
 
         arrayClassesPredictions.add(classInfo)
@@ -62,16 +59,16 @@ class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepos
 
     // INNER CLASSES
     private open inner class EvaluationClassificationListener :
-        ClassificationListener<IImageDetectionData, ImageDetectionArrayListOutput<String>>,
+        ClassificationListener<IImageDetectionData, IImageDetectionResult<String>>,
         EvaluationListener() {
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<ImageDetectionArrayListOutput<String>>) {
+        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<IImageDetectionResult<String>>) {
             _hasEnded.tryUpdate(state.result != null)
             super.onLiveEvaluationEnd(state)
         }
 
-        override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<ImageDetectionArrayListOutput<String>>) {
+        override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<IImageDetectionResult<String>>) {
             // add the partialResult to the resultsArray
-            if (!state.partialResult.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
+            if (!state.partialResult?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
         }
 
         override fun onLiveEvaluationStart() {}
