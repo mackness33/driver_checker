@@ -12,17 +12,17 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-open class MachineLearningRepository<Data, Result : WithConfidence> (importedModel: IMachineLearningModel<Data, Result>?) :
-    IMachineLearningRepository<Data, Result> {
-    protected open var window: IMachineLearningWindow<Result> = MachineLearningWindow()
-    protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<Result>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+open class MachineLearningRepository<D, R : WithConfidence> (importedModel: IMachineLearningModel<D, R>?) :
+    IMachineLearningRepository<D, R> {
+    protected open var window: IMachineLearningWindow<R> = MachineLearningWindow()
+    protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<R>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
     protected var loadingModelJob: Job? = null
-    protected open var model: IMachineLearningModel<Data, Result>? = importedModel
+    protected open var model: IMachineLearningModel<D, R>? = importedModel
 
     override val repositoryScope = CoroutineScope(SupervisorJob())
 
-    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
+    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<R>>?
         get() = _externalProgressState.asSharedFlow()
 
     init {
@@ -39,24 +39,24 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
         }
     }
 
-    override suspend fun instantClassification(input: Data): Result? {
-        var result: Result? = null
+    override suspend fun instantClassification(input: D): R? {
+        var result: R? = null
         val job = repositoryScope.launch(Dispatchers.Default) { result = model?.processAndEvaluate(input) }
         job.join()
 
         return result
     }
 
-    override suspend fun continuousClassification(input: List<Data>): Result? {
+    override suspend fun continuousClassification(input: List<D>): R? {
         return withContext(Dispatchers.Default) {
-            var result: Result? = null
+            var result: R? = null
 
             try {
                 for (data in input) {
-                    val instantResult : Result = model?.processAndEvaluate(data) ?: throw Error("The result is null")
+                    val instantResult : R = model?.processAndEvaluate(data) ?: throw Error("The result is null")
 
                     window.next(instantResult)
-                    // TODO: Pass the metrics and Result
+                    // TODO: Pass the metrics and R
                     if (window.isSatisfied()) {
                         result = window.getLastResult()
                         break;
@@ -74,13 +74,13 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
         }
     }
 
-    override suspend fun continuousClassification(input: Flow<Data>, scope: CoroutineScope): Result? {
+    override suspend fun continuousClassification(input: Flow<D>, scope: CoroutineScope): R? {
         jobClassification(input, scope).join()
 
         return window.getLastResult()
     }
 
-    protected open fun jobClassification (input: Flow<Data>, scope: CoroutineScope): Job {
+    protected open fun jobClassification (input: Flow<D>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
@@ -94,7 +94,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
         }
     }
 
-    protected open fun flowClassification (input: Flow<Data>, onConditionSatisfied: (CancellationException) -> Unit): Flow<Result>? {
+    protected open fun flowClassification (input: Flow<D>, onConditionSatisfied: (CancellationException) -> Unit): Flow<R>? {
         return model?.processAndEvaluatesStream(input)
                     ?.onEach {
                         window.next(it)
@@ -104,7 +104,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
                                 window.getIndex(),
                                 window.getLastResult()
                             ))
-                        // TODO: Pass the metrics and Result
+                        // TODO: Pass the metrics and R
                         if (window.isSatisfied())
                             onConditionSatisfied(CorrectCancellationException())
 
@@ -134,7 +134,7 @@ open class MachineLearningRepository<Data, Result : WithConfidence> (importedMod
     }
 
     override fun onStartLiveClassification(
-        input: SharedFlow<Data>,
+        input: SharedFlow<D>,
         scope: CoroutineScope
     ) {
         if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {

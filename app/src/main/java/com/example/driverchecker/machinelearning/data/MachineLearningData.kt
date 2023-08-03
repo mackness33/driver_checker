@@ -6,6 +6,12 @@ interface WithConfidence {
     val confidence: Float
 }
 
+interface IMachineLearningFinalResult : WithConfidence
+
+data class MachineLearningFinalResult (
+    override val confidence: Float
+) : IMachineLearningFinalResult
+
 // ---------------------------------- INPUT ----------------------------------
 
 interface IMachineLearningInput<D> {
@@ -19,16 +25,12 @@ data class MachineLearningInput<D>(
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IMachineLearningBasicItem<R> : WithConfidence {
-    val result: R
-}
-
 interface IMachineLearningResult<D, R : WithConfidence> : WithConfidence {
     val data: D
     val listItems: MachineLearningResultList<R>
 }
 
-interface IMachineLearningOutput<D, R : WithConfidence> {
+interface IMachineLearningOutput<D, R : WithConfidence> : IMachineLearningFinalResult {
     val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
 }
 
@@ -40,7 +42,8 @@ data class MachineLearningResult <D, R : WithConfidence> (
 }
 
 data class MachineLearningOutput <D, R: WithConfidence> (
-    override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
+    override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>,
+    override val confidence: Float
 ) : IMachineLearningOutput<D, R>
 
 

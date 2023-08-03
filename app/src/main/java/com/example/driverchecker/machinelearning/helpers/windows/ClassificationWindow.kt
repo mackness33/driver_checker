@@ -1,61 +1,34 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
-import com.example.driverchecker.machinelearning.data.MachineLearningFinalResult
-import com.example.driverchecker.machinelearning.data.MachineLearningResult
-import com.example.driverchecker.machinelearning.data.WithConfidence
+import com.example.driverchecker.machinelearning.data.*
 
-open class ClassificationWindow<Result : WithConfidence> (open val size: Int = 3, open val threshold: Float = 0.15f) :
-    IMachineLearningWindow<Result> {
-    protected val window : MutableList<Result> = mutableListOf()
+open class ClassificationWindow<Result : WithConfAndClas<S>, S> (override val size: Int = 3, override val threshold: Float = 0.15f, supergroups: Set<S>) :
+    MachineLearningWindow<Result>(), IClassificationWindow<Result, S> {
 
-    var confidence: Float = 0f
-        protected set
+    protected val _supergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
 
-    protected var numEvaluationDone: Int = 0
-
-    protected var last : Result? = null
-
-    override fun totalNumber() : Int = if (window.size >= size) window.size else 0
-
-    override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
+    override val supergroupCounter: Map<S, Int> = _supergroupCounter
 
     override fun next (element: Result) {
-        window.add(element)
+        if (!_supergroupCounter.containsKey(element.classification.supergroup)) throw Throwable("The value found is not part of the classification")
 
-        if (window.size > size)
-            window.removeFirst()
-
-        last = element
-        numEvaluationDone++
-
-        confidence = calculateConfidence()
-        metricsCalculation()
+        _supergroupCounter[element.classification.supergroup] = _supergroupCounter[element.classification.supergroup]!!.inc()
     }
 
-    // TODO: Clean also the last evaluation done
-    override fun clean () {
-        window.clear()
-        confidence = 0f
-        numEvaluationDone = 0
-    }
-
-    // TODO: Change the calculation of the confidence
-    protected open fun calculateConfidence () : Float {
+    override fun update () {
         if (window.size == 0) {
-            return 0.0f
+            confidence = 0.0f
         }
-        return window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
+
+        confidence = (supergroupCounter.values.max() / window.size).toFloat()
     }
 
-    // Is gonna return the confidence and other metrics
-    open fun metricsCalculation () {}
+    override fun clean () {
+        super.clean()
+        _supergroupCounter.clear()
+    }
 
-    override fun getIndex(): Int = numEvaluationDone
-
-    override fun getLastResult(): Result? = last
-
-    override fun getFinalResults() : IMachineLearningFinalResult {
-        return MachineLearningFinalResult(confidence)
+    override fun getFinalResults() : IClassificationFinalResult<S> {
+        return ClassificationFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o2.value.compareTo(o1.value) }.key)
     }
 }

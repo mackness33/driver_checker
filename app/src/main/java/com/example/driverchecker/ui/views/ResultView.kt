@@ -49,7 +49,7 @@ class ResultView : View {
         canvas.drawText(
             String.format(
                 "%s %.2f",
-                item.group.name,
+                item.classification.name,
                 item.confidence
             ),
             item.rect.left + TEXT_X,

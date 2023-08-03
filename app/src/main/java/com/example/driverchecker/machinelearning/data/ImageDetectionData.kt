@@ -12,7 +12,7 @@ typealias IImageDetectionData = IMachineLearningInput<Bitmap>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IImageDetectionItem<S> : WithConfAndSupergroup<S> {
+interface IImageDetectionItem<S> : WithConfAndClas<S> {
     var classIndex: Int
     var rect: RectF
 }
@@ -26,7 +26,7 @@ data class ImageDetectionItem<S> (
     override var classIndex: Int,
     override var rect: RectF,
     override val confidence: Float,
-    override val group: IClassification<S>
+    override val classification: IClassification<S>
 ) : IImageDetectionItem<S>
 
 // ---------------------------------- TYPE ALIASES ----------------------------------

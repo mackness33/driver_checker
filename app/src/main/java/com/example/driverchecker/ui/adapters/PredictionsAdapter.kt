@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.machinelearning.data.IImageDetectionResult
-import com.example.driverchecker.machinelearning.data.ImageDetectionArrayListOutput
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -59,7 +58,7 @@ class PredictionsAdapter(
             .distinctBy { predictions -> predictions.classIndex }
             .map { prediction -> prediction.classIndex}
         val foundClass: List<Boolean> = MutableList(maxClassesPerSuperclass) { index -> indexFoundClass.contains(index) }
-        viewHolder.textIndex.text = items[position].listItems.first().group.index.toString()
+        viewHolder.textIndex.text = items[position].listItems.first().classification.index.toString()
         viewHolder.textGroup.text = items[position].groups.first()
         viewHolder.textGroup.setTextColor(colorManager.listFullColors[1].main ?: Color.BLACK)
         viewHolder.imageInput.setImageBitmap(

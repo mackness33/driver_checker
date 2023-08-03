@@ -9,9 +9,29 @@ import kotlinx.serialization.Serializable
 
 // ---------------------------------- CLASSES ----------------------------------
 
-interface WithSupergroup<S> {
-    val group: IClassification<S>
+// with classification
+interface WithClassification<S> {
+    val classification: IClassification<S>
 }
+
+interface WithConfAndClas<S> : WithConfidence, WithClassification<S>
+
+// with supergroup
+interface WithSupergroup<S> {
+    val supergroup: S
+}
+
+interface WithConfAndGroup<S> : WithConfidence, WithSupergroup<S>
+
+
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndGroup<S>
+
+
+data class ClassificationFinalResult<S> (
+    override val confidence: Float,
+    override val supergroup: S
+) : IClassificationFinalResult<S>
+
 
 interface IClassification<S> {
     val name: String
@@ -44,19 +64,13 @@ typealias StringClassifier = IClassifier<String>
 
 
 // ---------------------------------- OUTPUT ----------------------------------
-interface IClassificationBasicItem<D, R : WithSupergroup<S>, S> : IMachineLearningBasicItem<R>
-
-interface WithConfAndSupergroup<S> : WithConfidence, WithSupergroup<S>
-
-interface IClassificationResult<D, R : WithConfAndSupergroup<S>, S> : IMachineLearningResult<D, R> {
+interface IClassificationResult<D, R : WithConfAndClas<S>, S> : IMachineLearningResult<D, R> {
     val groups: Set<S>
 }
 
-interface IClassificationOutput<D, R : WithConfAndSupergroup<S>, S> : IMachineLearningOutput<D, R> {
-    val supergroup: S
-}
+interface IClassificationOutput<D, R : WithConfAndClas<S>, S> : IMachineLearningOutput<D, R>, WithConfAndGroup<S>
 
-data class ClassificationResult<D, R : WithConfAndSupergroup<S>, S>(
+data class ClassificationResult<D, R : WithConfAndClas<S>, S>(
     override val groups: Set<S>,
     override val data: D,
     override val listItems: MachineLearningResultList<R>
@@ -64,9 +78,10 @@ data class ClassificationResult<D, R : WithConfAndSupergroup<S>, S>(
     override val confidence: Float = listItems.confidence
 }
 
-data class ClassificationOutput<D, R : WithConfAndSupergroup<S>, S>(
+data class ClassificationOutput<D, R : WithConfAndClas<S>, S> (
     override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>,
-    override val supergroup: S
+    override val supergroup: S,
+    override val confidence: Float
 ) : IClassificationOutput<D, R, S>
 
 

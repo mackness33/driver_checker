@@ -1,12 +1,14 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
+import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
+import com.example.driverchecker.machinelearning.data.MachineLearningFinalResult
 import com.example.driverchecker.machinelearning.data.WithConfidence
 
 open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 3, open val threshold: Float = 0.15f) :
     IMachineLearningWindow<Result> {
     protected val window : MutableList<Result> = mutableListOf()
 
-    var confidence: Float = 0f
+    override var confidence: Float = 0f
         protected set
 
     protected var numEvaluationDone: Int = 0
@@ -26,7 +28,7 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
         last = element
         numEvaluationDone++
 
-        confidence = calculateConfidence()
+        update()
         metricsCalculation()
     }
 
@@ -38,11 +40,12 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
     }
 
     // TODO: Change the calculation of the confidence
-    protected open fun calculateConfidence () : Float {
+    protected open fun update () {
         if (window.size == 0) {
-            return 0.0f
+            confidence = 0.0f
         }
-        return window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
+
+        confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
     }
 
     // Is gonna return the confidence and other metrics
@@ -51,4 +54,8 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
     override fun getIndex(): Int = numEvaluationDone
 
     override fun getLastResult(): Result? = last
+
+    override fun getFinalResults() : IMachineLearningFinalResult {
+        return MachineLearningFinalResult(confidence)
+    }
 }

@@ -1,20 +1,11 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
-import com.example.driverchecker.machinelearning.data.WithConfidence
+import com.example.driverchecker.machinelearning.data.IClassificationFinalResult
+import com.example.driverchecker.machinelearning.data.WithConfAndClas
+import com.example.driverchecker.machinelearning.data.WithConfAndGroup
 
-interface IClassificationWindow<E : WithConfidence>{
-    fun getIndex() : Int
+interface IClassificationWindow<E : WithConfAndClas<S>, S> : IMachineLearningWindow<E> {
+    val supergroupCounter: Map<S, Int>
 
-    fun getLastResult() : E?
-
-    fun totalNumber() : Int
-
-    fun isSatisfied() : Boolean
-
-    fun next (element: E)
-
-    fun clean ()
-
-    fun getFinalResults() : IMachineLearningFinalResult
+    override fun getFinalResults() : IClassificationFinalResult<S>
 }
