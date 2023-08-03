@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 abstract class MachineLearningMergerRepository
-    :
-    IMachineLearningRepository<IMachineLearningInput<Any?>, MachineLearningArrayListBaseOutput<Any?>> {
+    : IMachineLearningRepository<IMachineLearningInput<Any?>, MachineLearningArrayListBaseOutput<Any?>> {
     protected var activeKey: String? = null
     protected var repositories: MutableMap<String, IMachineLearningRepository<IMachineLearningInput<Any?>, MachineLearningArrayListBaseOutput<Any?>>> = mutableMapOf()
     override val repositoryScope: CoroutineScope = CoroutineScope(SupervisorJob())

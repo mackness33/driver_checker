@@ -76,4 +76,4 @@ data class ClassificationOutput<D, R : WithConfAndSupergroup<S>, S>(
 typealias ClassificationArrayListOutput<D, R, S> = MachineLearningResultArrayList<IClassificationBasicItem<D, R, S>>
 //typealias ClassificationArrayListBaseOutput<Result, Superclass> = MachineLearningResultArrayList<IClassificationBasicItem<Result, Superclass>>
 
-typealias ClassificationRepository<Data, Result, Superclass> = MachineLearningRepository<IMachineLearningInput<Data>, ClassificationArrayListOutput<Data, Result, Superclass>>
+typealias ClassificationRepository<D, R, S> = MachineLearningRepository<IMachineLearningInput<D>, IClassificationResult<D, R, S>>

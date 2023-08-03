@@ -44,4 +44,4 @@ typealias ImageDetectionArrayListOutput<S> = ClassificationArrayListOutput<IImag
 
 typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionData, IImageDetectionResult<S>, S>
 
-typealias ImageDetectionRepository<Superclass> = ClassificationRepository<IImageDetectionData, ImageDetectionArrayListOutput<Superclass>, Superclass>
+typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionData, IImageDetectionResult<S>, S>

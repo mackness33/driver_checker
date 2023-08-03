@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
 class ImageDetectionFactoryRepository
-    : MachineLearningFactoryRepository<IImageDetectionData, ImageDetectionArrayListOutput<String>> {
+    : MachineLearningFactoryRepository<IImageDetectionData, IImageDetectionResult<String>> {
 
     constructor() : super()
 
     constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
 
-    override var model: IMachineLearningModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>? = null
+    override var model: IMachineLearningModel<IImageDetectionData, IImageDetectionResult<String>>? = null
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
         try {
@@ -31,7 +31,7 @@ class ImageDetectionFactoryRepository
         return false
     }
 
-    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IMachineLearningModel<IImageDetectionData, ImageDetectionArrayListOutput<String>>? {
+    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IMachineLearningModel<IImageDetectionData, IImageDetectionResult<String>>? {
         return when (modelName){
             "YoloV5" -> {
                 val path = modelInit["path"] as String?
