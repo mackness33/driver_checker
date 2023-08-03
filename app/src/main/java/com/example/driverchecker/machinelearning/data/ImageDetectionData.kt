@@ -31,17 +31,6 @@ data class ImageDetectionItem<S> (
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-//typealias IImageDetectionResult<Superclass> = IClassificationBasicItem<IImageDetectionBox, Superclass>
-//typealias IImageDetectionWithInput<Superclass> = IClassificationBasicItemWithInput<IImageDetectionData, IImageDetectionBox, Superclass>
-
-
-//typealias ImageDetectionListOutput<S> = ClassificationListOutput<IImageDetectionData, IImageDetectionBox<S>, S>
-//typealias ImageDetectionListBaseOutput<S> = ClassificationListBaseOutput<IImageDetectionBox<S>, S>
-
-typealias ImageDetectionArrayListOutput<S> = ClassificationArrayListOutput<IImageDetectionData, IImageDetectionItem<S>, S>
-//typealias ImageDetectionArrayListBaseOutput<S> = ClassificationArrayListBaseOutput<IImageDetectionBox<S>, S>
-
-
 typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionData, IImageDetectionResult<S>, S>
 
 typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionData, IImageDetectionResult<S>, S>

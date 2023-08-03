@@ -32,9 +32,6 @@ interface IMachineLearningOutput<D, R : WithConfidence> {
     val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
 }
 
-interface IMachineLearningBasicItemWithInput<Data, Result> : IMachineLearningBasicItem<Result>,
-    IMachineLearningInput<Data>
-
 data class MachineLearningResult <D, R : WithConfidence> (
     override val listItems: MachineLearningResultList<R>,
     override val data: D,
@@ -47,18 +44,7 @@ data class MachineLearningOutput <D, R: WithConfidence> (
 ) : IMachineLearningOutput<D, R>
 
 
-// ---------------------------------- TYPE ALIASES ----------------------------------
-
-typealias MachineLearningListOutput<Data, Result> = MachineLearningResultList<IMachineLearningBasicItemWithInput<Data, Result>>
-typealias MachineLearningListBaseOutput<Result> = MachineLearningResultList<IMachineLearningBasicItem<Result>>
-
-typealias MachineLearningArrayListOutput<Data, Result> = MachineLearningResultArrayList<IMachineLearningBasicItemWithInput<Data, Result>>
-typealias MachineLearningArrayListBaseOutput<Result> = MachineLearningResultArrayList<IMachineLearningBasicItem<Result>>
-
-// interface IMachineLearningMetrics<Result> : IMachineLearningResult<Result>
-
-// data class MachineLearningWindowOutput<Data, Result>(override val result: Result, override val confidence: Float, val classes: List<Int>, val data: Data) : IMachineLearningResult<Result>
-
+// ---------------------------------- SEALED CLASSES/INTERFACES ----------------------------------
 
 // Represents different states for the LatestNews screen
 sealed interface LiveEvaluationStateInterface<out Result>

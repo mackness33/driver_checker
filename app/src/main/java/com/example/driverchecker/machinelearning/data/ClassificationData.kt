@@ -72,10 +72,4 @@ data class ClassificationOutput<D, R : WithConfAndSupergroup<S>, S>(
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-//typealias ClassificationListOutput<Data, Result, Superclass> = MachineLearningResultList<IClassificationBasicItemWithInput<Data, Result, Superclass>>
-//typealias ClassificationListBaseOutput<Result, Superclass> = MachineLearningResultList<IClassificationBasicItem<Result, Superclass>>
-
-typealias ClassificationArrayListOutput<D, R, S> = MachineLearningResultArrayList<IClassificationBasicItem<D, R, S>>
-//typealias ClassificationArrayListBaseOutput<Result, Superclass> = MachineLearningResultArrayList<IClassificationBasicItem<Result, Superclass>>
-
 typealias ClassificationRepository<D, R, S> = MachineLearningRepository<IMachineLearningInput<D>, IClassificationResult<D, R, S>>

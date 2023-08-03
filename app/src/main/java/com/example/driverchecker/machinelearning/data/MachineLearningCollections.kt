@@ -7,7 +7,7 @@ open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<R
     constructor(collection: Collection<Result>) : super(collection)
     constructor() : super(10)
 
-    override var confidence: Float
+    final override var confidence: Float
         protected set
 
     init {
