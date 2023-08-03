@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.helpers.classification
+package com.example.driverchecker.machinelearning.helpers.classifiers
 
 import com.example.driverchecker.machinelearning.data.ImportClassifier
 import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap

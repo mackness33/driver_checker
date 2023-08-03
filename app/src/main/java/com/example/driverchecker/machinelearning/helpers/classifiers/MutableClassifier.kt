@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.helpers.classification
+package com.example.driverchecker.machinelearning.helpers.classifiers
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
