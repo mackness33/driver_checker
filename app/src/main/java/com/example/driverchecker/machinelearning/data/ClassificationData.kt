@@ -60,7 +60,9 @@ data class ClassificationResult<D, R : WithConfAndSupergroup<S>, S>(
     override val groups: Set<S>,
     override val data: D,
     override val listItems: MachineLearningResultList<R>
-) : IClassificationResult<D, R, S>
+) : IClassificationResult<D, R, S> {
+    override val confidence: Float = listItems.confidence
+}
 
 data class ClassificationOutput<D, R : WithConfAndSupergroup<S>, S>(
     override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>,

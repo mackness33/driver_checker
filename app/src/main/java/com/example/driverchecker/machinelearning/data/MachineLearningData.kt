@@ -19,26 +19,28 @@ data class MachineLearningInput<D>(
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IMachineLearningBasicItem<R> : WithConfidence{
+interface IMachineLearningBasicItem<R> : WithConfidence {
     val result: R
 }
 
-interface IMachineLearningResult<D, R : WithConfidence>{
+interface IMachineLearningResult<D, R : WithConfidence> : WithConfidence {
     val data: D
     val listItems: MachineLearningResultList<R>
 }
 
-interface IMachineLearningOutput<D, R : WithConfidence>{
+interface IMachineLearningOutput<D, R : WithConfidence> {
     val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
 }
 
 interface IMachineLearningBasicItemWithInput<Data, Result> : IMachineLearningBasicItem<Result>,
     IMachineLearningInput<Data>
 
-data class MachineLearningResult <D, R : WithConfidence>(
+data class MachineLearningResult <D, R : WithConfidence> (
     override val listItems: MachineLearningResultList<R>,
-    override val data: D
-) : IMachineLearningResult<D, R>
+    override val data: D,
+) : IMachineLearningResult<D, R> {
+    override val confidence: Float = listItems.confidence
+}
 
 data class MachineLearningOutput <D, R: WithConfidence> (
     override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
