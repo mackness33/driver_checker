@@ -26,7 +26,7 @@ open class YOLOModel :
 
     // model output is of size 25200*(num_of_class+5)
     protected val outputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
-    protected var threshold = 0.20f // score above which a detection is generated
+    protected var threshold = 0.50f // score above which a detection is generated
     protected val maxPredictionsLimit = 5
 
     override fun preProcess(data: IImageDetectionData): IImageDetectionData {

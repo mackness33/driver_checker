@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.SharedFlow
 interface IMachineLearningRepository<in Data, out Result : WithConfidence> {
     suspend fun instantClassification (input: Data): Result?
 
-    suspend fun continuousClassification (input: List<Data>): Result?
     suspend fun continuousClassification (input: Flow<Data>, scope: CoroutineScope): Result?
 
     fun onStartLiveClassification (input: SharedFlow<Data>, scope: CoroutineScope)

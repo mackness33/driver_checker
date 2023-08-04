@@ -14,17 +14,25 @@ interface WithClassification<S> {
     val classification: IClassification<S>
 }
 
-interface WithConfAndClas<S> : WithConfidence, WithClassification<S>
+interface WithConfAndClass<S> : WithConfidence, WithClassification<S>
 
 // with supergroup
 interface WithSupergroup<S> {
     val supergroup: S
 }
 
-interface WithConfAndGroup<S> : WithConfidence, WithSupergroup<S>
+interface WithConfAndSuper<S> : WithConfidence, WithSupergroup<S>
 
 
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndGroup<S>
+// with supergroup
+interface WithGroups<S> {
+    val groups: Set<S>
+}
+
+interface WithConfAndGroups<S> : WithConfidence, WithGroups<S>
+
+
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndSuper<S>
 
 
 data class ClassificationFinalResult<S> (
@@ -64,13 +72,11 @@ typealias StringClassifier = IClassifier<String>
 
 
 // ---------------------------------- OUTPUT ----------------------------------
-interface IClassificationResult<D, R : WithConfAndClas<S>, S> : IMachineLearningResult<D, R> {
-    val groups: Set<S>
-}
+interface IClassificationResult<D, R : WithConfAndClass<S>, S> : IMachineLearningResult<D, R>, WithConfAndGroups<S>
 
-interface IClassificationOutput<D, R : WithConfAndClas<S>, S> : IMachineLearningOutput<D, R>, WithConfAndGroup<S>
+interface IClassificationOutput<D, R : WithConfAndClass<S>, S> : IMachineLearningOutput<D, R>, WithConfAndSuper<S>
 
-data class ClassificationResult<D, R : WithConfAndClas<S>, S>(
+data class ClassificationResult<D, R : WithConfAndClass<S>, S> (
     override val groups: Set<S>,
     override val data: D,
     override val listItems: MachineLearningResultList<R>
@@ -78,7 +84,7 @@ data class ClassificationResult<D, R : WithConfAndClas<S>, S>(
     override val confidence: Float = listItems.confidence
 }
 
-data class ClassificationOutput<D, R : WithConfAndClas<S>, S> (
+data class ClassificationOutput<D, R : WithConfAndClass<S>, S> (
     override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>,
     override val supergroup: S,
     override val confidence: Float

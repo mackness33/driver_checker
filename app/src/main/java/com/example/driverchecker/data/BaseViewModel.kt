@@ -21,7 +21,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     val liveData: SharedFlow<Data>
         get() = _liveData.asSharedFlow()
 
-    // progress flow of the evaluation by the mlRepository
+    // progress flow of the evaluation by the mlRepositorye
     val analysisState: SharedFlow<LiveEvaluationStateInterface<Result>>?
         get() = machineLearningRepository?.analysisProgressState
 

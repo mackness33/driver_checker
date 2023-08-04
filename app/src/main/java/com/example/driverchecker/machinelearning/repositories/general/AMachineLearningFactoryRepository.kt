@@ -6,9 +6,9 @@ import com.example.driverchecker.machinelearning.repositories.IMachineLearningFa
 abstract class AMachineLearningFactoryRepository<Data, Result : WithConfidence>
     : AMachineLearningRepository<Data, Result>, IMachineLearningFactory<Data, Result> {
 
-    constructor() : super(null)
+    constructor() : super()
 
-    constructor(modelName: String, modelInit: Map<String, Any?>) : super(null){
+    constructor(modelName: String, modelInit: Map<String, Any?>) : super(){
         initUseRepo(modelName, modelInit)
     }
 

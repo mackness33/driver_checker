@@ -12,7 +12,7 @@ typealias IImageDetectionData = IMachineLearningInput<Bitmap>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IImageDetectionItem<S> : WithConfAndClas<S> {
+interface IImageDetectionItem<S> : WithConfAndClass<S> {
     var classIndex: Int
     var rect: RectF
 }

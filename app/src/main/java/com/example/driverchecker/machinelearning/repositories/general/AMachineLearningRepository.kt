@@ -10,14 +10,17 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-open class AMachineLearningRepository<D, R : WithConfidence> (importedModel: IMachineLearningModel<D, R>?) :
+abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     IMachineLearningRepository<D, R> {
-    protected open val window: IMachineLearningWindow<R> = MachineLearningWindow()
+    // abstracted
+    protected abstract val window: IMachineLearningWindow<R>
+    protected abstract val model: IMachineLearningModel<D, R>?
+
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<R>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
     protected var loadingModelJob: Job? = null
-    protected open var model: IMachineLearningModel<D, R>? = importedModel
 
+    // TODO: The scope must be external (from the Application level or Activity level)
     override val repositoryScope = CoroutineScope(SupervisorJob())
 
     override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<R>>?
@@ -45,33 +48,6 @@ open class AMachineLearningRepository<D, R : WithConfidence> (importedModel: IMa
         return result
     }
 
-    override suspend fun continuousClassification(input: List<D>): R? {
-        return withContext(Dispatchers.Default) {
-            var result: R? = null
-
-            try {
-                for (data in input) {
-                    val instantResult : R = model?.processAndEvaluate(data) ?: throw Error("The result is null")
-
-                    window.next(instantResult)
-                    // TODO: Pass the metrics and R
-                    if (window.isSatisfied()) {
-                        result = window.getLastResult()
-                        break;
-                    }
-                }
-
-            } catch (e: Throwable) {
-                Log.d("FlowClassificationOutside", "Just caught this, ${e.message}")
-            } finally {
-                Log.d("FlowClassificationWindow", "finally finished")
-                window.clean()
-            }
-
-            return@withContext result
-        }
-    }
-
     override suspend fun continuousClassification(input: Flow<D>, scope: CoroutineScope): R? {
         jobClassification(input, scope).join()
 
@@ -94,14 +70,13 @@ open class AMachineLearningRepository<D, R : WithConfidence> (importedModel: IMa
 
     protected open fun flowClassification (input: Flow<D>, onConditionSatisfied: (CancellationException) -> Unit): Flow<R>? {
         return model?.processAndEvaluatesStream(input)
-                    ?.onEach {
-                        window.next(it)
+                    ?.onEach { postProcessedResult ->
+                        window.next(postProcessedResult)
 
                         _externalProgressState.emit(
-                            LiveEvaluationState.Loading(
-                                window.getIndex(),
-                                window.getLastResult()
-                            ))
+                            LiveEvaluationState.Loading(window.getIndex(), window.getLastResult())
+                        )
+
                         // TODO: Pass the metrics and R
                         if (window.isSatisfied())
                             onConditionSatisfied(CorrectCancellationException())

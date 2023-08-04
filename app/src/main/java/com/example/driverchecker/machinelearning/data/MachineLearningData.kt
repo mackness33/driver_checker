@@ -1,5 +1,7 @@
 package com.example.driverchecker.machinelearning.data
 
+import kotlin.coroutines.cancellation.CancellationException
+
 // ---------------------------------- CLASSES ----------------------------------
 
 interface WithConfidence {
@@ -17,6 +19,7 @@ data class MachineLearningFinalResult (
 interface IMachineLearningInput<D> {
     val data: D
 }
+// ---------------------------------- SEALED CLASSES/INTERFACES ----------------------------------
 
 data class MachineLearningInput<D>(
     override val data: D,
@@ -74,3 +77,10 @@ sealed class PartialEvaluationState : PartialEvaluationStateInterface {
     object Clear : PartialEvaluationState()
     object Init : PartialEvaluationState()
 }
+
+
+// ---------------------------------- ERRORS ----------------------------------
+
+
+class ExternalCancellationException : CancellationException ()
+class CorrectCancellationException : CancellationException ()
