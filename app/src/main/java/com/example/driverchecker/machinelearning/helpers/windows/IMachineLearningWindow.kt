@@ -17,4 +17,10 @@ interface IMachineLearningWindow<E : WithConfidence> : WithConfidence {
     fun clean ()
 
     fun getFinalResults() : IMachineLearningFinalResult
+
+    val hasAcceptedLast: Boolean
+
+    val totEvaluationsDone: Int
+
+    val last : E?
 }

@@ -3,15 +3,11 @@ package com.example.driverchecker.machinelearning.repositories
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.models.IClassificationModel
-import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
-import com.example.driverchecker.machinelearning.repositories.general.ClassificationFactoryRepository
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
 
 class ImageDetectionFactoryRepository
-    : ClassificationFactoryRepository<IImageDetectionData, IImageDetectionResult<String>, String> {
+    : AClassificationFactoryRepository<IImageDetectionData, IImageDetectionResult<String>, String> {
 
     constructor() : super()
 

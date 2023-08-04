@@ -10,7 +10,10 @@ open class ClassificationWindow<E : WithConfAndGroups<S>, S> (override val size:
     override val supergroupCounter: Map<S, Int> = _supergroupCounter
 
     override fun next (element: E) {
-        if (element.groups.isEmpty()) return
+        if (element.groups.isEmpty()) {
+            hasAcceptedLast = false
+            return
+        }
 
         if (!_supergroupCounter.keys.containsAll(element.groups)) throw Throwable("The value found is not part of the classification")
 

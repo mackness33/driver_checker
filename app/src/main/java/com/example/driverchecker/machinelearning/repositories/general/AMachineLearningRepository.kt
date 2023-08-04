@@ -73,9 +73,11 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
                     ?.onEach { postProcessedResult ->
                         window.next(postProcessedResult)
 
-                        _externalProgressState.emit(
-                            LiveEvaluationState.Loading(window.getIndex(), window.getLastResult())
-                        )
+                        if (window.hasAcceptedLast) {
+                            _externalProgressState.emit(
+                                LiveEvaluationState.Loading(window.getIndex(), window.getLastResult())
+                            )
+                        }
 
                         // TODO: Pass the metrics and R
                         if (window.isSatisfied())

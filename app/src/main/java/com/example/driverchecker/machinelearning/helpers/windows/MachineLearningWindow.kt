@@ -11,9 +11,15 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
     override var confidence: Float = 0f
         protected set
 
-    protected var numEvaluationDone: Int = 0
+    override var hasAcceptedLast: Boolean = false
+        protected set
 
-    protected var last : Result? = null
+    override var totEvaluationsDone: Int = 0
+        protected set
+
+    override var last : Result? = null
+        protected set
+
 
     override fun totalNumber() : Int = if (window.size >= size) window.size else 0
 
@@ -26,17 +32,17 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
             window.removeFirst()
 
         last = element
-        numEvaluationDone++
+        totEvaluationsDone++
 
         update()
-        metricsCalculation()
+        hasAcceptedLast = true
     }
 
     // TODO: Clean also the last evaluation done
     override fun clean () {
         window.clear()
         confidence = 0f
-        numEvaluationDone = 0
+        totEvaluationsDone = 0
     }
 
     // TODO: Change the calculation of the confidence
@@ -48,10 +54,7 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
         confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
     }
 
-    // Is gonna return the confidence and other metrics
-    open fun metricsCalculation () {}
-
-    override fun getIndex(): Int = numEvaluationDone
+    override fun getIndex(): Int = totEvaluationsDone
 
     override fun getLastResult(): Result? = last
 

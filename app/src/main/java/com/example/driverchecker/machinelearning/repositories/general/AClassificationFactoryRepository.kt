@@ -3,16 +3,13 @@ package com.example.driverchecker.machinelearning.repositories.general
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
-import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
-import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
-abstract class ClassificationFactoryRepository<D, R : WithConfAndGroups<S>, S>
+abstract class AClassificationFactoryRepository<D, R : WithConfAndGroups<S>, S>
     : AMachineLearningFactoryRepository<D, R>, IClassificationRepository<D, R, S> {
     constructor() : super()
 
