@@ -5,32 +5,32 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
-import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-abstract class MachineLearningClient<D, R : WithConfidence> (machineLearningRepo: IMachineLearningFactory<D, R>? = null) : IMachineLearningClient<D, R>{
+abstract class MachineLearningClient<D, R : WithConfidence> : IMachineLearningClient<D, R>{
     // LIVE DATA
 
-    protected val _hasEnded = AtomicLiveData(100, false)
+    protected val mHasEnded = AtomicLiveData(100, false)
     override val hasEnded: LiveData<Boolean?>
-        get() = _hasEnded.asLiveData
+        get() = mHasEnded.asLiveData
 
     // last result evaluated by the mlRepo
-    protected val _lastResult: MutableLiveData<R?> = MutableLiveData(null)
+    protected val mLastResult: MutableLiveData<R?> = MutableLiveData(null)
     override val lastResult: LiveData<R?>
-        get() = _lastResult
+        get() = mLastResult
 
     // the index of the partialResult
-    protected val _partialResultEvent: MutableLiveData<PartialEvaluationStateInterface> = MutableLiveData(PartialEvaluationState.Init)
+    protected val mPartialResultEvent: MutableLiveData<PartialEvaluationStateInterface> = MutableLiveData(PartialEvaluationState.Init)
     override val partialResultEvent: LiveData<PartialEvaluationStateInterface>
-        get () = _partialResultEvent
+        get () = mPartialResultEvent
 
     // array of evaluated items by the mlRepo
-    protected val evaluatedItemsArray = ArrayList<R>()
+    protected val evaluatedItemsArray =
+        MachineLearningResultArrayList<R>()
     override val currentResultsList: List<R>
         get() = evaluatedItemsArray
 
@@ -38,6 +38,13 @@ abstract class MachineLearningClient<D, R : WithConfidence> (machineLearningRepo
     // LISTENERS
 
     protected open val evaluationListener: MachineLearningListener<D, R> = EvaluationListener()
+
+
+//    abstract var output: IMachineLearningOutput<D, R>?
+
+    override fun getOutput () : IMachineLearningOutput<D, R>? {
+        return MachineLearningOutput(evaluatedItemsArray, 1.0f)
+    }
 
 
     // FUNCTIONS
@@ -50,16 +57,16 @@ abstract class MachineLearningClient<D, R : WithConfidence> (machineLearningRepo
     // handling the clearing of the main array
     protected open fun clearPartialResults () {
         evaluatedItemsArray.clear()
-        _hasEnded.tryUpdate(false)
+        mHasEnded.tryUpdate(false)
     }
 
-    override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface<R>>?) {
+    override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
         evaluationListener.listen(scope, evaluationFlow)
     }
 
     // INNER CLASSES
     protected open inner class EvaluationListener : MachineLearningListener<D, R> {
-        override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface<R>>?) {
+        override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
             scope.launch(Dispatchers.Default) {
                 evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
             }
@@ -67,31 +74,32 @@ abstract class MachineLearningClient<D, R : WithConfidence> (machineLearningRepo
 
         override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             clearPartialResults()
-            _partialResultEvent.postValue(PartialEvaluationState.Clear)
-            _lastResult.postValue(null)
-            Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${_partialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
+            mPartialResultEvent.postValue(PartialEvaluationState.Clear)
+            mLastResult.postValue(null)
+            Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
         }
 
         override fun onLiveEvaluationStart() {
             // add the partialResult to the resultsArray
-            _lastResult.postValue(null)
-            Log.d("LiveEvaluationState", "START: ${_partialResultEvent.value} initialIndex")
+            mLastResult.postValue(null)
+            Log.d("LiveEvaluationState", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
         override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading<R>) {
             // add the partialResult to the resultsArray
             if (state.partialResult != null) {
                 insertPartialResult(state.partialResult)
-                _partialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
-                _lastResult.postValue(state.partialResult)
-                Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${_partialResultEvent.value} time")
+                mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
+                mLastResult.postValue(state.partialResult)
+                Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${mPartialResultEvent.value} time")
             }
         }
 
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<R>) {
+        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
-            Log.d("LiveEvaluationState", "END: ${state.result} for the ${_partialResultEvent.value} time")
+            mHasEnded.tryUpdate(state.finalResult != null)
+            Log.d("LiveEvaluationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
     }
 }

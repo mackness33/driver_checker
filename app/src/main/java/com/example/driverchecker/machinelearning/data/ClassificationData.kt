@@ -32,13 +32,10 @@ interface WithGroups<S> {
 interface WithConfAndGroups<S> : WithConfidence, WithGroups<S>
 
 
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndSuper<S>
-
-
 data class ClassificationFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S
-) : IClassificationFinalResult<S>
+) : WithConfAndSuper<S>
 
 
 interface IClassification<S> {
@@ -74,7 +71,7 @@ typealias StringClassifier = IClassifier<String>
 // ---------------------------------- OUTPUT ----------------------------------
 interface IClassificationResult<D, R : WithConfAndClass<S>, S> : IMachineLearningResult<D, R>, WithConfAndGroups<S>
 
-interface IClassificationOutput<D, R : WithConfAndClass<S>, S> : IMachineLearningOutput<D, R>, WithConfAndSuper<S>
+interface IClassificationOutput<D, R : WithConfAndGroups<S>, S> : IMachineLearningOutput<D, R>, WithConfAndSuper<S>
 
 data class ClassificationResult<D, R : WithConfAndClass<S>, S> (
     override val groups: Set<S>,
@@ -84,8 +81,8 @@ data class ClassificationResult<D, R : WithConfAndClass<S>, S> (
     override val confidence: Float = listItems.confidence
 }
 
-data class ClassificationOutput<D, R : WithConfAndClass<S>, S> (
-    override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>,
+data class ClassificationOutput<D, R : WithConfAndGroups<S>, S> (
+    override val listPartialResults: MachineLearningResultList<R>,
     override val supergroup: S,
     override val confidence: Float
 ) : IClassificationOutput<D, R, S>
@@ -94,3 +91,12 @@ data class ClassificationOutput<D, R : WithConfAndClass<S>, S> (
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
 typealias ClassificationRepository<D, R, S> = MachineLearningRepository<IMachineLearningInput<D>, IClassificationResult<D, R, S>>
+
+
+sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface
+
+// Represents different states for the LatestNews screen
+sealed class LiveClassificationState : LiveEvaluationState(), LiveClassificationStateInterface {
+    data class Start(val maxClassesPerGroup: Int) : LiveClassificationState()
+    data class End<S>(val exception: Throwable?, val finalResult: WithConfAndSuper<S>?) : LiveClassificationState()
+}

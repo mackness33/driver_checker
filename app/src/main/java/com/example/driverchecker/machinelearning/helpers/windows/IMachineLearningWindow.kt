@@ -1,14 +1,15 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
 import com.example.driverchecker.machinelearning.data.WithConfidence
 
 interface IMachineLearningWindow<E : WithConfidence> : WithConfidence {
-    fun getIndex() : Int
+    val lastResult : E?
 
-    fun getLastResult() : E?
+    val hasAcceptedLast: Boolean
 
-    fun totalNumber() : Int
+    val totEvaluationsDone: Int
+
+    fun totalWindowsDone() : Int
 
     fun isSatisfied() : Boolean
 
@@ -16,11 +17,5 @@ interface IMachineLearningWindow<E : WithConfidence> : WithConfidence {
 
     fun clean ()
 
-    fun getFinalResults() : IMachineLearningFinalResult
-
-    val hasAcceptedLast: Boolean
-
-    val totEvaluationsDone: Int
-
-    val last : E?
+    fun getFinalResults() : WithConfidence
 }

@@ -13,16 +13,16 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     // SHARED FLOWS
 
     // producer flow of the data in input of mlRepository
-    protected val _liveData: MutableSharedFlow<Data> = MutableSharedFlow (
+    protected val mLiveInput: MutableSharedFlow<Data> = MutableSharedFlow (
         replay = 0,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
     )
-    val liveData: SharedFlow<Data>
-        get() = _liveData.asSharedFlow()
+    val liveInput: SharedFlow<Data>
+        get() = mLiveInput.asSharedFlow()
 
-    // progress flow of the evaluation by the mlRepositorye
-    val analysisState: SharedFlow<LiveEvaluationStateInterface<Result>>?
+    // progress flow of the evaluation by the mlRepository
+    val analysisState: SharedFlow<LiveEvaluationStateInterface>?
         get() = machineLearningRepository?.analysisProgressState
 
 
@@ -41,14 +41,14 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
         get() = client.lastResult
 
     // bool to check if the mlRepo is evaluating
-    protected val _isEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
+    protected val mIsEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
     val isEvaluating: LiveData<Boolean>
-        get() = _isEvaluating
+        get() = mIsEvaluating
 
     // bool to check if the button to start/stop the evaluation of mlRepo is enable
-    protected val _isEnabled: MutableLiveData<Boolean> = MutableLiveData(true)
+    protected val mIsEnabled: MutableLiveData<Boolean> = MutableLiveData(true)
     val isEnabled: LiveData<Boolean>
-        get() = _isEnabled
+        get() = mIsEnabled
 
     // the index of the partialResult
     val partialResultEvent: LiveData<PartialEvaluationStateInterface>
@@ -64,20 +64,20 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // enabling the button to start/stop the evaluation of the ml
     fun enable (enable: Boolean) {
-        _isEnabled.value = enable
+        mIsEnabled.value = enable
     }
 
     // start/stop the evaluation of the ml
     fun evaluate (record: Boolean) {
-        _isEvaluating.value = record
+        mIsEvaluating.value = record
     }
 
     // update of the live classification of the mlRepo
     fun updateLiveClassification () {
         runBlocking(Dispatchers.Default) {
-            when (_isEvaluating.value) {
+            when (mIsEvaluating.value) {
                 false -> {
-                    machineLearningRepository?.onStartLiveClassification(liveData, viewModelScope)
+                    machineLearningRepository?.onStartLiveClassification(liveInput, viewModelScope)
                 }
                 true -> {
                     machineLearningRepository?.onStopLiveClassification()
@@ -89,28 +89,28 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // INNER CLASSES
     protected open inner class EvaluationListener : MachineLearningListener<Data, Result> {
-        override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface<Result>>?) {
+        override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
             scope.launch(Dispatchers.Default) {
                 evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
             }
         }
 
         override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
-            _isEvaluating.postValue(false)
-            _isEnabled.postValue(state.isReady)
+            mIsEvaluating.postValue(false)
+            mIsEnabled.postValue(state.isReady)
         }
 
         override fun onLiveEvaluationStart() {
             // add the partialResult to the resultsArray
-            _isEvaluating.postValue(true)
-            _isEnabled.postValue(true)
+            mIsEvaluating.postValue(true)
+            mIsEnabled.postValue(true)
         }
 
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<Result>) {
+        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
-            _isEvaluating.postValue(false)
-            _isEnabled.postValue(false)
+            mIsEvaluating.postValue(false)
+            mIsEnabled.postValue(false)
         }
 
         override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading<Result>) {}

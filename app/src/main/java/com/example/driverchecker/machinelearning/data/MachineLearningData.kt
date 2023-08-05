@@ -8,11 +8,9 @@ interface WithConfidence {
     val confidence: Float
 }
 
-interface IMachineLearningFinalResult : WithConfidence
-
 data class MachineLearningFinalResult (
     override val confidence: Float
-) : IMachineLearningFinalResult
+) : WithConfidence
 
 // ---------------------------------- INPUT ----------------------------------
 
@@ -33,8 +31,8 @@ interface IMachineLearningResult<D, R : WithConfidence> : WithConfidence {
     val listItems: MachineLearningResultList<R>
 }
 
-interface IMachineLearningOutput<D, R : WithConfidence> : IMachineLearningFinalResult {
-    val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>
+interface IMachineLearningOutput<D, R : WithConfidence> : WithConfidence {
+    val listPartialResults: MachineLearningResultList<R>
 }
 
 data class MachineLearningResult <D, R : WithConfidence> (
@@ -45,7 +43,7 @@ data class MachineLearningResult <D, R : WithConfidence> (
 }
 
 data class MachineLearningOutput <D, R: WithConfidence> (
-    override val listPartialResults: MachineLearningResultList<IMachineLearningResult<D, R>>,
+    override val listPartialResults: MachineLearningResultList<R>,
     override val confidence: Float
 ) : IMachineLearningOutput<D, R>
 
@@ -53,20 +51,16 @@ data class MachineLearningOutput <D, R: WithConfidence> (
 // ---------------------------------- SEALED CLASSES/INTERFACES ----------------------------------
 
 // Represents different states for the LatestNews screen
-sealed interface LiveEvaluationStateInterface<out Result>
+sealed interface LiveEvaluationStateInterface
 
 // Represents different states for the LatestNews screen
-sealed class LiveEvaluationState<out Result> : LiveEvaluationStateInterface<Result> {
-    data class Ready(val isReady: Boolean) : LiveEvaluationState<Nothing>()
-    data class Loading<Result>(val index: Int, val partialResult: Result?) : LiveEvaluationState<Result>()
-    object Start : LiveEvaluationState<Nothing>()
-    data class End<Result>(val exception: Throwable?, val result: Result?) : LiveEvaluationState<Result>()
+sealed class LiveEvaluationState : LiveEvaluationStateInterface {
+    data class Ready(val isReady: Boolean) : LiveEvaluationState()
+    data class Loading<R>(val index: Int, val partialResult: R?) : LiveEvaluationState()
+    object Start : LiveEvaluationState()
+    data class End(val exception: Throwable?, val finalResult: WithConfidence?) : LiveEvaluationState()
 }
 
-// Represents different states for the LatestNews screen
-sealed class LiveClassificationState<out Result> : LiveEvaluationState<Result>() {
-    data class Start(val maxClassesPerGroup: Int) : LiveEvaluationState<Nothing>()
-}
 
 // Represents different states for the LatestNews screen
 sealed interface PartialEvaluationStateInterface

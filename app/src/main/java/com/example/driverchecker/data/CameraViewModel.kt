@@ -9,14 +9,11 @@ import com.example.driverchecker.machinelearning.repositories.ImageDetectionFact
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
-import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
-import com.example.driverchecker.machinelearning.manipulators.MachineLearningClient
-import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.*
 
 class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, IImageDetectionResult<String>>(imageDetectionRepository) {
-    override val client: IClassificationClient<IImageDetectionData, IImageDetectionResult<String>> = ImageDetectionClient(imageDetectionRepository)
+    override val client: IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String> = ImageDetectionClient()
 
     val showResults: LiveData<Boolean?>
         get() = client.hasEnded
@@ -33,7 +30,7 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         get() = client.simpleListClassesPredictions
 
 
-    override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>> = EvaluationClassificationListener()
+    override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String> = EvaluationClassificationListener()
 
 
     init {
@@ -44,19 +41,25 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
             val bitmap: Bitmap = ImageDetectionUtils.imageProxyToBitmap(image)
-            _liveData.emit(ImageDetectionBaseInput(bitmap))
+            mLiveInput.emit(ImageDetectionBaseInput(bitmap))
             image.close()
         }
     }
 
     // INNER CLASSES
     private open inner class EvaluationClassificationListener :
-        ClassificationListener<IImageDetectionData, IImageDetectionResult<String>>,
+        ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String>,
         EvaluationListener() {
         override fun onLiveEvaluationStart() {}
 
         override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
             super.onLiveEvaluationStart()
+        }
+
+        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
+
+        override fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
+            super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
         }
 
     }

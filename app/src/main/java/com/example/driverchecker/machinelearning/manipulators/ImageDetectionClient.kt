@@ -3,13 +3,10 @@ package com.example.driverchecker.machinelearning.manipulators
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.driverchecker.data.BaseViewModel
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
-import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
-import com.example.driverchecker.utils.AtomicLiveData
 
-class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>> (imageDetectionRepository), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>> {
+class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>> (), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String> {
     // LIVE DATA
     private val _passengerInfo = MutableLiveData(Pair(0, 0))
     override val passengerInfo: LiveData<Pair<Int, Int>>
@@ -25,10 +22,13 @@ class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepos
         get() = arrayClassesPredictions
 
 
-    override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>> = EvaluationClassificationListener()
-
+    override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String> = EvaluationClassificationListener()
 
     // FUNCTIONS
+
+    override fun getOutput () : IClassificationOutput<IImageDetectionData, IImageDetectionResult<String>, String>? {
+        return null
+    }
 
     // handling the add of a partial result to the main array
     override fun insertPartialResult (partialResult: IImageDetectionResult<String>) {
@@ -54,18 +54,13 @@ class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepos
         arrayClassesPredictions.clear()
         _passengerInfo.postValue(Pair(0, 0))
         _driverInfo.postValue(Pair(0, 0))
-        _hasEnded.tryUpdate(false)
+        mHasEnded.tryUpdate(false)
     }
 
     // INNER CLASSES
     private open inner class EvaluationClassificationListener :
-        ClassificationListener<IImageDetectionData, IImageDetectionResult<String>>,
+        ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String>,
         EvaluationListener() {
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End<IImageDetectionResult<String>>) {
-            _hasEnded.tryUpdate(state.result != null)
-            super.onLiveEvaluationEnd(state)
-        }
-
         override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<IImageDetectionResult<String>>) {
             // add the partialResult to the resultsArray
             if (!state.partialResult?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
@@ -75,8 +70,14 @@ class ImageDetectionClient (imageDetectionRepository: ImageDetectionFactoryRepos
 
         override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
             super.onLiveEvaluationStart()
-            Log.d("LiveEvaluationState", "START: ${_partialResultEvent.value} initialIndex")
+            Log.d("LiveClassificationState", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
+        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
+
+        override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
+            super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
+            Log.d("LiveClassificationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
+        }
     }
 }

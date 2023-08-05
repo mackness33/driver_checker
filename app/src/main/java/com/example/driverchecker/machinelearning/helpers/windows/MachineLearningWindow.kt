@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
 import com.example.driverchecker.machinelearning.data.MachineLearningFinalResult
 import com.example.driverchecker.machinelearning.data.WithConfidence
 
@@ -17,11 +16,10 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
     override var totEvaluationsDone: Int = 0
         protected set
 
-    override var last : Result? = null
+    override var lastResult : Result? = null
         protected set
 
-
-    override fun totalNumber() : Int = if (window.size >= size) window.size else 0
+    override fun totalWindowsDone() : Int = if (window.size >= size) window.size else 0
 
     override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
 
@@ -31,10 +29,10 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
         if (window.size > size)
             window.removeFirst()
 
-        last = element
-        totEvaluationsDone++
-
         update()
+
+        lastResult = element
+        totEvaluationsDone++
         hasAcceptedLast = true
     }
 
@@ -43,6 +41,8 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
         window.clear()
         confidence = 0f
         totEvaluationsDone = 0
+        hasAcceptedLast = false
+        lastResult = null
     }
 
     // TODO: Change the calculation of the confidence
@@ -54,11 +54,7 @@ open class MachineLearningWindow<Result : WithConfidence> (open val size: Int = 
         confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
     }
 
-    override fun getIndex(): Int = totEvaluationsDone
-
-    override fun getLastResult(): Result? = last
-
-    override fun getFinalResults() : IMachineLearningFinalResult {
+    override fun getFinalResults() : WithConfidence {
         return MachineLearningFinalResult(confidence)
     }
 }

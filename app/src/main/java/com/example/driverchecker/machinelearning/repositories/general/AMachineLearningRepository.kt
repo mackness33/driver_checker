@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
-import com.example.driverchecker.machinelearning.helpers.windows.MachineLearningWindow
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
@@ -16,14 +15,14 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     protected abstract val window: IMachineLearningWindow<R>
     protected abstract val model: IMachineLearningModel<D, R>?
 
-    protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface<R>> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveClassificationJob: Job? = null
     protected var loadingModelJob: Job? = null
 
     // TODO: The scope must be external (from the Application level or Activity level)
     override val repositoryScope = CoroutineScope(SupervisorJob())
 
-    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<R>>?
+    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface>?
         get() = _externalProgressState.asSharedFlow()
 
     init {
@@ -51,7 +50,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     override suspend fun continuousClassification(input: Flow<D>, scope: CoroutineScope): R? {
         jobClassification(input, scope).join()
 
-        return window.getLastResult()
+        return window.lastResult
     }
 
     protected open fun jobClassification (input: Flow<D>, scope: CoroutineScope): Job {
@@ -75,7 +74,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
 
                         if (window.hasAcceptedLast) {
                             _externalProgressState.emit(
-                                LiveEvaluationState.Loading(window.getIndex(), window.getLastResult())
+                                LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
                             )
                         }
 
@@ -83,7 +82,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
                         if (window.isSatisfied())
                             onConditionSatisfied(CorrectCancellationException())
 
-                        Log.d("JobClassification", "Checked: ${window.getIndex()} with ${window.getLastResult()}")
+                        Log.d("JobClassification", "Checked: ${window.totEvaluationsDone} with ${window.lastResult}")
                     }
                     ?.cancellable()
                     ?.catch { cause ->
@@ -98,7 +97,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
                             )
                         } else {
                             _externalProgressState.emit(
-                                LiveEvaluationState.End(null, window.getLastResult())
+                                LiveEvaluationState.End(null, window.getFinalResults())
                             )
                         }
 
