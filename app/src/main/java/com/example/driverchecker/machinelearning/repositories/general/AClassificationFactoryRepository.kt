@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
+import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
@@ -19,17 +20,35 @@ abstract class AClassificationFactoryRepository<D, R : WithConfAndGroups<S>, S>
 
     abstract override var model: IClassificationModel<D, R, S>?
 
-    override fun jobClassification (input: Flow<D>, scope: CoroutineScope): Job {
+    override fun jobEvaluation (input: Flow<D>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 _externalProgressState.emit(LiveClassificationState.Start((model as IClassificationModel<*, *, *>).classifier.maxClassesInGroup()))
 
-                flowClassification(input, ::cancel)?.collect()
+                flowEvaluation(input, ::cancel)?.collect()
             } else {
                 _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
                 _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
             }
         }
+    }
+
+    override suspend fun onCompletionEvaluation (cause: Throwable?) {
+        Log.d("JobClassification", "finally finished")
+
+        if (cause != null && cause !is CorrectCancellationException) {
+            _externalProgressState.emit(
+                LiveClassificationState.End<S>(cause, null)
+            )
+        } else {
+            _externalProgressState.emit(
+                LiveClassificationState.End(null, window.getFinalResults())
+            )
+        }
+
+        window.clean()
+
+        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
     }
 }

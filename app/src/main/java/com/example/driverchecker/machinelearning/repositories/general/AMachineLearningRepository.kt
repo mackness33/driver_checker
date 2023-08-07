@@ -16,7 +16,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     protected abstract val model: IMachineLearningModel<D, R>?
 
     protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    protected var liveClassificationJob: Job? = null
+    protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
 
     // TODO: The scope must be external (from the Application level or Activity level)
@@ -39,7 +39,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
         }
     }
 
-    override suspend fun instantClassification(input: D): R? {
+    override suspend fun instantEvaluation(input: D): R? {
         var result: R? = null
         val job = repositoryScope.launch(Dispatchers.Default) { result = model?.processAndEvaluate(input) }
         job.join()
@@ -47,19 +47,19 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
         return result
     }
 
-    override suspend fun continuousClassification(input: Flow<D>, scope: CoroutineScope): R? {
-        jobClassification(input, scope).join()
+    override suspend fun continuousEvaluation(input: Flow<D>, scope: CoroutineScope): R? {
+        jobEvaluation(input, scope).join()
 
         return window.lastResult
     }
 
-    protected open fun jobClassification (input: Flow<D>, scope: CoroutineScope): Job {
+    protected open fun jobEvaluation (input: Flow<D>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 _externalProgressState.emit(LiveEvaluationState.Start)
 
-                flowClassification(input, ::cancel)?.collect()
+                flowEvaluation(input, ::cancel)?.collect()
             } else {
                 _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
                 _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
@@ -67,60 +67,73 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
         }
     }
 
-    protected open fun flowClassification (input: Flow<D>, onConditionSatisfied: (CancellationException) -> Unit): Flow<R>? {
+    protected open fun flowEvaluation (
+        input: Flow<D>,
+        onConditionSatisfied: (CancellationException) -> Unit
+    ): Flow<R>? {
         return model?.processAndEvaluatesStream(input)
-                    ?.onEach { postProcessedResult ->
-                        window.next(postProcessedResult)
-
-                        if (window.hasAcceptedLast) {
-                            _externalProgressState.emit(
-                                LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
-                            )
-                        }
-
-                        // TODO: Pass the metrics and R
-                        if (window.isSatisfied())
-                            onConditionSatisfied(CorrectCancellationException())
-
-                        Log.d("JobClassification", "Checked: ${window.totEvaluationsDone} with ${window.lastResult}")
-                    }
+                    ?.onEach { postProcessedResult -> onEachEvaluation(postProcessedResult, onConditionSatisfied) }
                     ?.cancellable()
-                    ?.catch { cause ->
-                        Log.e("JobClassification", "Just caught this: ${cause.message}")
-                    }
-                    ?.onCompletion { cause ->
-                        Log.d("JobClassification", "finally finished")
-
-                        if (cause != null && cause !is CorrectCancellationException) {
-                            _externalProgressState.emit(
-                                LiveEvaluationState.End(cause, null)
-                            )
-                        } else {
-                            _externalProgressState.emit(
-                                LiveEvaluationState.End(null, window.getFinalResults())
-                            )
-                        }
-
-                        window.clean()
-
-                        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
-                    }
+                    ?.catch { cause -> onErrorEvaluation(cause) }
+                    ?.onCompletion { cause -> onCompletionEvaluation (cause) }
     }
 
-    override fun onStartLiveClassification(
+    protected open suspend fun onCompletionEvaluation (cause: Throwable?) {
+        Log.d("JobClassification", "finally finished")
+
+        if (cause != null && cause !is CorrectCancellationException) {
+            _externalProgressState.emit(
+                LiveEvaluationState.End(cause, null)
+            )
+        } else {
+            _externalProgressState.emit(
+                LiveEvaluationState.End(null, window.getFinalResults())
+            )
+        }
+
+        window.clean()
+
+        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+    }
+
+    protected open suspend fun onEachEvaluation (
+        postProcessedResult: R,
+        onConditionSatisfied: (CancellationException) -> Unit
+    ) {
+        Log.d("JobClassification", "finally finished")
+        window.next(postProcessedResult)
+
+        if (window.hasAcceptedLast) {
+            _externalProgressState.emit(
+                LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
+            )
+        }
+
+        // TODO: Pass the metrics and R
+        if (window.isSatisfied())
+            onConditionSatisfied(CorrectCancellationException())
+    }
+
+    protected open suspend fun onErrorEvaluation (cause: Throwable) {
+        Log.e("JobClassification", "Just caught this: ${cause.message}")
+    }
+
+    override fun onStartLiveEvaluation(
         input: SharedFlow<D>,
         scope: CoroutineScope
     ) {
         if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-            liveClassificationJob = jobClassification(input.buffer(2), scope)
+            liveEvaluationJob = jobEvaluation(input.buffer(2), scope)
         }
     }
 
-    override fun onStopLiveClassification(externalCause: CancellationException?) {
-        liveClassificationJob?.cancel(cause = externalCause ?: ExternalCancellationException())
+    override fun onStopLiveEvaluation(externalCause: CancellationException?) {
+        liveEvaluationJob?.cancel(cause = externalCause ?: ExternalCancellationException())
     }
 
     override fun <ModelInit> updateModel(init: ModelInit) {
         model?.loadModel(init)
     }
+
+//    protected open inner class
 }

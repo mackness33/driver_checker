@@ -17,7 +17,7 @@ class ImageDetectionFactoryRepository
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
         try {
-            onStopLiveClassification()
+            onStopLiveEvaluation()
             model = factory(modelName, modelInit)
             listenOnLoadingState()
             return model?.isLoaded?.value ?: false
