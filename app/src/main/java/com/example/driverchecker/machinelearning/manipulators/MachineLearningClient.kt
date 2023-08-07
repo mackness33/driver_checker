@@ -85,12 +85,13 @@ abstract class MachineLearningClient<D, R : WithConfidence> : IMachineLearningCl
             Log.d("LiveEvaluationState", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
-        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading<R>) {
+        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
             if (state.partialResult != null) {
-                insertPartialResult(state.partialResult)
+                val partialResult: R = state.partialResult as R
+                insertPartialResult(partialResult)
                 mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
-                mLastResult.postValue(state.partialResult)
+                mLastResult.postValue(partialResult)
                 Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${mPartialResultEvent.value} time")
             }
         }

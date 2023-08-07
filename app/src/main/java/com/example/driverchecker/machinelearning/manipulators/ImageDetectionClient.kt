@@ -61,9 +61,9 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
     private open inner class EvaluationClassificationListener :
         ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String>,
         EvaluationListener() {
-        override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading<IImageDetectionResult<String>>) {
+        override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
-            if (!state.partialResult?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
+            if (!(state.partialResult as IImageDetectionResult<String>?)?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
         }
 
         override fun onLiveEvaluationStart() {}

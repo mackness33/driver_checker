@@ -17,6 +17,6 @@ interface IMachineLearningRepository<in Data, out Result : WithConfidence> {
 
     fun <ModelInit> updateModel (init: ModelInit)
 
-    val analysisProgressState: SharedFlow<LiveEvaluationStateInterface<Result>>?
+    val analysisProgressState: SharedFlow<LiveEvaluationStateInterface>?
     val repositoryScope: CoroutineScope
 }

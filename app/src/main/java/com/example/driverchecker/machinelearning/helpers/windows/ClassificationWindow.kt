@@ -7,7 +7,7 @@ open class ClassificationWindow<E : WithConfAndGroups<S>, S> (override val size:
 
     protected val mSupergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
 
-    override val supergroupCounter: Map<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
+    override val supergroupCounter: Map<S, Int> = mSupergroupCounter
 
     override fun next (element: E) {
         if (element.groups.isEmpty()) {

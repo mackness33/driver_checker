@@ -55,12 +55,11 @@ sealed interface LiveEvaluationStateInterface
 
 // Represents different states for the LatestNews screen
 sealed class LiveEvaluationState : LiveEvaluationStateInterface {
-    data class Ready(val isReady: Boolean) : LiveEvaluationState()
-    data class Loading<R>(val index: Int, val partialResult: R?) : LiveEvaluationState()
-    object Start : LiveEvaluationState()
-    data class End(val exception: Throwable?, val finalResult: WithConfidence?) : LiveEvaluationState()
+    data class Ready(val isReady: Boolean) : LiveEvaluationStateInterface
+    data class Loading(val index: Int, val partialResult: WithConfidence?) : LiveEvaluationStateInterface
+    object Start : LiveEvaluationStateInterface
+    data class End(val exception: Throwable?, val finalResult: WithConfidence?) : LiveEvaluationStateInterface
 }
-
 
 // Represents different states for the LatestNews screen
 sealed interface PartialEvaluationStateInterface

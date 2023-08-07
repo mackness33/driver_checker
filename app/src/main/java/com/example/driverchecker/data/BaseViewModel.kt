@@ -113,6 +113,6 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
             mIsEnabled.postValue(false)
         }
 
-        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading<Result>) {}
+        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
     }
 }

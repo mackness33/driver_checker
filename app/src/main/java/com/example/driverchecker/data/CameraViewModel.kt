@@ -61,6 +61,5 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
         override fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
         }
-
     }
 }

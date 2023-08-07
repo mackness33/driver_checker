@@ -1,13 +1,12 @@
 package com.example.driverchecker.machinelearning.helpers.listeners
 
-import com.example.driverchecker.machinelearning.data.LiveClassificationState
-import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.data.WithConfidence
+import com.example.driverchecker.machinelearning.data.*
 
-interface ClassificationListener<D, R : WithConfidence, S> : MachineLearningListener<D, R> {
+interface ClassificationListener<D, R : WithConfAndGroups<S>, S> : MachineLearningListener<D, R> {
     override fun collectLiveEvaluations (state: LiveEvaluationStateInterface) {
         when (state) {
             is LiveClassificationState.Start -> onLiveClassificationStart(state)
+            is LiveClassificationState.End<*> -> onLiveClassificationEnd(state as LiveClassificationState.End<S>)
             else -> super.collectLiveEvaluations(state)
         }
     }
