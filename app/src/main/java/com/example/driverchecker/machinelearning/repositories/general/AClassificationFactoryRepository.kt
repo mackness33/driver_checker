@@ -23,13 +23,13 @@ abstract class AClassificationFactoryRepository<D, R : WithConfAndGroups<S>, S>
     override fun jobEvaluation (input: Flow<D>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
-            if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-                _externalProgressState.emit(LiveClassificationState.Start((model as IClassificationModel<*, *, *>).classifier.maxClassesInGroup()))
+            if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+                mEvaluationFlowState.emit(LiveClassificationState.Start((model as IClassificationModel<*, *, *>).classifier.maxClassesInGroup()))
 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
-                _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
-                _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+                mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
+                mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
             }
         }
     }
@@ -38,17 +38,17 @@ abstract class AClassificationFactoryRepository<D, R : WithConfAndGroups<S>, S>
         Log.d("JobClassification", "finally finished")
 
         if (cause != null && cause !is CorrectCancellationException) {
-            _externalProgressState.emit(
+            mEvaluationFlowState.emit(
                 LiveClassificationState.End<S>(cause, null)
             )
         } else {
-            _externalProgressState.emit(
+            mEvaluationFlowState.emit(
                 LiveClassificationState.End(null, window.getFinalResults())
             )
         }
 
         window.clean()
 
-        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
     }
 }

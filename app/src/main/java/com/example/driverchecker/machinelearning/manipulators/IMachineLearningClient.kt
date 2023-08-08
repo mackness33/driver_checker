@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.manipulators
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.IMachineLearningOutput
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.data.PartialEvaluationStateInterface
@@ -8,7 +9,7 @@ import com.example.driverchecker.machinelearning.data.WithConfidence
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-interface IMachineLearningClient<D, R : WithConfidence> {
+interface IMachineLearningClient<D, R : WithConfidence, O : WithConfidence> {
     // LIVE DATA
 
     val hasEnded: LiveData<Boolean?>
@@ -25,4 +26,6 @@ interface IMachineLearningClient<D, R : WithConfidence> {
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 
     fun getOutput () : IMachineLearningOutput<D, R>?
+
+    val output: LiveData<O?>
 }

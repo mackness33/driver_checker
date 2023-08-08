@@ -18,9 +18,10 @@ interface IImageDetectionItem<S> : WithConfAndClass<S> {
 }
 
 typealias IImageDetectionResult<S> = IClassificationResult<IImageDetectionData, IImageDetectionItem<S>, S>
+typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionData, IImageDetectionResult<S>, S>
 
 typealias ImageDetectionResult<S> = ClassificationResult<IImageDetectionData, IImageDetectionItem<S>, S>
-typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionData, IImageDetectionItem<S>, S>
+typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionData, IImageDetectionResult<S>, S>
 
 data class ImageDetectionItem<S> (
     override var classIndex: Int,

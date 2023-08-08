@@ -15,26 +15,26 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     protected abstract val window: IMachineLearningWindow<R>
     protected abstract val model: IMachineLearningModel<D, R>?
 
-    protected val _externalProgressState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    protected val mEvaluationFlowState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
 
     // TODO: The scope must be external (from the Application level or Activity level)
     override val repositoryScope = CoroutineScope(SupervisorJob())
 
-    override val analysisProgressState: SharedFlow<LiveEvaluationStateInterface>?
-        get() = _externalProgressState.asSharedFlow()
+    override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
+        get() = mEvaluationFlowState.asSharedFlow()
 
     init {
-        _externalProgressState.tryEmit(LiveEvaluationState.Ready(false))
+        mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
         listenOnLoadingState()
     }
 
     protected open fun listenOnLoadingState () {
         loadingModelJob = repositoryScope.launch {
             model?.isLoaded?.collect { state ->
-                if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(!state))
-                    _externalProgressState.emit(LiveEvaluationState.Ready(state))
+                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(!state))
+                    mEvaluationFlowState.emit(LiveEvaluationState.Ready(state))
             }
         }
     }
@@ -56,13 +56,13 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     protected open fun jobEvaluation (input: Flow<D>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
-            if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-                _externalProgressState.emit(LiveEvaluationState.Start)
+            if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+                mEvaluationFlowState.emit(LiveEvaluationState.Start)
 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
-                _externalProgressState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
-                _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+                mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
+                mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
             }
         }
     }
@@ -82,18 +82,18 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
         Log.d("JobClassification", "finally finished")
 
         if (cause != null && cause !is CorrectCancellationException) {
-            _externalProgressState.emit(
+            mEvaluationFlowState.emit(
                 LiveEvaluationState.End(cause, null)
             )
         } else {
-            _externalProgressState.emit(
+            mEvaluationFlowState.emit(
                 LiveEvaluationState.End(null, window.getFinalResults())
             )
         }
 
         window.clean()
 
-        _externalProgressState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
     }
 
     protected open suspend fun onEachEvaluation (
@@ -104,7 +104,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
         window.next(postProcessedResult)
 
         if (window.hasAcceptedLast) {
-            _externalProgressState.emit(
+            mEvaluationFlowState.emit(
                 LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
             )
         }
@@ -122,7 +122,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
         input: SharedFlow<D>,
         scope: CoroutineScope
     ) {
-        if (_externalProgressState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+        if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
             liveEvaluationJob = jobEvaluation(input.buffer(2), scope)
         }
     }

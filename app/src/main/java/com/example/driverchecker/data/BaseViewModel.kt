@@ -23,7 +23,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // progress flow of the evaluation by the mlRepository
     val analysisState: SharedFlow<LiveEvaluationStateInterface>?
-        get() = machineLearningRepository?.analysisProgressState
+        get() = machineLearningRepository?.evaluationFlowState
 
 
     // LISTENERS
@@ -32,13 +32,13 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // CLIENTS
 
-    protected abstract val client: IMachineLearningClient<Data, Result>
+    protected abstract val evaluationClient: IMachineLearningClient<Data, Result>
 
     // LIVE DATA
 
     // last result evaluated by the mlRepo
     val lastResult: LiveData<Result?>
-        get() = client.lastResult
+        get() = evaluationClient.lastResult
 
     // bool to check if the mlRepo is evaluating
     protected val mIsEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -52,12 +52,14 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // the index of the partialResult
     val partialResultEvent: LiveData<PartialEvaluationStateInterface>
-        get () = client.partialResultEvent
+        get () = evaluationClient.partialResultEvent
 
     // array of evaluated items by the mlRepo
     val evaluatedItemsList: List<Result>
-        get() = client.currentResultsList
+        get() = evaluationClient.currentResultsList
 
+    open val finalOutput: LiveData<IMachineLearningOutput<Data, Result>>
+        get() = evaluationClient.getOutput()
 
 
     // FUNCTIONS

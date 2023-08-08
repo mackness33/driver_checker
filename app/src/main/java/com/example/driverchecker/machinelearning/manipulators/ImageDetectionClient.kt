@@ -6,15 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 
-class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>> (), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String> {
+class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>> (), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String, IImageDetectionOutput<String>> {
     // LIVE DATA
-    private val _passengerInfo = MutableLiveData(Pair(0, 0))
+    private val mPassengerInfo = MutableLiveData(Pair(0, 0))
     override val passengerInfo: LiveData<Pair<Int, Int>>
-        get() = _passengerInfo
+        get() = mPassengerInfo
 
-    private val _driverInfo = MutableLiveData(Pair(0, 0))
+    private val mDriverInfo = MutableLiveData(Pair(0, 0))
     override val driverInfo: LiveData<Pair<Int, Int>>
-        get() = _driverInfo
+        get() = mDriverInfo
 
     // REFACTOR: move this array/function to the mlRepo
     private val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
@@ -26,9 +26,12 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
 
     // FUNCTIONS
 
-    override fun getOutput () : IClassificationOutput<IImageDetectionData, IImageDetectionResult<String>, String>? {
-        return null
+    override fun getOutput () : IClassificationOutput<IImageDetectionData, IImageDetectionResult<String>, String> {
+        return ClassificationOutput(evaluatedItemsArray, "Driver", 6.0f)
     }
+
+    override val output: LiveData<IClassificationOutput<IImageDetectionData, IImageDetectionResult<String>, String>?>
+        get() = mOutput
 
     // handling the add of a partial result to the main array
     override fun insertPartialResult (partialResult: IImageDetectionResult<String>) {
@@ -43,8 +46,8 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
 
         arrayClassesPredictions.add(classInfo)
         when (classInfo.first) {
-            0 -> _passengerInfo.postValue(Pair((_passengerInfo.value?.first ?: 0) + classInfo.first, (_passengerInfo.value?.second ?: 0) + classInfo.second.count()))
-            1 -> _driverInfo.postValue(Pair((_driverInfo.value?.first ?: 0) + classInfo.first, (_driverInfo.value?.second ?: 0) + classInfo.second.count()))
+            0 -> mPassengerInfo.postValue(Pair((mPassengerInfo.value?.first ?: 0) + classInfo.first, (mPassengerInfo.value?.second ?: 0) + classInfo.second.count()))
+            1 -> mDriverInfo.postValue(Pair((mDriverInfo.value?.first ?: 0) + classInfo.first, (mDriverInfo.value?.second ?: 0) + classInfo.second.count()))
         }
     }
 
@@ -52,8 +55,8 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
     override fun clearPartialResults () {
         evaluatedItemsArray.clear()
         arrayClassesPredictions.clear()
-        _passengerInfo.postValue(Pair(0, 0))
-        _driverInfo.postValue(Pair(0, 0))
+        mPassengerInfo.postValue(Pair(0, 0))
+        mDriverInfo.postValue(Pair(0, 0))
         mHasEnded.tryUpdate(false)
     }
 
@@ -76,6 +79,7 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
         override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
         override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
+            mOutput.value = ImageDetectionOutput(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence)
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
             Log.d("LiveClassificationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }

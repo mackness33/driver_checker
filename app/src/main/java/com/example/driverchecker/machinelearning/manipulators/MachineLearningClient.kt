@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-abstract class MachineLearningClient<D, R : WithConfidence> : IMachineLearningClient<D, R>{
+abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> : IMachineLearningClient<D, R, O>{
     // LIVE DATA
 
     protected val mHasEnded = AtomicLiveData(100, false)
@@ -45,6 +45,10 @@ abstract class MachineLearningClient<D, R : WithConfidence> : IMachineLearningCl
     override fun getOutput () : IMachineLearningOutput<D, R>? {
         return MachineLearningOutput(evaluatedItemsArray, 1.0f)
     }
+
+    protected open val mOutput: MutableLiveData<O?> = MutableLiveData(null)
+    override val output: LiveData<O?>
+        get() = mOutput
 
 
     // FUNCTIONS

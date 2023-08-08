@@ -1,7 +1,6 @@
 package com.example.driverchecker.data
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
@@ -13,21 +12,21 @@ import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClie
 import kotlinx.coroutines.*
 
 class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, IImageDetectionResult<String>>(imageDetectionRepository) {
-    override val client: IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String> = ImageDetectionClient()
+    override val evaluationClient: IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String> = ImageDetectionClient()
 
     val showResults: LiveData<Boolean?>
-        get() = client.hasEnded
+        get() = evaluationClient.hasEnded
 
     val passengerInfo: LiveData<Pair<Int, Int>>
-        get() = client.passengerInfo
+        get() = evaluationClient.passengerInfo
 
     val driverInfo: LiveData<Pair<Int, Int>>
-        get() = client.driverInfo
+        get() = evaluationClient.driverInfo
 
 
     // REFACTOR: move this array/function to the mlRepo
     val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
-        get() = client.simpleListClassesPredictions
+        get() = evaluationClient.simpleListClassesPredictions
 
 
     override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String> = EvaluationClassificationListener()
@@ -35,7 +34,7 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
 
     init {
         evaluationListener.listen(viewModelScope, analysisState)
-        client.listen(viewModelScope, analysisState)
+        evaluationClient.listen(viewModelScope, analysisState)
     }
 
     suspend fun produceImage (image: ImageProxy) {
