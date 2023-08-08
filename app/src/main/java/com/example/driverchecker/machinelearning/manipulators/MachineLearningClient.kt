@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> : IMachineLearningClient<D, R, O>{
+abstract class MachineLearningClient<I, O : WithConfidence, FR : WithConfidence> : IMachineLearningClient<I, O, FR>{
     // LIVE DATA
 
     protected val mHasEnded = AtomicLiveData(100, false)
@@ -19,8 +19,8 @@ abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> 
         get() = mHasEnded.asLiveData
 
     // last result evaluated by the mlRepo
-    protected val mLastResult: MutableLiveData<R?> = MutableLiveData(null)
-    override val lastResult: LiveData<R?>
+    protected val mLastResult: MutableLiveData<O?> = MutableLiveData(null)
+    override val lastResult: LiveData<O?>
         get() = mLastResult
 
     // the index of the partialResult
@@ -30,8 +30,8 @@ abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> 
 
     // array of evaluated items by the mlRepo
     protected val evaluatedItemsArray =
-        MachineLearningResultArrayList<R>()
-    override val currentResultsList: List<R>
+        MachineLearningResultArrayList<O>()
+    override val currentResultsList: List<O>
         get() = evaluatedItemsArray
 
 
@@ -42,19 +42,19 @@ abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> 
 
 //    abstract var output: IMachineLearningOutput<D, R>?
 
-    override fun getOutput () : IMachineLearningOutput<D, R>? {
+    override fun getOutput () : IMachineLearningOutput<I, O>? {
         return MachineLearningOutput(evaluatedItemsArray, 1.0f)
     }
 
-    protected open val mOutput: MutableLiveData<O?> = MutableLiveData(null)
-    override val output: LiveData<O?>
+    protected open val mOutput: MutableLiveData<FR?> = MutableLiveData(null)
+    override val output: LiveData<FR?>
         get() = mOutput
 
 
     // FUNCTIONS
 
     // handling the add of a partial result to the main array
-    protected open fun insertPartialResult (partialResult: R) {
+    protected open fun insertPartialResult (partialResult: O) {
         evaluatedItemsArray.add(partialResult)
     }
 
@@ -92,7 +92,7 @@ abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> 
         override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
             if (state.partialResult != null) {
-                val partialResult: R = state.partialResult as R
+                val partialResult: O = state.partialResult as O
                 insertPartialResult(partialResult)
                 mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
                 mLastResult.postValue(partialResult)

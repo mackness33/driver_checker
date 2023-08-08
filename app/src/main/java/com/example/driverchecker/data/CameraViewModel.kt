@@ -12,7 +12,7 @@ import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClie
 import kotlinx.coroutines.*
 
 class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>>(imageDetectionRepository) {
-    override val evaluationClient: IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String, IImageDetectionOutput<String>> = ImageDetectionClient()
+    override val evaluationClient: IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>, String> = ImageDetectionClient()
 
     val showResults: LiveData<Boolean?>
         get() = evaluationClient.hasEnded

@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 
-class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>> (), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, String, IImageDetectionOutput<String>> {
+class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>> (), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>, String> {
     // LIVE DATA
     private val mPassengerInfo = MutableLiveData(Pair(0, 0))
     override val passengerInfo: LiveData<Pair<Int, Int>>
@@ -79,7 +79,7 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
         override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
         override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
-//            mOutput.value = ImageDetectionOutput(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence)
+            mOutput.postValue(ImageDetectionOutput(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence))
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
             Log.d("LiveClassificationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
