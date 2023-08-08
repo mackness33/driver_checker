@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.helpers.listeners
 
 import com.example.driverchecker.machinelearning.data.*
 
-interface ClassificationListener<D, R : WithConfAndGroups<S>, S> : MachineLearningListener<D, R> {
+interface ClassificationListener<S> : MachineLearningListener {
     override fun collectLiveEvaluations (state: LiveEvaluationStateInterface) {
         when (state) {
             is LiveClassificationState.Start -> onLiveClassificationStart(state)

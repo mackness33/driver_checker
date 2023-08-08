@@ -7,7 +7,7 @@ import com.example.driverchecker.machinelearning.data.WithConfidence
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-interface MachineLearningListener<Data, Result : WithConfidence> {
+interface MachineLearningListener {
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 
     fun collectLiveEvaluations (state: LiveEvaluationStateInterface) {
