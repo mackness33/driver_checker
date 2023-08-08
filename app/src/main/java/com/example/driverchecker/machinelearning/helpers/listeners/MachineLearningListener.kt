@@ -5,10 +5,16 @@ import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterfa
 import com.example.driverchecker.machinelearning.data.WithConfAndSuper
 import com.example.driverchecker.machinelearning.data.WithConfidence
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
 interface MachineLearningListener {
-    fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
+    fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
+        scope.launch(Dispatchers.Default) {
+            evaluationFlow?.collect {state -> collectLiveEvaluations(state)}
+        }
+    }
 
     fun collectLiveEvaluations (state: LiveEvaluationStateInterface) {
         when (state) {

@@ -9,16 +9,16 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class BaseViewModel<Data, Result : WithConfidence, O : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<Data, Result, O>? = null): ViewModel(){
+abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<I, O, FR>? = null): ViewModel(){
     // SHARED FLOWS
 
     // producer flow of the data in input of mlRepository
-    protected val mLiveInput: MutableSharedFlow<Data> = MutableSharedFlow (
+    protected val mLiveInput: MutableSharedFlow<I> = MutableSharedFlow (
         replay = 0,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
     )
-    val liveInput: SharedFlow<Data>
+    val liveInput: SharedFlow<I>
         get() = mLiveInput.asSharedFlow()
 
     // progress flow of the evaluation by the mlRepository
@@ -32,12 +32,12 @@ abstract class BaseViewModel<Data, Result : WithConfidence, O : WithConfidence> 
 
     // CLIENTS
 
-    protected abstract val evaluationClient: IMachineLearningClient<Data, Result, O>
+    protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
 
     // LIVE DATA
 
     // last result evaluated by the mlRepo
-    val lastResult: LiveData<Result?>
+    val lastResult: LiveData<O?>
         get() = evaluationClient.lastResult
 
     // bool to check if the mlRepo is evaluating
@@ -55,10 +55,10 @@ abstract class BaseViewModel<Data, Result : WithConfidence, O : WithConfidence> 
         get () = evaluationClient.partialResultEvent
 
     // array of evaluated items by the mlRepo
-    val evaluatedItemsList: List<Result>
+    val evaluatedItemsList: List<O>
         get() = evaluationClient.currentResultsList
 
-//    open val finalOutput: LiveData<IMachineLearningOutput<Data, Result>>
+//    open val finalOutput: LiveData<IMachineLearningOutput<I, O>?>
 //        get() = evaluationClient.getOutput()
 
 
@@ -91,12 +91,6 @@ abstract class BaseViewModel<Data, Result : WithConfidence, O : WithConfidence> 
 
     // INNER CLASSES
     protected open inner class EvaluationListener : MachineLearningListener {
-        override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
-            scope.launch(Dispatchers.Default) {
-                evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
-            }
-        }
-
         override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             mIsEvaluating.postValue(false)
             mIsEnabled.postValue(state.isReady)

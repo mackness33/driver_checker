@@ -35,7 +35,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
     }
 
     override suspend fun onCompletionEvaluation (cause: Throwable?) {
-        Log.d("JobClassification", "finally finished")
+        Log.d("ACClassification", "finally finished")
 
         if (cause != null && cause !is CorrectCancellationException) {
             mEvaluationFlowState.emit(

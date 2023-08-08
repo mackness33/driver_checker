@@ -33,11 +33,10 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
     // handling the clearing of the main array
     override fun clearPartialResults () {
-        evaluatedItemsArray.clear()
+        super.clearPartialResults()
         arrayClassesPredictions.clear()
         mPassengerInfo.postValue(Pair(0, 0))
         mDriverInfo.postValue(Pair(0, 0))
-        mHasEnded.tryUpdate(false)
     }
 
     // INNER CLASSES

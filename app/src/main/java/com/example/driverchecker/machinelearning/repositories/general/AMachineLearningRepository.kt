@@ -79,7 +79,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
     }
 
     protected open suspend fun onCompletionEvaluation (cause: Throwable?) {
-        Log.d("JobClassification", "finally finished")
+        Log.d("AMLClassification", "finally finished")
 
         if (cause != null && cause !is CorrectCancellationException) {
             mEvaluationFlowState.emit(
