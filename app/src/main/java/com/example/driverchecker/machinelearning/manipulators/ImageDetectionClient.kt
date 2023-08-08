@@ -22,7 +22,7 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
         get() = arrayClassesPredictions
 
 
-    override val evaluationListener: ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String> = EvaluationClassificationListener()
+    override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
 
     // FUNCTIONS
 
@@ -62,7 +62,7 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
 
     // INNER CLASSES
     private open inner class EvaluationClassificationListener :
-        ClassificationListener<IImageDetectionData, IImageDetectionResult<String>, String>,
+        ClassificationListener<String>,
         EvaluationListener() {
         override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
@@ -79,7 +79,7 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
         override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
         override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
-            mOutput.value = ImageDetectionOutput(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence)
+//            mOutput.value = ImageDetectionOutput(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence)
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
             Log.d("LiveClassificationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }

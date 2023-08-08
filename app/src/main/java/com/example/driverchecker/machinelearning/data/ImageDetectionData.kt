@@ -34,4 +34,4 @@ data class ImageDetectionItem<S> (
 
 typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionData, IImageDetectionResult<S>, S>
 
-typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionData, IImageDetectionResult<S>, S>
+//typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionData, IImageDetectionResult<S>, S>

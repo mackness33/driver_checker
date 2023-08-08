@@ -9,7 +9,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class BaseViewModel<Data, Result : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<Data, Result>? = null): ViewModel(){
+abstract class BaseViewModel<Data, Result : WithConfidence, O : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<Data, Result, O>? = null): ViewModel(){
     // SHARED FLOWS
 
     // producer flow of the data in input of mlRepository
@@ -28,11 +28,11 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
 
     // LISTENERS
 
-    protected open val evaluationListener: MachineLearningListener<Data, Result> = EvaluationListener()
+    protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
     // CLIENTS
 
-    protected abstract val evaluationClient: IMachineLearningClient<Data, Result>
+    protected abstract val evaluationClient: IMachineLearningClient<Data, Result, O>
 
     // LIVE DATA
 
@@ -58,8 +58,8 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     val evaluatedItemsList: List<Result>
         get() = evaluationClient.currentResultsList
 
-    open val finalOutput: LiveData<IMachineLearningOutput<Data, Result>>
-        get() = evaluationClient.getOutput()
+//    open val finalOutput: LiveData<IMachineLearningOutput<Data, Result>>
+//        get() = evaluationClient.getOutput()
 
 
     // FUNCTIONS
@@ -90,7 +90,7 @@ abstract class BaseViewModel<Data, Result : WithConfidence> (private var machine
     }
 
     // INNER CLASSES
-    protected open inner class EvaluationListener : MachineLearningListener<Data, Result> {
+    protected open inner class EvaluationListener : MachineLearningListener {
         override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
             scope.launch(Dispatchers.Default) {
                 evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}

@@ -90,7 +90,7 @@ data class ClassificationOutput<D, R : WithConfAndGroups<S>, S> (
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias ClassificationRepository<D, R, S> = MachineLearningRepository<IMachineLearningInput<D>, IClassificationResult<D, R, S>>
+//typealias ClassificationRepository<D, R, S> = MachineLearningRepository<IMachineLearningInput<D>, IClassificationResult<D, R, S>>
 
 
 sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface

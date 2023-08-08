@@ -37,7 +37,7 @@ abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> 
 
     // LISTENERS
 
-    protected open val evaluationListener: MachineLearningListener<D, R> = EvaluationListener()
+    protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
 
 //    abstract var output: IMachineLearningOutput<D, R>?
@@ -69,7 +69,7 @@ abstract class MachineLearningClient<D, R : WithConfidence, O : WithConfidence> 
     }
 
     // INNER CLASSES
-    protected open inner class EvaluationListener : MachineLearningListener<D, R> {
+    protected open inner class EvaluationListener : MachineLearningListener {
         override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
             scope.launch(Dispatchers.Default) {
                 evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
