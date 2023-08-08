@@ -7,12 +7,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
-interface IMachineLearningRepository<in Data, out Result : WithConfidence> {
-    suspend fun instantEvaluation (input: Data): Result?
+interface IMachineLearningRepository<in I, out O : WithConfidence, FR : WithConfidence> {
+    suspend fun instantEvaluation (input: I): O?
 
-    suspend fun continuousEvaluation (input: Flow<Data>, scope: CoroutineScope): Result?
+    suspend fun continuousEvaluation (input: Flow<I>, scope: CoroutineScope): O?
 
-    fun onStartLiveEvaluation (input: SharedFlow<Data>, scope: CoroutineScope)
+    fun onStartLiveEvaluation (input: SharedFlow<I>, scope: CoroutineScope)
     fun onStopLiveEvaluation (externalCause: CancellationException? = null)
 
     fun <ModelInit> updateModel (init: ModelInit)

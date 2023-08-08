@@ -3,8 +3,8 @@ package com.example.driverchecker.machinelearning.repositories.general
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 
-abstract class AMachineLearningFactoryRepository<Data, Result : WithConfidence>
-    : AMachineLearningRepository<Data, Result>, IMachineLearningFactory<Data, Result> {
+abstract class AMachineLearningFactoryRepository<I, O : WithConfidence, FR : WithConfidence>
+    : AMachineLearningRepository<I, O, FR>, IMachineLearningFactory<I, O, FR> {
 
     constructor() : super()
 

@@ -7,7 +7,7 @@ import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
 
 class ImageDetectionFactoryRepository
-    : AClassificationFactoryRepository<IImageDetectionData, IImageDetectionResult<String>, String> {
+    : AClassificationFactoryRepository<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>, String> {
 
     constructor() : super()
 

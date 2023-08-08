@@ -9,11 +9,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class AMachineLearningRepository<D, R : WithConfidence> () :
-    IMachineLearningRepository<D, R> {
+abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfidence> () :
+    IMachineLearningRepository<I, O, FR> {
     // abstracted
-    protected abstract val window: IMachineLearningWindow<R>
-    protected abstract val model: IMachineLearningModel<D, R>?
+    protected abstract val window: IMachineLearningWindow<O>
+    protected abstract val model: IMachineLearningModel<I, O>?
 
     protected val mEvaluationFlowState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     protected var liveEvaluationJob: Job? = null
@@ -39,21 +39,21 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
         }
     }
 
-    override suspend fun instantEvaluation(input: D): R? {
-        var result: R? = null
+    override suspend fun instantEvaluation(input: I): O? {
+        var result: O? = null
         val job = repositoryScope.launch(Dispatchers.Default) { result = model?.processAndEvaluate(input) }
         job.join()
 
         return result
     }
 
-    override suspend fun continuousEvaluation(input: Flow<D>, scope: CoroutineScope): R? {
+    override suspend fun continuousEvaluation(input: Flow<I>, scope: CoroutineScope): O? {
         jobEvaluation(input, scope).join()
 
         return window.lastResult
     }
 
-    protected open fun jobEvaluation (input: Flow<D>, scope: CoroutineScope): Job {
+    protected open fun jobEvaluation (input: Flow<I>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
@@ -68,9 +68,9 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     }
 
     protected open fun flowEvaluation (
-        input: Flow<D>,
+        input: Flow<I>,
         onConditionSatisfied: (CancellationException) -> Unit
-    ): Flow<R>? {
+    ): Flow<O>? {
         return model?.processAndEvaluatesStream(input)
                     ?.onEach { postProcessedResult -> onEachEvaluation(postProcessedResult, onConditionSatisfied) }
                     ?.cancellable()
@@ -97,7 +97,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     }
 
     protected open suspend fun onEachEvaluation (
-        postProcessedResult: R,
+        postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
         Log.d("JobClassification", "finally finished")
@@ -119,7 +119,7 @@ abstract class AMachineLearningRepository<D, R : WithConfidence> () :
     }
 
     override fun onStartLiveEvaluation(
-        input: SharedFlow<D>,
+        input: SharedFlow<I>,
         scope: CoroutineScope
     ) {
         if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {

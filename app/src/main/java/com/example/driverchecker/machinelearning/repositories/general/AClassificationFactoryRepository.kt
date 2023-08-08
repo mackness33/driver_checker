@@ -10,17 +10,17 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
-abstract class AClassificationFactoryRepository<D, R : WithConfAndGroups<S>, S>
-    : AMachineLearningFactoryRepository<D, R>, IClassificationRepository<D, R, S> {
+abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR : WithConfAndSuper<S>, S>
+    : AMachineLearningFactoryRepository<I, O, FR>, IClassificationRepository<I, O, FR, S> {
     constructor() : super()
 
     constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
 
-    override var window: IClassificationWindow<R, S> = ClassificationWindow(5, 0.5f, model?.classifier?.superclasses!!.keys)
+    override var window: IClassificationWindow<O, S> = ClassificationWindow(5, 0.5f, model?.classifier?.superclasses!!.keys)
 
-    abstract override var model: IClassificationModel<D, R, S>?
+    abstract override var model: IClassificationModel<I, O, S>?
 
-    override fun jobEvaluation (input: Flow<D>, scope: CoroutineScope): Job {
+    override fun jobEvaluation (input: Flow<I>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
