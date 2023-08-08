@@ -6,36 +6,21 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 
-class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>> (), IClassificationClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>, String> {
-    // LIVE DATA
-    private val mPassengerInfo = MutableLiveData(Pair(0, 0))
-    override val passengerInfo: LiveData<Pair<Int, Int>>
-        get() = mPassengerInfo
-
-    private val mDriverInfo = MutableLiveData(Pair(0, 0))
-    override val driverInfo: LiveData<Pair<Int, Int>>
-        get() = mDriverInfo
-
-    // REFACTOR: move this array/function to the mlRepo
-    private val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
-    override val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
-        get() = arrayClassesPredictions
-
-
-    override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
+class ImageDetectionClient : AClassificationClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>, String>() {
+    override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
 
     // FUNCTIONS
 
-    override fun getOutput () : IClassificationOutput<IImageDetectionData, IImageDetectionResult<String>, String> {
-        return ClassificationOutput(evaluatedItemsArray, "Driver", 6.0f)
+    override fun getOutput () : IImageDetectionOutput<String> {
+        return ImageDetectionOutput(evaluatedItemsArray, "Driver", 6.0f)
     }
 
-    override val output: LiveData<IClassificationOutput<IImageDetectionData, IImageDetectionResult<String>, String>?>
+    override val output: LiveData<IImageDetectionOutput<String>?>
         get() = mOutput
 
     // handling the add of a partial result to the main array
     override fun insertPartialResult (partialResult: IImageDetectionResult<String>) {
-        evaluatedItemsArray.add(partialResult)
+        super.insertPartialResult(partialResult)
 
         val classInfo: Pair<Int, List<Int>> = Pair(
             1,
@@ -53,35 +38,23 @@ class ImageDetectionClient : MachineLearningClient<IImageDetectionData, IImageDe
 
     // handling the clearing of the main array
     override fun clearPartialResults () {
-        evaluatedItemsArray.clear()
         arrayClassesPredictions.clear()
         mPassengerInfo.postValue(Pair(0, 0))
         mDriverInfo.postValue(Pair(0, 0))
-        mHasEnded.tryUpdate(false)
+        super.clearPartialResults()
     }
 
     // INNER CLASSES
-    private open inner class EvaluationClassificationListener :
-        ClassificationListener<String>,
-        EvaluationListener() {
+    private inner class EvaluationImageDetectionListener :
+        EvaluationClassificationListener() {
         override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
             if (!(state.partialResult as IImageDetectionResult<String>?)?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
         }
 
-        override fun onLiveEvaluationStart() {}
-
-        override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
-            super.onLiveEvaluationStart()
-            Log.d("LiveClassificationState", "START: ${mPartialResultEvent.value} initialIndex")
-        }
-
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
-
         override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
             mOutput.postValue(ImageDetectionOutput(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence))
-            super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
-            Log.d("LiveClassificationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
+            super.onLiveClassificationEnd(state)
         }
     }
 }
