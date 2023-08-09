@@ -17,8 +17,8 @@ interface WithInput<I> {
 typealias IMachineLearningInput<I> = WithInput<I>
 
 data class MachineLearningInput<I>(
-    override val data: I,
-) : IMachineLearningData<I>
+    override val input: I,
+) : IMachineLearningInput<I>
 
 
 // ---------------------------------- OUTPUT ----------------------------------

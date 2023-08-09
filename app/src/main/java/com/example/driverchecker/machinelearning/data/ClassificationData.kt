@@ -9,26 +9,20 @@ import kotlinx.serialization.Serializable
 // ---------------------------------- CLASSES ----------------------------------
 
 // with classification
-interface WithClassification<S> {
+interface WithConfAndClass<S> : WithConfidence {
     val classification: IClassification<S>
 }
 
-interface WithConfAndClass<S> : WithConfidence, WithClassification<S>
-
 // with supergroup
-interface WithSupergroup<S> {
+interface WithConfAndSuper<S> : WithConfidence {
     val supergroup: S
 }
 
-interface WithConfAndSuper<S> : WithConfidence, WithSupergroup<S>
-
 
 // with supergroup
-interface WithGroups<S> {
+interface WithConfAndGroups<S> : WithConfidence {
     val groups: Set<S>
 }
-
-interface WithConfAndGroups<S> : WithConfidence, WithGroups<S>
 
 interface IClassification<S> {
     val name: String
@@ -62,20 +56,20 @@ typealias StringClassifier = IClassifier<String>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-//interface IClassificationItem<S> : IMachineLearningItem, WithConfAndClass<S>
-interface IClassificationItem<S> : IMachineLearningItem {
-    val classification: IClassification<S>
-}
+interface IClassificationItem<S> : IMachineLearningItem, WithConfAndClass<S>
+//interface IClassificationItem<S> : IMachineLearningItem {
+//    val classification: IClassification<S>
+//}
 
-//interface IClassificationOutput2<E : IClassificationItem<S>, S> : IMachineLearningResult<E>, WithConfAndGroups<S>
-interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E> {
-    val groups: Set<S>
-}
+interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E>, WithConfAndGroups<S>
+//interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E> {
+//    val groups: Set<S>
+//}
 
-//interface IClassificationFinalResult2<S> : IMachineLearningFinalResult, WithConfAndSuper<S>
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult {
-    val supergroup: S
-}
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndSuper<S>
+//interface IClassificationFinalResult<S> : IMachineLearningFinalResult {
+//    val supergroup: S
+//}
 
 
 data class ClassificationItem<S> (
