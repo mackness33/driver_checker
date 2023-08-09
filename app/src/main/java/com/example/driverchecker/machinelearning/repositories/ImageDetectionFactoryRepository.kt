@@ -7,13 +7,13 @@ import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
 
 class ImageDetectionFactoryRepository
-    : AClassificationFactoryRepository<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>, String> {
+    : AClassificationFactoryRepository<IImageDetectionData, IImageDetectionResultOld<String>, IImageDetectionOutputOld<String>, String> {
 
     constructor() : super()
 
     constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
 
-    override var model: IClassificationModel<IImageDetectionData, IImageDetectionResult<String>, String>? = null
+    override var model: IClassificationModel<IImageDetectionData, IImageDetectionResultOld<String>, String>? = null
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
         try {
@@ -27,7 +27,7 @@ class ImageDetectionFactoryRepository
         return false
     }
 
-    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionData, IImageDetectionResult<String>, String>? {
+    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionData, IImageDetectionResultOld<String>, String>? {
         return when (modelName){
             "YoloV5" -> {
                 val path = modelInit["path"] as String?

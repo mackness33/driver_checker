@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
-import com.example.driverchecker.machinelearning.data.ImageDetectionItem
+import com.example.driverchecker.machinelearning.data.ImageDetectionItemOld
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -34,7 +34,7 @@ open class YOLOModel :
         return ImageDetectionBaseInput(resizedBitmap)
     }
 
-    override fun evaluateData(input: IImageDetectionData): IImageDetectionResult<String> {
+    override fun evaluateData(input: IImageDetectionData): IImageDetectionResultOld<String> {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.data,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
@@ -48,10 +48,10 @@ open class YOLOModel :
         return outputsToNMSPredictions(predictions, input)
     }
 
-    override fun postProcess(output: IImageDetectionResult<String>): IImageDetectionResult<String> {
+    override fun postProcess(output: IImageDetectionResultOld<String>): IImageDetectionResultOld<String> {
         ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
 
-        return ImageDetectionResult(
+        return ImageDetectionResultOld(
             output.groups,
             output.data,
             ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
@@ -61,8 +61,8 @@ open class YOLOModel :
     open fun outputsToNMSPredictions(
         outputs: FloatArray,
         image: IImageDetectionData
-    ): IImageDetectionResult<String> {
-        val results: MachineLearningResultArrayList<IImageDetectionItem<String>> = MachineLearningResultArrayList()
+    ): IImageDetectionResultOld<String> {
+        val results: MachineLearningResultArrayList<IImageDetectionItemOld<String>> = MachineLearningResultArrayList()
         val groupsFound: MutableSet<String> = mutableSetOf()
         val (scaleX, scaleY) = image.data.width/inputWidth to image.data.height/inputHeight
         val outputColumn = _classifier.size() + 5 // left, top, right, bottom, score and class probability
@@ -88,7 +88,7 @@ open class YOLOModel :
                 }
 
                 results.add(
-                    ImageDetectionItem(
+                    ImageDetectionItemOld(
                         clsIndex,
                         rect,
                         outputs[i * outputColumn + 4],
@@ -99,7 +99,7 @@ open class YOLOModel :
                 groupsFound.add(_classifier.get(clsIndex)!!.supergroup)
             }
         }
-        return ImageDetectionResult(
+        return ImageDetectionResultOld(
             groupsFound,
             image,
             results

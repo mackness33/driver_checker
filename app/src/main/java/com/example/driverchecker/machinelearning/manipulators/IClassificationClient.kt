@@ -11,7 +11,7 @@ interface IClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSup
 
     val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
 
-    override fun getOutput () : IClassificationOutput<I, O, S>?
+    override fun getOutput () : IClassificationOutputOld<I, O, S>?
 
     override val output: LiveData<FR?>
 }

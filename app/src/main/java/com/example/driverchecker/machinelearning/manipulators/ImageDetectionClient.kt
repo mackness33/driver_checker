@@ -1,25 +1,23 @@
 package com.example.driverchecker.machinelearning.manipulators
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 
-class ImageDetectionClient : AClassificationClient<IImageDetectionData, IImageDetectionResult<String>, IImageDetectionOutput<String>, String>() {
+class ImageDetectionClient : AClassificationClient<IImageDetectionData, IImageDetectionResultOld<String>, IImageDetectionOutputOld<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
 
     // FUNCTIONS
 
-    override fun getOutput () : IImageDetectionOutput<String> {
-        return ImageDetectionOutput(evaluatedItemsArray, "Driver", 6.0f)
+    override fun getOutput () : IImageDetectionOutputOld<String> {
+        return ImageDetectionOutputOld(evaluatedItemsArray, "Driver", 6.0f)
     }
 
-    override val output: LiveData<IImageDetectionOutput<String>?>
+    override val output: LiveData<IImageDetectionOutputOld<String>?>
         get() = mOutput
 
     // handling the add of a partial result to the main array
-    override fun insertPartialResult (partialResult: IImageDetectionResult<String>) {
+    override fun insertPartialResult (partialResult: IImageDetectionResultOld<String>) {
         super.insertPartialResult(partialResult)
 
         val classInfo: Pair<Int, List<Int>> = Pair(
@@ -49,11 +47,11 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionData, IImageDe
         EvaluationClassificationListener() {
         override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
-            if (!(state.partialResult as IImageDetectionResult<String>?)?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
+            if (!(state.partialResult as IImageDetectionResultOld<String>?)?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
         }
 
         override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
-            mOutput.postValue(ImageDetectionOutput(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence))
+            mOutput.postValue(ImageDetectionOutputOld(evaluatedItemsArray, state.finalResult!!.supergroup, state.finalResult.confidence))
             super.onLiveClassificationEnd(state)
         }
     }

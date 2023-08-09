@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
 import com.example.driverchecker.machinelearning.helpers.classifiers.MutableClassifier
-import com.example.driverchecker.machinelearning.repositories.general.MachineLearningRepository
 import kotlinx.serialization.Serializable
 
 
@@ -30,13 +29,6 @@ interface WithGroups<S> {
 }
 
 interface WithConfAndGroups<S> : WithConfidence, WithGroups<S>
-
-
-data class ClassificationFinalResult<S> (
-    override val confidence: Float,
-    override val supergroup: S
-) : WithConfAndSuper<S>
-
 
 interface IClassification<S> {
     val name: String
@@ -69,23 +61,60 @@ typealias StringClassifier = IClassifier<String>
 
 
 // ---------------------------------- OUTPUT ----------------------------------
-interface IClassificationResult<D, R : WithConfAndClass<S>, S> : IMachineLearningResult<D, R>, WithConfAndGroups<S>
 
-interface IClassificationOutput<D, R : WithConfAndGroups<S>, S> : IMachineLearningOutput<D, R>, WithConfAndSuper<S>
+//interface IClassificationItem<S> : IMachineLearningItem, WithConfAndClass<S>
+interface IClassificationItem<S> : IMachineLearningItem {
+    val classification: IClassification<S>
+}
 
-data class ClassificationResult<D, R : WithConfAndClass<S>, S> (
+//interface IClassificationOutput2<E : IClassificationItem<S>, S> : IMachineLearningResult<E>, WithConfAndGroups<S>
+interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E> {
+    val groups: Set<S>
+}
+
+//interface IClassificationFinalResult2<S> : IMachineLearningFinalResult, WithConfAndSuper<S>
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult {
+    val supergroup: S
+}
+
+
+data class ClassificationItem<S> (
+    override val confidence: Float,
+    override val classification: IClassification<S>,
+) : IClassificationItem<S>
+
+data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
     override val groups: Set<S>,
-    override val data: D,
-    override val listItems: MachineLearningResultList<R>
-) : IClassificationResult<D, R, S> {
+    override val input: I,
+    override val listItems: MachineLearningResultList<E>
+) : IClassificationOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
 }
 
-data class ClassificationOutput<D, R : WithConfAndGroups<S>, S> (
+data class ClassificationFinalResult<S> (
+    override val confidence: Float,
+    override val supergroup: S
+) : IClassificationFinalResult<S>
+
+
+// --------- OLD -----
+interface IClassificationResultOld<D, R : WithConfAndClass<S>, S> : IMachineLearningResult<D, R>, WithConfAndGroups<S>
+
+interface IClassificationOutputOld<D, R : WithConfAndGroups<S>, S> : IMachineLearningOutputOld<D, R>, WithConfAndSuper<S>
+
+data class ClassificationResultOld<D, R : WithConfAndClass<S>, S> (
+    override val groups: Set<S>,
+    override val data: D,
+    override val listItems: MachineLearningResultList<R>
+) : IClassificationResultOld<D, R, S> {
+    override val confidence: Float = listItems.confidence
+}
+
+data class ClassificationOutputOld<D, R : WithConfAndGroups<S>, S> (
     override val listPartialResults: MachineLearningResultList<R>,
     override val supergroup: S,
     override val confidence: Float
-) : IClassificationOutput<D, R, S>
+) : IClassificationOutputOld<D, R, S>
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------

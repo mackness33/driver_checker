@@ -42,8 +42,8 @@ abstract class MachineLearningClient<I, O : WithConfidence, FR : WithConfidence>
 
 //    abstract var output: IMachineLearningOutput<D, R>?
 
-    override fun getOutput () : IMachineLearningOutput<I, O>? {
-        return MachineLearningOutput(evaluatedItemsArray, 1.0f)
+    override fun getOutput () : IMachineLearningOutputOld<I, O>? {
+        return MachineLearningOutputOld(evaluatedItemsArray, 1.0f)
     }
 
     protected open val mOutput: MutableLiveData<FR?> = MutableLiveData(null)

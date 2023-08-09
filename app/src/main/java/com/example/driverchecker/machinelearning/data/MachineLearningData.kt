@@ -8,44 +8,41 @@ interface WithConfidence {
     val confidence: Float
 }
 
-data class MachineLearningFinalResult (
-    override val confidence: Float
-) : WithConfidence
-
 // ---------------------------------- INPUT ----------------------------------
 
-interface IMachineLearningInput<D> {
-    val data: D
+interface WithInput<I> {
+    val input: I
 }
-// ---------------------------------- SEALED CLASSES/INTERFACES ----------------------------------
 
-data class MachineLearningInput<D>(
-    override val data: D,
-) : IMachineLearningInput<D>
+typealias IMachineLearningInput<I> = WithInput<I>
+
+data class MachineLearningInput<I>(
+    override val data: I,
+) : IMachineLearningData<I>
 
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IMachineLearningResult<D, R : WithConfidence> : WithConfidence {
-    val data: D
-    val listItems: MachineLearningResultList<R>
+typealias IMachineLearningItem = WithConfidence
+
+interface IMachineLearningOutput<I, E : IMachineLearningItem> : WithConfidence, WithInput<I> {
+    val listItems: MachineLearningResultList<E>
 }
 
-interface IMachineLearningOutput<D, R : WithConfidence> : WithConfidence {
-    val listPartialResults: MachineLearningResultList<R>
-}
+typealias IMachineLearningFinalResult = WithConfidence
 
-data class MachineLearningResult <D, R : WithConfidence> (
-    override val listItems: MachineLearningResultList<R>,
-    override val data: D,
-) : IMachineLearningResult<D, R> {
+data class MachineLearningOutput <I, E : WithConfidence> (
+    override val listItems: MachineLearningResultList<E>,
+    override val input: I,
+) : IMachineLearningOutput<I, E> {
     override val confidence: Float = listItems.confidence
 }
 
-data class MachineLearningOutput <D, R: WithConfidence> (
-    override val listPartialResults: MachineLearningResultList<R>,
+data class MachineLearningFinalResult (
     override val confidence: Float
-) : IMachineLearningOutput<D, R>
+) : WithConfidence
+
+typealias MachineLearningItem = MachineLearningFinalResult
 
 
 // ---------------------------------- SEALED CLASSES/INTERFACES ----------------------------------
@@ -77,3 +74,34 @@ sealed class PartialEvaluationState : PartialEvaluationStateInterface {
 
 class ExternalCancellationException : CancellationException ()
 class CorrectCancellationException : CancellationException ()
+
+
+
+// ------------- OLD --------
+
+interface IMachineLearningResult<D, R : WithConfidence> : WithConfidence {
+    val data: D
+    val listItems: MachineLearningResultList<R>
+}
+
+interface IMachineLearningOutputOld<D, R : WithConfidence> : WithConfidence {
+    val listPartialResults: MachineLearningResultList<R>
+}
+
+data class MachineLearningResultOld <D, R : WithConfidence> (
+    override val listItems: MachineLearningResultList<R>,
+    override val data: D,
+) : IMachineLearningResult<D, R> {
+    override val confidence: Float = listItems.confidence
+}
+
+data class MachineLearningOutputOld <D, R: WithConfidence> (
+    override val listPartialResults: MachineLearningResultList<R>,
+    override val confidence: Float
+) : IMachineLearningOutputOld<D, R>
+
+
+
+interface IMachineLearningData<D> {
+    val data: D
+}

@@ -8,30 +8,43 @@ import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchM
 // ---------------------------------- INPUT ----------------------------------
 
 typealias ImageDetectionBaseInput = MachineLearningInput<Bitmap>
-typealias IImageDetectionData = IMachineLearningInput<Bitmap>
+typealias IImageDetectionData = IMachineLearningData<Bitmap>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IImageDetectionItem<S> : WithConfAndClass<S> {
+interface IImageDetectionItem<S> : IClassificationItem<S> {
     var classIndex: Int
     var rect: RectF
 }
 
-typealias IImageDetectionResult<S> = IClassificationResult<IImageDetectionData, IImageDetectionItem<S>, S>
-typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionData, IImageDetectionResult<S>, S>
+typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionData, IImageDetectionItem<S>, S>
+typealias IImageDetectionFinalResult<S> = IClassificationFinalResult<S>
 
-typealias ImageDetectionResult<S> = ClassificationResult<IImageDetectionData, IImageDetectionItem<S>, S>
-typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionData, IImageDetectionResult<S>, S>
+typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionData, IImageDetectionItem<S>, S>
+typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
 
-data class ImageDetectionItem<S> (
+// ---------------------------------- TYPE ALIASES ----------------------------------
+
+typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionData, IImageDetectionResultOld<S>, S>
+
+//typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionData, IImageDetectionResult<S>, S>
+
+// ---------------------------------- OLD OUTPUT ----------------------------------
+
+interface IImageDetectionItemOld<S> : WithConfAndClass<S> {
+    var classIndex: Int
+    var rect: RectF
+}
+
+typealias IImageDetectionResultOld<S> = IClassificationResultOld<IImageDetectionData, IImageDetectionItemOld<S>, S>
+typealias IImageDetectionOutputOld<S> = IClassificationOutputOld<IImageDetectionData, IImageDetectionResultOld<S>, S>
+
+typealias ImageDetectionResultOld<S> = ClassificationResultOld<IImageDetectionData, IImageDetectionItemOld<S>, S>
+typealias ImageDetectionOutputOld<S> = ClassificationOutputOld<IImageDetectionData, IImageDetectionResultOld<S>, S>
+
+data class ImageDetectionItemOld<S> (
     override var classIndex: Int,
     override var rect: RectF,
     override val confidence: Float,
     override val classification: IClassification<S>
-) : IImageDetectionItem<S>
-
-// ---------------------------------- TYPE ALIASES ----------------------------------
-
-typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionData, IImageDetectionResult<S>, S>
-
-//typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionData, IImageDetectionResult<S>, S>
+) : IImageDetectionItemOld<S>

@@ -26,7 +26,7 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
     // FUNCTIONS
 
-    abstract override fun getOutput () : IClassificationOutput<I, O, S>
+    abstract override fun getOutput () : IClassificationOutputOld<I, O, S>
 
     override val output: LiveData<FR?>
         get() = mOutput

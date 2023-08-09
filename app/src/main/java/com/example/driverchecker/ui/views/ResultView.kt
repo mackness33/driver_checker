@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import com.example.driverchecker.machinelearning.data.IImageDetectionItem
-import com.example.driverchecker.machinelearning.data.IImageDetectionResult
+import com.example.driverchecker.machinelearning.data.IImageDetectionItemOld
+import com.example.driverchecker.machinelearning.data.IImageDetectionResultOld
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.
@@ -17,7 +17,7 @@ class ResultView : View {
     private var paintText: Paint? = null
     private var path: Path? = null
     private var rect: RectF? = null
-    private var results: IImageDetectionResult<String>? = null
+    private var results: IImageDetectionResultOld<String>? = null
 
     constructor(context: Context?) : super(context) {}
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
@@ -32,16 +32,16 @@ class ResultView : View {
         super.onDraw(canvas)
         if (results == null) return
 
-        val res: IImageDetectionResult<String> = results!!
+        val res: IImageDetectionResultOld<String> = results!!
 
-        for (item: IImageDetectionItem<String> in res.listItems) {
+        for (item: IImageDetectionItemOld<String> in res.listItems) {
             drawBox(canvas, item.rect)
             drawPath(canvas, item)
             drawText(canvas, item)
         }
     }
 
-    private fun drawText (canvas: Canvas, item: IImageDetectionItem<String>) {
+    private fun drawText (canvas: Canvas, item: IImageDetectionItemOld<String>) {
         paintText!!.color = Color.WHITE
         paintText!!.strokeWidth = 0f
         paintText!!.style = Paint.Style.FILL
@@ -58,7 +58,7 @@ class ResultView : View {
         )
     }
 
-    private fun drawPath (canvas: Canvas, box: IImageDetectionItem<String>) {
+    private fun drawPath (canvas: Canvas, box: IImageDetectionItemOld<String>) {
         path?.reset()
         rect?.set(
             box.rect.left,
@@ -77,7 +77,7 @@ class ResultView : View {
         canvas.drawRect(rect, paintRectangle!!)
     }
 
-    fun setResults(results: IImageDetectionResult<String>?) {
+    fun setResults(results: IImageDetectionResultOld<String>?) {
         this.results = results
     }
 
