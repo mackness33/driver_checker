@@ -28,7 +28,7 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model.output.observe(viewLifecycleOwner) { output ->
-            binding.txtResult.text = String.format("%s with %s%", output?.supergroup, output?.confidence?.times(100))
+            binding.txtResult.text = String.format("%s with %s", output?.supergroup, output?.confidence?.times(100))
         }
 
         model.passengerInfo.observe(viewLifecycleOwner) { info ->

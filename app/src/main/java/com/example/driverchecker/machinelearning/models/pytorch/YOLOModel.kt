@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
-import com.example.driverchecker.machinelearning.data.ImageDetectionItemOld
+import com.example.driverchecker.machinelearning.data.ImageDetectionItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -29,14 +29,14 @@ open class YOLOModel :
     protected var threshold = 0.20f // score above which a detection is generated
     protected val maxPredictionsLimit = 5
 
-    override fun preProcess(data: IImageDetectionData): IImageDetectionData {
-        val resizedBitmap = Bitmap.createScaledBitmap(data.data, inputWidth, inputHeight, true)
-        return ImageDetectionBaseInput(resizedBitmap)
+    override fun preProcess(data: IImageDetectionInput): IImageDetectionInput {
+        val resizedBitmap = Bitmap.createScaledBitmap(data.input, inputWidth, inputHeight, true)
+        return ImageDetectionInput(resizedBitmap)
     }
 
-    override fun evaluateData(input: IImageDetectionData): IImageDetectionResultOld<String> {
+    override fun evaluateData(input: IImageDetectionInput): IImageDetectionOutput<String> {
         // preparing input tensor
-        val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.data,
+        val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.input,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
 
         // running the model
@@ -48,23 +48,23 @@ open class YOLOModel :
         return outputsToNMSPredictions(predictions, input)
     }
 
-    override fun postProcess(output: IImageDetectionResultOld<String>): IImageDetectionResultOld<String> {
+    override fun postProcess(output: IImageDetectionOutput<String>): IImageDetectionOutput<String> {
         ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
 
-        return ImageDetectionResultOld(
+        return ImageDetectionOutput(
             output.groups,
-            output.data,
+            output.input,
             ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
         )
     }
 
     open fun outputsToNMSPredictions(
         outputs: FloatArray,
-        image: IImageDetectionData
-    ): IImageDetectionResultOld<String> {
-        val results: MachineLearningResultArrayList<IImageDetectionItemOld<String>> = MachineLearningResultArrayList()
+        image: IImageDetectionInput
+    ): IImageDetectionOutput<String> {
+        val results: MachineLearningResultArrayList<IImageDetectionItem<String>> = MachineLearningResultArrayList()
         val groupsFound: MutableSet<String> = mutableSetOf()
-        val (scaleX, scaleY) = image.data.width/inputWidth to image.data.height/inputHeight
+        val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = _classifier.size() + 5 // left, top, right, bottom, score and class probability
 
         for (i in 0 until outputRow) {
@@ -88,7 +88,7 @@ open class YOLOModel :
                 }
 
                 results.add(
-                    ImageDetectionItemOld(
+                    ImageDetectionItem(
                         clsIndex,
                         rect,
                         outputs[i * outputColumn + 4],
@@ -99,7 +99,7 @@ open class YOLOModel :
                 groupsFound.add(_classifier.get(clsIndex)!!.supergroup)
             }
         }
-        return ImageDetectionResultOld(
+        return ImageDetectionOutput(
             groupsFound,
             image,
             results

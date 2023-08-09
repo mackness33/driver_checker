@@ -21,15 +21,15 @@ object ImageDetectionUtils {
      * - threshold: used to decide whether boxes overlap too much
      */
     fun <S> nonMaxSuppression(
-        boxes: MachineLearningResultList<IImageDetectionItemOld<S>>,
+        boxes: MachineLearningResultList<IImageDetectionItem<S>>,
         limit: Int = Int.MAX_VALUE,
         threshold: Float
-    ): MachineLearningResultList<IImageDetectionItemOld<S>> {
+    ): MachineLearningResultList<IImageDetectionItem<S>> {
 
         // Do an argument sort on the confidence scores, from high to low.
 //        val res = boxes.listItems.sort { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
         val sortedBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
-        val selected: MachineLearningResultArrayList<IImageDetectionItemOld<S>> = MachineLearningResultArrayList(10)
+        val selected: MachineLearningResultArrayList<IImageDetectionItem<S>> = MachineLearningResultArrayList(10)
         val active = BooleanArray(sortedBoxes.size)
         Arrays.fill(active, true)
         var numActive = active.size

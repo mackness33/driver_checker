@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
-import com.example.driverchecker.machinelearning.data.IImageDetectionResultOld
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -19,7 +19,7 @@ import com.example.driverchecker.machinelearning.data.IImageDetectionResultOld
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
 class PredictionsAdapter(
-    private val items: List<IImageDetectionResultOld<String>>,
+    private val items: List<IImageDetectionOutput<String>>,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64),
     private val maxClassesPerSuperclass: Int = 0
 ) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
@@ -63,7 +63,7 @@ class PredictionsAdapter(
         viewHolder.textGroup.setTextColor(colorManager.listFullColors[1].main ?: Color.BLACK)
         viewHolder.imageInput.setImageBitmap(
             Bitmap.createScaledBitmap(
-                items[position].data.data,
+                items[position].input.input,
                 viewHolder.imageInput.maxWidth,
                 viewHolder.imageInput.maxHeight,
                 true

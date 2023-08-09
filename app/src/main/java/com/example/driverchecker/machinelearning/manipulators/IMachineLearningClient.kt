@@ -1,7 +1,7 @@
 package com.example.driverchecker.machinelearning.manipulators
 
 import androidx.lifecycle.LiveData
-import com.example.driverchecker.machinelearning.data.IMachineLearningOutputOld
+import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
 import com.example.driverchecker.machinelearning.data.PartialEvaluationStateInterface
 import com.example.driverchecker.machinelearning.data.WithConfidence
@@ -24,7 +24,7 @@ interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 
-    fun getOutput () : IMachineLearningOutputOld<I, O>?
+    fun getOutput () : IMachineLearningFinalResult?
 
     val output: LiveData<FR?>
 }

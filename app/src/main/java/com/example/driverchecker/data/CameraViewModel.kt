@@ -11,8 +11,8 @@ import com.example.driverchecker.machinelearning.manipulators.IClassificationCli
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
 import kotlinx.coroutines.*
 
-class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionData, IImageDetectionResultOld<String>, IImageDetectionOutputOld<String>>(imageDetectionRepository) {
-    override val evaluationClient: IClassificationClient<IImageDetectionData, IImageDetectionResultOld<String>, IImageDetectionOutputOld<String>, String> = ImageDetectionClient()
+class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
+    override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
     val showResults: LiveData<Boolean?>
         get() = evaluationClient.hasEnded
@@ -40,7 +40,7 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
             val bitmap: Bitmap = ImageDetectionUtils.imageProxyToBitmap(image)
-            mLiveInput.emit(ImageDetectionBaseInput(bitmap))
+            mLiveInput.emit(ImageDetectionInput(bitmap))
             image.close()
         }
     }
