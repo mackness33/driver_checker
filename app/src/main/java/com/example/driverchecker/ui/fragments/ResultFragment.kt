@@ -27,11 +27,18 @@ class ResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        binding.txtResult.text = model.
-//
-//        binding.txtDriver.text = String.format("%s:%s", model.driverInfo.value?.first, model.driverInfo.value?.second)
-//        binding.txtPassenger.text = String.format("%s:%s", model.passengerInfo.value?.first, model.passengerInfo.value?.second)
-//
+        model.output.observe(viewLifecycleOwner) { output ->
+            binding.txtResult.text = String.format("%s with %s%", output?.supergroup, output?.confidence?.times(100))
+        }
+
+        model.passengerInfo.observe(viewLifecycleOwner) { info ->
+            binding.txtPassenger.text = String.format("%s:%s", info.first, info.second)
+        }
+
+        model.driverInfo.observe(viewLifecycleOwner) { info ->
+            binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
+        }
+
 //        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, false)
 //        binding.recyclerView.itemAnimator = null
 //        binding.recyclerView.adapter = PartialsAdapter(model.simpleListClassesPredictions)

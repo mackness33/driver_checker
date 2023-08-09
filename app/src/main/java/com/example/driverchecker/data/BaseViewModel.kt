@@ -58,6 +58,9 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     val evaluatedItemsList: List<O>
         get() = evaluationClient.currentResultsList
 
+    val output: LiveData<FR?>
+        get() = evaluationClient.output
+
 //    open val finalOutput: LiveData<IMachineLearningOutput<I, O>?>
 //        get() = evaluationClient.getOutput()
 
