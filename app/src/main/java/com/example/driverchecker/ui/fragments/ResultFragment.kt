@@ -9,8 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.data.CameraViewModel
-import com.example.driverchecker.ui.adapters.PartialsAdapter
 import com.example.driverchecker.databinding.FragmentResultBinding
+import com.example.driverchecker.ui.adapters.PredictionsAdapter
 
 class ResultFragment : Fragment() {
     private lateinit var layout: View
@@ -39,9 +39,9 @@ class ResultFragment : Fragment() {
             binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
         }
 
-//        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, false)
-//        binding.recyclerView.itemAnimator = null
-//        binding.recyclerView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
+        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, false)
+        binding.recyclerView.itemAnimator = null
+        binding.recyclerView.adapter = PredictionsAdapter(model.evaluatedItemsList)
     }
 
 

@@ -91,26 +91,6 @@ data class ClassificationFinalResult<S> (
 ) : IClassificationFinalResult<S>
 
 
-// --------- OLD -----
-interface IClassificationResultOld<D, R : WithConfAndClass<S>, S> : IMachineLearningResult<D, R>, WithConfAndGroups<S>
-
-interface IClassificationOutputOld<D, R : WithConfAndGroups<S>, S> : IMachineLearningOutputOld<D, R>, WithConfAndSuper<S>
-
-data class ClassificationResultOld<D, R : WithConfAndClass<S>, S> (
-    override val groups: Set<S>,
-    override val data: D,
-    override val listItems: MachineLearningResultList<R>
-) : IClassificationResultOld<D, R, S> {
-    override val confidence: Float = listItems.confidence
-}
-
-data class ClassificationOutputOld<D, R : WithConfAndGroups<S>, S> (
-    override val listPartialResults: MachineLearningResultList<R>,
-    override val supergroup: S,
-    override val confidence: Float
-) : IClassificationOutputOld<D, R, S>
-
-
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
 //typealias ClassificationRepository<D, R, S> = MachineLearningRepository<IMachineLearningInput<D>, IClassificationResult<D, R, S>>

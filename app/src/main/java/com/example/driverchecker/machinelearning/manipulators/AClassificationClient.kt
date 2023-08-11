@@ -17,6 +17,7 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
         get() = mDriverInfo
 
     // REFACTOR: move this array/function to the mlRepo
+    // It doesn't count two same object on the same output
     protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
     override val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions

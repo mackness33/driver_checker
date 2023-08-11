@@ -6,10 +6,6 @@ import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchM
 
 
 // ---------------------------------- INPUT ----------------------------------
-
-typealias ImageDetectionBaseInput = MachineLearningInput<Bitmap>
-typealias IImageDetectionData = IMachineLearningData<Bitmap>
-
 typealias ImageDetectionInput = MachineLearningInput<Bitmap>
 typealias IImageDetectionInput = IMachineLearningInput<Bitmap>
 
@@ -38,23 +34,3 @@ typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
 typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionInput, IImageDetectionOutput<S>, S>
 
 //typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionInput, IImageDetectionOutput<S>, S>
-
-// ---------------------------------- OLD OUTPUT ----------------------------------
-
-interface IImageDetectionItemOld<S> : WithConfAndClass<S> {
-    var classIndex: Int
-    var rect: RectF
-}
-
-typealias IImageDetectionResultOld<S> = IClassificationResultOld<IImageDetectionData, IImageDetectionItem<S>, S>
-typealias IImageDetectionOutputOld<S> = IClassificationOutputOld<IImageDetectionData, IImageDetectionResultOld<S>, S>
-
-typealias ImageDetectionResultOld<S> = ClassificationResultOld<IImageDetectionData, IImageDetectionItem<S>, S>
-typealias ImageDetectionOutputOld<S> = ClassificationOutputOld<IImageDetectionData, IImageDetectionResultOld<S>, S>
-
-data class ImageDetectionItemOld<S> (
-    override var classIndex: Int,
-    override var rect: RectF,
-    override val confidence: Float,
-    override val classification: IClassification<S>
-) : IImageDetectionItem<S>

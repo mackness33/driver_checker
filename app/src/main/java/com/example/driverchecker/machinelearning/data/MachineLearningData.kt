@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
+import kotlinx.coroutines.flow.SharedFlow
 import kotlin.coroutines.cancellation.CancellationException
 
 // ---------------------------------- CLASSES ----------------------------------
@@ -69,39 +70,20 @@ sealed class PartialEvaluationState : PartialEvaluationStateInterface {
 }
 
 
+
+// Represents different states for the LatestNews screen
+sealed interface ClientStateInterface
+
+// Represents different states for the LatestNews screen
+sealed class ClientState : ClientStateInterface {
+    object Ready : ClientState()
+    data class Start<E>(val input: SharedFlow<E>) : ClientState()
+    data class Stop(val cause: ExternalCancellationException) : ClientState()
+}
+
+
 // ---------------------------------- ERRORS ----------------------------------
 
 
 class ExternalCancellationException : CancellationException ()
 class CorrectCancellationException : CancellationException ()
-
-
-
-// ------------- OLD --------
-
-interface IMachineLearningResult<D, R : WithConfidence> : WithConfidence {
-    val data: D
-    val listItems: MachineLearningResultList<R>
-}
-
-interface IMachineLearningOutputOld<D, R : WithConfidence> : WithConfidence {
-    val listPartialResults: MachineLearningResultList<R>
-}
-
-data class MachineLearningResultOld <D, R : WithConfidence> (
-    override val listItems: MachineLearningResultList<R>,
-    override val data: D,
-) : IMachineLearningResult<D, R> {
-    override val confidence: Float = listItems.confidence
-}
-
-data class MachineLearningOutputOld <D, R: WithConfidence> (
-    override val listPartialResults: MachineLearningResultList<R>,
-    override val confidence: Float
-) : IMachineLearningOutputOld<D, R>
-
-
-
-interface IMachineLearningData<D> {
-    val data: D
-}
