@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> : IMachineLearningClient<I, O, FR>{
 
     // LIVE DATA
-    protected val mHasEnded = AtomicLiveData(100, false)
+    protected val mHasEnded = AtomicLiveData(false)
     override val hasEnded: LiveData<Boolean?>
         get() = mHasEnded.asLiveData
 
