@@ -1,15 +1,13 @@
 package com.example.driverchecker.utils
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 
-open class AtomicObject<T> (initialValue: T?) {
+open class AtomicValue<T> (initialValue: T?) {
     protected val mutex = Mutex(false) // private mutable state flow
-    protected var value: T?
+    var value: T?
+        protected set
 
     init {
         value = initialValue
