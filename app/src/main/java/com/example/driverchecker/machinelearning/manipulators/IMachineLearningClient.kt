@@ -27,6 +27,8 @@ interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
 
     val liveInput: SharedFlow<I>
 
+    val clientState: SharedFlow<ClientStateInterface>
+
     suspend fun ready ()
 
     suspend fun start ()

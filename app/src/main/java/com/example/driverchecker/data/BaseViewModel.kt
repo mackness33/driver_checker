@@ -67,10 +67,12 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
         runBlocking(Dispatchers.Default) {
             when (mIsEvaluating.value) {
                 false -> {
-                    machineLearningRepository?.onStartLiveEvaluation(evaluationClient.liveInput, viewModelScope)
+//                    machineLearningRepository?.onStartLiveEvaluation(evaluationClient.liveInput, viewModelScope)
+                    evaluationClient.start()
                 }
                 true -> {
-                    machineLearningRepository?.onStopLiveEvaluation()
+//                    machineLearningRepository?.onStopLiveEvaluation()
+                    evaluationClient.stop()
                 }
                 else -> {}
             }

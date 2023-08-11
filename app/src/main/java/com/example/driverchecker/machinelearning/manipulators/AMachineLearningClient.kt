@@ -69,7 +69,7 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
     )
-    val clientState: SharedFlow<ClientStateInterface>
+    override val clientState: SharedFlow<ClientStateInterface>
         get() = mClientState.asSharedFlow()
 
 
