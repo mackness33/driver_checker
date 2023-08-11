@@ -7,12 +7,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-interface GeneralListener<S> {
-    fun listen (scope: CoroutineScope, inputFlow: SharedFlow<S>?) : Job {
-        return scope.launch(Dispatchers.Default) {
-            inputFlow?.collect { state -> collectClientStates(state)}
-        }
-    }
+interface IGenericListener<S> {
+    fun listen (scope: CoroutineScope, inputFlow: SharedFlow<S>?)
 
     fun destroy () {
         job?.cancel()
