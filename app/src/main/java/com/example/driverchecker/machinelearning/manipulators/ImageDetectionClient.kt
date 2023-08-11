@@ -1,20 +1,26 @@
 package com.example.driverchecker.machinelearning.manipulators
 
+import android.graphics.Bitmap
+import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 
 class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
+    override val output: LiveData<IImageDetectionFinalResult<String>?>
+        get() = mOutput
 
     // FUNCTIONS
 
-    override fun getOutput () : IImageDetectionFinalResult<String> {
-        return ImageDetectionFinalResult(6.0f, "Driver")
+    suspend fun produceImage (imgProxy: ImageProxy) {
+        produceInput(ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy)))
     }
 
-    override val output: LiveData<IImageDetectionFinalResult<String>?>
-        get() = mOutput
+    suspend fun produceImage (bitmap: Bitmap) {
+        produceInput(ImageDetectionInput(bitmap))
+    }
 
     // handling the add of a partial result to the main array
     override fun insertPartialResult (partialResult: IImageDetectionOutput<String>) {
@@ -51,7 +57,9 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
         }
 
         override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
-            mOutput.postValue(ImageDetectionFinalResult(state.finalResult!!.confidence, state.finalResult.supergroup))
+            if (state.finalResult != null)
+                mOutput.postValue(ImageDetectionFinalResult(state.finalResult!!.confidence, state.finalResult.supergroup))
+
             super.onLiveClassificationEnd(state)
         }
     }

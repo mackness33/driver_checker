@@ -33,14 +33,13 @@ class CameraViewModel (imageDetectionRepository: ImageDetectionFactoryRepository
 
 
     init {
-        evaluationListener.listen(viewModelScope, analysisState)
-        evaluationClient.listen(viewModelScope, analysisState)
+        evaluationListener.listen(viewModelScope, evaluationState)
+        evaluationClient.listen(viewModelScope, evaluationState)
     }
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
-            val bitmap: Bitmap = ImageDetectionUtils.imageProxyToBitmap(image)
-            mLiveInput.emit(ImageDetectionInput(bitmap))
+            (evaluationClient as ImageDetectionClient).produceImage(image)
             image.close()
         }
     }

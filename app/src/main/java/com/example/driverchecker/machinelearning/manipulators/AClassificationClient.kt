@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 
-abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSuper<S>, S> : MachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
+abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSuper<S>, S> : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
     protected val mPassengerInfo = MutableLiveData(Pair(0, 0))
     override val passengerInfo: LiveData<Pair<Int, Int>>
@@ -16,22 +16,21 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
     override val driverInfo: LiveData<Pair<Int, Int>>
         get() = mDriverInfo
 
+    override val output: LiveData<FR?>
+        get() = mOutput
+
+
+    // VARIABLES
     // REFACTOR: move this array/function to the mlRepo
     // It doesn't count two same object on the same output
     protected val arrayClassesPredictions = ArrayList<Pair<Int, List<Int>>>()
     override val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions
 
-
     override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
 
+
     // FUNCTIONS
-
-    abstract override fun getOutput () : IClassificationFinalResult<S>
-
-    override val output: LiveData<FR?>
-        get() = mOutput
-
     // handling the clearing of the main array
     override fun clearPartialResults () {
         super.clearPartialResults()

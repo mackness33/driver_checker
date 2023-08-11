@@ -1,35 +1,26 @@
 package com.example.driverchecker.utils
 
-import android.content.ContentValues
 import android.content.Context
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.video.*
-import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
-import com.example.driverchecker.data.CameraViewModel
-import com.example.driverchecker.media.FileUtils
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.Executors
 
-typealias ImageDetectionListener = (image: ImageProxy) -> Unit
+typealias LiveCameraXListener = (image: ImageProxy) -> Unit
 
 class CameraXHandler (){
-    private var imageCapture: ImageCapture? = null
+//    private var imageCapture: ImageCapture? = null
+//    private var videoCapture: VideoCapture<Recorder>? = null
+//    private var recording: Recording? = null
+
     private var imageAnalyzer: ImageAnalysis? = null
-    private var videoCapture: VideoCapture<Recorder>? = null
-    private var recording: Recording? = null
     var hasCameraStarted: Boolean = false
         private set
 
-    fun startCamera(context: Context, surfaceProvider: SurfaceProvider, listener: ImageDetectionListener) {
+    fun startCamera(context: Context, surfaceProvider: SurfaceProvider, listener: LiveCameraXListener) {
         hasCameraStarted = false
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
@@ -57,7 +48,6 @@ class CameraXHandler (){
 
 //            videoCapture = VideoCapture.withOutput(recorder)
 
-
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
@@ -77,6 +67,16 @@ class CameraXHandler (){
             }
 
         }, ContextCompat.getMainExecutor(context))
+    }
+
+    fun pauseCamera () {
+        hasCameraStarted = false
+    }
+
+    private class ImageDetectionAnalyzer(private val listener: LiveCameraXListener) : ImageAnalysis.Analyzer {
+        override fun analyze(image: ImageProxy) {
+            listener(image)
+        }
     }
 
 //    fun takePhoto(context: Context, fileFormat: String, fileName: String, model: CameraViewModel) {
@@ -124,16 +124,6 @@ class CameraXHandler (){
 ////            }
 ////        )
 //    }
-
-    fun pauseCamera () {
-        hasCameraStarted = false
-    }
-
-    private class ImageDetectionAnalyzer(private val listener: ImageDetectionListener) : ImageAnalysis.Analyzer {
-        override fun analyze(image: ImageProxy) {
-            listener(image)
-        }
-    }
 
     // Implements VideoCapture use case, including start and stop capturing.
 //    fun captureVideo(context: Context, fileFormat: String, model: CameraViewModel, onFinalize: () -> Unit) {

@@ -6,36 +6,24 @@ import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearni
 import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (private var machineLearningRepository: IMachineLearningFactory<I, O, FR>? = null): ViewModel(){
     // SHARED FLOWS
-
-    // producer flow of the data in input of mlRepository
-    protected val mLiveInput: MutableSharedFlow<I> = MutableSharedFlow (
-        replay = 0,
-        extraBufferCapacity = 0,
-        onBufferOverflow = BufferOverflow.SUSPEND
-    )
-    val liveInput: SharedFlow<I>
-        get() = mLiveInput.asSharedFlow()
-
     // progress flow of the evaluation by the mlRepository
-    val analysisState: SharedFlow<LiveEvaluationStateInterface>?
+    val evaluationState: SharedFlow<LiveEvaluationStateInterface>?
         get() = machineLearningRepository?.evaluationFlowState
 
 
     // LISTENERS
-
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
-    // CLIENTS
 
+    // CLIENTS
     protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
 
-    // LIVE DATA
 
+    // LIVE DATA
     // last result evaluated by the mlRepo
     val lastResult: LiveData<O?>
         get() = evaluationClient.lastResult
@@ -61,12 +49,9 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     val output: LiveData<FR?>
         get() = evaluationClient.output
 
-//    open val finalOutput: LiveData<IMachineLearningOutput<I, O>?>
-//        get() = evaluationClient.getOutput()
 
 
     // FUNCTIONS
-
     // enabling the button to start/stop the evaluation of the ml
     fun enable (enable: Boolean) {
         mIsEnabled.value = enable
@@ -82,7 +67,7 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
         runBlocking(Dispatchers.Default) {
             when (mIsEvaluating.value) {
                 false -> {
-                    machineLearningRepository?.onStartLiveEvaluation(liveInput, viewModelScope)
+                    machineLearningRepository?.onStartLiveEvaluation(evaluationClient.liveInput, viewModelScope)
                 }
                 true -> {
                     machineLearningRepository?.onStopLiveEvaluation()
@@ -91,6 +76,7 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
             }
         }
     }
+
 
     // INNER CLASSES
     protected open inner class EvaluationListener : MachineLearningListener {

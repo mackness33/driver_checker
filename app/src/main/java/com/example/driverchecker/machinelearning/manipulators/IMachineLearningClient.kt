@@ -24,7 +24,9 @@ interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 
-    fun getOutput () : IMachineLearningFinalResult?
-
     val output: LiveData<FR?>
+
+    suspend fun produceInput (input: I)
+
+    val liveInput: SharedFlow<I>
 }

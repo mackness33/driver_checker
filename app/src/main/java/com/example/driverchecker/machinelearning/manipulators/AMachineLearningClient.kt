@@ -1,19 +1,26 @@
 package com.example.driverchecker.machinelearning.manipulators
 
+import android.graphics.Bitmap
 import android.util.Log
+import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-abstract class MachineLearningClient<I, O : WithConfidence, FR : WithConfidence> : IMachineLearningClient<I, O, FR>{
-    // LIVE DATA
+abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> : IMachineLearningClient<I, O, FR>{
 
+    // LIVE DATA
     protected val mHasEnded = AtomicLiveData(100, false)
     override val hasEnded: LiveData<Boolean?>
         get() = mHasEnded.asLiveData
@@ -28,6 +35,14 @@ abstract class MachineLearningClient<I, O : WithConfidence, FR : WithConfidence>
     override val partialResultEvent: LiveData<PartialEvaluationStateInterface>
         get () = mPartialResultEvent
 
+
+    protected open val mOutput: MutableLiveData<FR?> = MutableLiveData(null)
+    override val output: LiveData<FR?>
+        get() = mOutput
+
+
+
+    // VARIABLES
     // array of evaluated items by the mlRepo
     protected val evaluatedItemsArray =
         MachineLearningResultArrayList<O>()
@@ -35,27 +50,27 @@ abstract class MachineLearningClient<I, O : WithConfidence, FR : WithConfidence>
         get() = evaluatedItemsArray
 
 
-    // LISTENERS
-
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
-
-//    abstract var output: IMachineLearningOutput<D, R>?
-
-    override fun getOutput () : IMachineLearningFinalResult? {
-        return MachineLearningFinalResult(1.0f)
-    }
-
-    protected open val mOutput: MutableLiveData<FR?> = MutableLiveData(null)
-    override val output: LiveData<FR?>
-        get() = mOutput
+    // producer flow of the data in input of mlRepository
+    protected val mLiveInput: MutableSharedFlow<I> = MutableSharedFlow (
+        replay = 0,
+        extraBufferCapacity = 0,
+        onBufferOverflow = BufferOverflow.SUSPEND
+    )
+    override val liveInput: SharedFlow<I>
+        get() = mLiveInput.asSharedFlow()
 
 
     // FUNCTIONS
-
     // handling the add of a partial result to the main array
     protected open fun insertPartialResult (partialResult: O) {
         evaluatedItemsArray.add(partialResult)
+    }
+
+
+    override suspend fun produceInput (input: I) {
+        mLiveInput.emit(input)
     }
 
     // handling the clearing of the main array
