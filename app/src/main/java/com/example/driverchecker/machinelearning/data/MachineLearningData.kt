@@ -86,4 +86,5 @@ sealed class ClientState : ClientStateInterface {
 
 
 class ExternalCancellationException : CancellationException ()
+class InternalCancellationException : CancellationException ()
 class CorrectCancellationException : CancellationException ()

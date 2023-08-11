@@ -39,7 +39,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
     init {
         mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
         startListenModelState()
-        listenModelState ()
+//        listenModelState ()
     }
 
     private fun startListenModelState() = modelListener?.listen(repositoryScope, model?.isLoaded)
@@ -61,7 +61,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         // if the last state of the evaluation is different from the ready state that has been triggered
         // then send the new ready state and stop all the job that were running
         if (mEvaluationFlowState.replayCache.last() != LiveEvaluationState.Ready(isReady() == true)){
-            onStopLiveEvaluation()
+            liveEvaluationJob?.cancel(InternalCancellationException())
             mEvaluationFlowState.emit(LiveEvaluationState.Ready(isReady() == true))
         }
     }
@@ -89,7 +89,8 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
                 mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
-                mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+//                mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+                triggerReadyState()
             }
         }
     }
@@ -119,8 +120,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         }
 
         window.clean()
-
-        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+//        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
     }
 
     protected open suspend fun onEachEvaluation (

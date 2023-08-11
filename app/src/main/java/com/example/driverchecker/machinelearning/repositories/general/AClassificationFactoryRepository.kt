@@ -29,7 +29,8 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
                 mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
-                mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+//                mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+                triggerReadyState()
             }
         }
     }
@@ -49,6 +50,6 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
 
         window.clean()
 
-        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+//        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
     }
 }
