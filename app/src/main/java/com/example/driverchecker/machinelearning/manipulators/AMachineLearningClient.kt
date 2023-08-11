@@ -52,6 +52,7 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
 
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
+
     // producer flow of the data in input of mlRepository
     protected val mLiveInput: MutableSharedFlow<I> = MutableSharedFlow (
         replay = 0,
@@ -60,6 +61,29 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
     )
     override val liveInput: SharedFlow<I>
         get() = mLiveInput.asSharedFlow()
+
+
+    // producer flow of the data in input of mlRepository
+    protected val mClientState: MutableSharedFlow<ClientStateInterface> = MutableSharedFlow (
+        replay = 0,
+        extraBufferCapacity = 0,
+        onBufferOverflow = BufferOverflow.SUSPEND
+    )
+    val clientState: SharedFlow<ClientStateInterface>
+        get() = mClientState.asSharedFlow()
+
+
+    override suspend fun ready () {
+        mClientState.emit(ClientState.Ready)
+    }
+
+    override suspend fun start () {
+        mClientState.emit(ClientState.Start(liveInput))
+    }
+
+    override suspend fun stop (cause: ExternalCancellationException) {
+        mClientState.emit(ClientState.Stop(cause))
+    }
 
 
     // FUNCTIONS

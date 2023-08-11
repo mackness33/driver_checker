@@ -2,6 +2,7 @@ package com.example.driverchecker.machinelearning.repositories
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
@@ -14,12 +15,13 @@ class ImageDetectionFactoryRepository
     constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
 
     override var model: IClassificationModel<IImageDetectionInput, IImageDetectionOutput<String>, String>? = null
+    override var clientListener: ClientStateListener? = ClientListener()
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
         try {
             onStopLiveEvaluation()
             model = factory(modelName, modelInit)
-            listenOnLoadingState()
+            listenModelState()
             return model?.isLoaded?.value ?: false
         } catch (e : Throwable) {
             Log.e("ImageDetectionFactoryRepository", e.message ?: "Error on the exposition of the model $modelName")

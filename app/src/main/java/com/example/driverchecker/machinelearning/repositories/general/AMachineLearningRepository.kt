@@ -2,6 +2,7 @@ package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
@@ -14,10 +15,16 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
     // abstracted
     protected abstract val window: IMachineLearningWindow<O>
     protected abstract val model: IMachineLearningModel<I, O>?
+    protected abstract var clientListener: ClientStateListener?
 
-    protected val mEvaluationFlowState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(replay = 1, extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    protected val mEvaluationFlowState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(
+        replay = 1,
+        extraBufferCapacity = 5,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
+
 
     // TODO: The scope must be external (from the Application level or Activity level)
     override val repositoryScope = CoroutineScope(SupervisorJob())
@@ -27,10 +34,12 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
 
     init {
         mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
-        listenOnLoadingState()
+        startListenModelState()
     }
 
-    protected open fun listenOnLoadingState () {
+    private fun startListenModelState() = listenModelState()
+
+    protected open fun listenModelState () {
         loadingModelJob = repositoryScope.launch {
             model?.isLoaded?.collect { state ->
                 if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(!state))
@@ -135,5 +144,54 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         model?.loadModel(init)
     }
 
-//    protected open inner class
+
+    fun addClient (
+        input: SharedFlow<ClientStateInterface>?
+    ) {
+        if (input != null)
+            clientListener?.listen(repositoryScope, input)
+    }
+
+    fun removeClient () {
+        clientListener?.destroy()
+    }
+
+    protected open inner class ClientListener : ClientStateListener {
+        var job: Job?
+            protected set
+
+        constructor (scope: CoroutineScope, clientFlow: SharedFlow<ClientStateInterface>) {
+            job = initJob(scope, clientFlow)
+        }
+
+        constructor () {
+            job = null
+        }
+
+        private fun initJob (scope: CoroutineScope, clientFlow: SharedFlow<ClientStateInterface>) = listen (scope, clientFlow)
+
+        override fun onLiveEvaluationReady() {
+
+        }
+
+        override suspend fun onLiveEvaluationStart(state: ClientState.Start<*>) {
+            try {
+                val typedState = state as ClientState.Start<I>
+                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+                    liveEvaluationJob = jobEvaluation(state.input.buffer(2), repositoryScope)
+                }
+            } catch (e : Throwable) {
+                mEvaluationFlowState.emit(LiveEvaluationState.End(e, null))
+            }
+        }
+
+        override fun onLiveEvaluationStop(state: ClientState.Stop) {
+            liveEvaluationJob?.cancel(state.cause)
+        }
+
+        override fun destroy() {
+            job?.cancel()
+        }
+
+    }
 }
