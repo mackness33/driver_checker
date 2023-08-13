@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.data.CameraViewModel
+import com.example.driverchecker.data.Page
 import com.example.driverchecker.databinding.FragmentCameraBinding
 import com.example.driverchecker.machinelearning.data.PartialEvaluationState
 import com.example.driverchecker.ui.adapters.PartialsAdapter
@@ -175,6 +176,7 @@ class CameraFragment : Fragment() {
         }
 
         model.ready()
+        model.setActualPage(Page.Camera)
     }
 
     // TODO: Create callback to manage onStart and onFinalize
