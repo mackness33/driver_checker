@@ -19,7 +19,7 @@ abstract class LitePyTorchModel <Data, Result> () : MachineLearningModel<Data, R
             // loading serialized torchscript module from packaged into app android asset model.pt,
             // app/src/model/assets/model.pt
             val newModule = LiteModuleLoader.load(init.toString())
-            _isLoaded.value = true
+            mIsLoaded.value = true
             module = newModule
         } catch (e: Throwable) {
             Log.e("LitePyTorch", e.message ?: "The model couldn't be loaded")

@@ -42,6 +42,8 @@ class ResultFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, false)
         binding.recyclerView.itemAnimator = null
         binding.recyclerView.adapter = PredictionsAdapter(model.evaluatedItemsList)
+
+        model.resultsViewed ()
     }
 
 

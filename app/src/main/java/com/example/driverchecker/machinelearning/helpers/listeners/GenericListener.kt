@@ -15,17 +15,22 @@ open class GenericListener<S> : IGenericListener<S> {
 
     constructor () {}
 
-    constructor (scope: CoroutineScope, inputFlow: SharedFlow<S>){
-        initJob(scope, inputFlow)
+    constructor (scope: CoroutineScope, inputFlow: SharedFlow<S>, mode: IGenericMode = GenericMode.None){
+        initJob(scope, inputFlow, mode)
     }
 
-    override fun listen (scope: CoroutineScope, inputFlow: SharedFlow<S>?) {
+    override fun listen (scope: CoroutineScope, inputFlow: SharedFlow<S>?, mode: IGenericMode) {
         destroy()
 
         job = scope.launch(Dispatchers.Default) {
-            inputFlow?.collect { state -> collectClientStates(state)}
+            when (mode) {
+                GenericMode.First -> currentState.update(inputFlow?.replayCache?.first())
+                GenericMode.Last -> currentState.update(inputFlow?.replayCache?.last())
+                GenericMode.None -> {}
+            }
+            inputFlow?.collect { state -> collectStates(state)}
         }
     }
 
-    private fun initJob (scope: CoroutineScope, inputFlow: SharedFlow<S>) = listen (scope, inputFlow)
+    private fun initJob (scope: CoroutineScope, inputFlow: SharedFlow<S>, mode: IGenericMode) = listen (scope, inputFlow, mode)
 }

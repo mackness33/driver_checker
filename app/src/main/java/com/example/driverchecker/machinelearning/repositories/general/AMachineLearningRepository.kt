@@ -2,13 +2,10 @@ package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
-import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
-import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
+import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
-import com.example.driverchecker.utils.AtomicValue
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -38,9 +35,10 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
 
     init {
         mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
-        startListenModelState()
+//        startListenModelState()
 //        listenModelState ()
     }
+
 
     private fun startListenModelState() = modelListener?.listen(repositoryScope, model?.isLoaded)
 
@@ -199,9 +197,13 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         }
     }
 
-    protected open inner class ModelListener () : GenericListener<Boolean> () {
-        override suspend fun collectClientStates (state: Boolean) {
-            super.collectClientStates(state)
+    protected open inner class ModelListener : GenericListener<Boolean> {
+        constructor () : super()
+
+        constructor (scope: CoroutineScope, modelFlow: SharedFlow<Boolean>, mode: IGenericMode) : super(scope, modelFlow, mode)
+
+        override suspend fun collectStates (state: Boolean) {
+            super.collectStates(state)
             triggerReadyState()
         }
     }

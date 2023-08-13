@@ -63,6 +63,8 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
+
+
         binding.partialsView.layoutManager = GridLayoutManager(view.context, 5, RecyclerView.VERTICAL, true)
         binding.partialsView.itemAnimator = null
         binding.partialsView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
@@ -171,6 +173,8 @@ class CameraFragment : Fragment() {
                 model.updateLiveClassification()
             }
         }
+
+        model.ready()
     }
 
     // TODO: Create callback to manage onStart and onFinalize

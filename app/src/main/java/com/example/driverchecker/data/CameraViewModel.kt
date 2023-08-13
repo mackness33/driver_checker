@@ -15,14 +15,21 @@ class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryReposi
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
     val showResults: LiveData<Boolean?>
-        get() = evaluationClient.hasEnded
+        get() = evaluationClient.hasEnded.switchMap { ended ->
+            mResultsShown.map { shown ->
+                !shown && (ended ?: false)
+            }
+        }
 
     val passengerInfo: LiveData<Pair<Int, Int>>
         get() = evaluationClient.passengerInfo
 
     val driverInfo: LiveData<Pair<Int, Int>>
         get() = evaluationClient.driverInfo
-
+    
+    private val mResultsShown: MutableLiveData<Boolean> = MutableLiveData(false)
+//    val resultsShown: LiveData<Boolean>
+//        get() = mResultsShown
 
     // REFACTOR: move this array/function to the mlRepo
     val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
@@ -31,17 +38,26 @@ class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryReposi
 
     override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
 
-
     init {
         evaluationListener.listen(viewModelScope, evaluationState)
         evaluationClient.listen(viewModelScope, evaluationState)
         imageDetectionRepository?.addClient(evaluationClient.clientState)
+    }
+    
+    fun resultsViewed () {
+        mResultsShown.value = true
     }
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
             (evaluationClient as ImageDetectionClient).produceImage(image)
             image.close()
+        }
+    }
+
+    fun ready () {
+        runBlocking {
+            evaluationClient.ready()
         }
     }
 
@@ -59,6 +75,11 @@ class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryReposi
 
         override fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
+        }
+
+        override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
+            super.onLiveEvaluationReady(state)
+            mResultsShown.postValue(false)
         }
     }
 

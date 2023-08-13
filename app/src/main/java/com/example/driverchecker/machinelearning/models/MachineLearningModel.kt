@@ -3,10 +3,10 @@ package com.example.driverchecker.machinelearning.models
 import kotlinx.coroutines.flow.*
 
 abstract class MachineLearningModel<Data, Result>  () : IMachineLearningModel<Data, Result> {
-    protected val _isLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    protected val mIsLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     protected val loadingMap: Map<String, Boolean> = mutableMapOf()
     override val isLoaded: StateFlow<Boolean>
-        get() = _isLoaded
+        get() = mIsLoaded
 
     override fun processAndEvaluate (input: Data): Result? {
         val data: Data = preProcess(input)
