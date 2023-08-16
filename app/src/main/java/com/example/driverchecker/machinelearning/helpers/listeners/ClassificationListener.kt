@@ -14,7 +14,7 @@ interface ClassificationListener<S> : MachineLearningListener, IGenericListener<
     }
 
     // handler of mlRepo in start (as a classification)
-    fun onLiveClassificationStart (state: LiveClassificationState.Start)
+    suspend fun onLiveClassificationStart (state: LiveClassificationState.Start)
 
-    fun onLiveClassificationEnd (state: LiveClassificationState.End<S>)
+    suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<S>)
 }

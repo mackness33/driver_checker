@@ -109,20 +109,20 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
+        override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             clearPartialResults()
             mPartialResultEvent.postValue(PartialEvaluationState.Clear)
             mLastResult.postValue(null)
             Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
         }
 
-        override fun onLiveEvaluationStart() {
+        override suspend fun onLiveEvaluationStart() {
             // add the partialResult to the resultsArray
             mLastResult.postValue(null)
             Log.d("LiveEvaluationState", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
-        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {
+        override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
             if (state.partialResult != null) {
                 val partialResult: O = state.partialResult as O
@@ -133,7 +133,7 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
             }
         }
 
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
+        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
             mHasEnded.tryUpdate(state.finalResult != null)

@@ -18,14 +18,14 @@ interface MachineLearningListener : IGenericListener<LiveEvaluationStateInterfac
     }
 
     // handler of mlRepo in ready
-    fun onLiveEvaluationReady (state: LiveEvaluationState.Ready)
+    suspend fun onLiveEvaluationReady (state: LiveEvaluationState.Ready)
 
     // handler of mlRepo in start
-    fun onLiveEvaluationStart()
+    suspend fun onLiveEvaluationStart()
 
     // handler of mlRepo in loading
-    fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading)
+    suspend fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading)
 
     // handler of mlRepo on end
-    fun onLiveEvaluationEnd (state: LiveEvaluationState.End)
+    suspend fun onLiveEvaluationEnd (state: LiveEvaluationState.End)
 }

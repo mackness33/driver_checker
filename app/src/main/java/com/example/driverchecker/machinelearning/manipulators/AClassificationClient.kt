@@ -50,16 +50,16 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override fun onLiveEvaluationStart() {}
+        override suspend fun onLiveEvaluationStart() {}
 
-        override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
+        override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start) {
             super.onLiveEvaluationStart()
             Log.d("LiveClassificationState", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
+        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
-        override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
+        override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
             Log.d("LiveClassificationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }

@@ -118,7 +118,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         }
 
         window.clean()
-//        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+//        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))signal
     }
 
     protected open suspend fun onEachEvaluation (
@@ -153,6 +153,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
     }
 
     override fun onStopLiveEvaluation(externalCause: CancellationException?) {
+//        liveEvaluationJob?.invokeOnCompletion { cause -> runBlocking { onCompletionEvaluation(cause) } }
         liveEvaluationJob?.cancel(cause = externalCause ?: ExternalCancellationException())
     }
 
@@ -193,7 +194,8 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         }
 
         override fun onLiveEvaluationStop(state: ClientState.Stop) {
-            liveEvaluationJob?.cancel(state.cause)
+//            liveEvaluationJob?.cancel(state.cause)
+            onStopLiveEvaluation(state.cause)
         }
     }
 

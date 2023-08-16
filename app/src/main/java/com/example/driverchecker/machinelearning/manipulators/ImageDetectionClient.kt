@@ -58,12 +58,12 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading) {
+        override suspend fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
             if (!(state.partialResult as IImageDetectionOutput<String>?)?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
         }
 
-        override fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
+        override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
             if (state.finalResult != null)
                 mOutput.postValue(ImageDetectionFinalResult(state.finalResult!!.confidence, state.finalResult.supergroup))
 

@@ -65,15 +65,15 @@ class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryReposi
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override fun onLiveEvaluationStart() {}
+        override suspend fun onLiveEvaluationStart() {}
 
-        override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
+        override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start) {
             super.onLiveEvaluationStart()
         }
 
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
+        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
-        override fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
+        override suspend fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
         }
     }

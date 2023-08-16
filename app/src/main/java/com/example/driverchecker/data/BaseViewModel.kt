@@ -74,6 +74,7 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
                 true -> {
 //                    machineLearningRepository?.onStopLiveEvaluation()
                     evaluationClient.stop()
+//                    evaluationClient.ready()
                 }
                 else -> {}
             }
@@ -88,24 +89,26 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
+        override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             mIsEvaluating.postValue(false)
             mIsEnabled.postValue(state.isReady)
         }
 
-        override fun onLiveEvaluationStart() {
+        override suspend fun onLiveEvaluationStart() {
             // add the partialResult to the resultsArray
             mIsEvaluating.postValue(true)
             mIsEnabled.postValue(true)
         }
 
-        override fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
+        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
             mIsEvaluating.postValue(false)
             mIsEnabled.postValue(false)
+
+            if (state.exception != null) evaluationClient.ready()
         }
 
-        override fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
+        override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
     }
 }
