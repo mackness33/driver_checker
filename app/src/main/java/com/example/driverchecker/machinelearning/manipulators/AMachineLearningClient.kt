@@ -1,22 +1,17 @@
 package com.example.driverchecker.machinelearning.manipulators
 
-import android.graphics.Bitmap
 import android.util.Log
-import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
+import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.utils.AtomicLiveData
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
 
 abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> : IMachineLearningClient<I, O, FR>{
 
@@ -108,12 +103,11 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
     }
 
     // INNER CLASSES
-    protected open inner class EvaluationListener : MachineLearningListener {
-        override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
-            scope.launch(Dispatchers.Default) {
-                evaluationFlow?.collect {state -> evaluationListener.collectLiveEvaluations(state)}
-            }
-        }
+    protected open inner class EvaluationListener : MachineLearningListener, GenericListener<LiveEvaluationStateInterface> {
+
+        constructor () : super()
+
+        constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
         override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             clearPartialResults()

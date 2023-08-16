@@ -2,21 +2,12 @@ package com.example.driverchecker.machinelearning.helpers.listeners
 
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
-import com.example.driverchecker.machinelearning.data.WithConfAndSuper
-import com.example.driverchecker.machinelearning.data.WithConfidence
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 
-interface MachineLearningListener {
-    fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
-        scope.launch(Dispatchers.Default) {
-            evaluationFlow?.collect {state -> collectLiveEvaluations(state)}
-        }
-    }
+interface MachineLearningListener : IGenericListener<LiveEvaluationStateInterface> {
 
-    fun collectLiveEvaluations (state: LiveEvaluationStateInterface) {
+    override suspend fun collectStates (state: LiveEvaluationStateInterface) {
+        super.collectStates(state)
+
         when (state) {
             is LiveEvaluationState.Ready -> onLiveEvaluationReady(state)
             is LiveEvaluationState.Start -> onLiveEvaluationStart()

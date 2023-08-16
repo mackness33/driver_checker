@@ -8,6 +8,7 @@ import com.example.driverchecker.machinelearning.helpers.listeners.Classificatio
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.SharedFlow
 
 class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
@@ -59,7 +60,11 @@ class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryReposi
     // INNER CLASSES
     private open inner class EvaluationClassificationListener :
         ClassificationListener<String>,
-        EvaluationListener() {
+        EvaluationListener {
+        constructor () : super()
+
+        constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
+
         override fun onLiveEvaluationStart() {}
 
         override fun onLiveClassificationStart(state: LiveClassificationState.Start) {

@@ -2,6 +2,7 @@ package com.example.driverchecker.data
 
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
@@ -81,7 +82,12 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
 
 
     // INNER CLASSES
-    protected open inner class EvaluationListener : MachineLearningListener {
+    protected open inner class EvaluationListener : MachineLearningListener, GenericListener<LiveEvaluationStateInterface> {
+
+        constructor () : super()
+
+        constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
+
         override fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             mIsEvaluating.postValue(false)
             mIsEnabled.postValue(state.isReady)

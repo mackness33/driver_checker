@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharedFlow
 
 abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSuper<S>, S> : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
@@ -42,7 +44,12 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
     // INNER CLASSES
     protected open inner class EvaluationClassificationListener :
         ClassificationListener<String>,
-        EvaluationListener() {
+        EvaluationListener {
+
+        constructor () : super()
+
+        constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
+
         override fun onLiveEvaluationStart() {}
 
         override fun onLiveClassificationStart(state: LiveClassificationState.Start) {
