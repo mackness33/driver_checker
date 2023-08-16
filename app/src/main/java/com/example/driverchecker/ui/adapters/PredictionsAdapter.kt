@@ -10,7 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
+import com.example.driverchecker.machinelearning.data.IImageDetectionItem
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -21,7 +24,7 @@ import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 class PredictionsAdapter(
     private val items: List<IImageDetectionOutput<String>>,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64),
-    private val maxClassesPerSuperclass: Int = 0
+    private val maxClassesPerSuperclass: Int = 2
 ) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
@@ -32,10 +35,29 @@ class PredictionsAdapter(
         val textGroup: TextView = view.findViewById(R.id.txtGroup)
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
         val colorGroupView: RecyclerView = view.findViewById(R.id.color_class_view)
+        var currentItem: IImageDetectionOutput<String>? = null
+            private set
 
         init {
             colorGroupView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, true)
             colorGroupView.itemAnimator = null
+        }
+
+        fun bind (detectionItem: IImageDetectionOutput<String>) {
+            currentItem = detectionItem
+
+            imageInput.setImageBitmap(detectionItem.input.input)
+            textIndex.text =
+                detectionItem.listItems.first().classification.index.toString()
+            textGroup.text = detectionItem.groups.first()
+//            imageInput.setImageBitmap(
+//                Bitmap.createScaledBitmap(
+//                    detectionItem.input.input,
+//                    imageInput.maxWidth,
+//                    imageInput.maxHeight,
+//                    true
+//                )
+//            )
         }
     }
 
@@ -54,27 +76,30 @@ class PredictionsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 
-//        val indexFoundClass = items[position].listItems
-//            .distinctBy { predictions -> predictions.classIndex }
-//            .map { prediction -> prediction.classIndex}
-//        val foundClass: List<Boolean> = MutableList(maxClassesPerSuperclass) { index -> indexFoundClass.contains(index) }
-//        viewHolder.textIndex.text = items[position].listItems.first().classification.index.toString()
-//        viewHolder.textGroup.text = items[position].groups.first()
-//        viewHolder.textGroup.setTextColor(colorManager.listFullColors[1].main ?: Color.BLACK)
-//        viewHolder.imageInput.setImageBitmap(
-//            Bitmap.createScaledBitmap(
-//                items[position].input.input,
-//                viewHolder.imageInput.maxWidth,
-//                viewHolder.imageInput.maxHeight,
-//                true
+//        runBlocking (Dispatchers.Default) {
+            val indexFoundClass = items[position].listItems
+                .distinctBy { predictions -> predictions.classIndex }
+                .map { prediction -> prediction.classIndex }
+            val foundClass: List<Boolean> =
+                MutableList(maxClassesPerSuperclass) { index -> indexFoundClass.contains(index) }
+            viewHolder.textGroup.setTextColor(colorManager.listFullColors[1].main ?: Color.BLACK)
+            viewHolder.colorGroupView.adapter = ItemColorsAdapter(foundClass)
+//            viewHolder.itemView.layoutParams =
+//                ViewGroup.LayoutParams(sizeHolder.first, sizeHolder.second)
+
+//            viewHolder.textIndex.text =
+//                items[position].listItems.first().classification.index.toString()
+//            viewHolder.textGroup.text = items[position].groups.first()
+
+            viewHolder.bind(items[position])
+//            viewHolder.predictionView.updateSize(
+//                Pair(
+//                    viewHolder.itemView.layoutParams.width.toFloat(),
+//                    viewHolder.itemView.layoutParams.height.toFloat()
+//                )
 //            )
-//        )
-//        viewHolder.colorGroupView.adapter = ItemColorsAdapter(foundClass)
-//        viewHolder.itemView.layoutParams = ViewGroup.LayoutParams(sizeHolder.first, sizeHolder.second)
-//        viewHolder.predictionView.updateSize(
-//            Pair(viewHolder.itemView.layoutParams.width.toFloat(), viewHolder.itemView.layoutParams.height.toFloat())
-//        )
-//        viewHolder.predictionView.updateColors(colorManager.listColor[superclass].scale[position])
+//            viewHolder.predictionView.updateColors(colorManager.listColor[superclass].scale[position])
+//        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

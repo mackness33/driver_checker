@@ -42,10 +42,10 @@ class ItemColorsAdapter(
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.itemView.layoutParams = ViewGroup.LayoutParams(sizeHolder.first, sizeHolder.second)
-        viewHolder.colorView.updateSize(
-            Pair(viewHolder.itemView.layoutParams.width.toFloat(), viewHolder.itemView.layoutParams.height.toFloat())
-        )
+//        viewHolder.itemView.layoutParams = ViewGroup.LayoutParams(sizeHolder.first, sizeHolder.second)
+//        viewHolder.colorView.updateSize(
+//            Pair(viewHolder.itemView.layoutParams.width.toFloat(), viewHolder.itemView.layoutParams.height.toFloat())
+//        )
         viewHolder.colorView.updateColors(colorManager.listFullColors[superclass].scale[position])
         viewHolder.colorView.activate(showColor = items[position])
     }

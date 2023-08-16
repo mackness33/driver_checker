@@ -47,7 +47,7 @@ class ResultFragment : Fragment() {
             Log.i("LiveData - showResults", "Evaluation ${if (show == true) "correctly ended" else "failed to end"}")
         }
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, false)
+        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.recyclerView.itemAnimator = null
         binding.recyclerView.adapter = PredictionsAdapter(model.evaluatedItemsList)
 
