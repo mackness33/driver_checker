@@ -52,6 +52,7 @@ class ResultFragment : Fragment() {
         binding.recyclerView.adapter = PredictionsAdapter(model.evaluatedItemsList)
 
         model.setActualPage (Page.Result)
+        model.resetShown()
     }
 
 

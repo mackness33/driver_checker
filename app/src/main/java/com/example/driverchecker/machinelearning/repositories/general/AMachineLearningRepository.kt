@@ -147,7 +147,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         input: SharedFlow<I>,
         scope: CoroutineScope
     ) {
-        if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+        if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && liveEvaluationJob?.isCompleted != false) {
             liveEvaluationJob = jobEvaluation(input.buffer(2), scope)
         }
     }

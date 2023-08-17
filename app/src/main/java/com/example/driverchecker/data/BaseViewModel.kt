@@ -6,6 +6,9 @@ import com.example.driverchecker.machinelearning.helpers.listeners.GenericListen
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
+import com.example.driverchecker.utils.AtomicLiveData
+import com.example.driverchecker.utils.DeferredLiveData
+import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -50,9 +53,26 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     val output: LiveData<FR?>
         get() = evaluationClient.output
 
+    protected val mShowResults = DeferredLiveData(false, viewModelScope.coroutineContext)
+    val showResults: StateLiveData<Boolean?>
+        get() = mShowResults.value
 
+    protected val mActualPage: AtomicLiveData<IPage?> = AtomicLiveData(null)
+    val actualPage: LiveData<IPage?>
+        get() = mActualPage.asLiveData
 
     // FUNCTIONS
+    fun setActualPage (nextPage: IPage) {
+        runBlocking {
+            mActualPage.update(nextPage)
+        }
+    }
+
+    fun resetShown () {
+        mShowResults.reset()
+    }
+
+
     // enabling the button to start/stop the evaluation of the ml
     fun enable (enable: Boolean) {
         mIsEnabled.value = enable
@@ -96,6 +116,7 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
 
         override suspend fun onLiveEvaluationStart() {
             // add the partialResult to the resultsArray
+            mShowResults.deferredAwait()
             mIsEvaluating.postValue(true)
             mIsEnabled.postValue(true)
         }
@@ -106,7 +127,10 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
             mIsEvaluating.postValue(false)
             mIsEnabled.postValue(false)
 
-            if (state.exception != null) evaluationClient.ready()
+            when {
+                state.exception != null -> evaluationClient.ready()
+                state.finalResult != null -> mShowResults.complete(mActualPage.value != null && mActualPage.value != Page.Result)
+            }
         }
 
         override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
