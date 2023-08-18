@@ -1,6 +1,8 @@
 package com.example.driverchecker
 
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Matrix
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -11,11 +13,18 @@ interface IColorScale {
     var indexMain: Int
 }
 
-data class ColorScale (override val scale: List<Int>, override var indexMain: Int = 2) : IColorScale{
-    override val main: Int?
-        get() = if (scale.isNotEmpty() && scale.size <= indexMain) scale[indexMain] else null
-    override val scaleWithoutMain: List<Int>
-        get() = scale.filter { color -> color == scale[indexMain] }
+object BitmapUtils {
+    fun rotateBitmap(source: Bitmap, angle: Float): Bitmap? {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+    }
+}
+
+
+data class ColorScale (override val scale: List<Int>, override var indexMain: Int = 2) : IColorScale {
+    override val main: Int? = if (scale.isNotEmpty() && scale.size <= indexMain) scale[indexMain] else null
+    override val scaleWithoutMain: List<Int> = scale.filter { color -> color == scale[indexMain] }
 }
 
 open class ColorManager () {

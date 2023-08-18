@@ -25,6 +25,7 @@ class RectView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     var selectedClasses: List<Int>?
         private set
 //    private var offset_item: Pair<Int, Int>
+    private var sizeHolder: Int = 50
 
     init {
         this.paint = Paint()
