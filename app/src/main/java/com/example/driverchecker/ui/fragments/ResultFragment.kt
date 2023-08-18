@@ -31,17 +31,17 @@ class ResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        model.output.observe(viewLifecycleOwner) { output ->
-            binding.txtResult.text = String.format("%s with %s", output?.supergroup, output?.confidence?.times(100))
-        }
+//        model.output.observe(viewLifecycleOwner) { output ->
+//            binding.txtResult.text = String.format("%s with %s", output?.supergroup, output?.confidence?.times(100))
+//        }
 
-        model.passengerInfo.observe(viewLifecycleOwner) { info ->
-            binding.txtPassenger.text = String.format("%s:%s", info.first, info.second)
-        }
-
-        model.driverInfo.observe(viewLifecycleOwner) { info ->
-            binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
-        }
+//        model.passengerInfo.observe(viewLifecycleOwner) { info ->
+//            binding.txtPassenger.text = String.format("%s:%s", info.first, info.second)
+//        }
+//
+//        model.driverInfo.observe(viewLifecycleOwner) { info ->
+//            binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
+//        }
 
         model.showResults.observe(viewLifecycleOwner) { show ->
             Log.i("LiveData - showResults", "Evaluation ${if (show == true) "correctly ended" else "failed to end"}")

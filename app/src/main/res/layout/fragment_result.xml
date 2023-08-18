@@ -4,60 +4,119 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 android:layout_width="match_parent"
 android:layout_height="match_parent">
 
-
-    <LinearLayout
-        android:id="@+id/title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/crdMetrics"
         app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <TextView
-            android:id="@+id/txtResult"
-            android:layout_weight="1"
-            android:layout_height="0dp"
-            android:layout_width="match_parent"
-            android:layout_marginTop="25dp"
-            android:textAlignment="center"
-            android:textSize="80sp"
-            />
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
             >
 
-            <TextView
-                android:id="@+id/txtPassenger"
-                android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:textSize="50sp"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                app:layout_constraintTop_toTopOf="parent"
+                >
 
-                />
+                <TextView
+                    android:id="@+id/txtTitle"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:textAlignment="center"
+                    android:textSize="37sp"
+                    />
 
-            <TextView
-                android:id="@+id/txtDriver"
-                android:layout_weight="1"
+                <EditText
+                    android:layout_weight="2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:inputType="text"
+                    android:textSize="40sp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:textSize="50sp"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:textAlignment="center"
+                    android:textSize="40sp"
+                    />
+
+                <TextView
+                    android:id="@+id/txtResults"
+                    android:layout_weight="2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="40sp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/txtHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:textAlignment="center"
+                    android:textSize="40sp"
+                    />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="40sp"
+                    />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="40sp"
+                    />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
                 />
         </LinearLayout>
-    </LinearLayout>
 
-<!--    <TextView-->
-<!--        android:layout_weight="1"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:textSize="50sp"-->
-<!--        android:text="Result"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        />-->
-
+    </androidx.cardview.widget.CardView>
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -66,7 +125,7 @@ android:layout_height="match_parent">
         android:layout_height="wrap_content"
         app:layout_constraintVertical_weight="1"
         android:elevation="6dp"
-        app:layout_constraintTop_toBottomOf="@id/title_layout"
+        app:layout_constraintTop_toBottomOf="@id/crdMetrics"
         app:layout_constraintStart_toStartOf="parent"
         />
 
