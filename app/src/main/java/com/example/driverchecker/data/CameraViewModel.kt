@@ -53,7 +53,7 @@ class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryReposi
 
         override suspend fun onLiveEvaluationStart() {}
 
-        override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start) {
+        override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start<String>) {
             super.onLiveEvaluationStart()
         }
 
@@ -61,6 +61,12 @@ class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryReposi
 
         override suspend fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
+        }
+
+        override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
+
+        override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<String>) {
+            super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
         }
     }
 

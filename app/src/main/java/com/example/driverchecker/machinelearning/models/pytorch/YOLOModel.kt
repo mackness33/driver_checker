@@ -63,9 +63,9 @@ open class YOLOModel :
         image: IImageDetectionInput
     ): IImageDetectionOutput<String> {
         val results: MachineLearningResultArrayList<IImageDetectionItem<String>> = MachineLearningResultArrayList()
-        val groupsFound: MutableSet<String> = mutableSetOf()
+        val groupsFound: MutableMap<String, Int> = mutableMapOf()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
-        val outputColumn = _classifier.size() + 5 // left, top, right, bottom, score and class probability
+        val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
 
         for (i in 0 until outputRow) {
             val offset = i * outputColumn
@@ -80,7 +80,7 @@ open class YOLOModel :
                     scaleY * (y + height / 2)
                 )
 
-                for (j in 0 until _classifier.size()) {
+                for (j in 0 until mClassifier.size()) {
                     if (outputs[offset + 5 + j] > max) {
                         max = outputs[offset + 5 + j]
                         clsIndex = j
@@ -92,11 +92,11 @@ open class YOLOModel :
                         clsIndex,
                         rect,
                         outputs[i * outputColumn + 4],
-                        _classifier.get(clsIndex) ?: throw Throwable("Classifier didn't find any suitable class"),
+                        mClassifier.get(clsIndex) ?: throw Throwable("Classifier didn't find any suitable class"),
                     )
                 )
 
-                groupsFound.add(_classifier.get(clsIndex)!!.supergroup)
+                groupsFound.merge(mClassifier.get(clsIndex)!!.supergroup, 1) { newValue, oldValue -> newValue + oldValue }
             }
         }
         return ImageDetectionOutput(
@@ -113,6 +113,6 @@ open class YOLOModel :
         // TODO: For now ImportClassifier can "understand" only String for simplicity
         val importedJson = Json.decodeFromString<ImportClassifier<String>>(json)
 
-        return _classifier.load(importedJson)
+        return mClassifier.load(importedJson)
     }
 }

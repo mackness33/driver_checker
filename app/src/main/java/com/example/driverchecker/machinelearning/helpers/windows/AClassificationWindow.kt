@@ -18,9 +18,13 @@ abstract class AClassificationWindow<E : WithConfAndGroups<S>, S> (
             return
         }
 
-        if (!mSupergroupCounter.keys.containsAll(element.groups)) throw Throwable("The value found is not part of the classification")
+        if (!mSupergroupCounter.keys.containsAll(element.groups.keys)) throw Throwable("The value found is not part of the classification")
 
-        mSupergroupCounter.putAll(element.groups.associateWith { group -> mSupergroupCounter[group]!!.inc() })
+        element.groups.forEach { group ->
+            mSupergroupCounter.merge(group.key, group.value) { newValue, oldValue ->
+                newValue + oldValue
+            }
+        }
 
         super.next(element)
     }

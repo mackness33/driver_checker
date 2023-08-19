@@ -23,13 +23,18 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
     override fun jobEvaluation (input: Flow<I>, scope: CoroutineScope): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
-            if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-                mEvaluationFlowState.emit(LiveClassificationState.Start((model as IClassificationModel<*, *, *>).classifier.maxClassesInGroup()))
+            try {
+                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && model != null && model?.classifier != null) {
+                    mEvaluationFlowState.emit(LiveClassificationState.Start(
+                        (model as IClassificationModel<I, O, S>).classifier.maxClassesInGroup(),
+                        (model as IClassificationModel<I, O, S>).classifier.superclasses.keys.toList())
+                    )
 
-                flowEvaluation(input, ::cancel)?.collect()
-            } else {
-                mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
-//                mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+                    flowEvaluation(input, ::cancel)?.collect()
+                } else
+                    throw Throwable("The stream is not ready yet")
+            } catch (e : Throwable) {
+                mEvaluationFlowState.emit(LiveEvaluationState.End(e, null))
                 triggerReadyState()
             }
         }
@@ -51,5 +56,23 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
         window.clean()
 
 //        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
+    }
+
+    override suspend fun onEachEvaluation (
+        postProcessedResult: O,
+        onConditionSatisfied: (CancellationException) -> Unit
+    ) {
+        Log.d("JobClassification", "finally finished")
+        window.next(postProcessedResult)
+
+        if (window.hasAcceptedLast) {
+            mEvaluationFlowState.emit(
+                LiveClassificationState.Loading(window.totEvaluationsDone, window.lastResult)
+            )
+        }
+
+        // TODO: Pass the metrics and R
+        if (window.isSatisfied())
+            onConditionSatisfied(CorrectCancellationException())
     }
 }

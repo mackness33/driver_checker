@@ -96,6 +96,8 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
     protected open fun clearPartialResults () {
         evaluatedItemsArray.clear()
         mHasEnded.tryUpdate(false)
+        mPartialResultEvent.postValue(PartialEvaluationState.Clear)
+        mLastResult.postValue(null)
     }
 
     override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
@@ -111,13 +113,10 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
 
         override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             clearPartialResults()
-            mPartialResultEvent.postValue(PartialEvaluationState.Clear)
-            mLastResult.postValue(null)
             Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
         }
 
         override suspend fun onLiveEvaluationStart() {
-            // add the partialResult to the resultsArray
             mLastResult.postValue(null)
             Log.d("LiveEvaluationState", "START: ${mPartialResultEvent.value} initialIndex")
         }

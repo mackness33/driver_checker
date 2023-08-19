@@ -21,7 +21,7 @@ interface WithConfAndSuper<S> : WithConfidence {
 
 // with supergroup
 interface WithConfAndGroups<S> : WithConfidence {
-    val groups: Set<S>
+    val groups: Map<S, Int>
 }
 
 interface IClassification<S> {
@@ -40,8 +40,8 @@ data class Classification<S> (
 
 // ---------------------------------- TYPE ALIAS ----------------------------------
 
-typealias ClassificationSuperclassMap<Superclass> = Map<Superclass, Set<IClassification<Superclass>>>
-typealias ClassificationSuperclassList<Superclass> = List<Set<IClassification<Superclass>>>
+typealias ClassificationSuperclassMap<Superclass> = Map<Superclass, ClassificationSet<Superclass>>
+typealias ClassificationSuperclassList<Superclass> = List<ClassificationSet<Superclass>>
 
 typealias ClassificationSet<Superclass> = Set<IClassification<Superclass>>
 typealias ClassificationList<Superclass> = List<IClassification<Superclass>>
@@ -78,7 +78,7 @@ data class ClassificationItem<S> (
 ) : IClassificationItem<S>
 
 data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
-    override val groups: Set<S>,
+    override val groups: Map<S, Int>,
     override val input: I,
     override val listItems: MachineLearningResultList<E>
 ) : IClassificationOutput<I, E, S> {
@@ -106,6 +106,7 @@ sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface
 
 // Represents different states for the LatestNews screen
 sealed class LiveClassificationState : LiveEvaluationState(), LiveClassificationStateInterface {
-    data class Start(val maxClassesPerGroup: Int) : LiveClassificationStateInterface
+    data class Start<S>(val maxClassesPerGroup: Int, val supergroups: List<S>) : LiveClassificationStateInterface
+    data class Loading<S>(val index: Int, val partialResult: WithConfAndGroups<S>?) : LiveClassificationStateInterface
     data class End<S>(val exception: Throwable?, val finalResult: WithConfAndSuper<S>?) : LiveClassificationStateInterface
 }

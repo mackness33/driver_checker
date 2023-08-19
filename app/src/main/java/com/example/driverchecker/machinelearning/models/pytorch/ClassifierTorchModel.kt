@@ -21,15 +21,15 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
         if (newClassifications != null) initClassifier(newClassifications)
     }
 
-    protected val _classifier = MutableClassifier<Superclass>(null)
+    protected val mClassifier = MutableClassifier<Superclass>(null)
     override val classifier: IClassifier<Superclass>
-        get() = _classifier
+        get() = mClassifier
 
     private fun initClassifier(json: String?) : Boolean = loadClassifications(json)
     private fun initClassifier(newClassifications: ClassificationSuperclassMap<Superclass>?) : Boolean = loadClassifications(newClassifications)
 
     override fun <ModelInit : ClassificationSuperclassMap<Superclass>> loadClassifications(init: ModelInit?): Boolean {
-        return _classifier.load(init)
+        return mClassifier.load(init)
     }
 
     override fun loadClassifications(json: String?): Boolean {
@@ -39,6 +39,6 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
         // TODO: For now ImportClassifier can "understand" only String for simplicity
         val importedJson = Json.decodeFromString<ImportClassifier<Superclass>>(json)
 
-        return _classifier.load(importedJson)
+        return mClassifier.load(importedJson)
     }
 }

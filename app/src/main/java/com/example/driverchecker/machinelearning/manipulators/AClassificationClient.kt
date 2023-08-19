@@ -29,7 +29,10 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
     override val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
         get() = arrayClassesPredictions
 
-    override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
+    protected val mMetricsPerGroup = mutableMapOf<S, Pair<Int, Int>>()
+    val metricsPerGroup: Map<S, Pair<Int, Int>> = mMetricsPerGroup
+
+    override val evaluationListener: ClassificationListener<S> = EvaluationClassificationListener()
 
 
     // FUNCTIONS
@@ -39,11 +42,12 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
         arrayClassesPredictions.clear()
         mPassengerInfo.postValue(Pair(0, 0))
         mDriverInfo.postValue(Pair(0, 0))
+        mMetricsPerGroup.clear()
     }
 
     // INNER CLASSES
     protected open inner class EvaluationClassificationListener :
-        ClassificationListener<String>,
+        ClassificationListener<S>,
         EvaluationListener {
 
         constructor () : super()
@@ -52,16 +56,29 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
         override suspend fun onLiveEvaluationStart() {}
 
-        override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start) {
+        override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start<S>) {
             super.onLiveEvaluationStart()
+            mMetricsPerGroup.putAll(state.supergroups.associateWith { Pair(0, 0) })
             Log.d("LiveClassificationState", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
-        override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
+        override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<S>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
             Log.d("LiveClassificationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
+        }
+
+        override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<S>) {
+            super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
+            // for each supergroup found update the metrics associated with
+            // REFACTOR: possible optimize solution
+            state.partialResult?.groups?.forEach {
+                group -> mMetricsPerGroup.merge(group.key, 1 to group.value)
+                    { newValue: Pair<Int, Int>, oldValue: Pair<Int, Int> ->
+                        (newValue.first + oldValue.first) to (newValue.second + oldValue.second)
+                    }
+            }
         }
     }
 }

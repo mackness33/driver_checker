@@ -52,7 +52,7 @@ class PredictionsAdapter(
             imageInput.setImageBitmap(bitmap)
             textIndex.text =
                 detectionItem.listItems.first().classification.index.toString()
-            textGroup.text = detectionItem.groups.first()
+            textGroup.text = detectionItem.groups.keys.first()
         }
     }
 
