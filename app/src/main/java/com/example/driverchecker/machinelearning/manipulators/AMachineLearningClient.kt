@@ -84,20 +84,11 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
     // FUNCTIONS
     // handling the add of a partial result to the main array
     protected open fun insertPartialResult (partialResult: O) {
-        evaluatedItemsArray.add(partialResult)
     }
 
 
     override suspend fun produceInput (input: I) {
         mLiveInput.emit(input)
-    }
-
-    // handling the clearing of the main array
-    protected open fun clearPartialResults () {
-        evaluatedItemsArray.clear()
-        mHasEnded.tryUpdate(false)
-        mPartialResultEvent.postValue(PartialEvaluationState.Clear)
-        mLastResult.postValue(null)
     }
 
     override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
@@ -112,23 +103,31 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
         override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
-            clearPartialResults()
-            Log.d("LiveEvaluationState", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
+            evaluatedItemsArray.clear()
+            mHasEnded.tryUpdate(false)
+            mPartialResultEvent.postValue(PartialEvaluationState.Clear)
+            mLastResult.postValue(null)
+            Log.d("MachineLearningClient - EvaluationListener", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
         }
 
         override suspend fun onLiveEvaluationStart() {
             mLastResult.postValue(null)
-            Log.d("LiveEvaluationState", "START: ${mPartialResultEvent.value} initialIndex")
+            Log.d("MachineLearningClient - EvaluationListener", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
         override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
-            if (state.partialResult != null) {
-                val partialResult: O = state.partialResult as O
-                insertPartialResult(partialResult)
-                mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
-                mLastResult.postValue(partialResult)
-                Log.d("LiveEvaluationState", "LOADING: ${state.partialResult} for the ${mPartialResultEvent.value} time")
+            try {
+                if (state.partialResult != null) {
+                    val partialResult: O = state.partialResult as O
+                    evaluatedItemsArray.add(partialResult)
+                    mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
+                    mLastResult.postValue(partialResult)
+                }
+            } catch (e : Throwable) {
+                Log.e("MachineLearningClient - EvaluationListener", "Client couldn't load the partial result properly", e)
+            } finally {
+                Log.d("MachineLearningClient - EvaluationListener", "LOADING: ${state.partialResult} for the ${mPartialResultEvent.value} time")
             }
         }
 
@@ -136,7 +135,7 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
             mHasEnded.tryUpdate(state.finalResult != null)
-            Log.d("LiveEvaluationState", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
+            Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
     }
 }

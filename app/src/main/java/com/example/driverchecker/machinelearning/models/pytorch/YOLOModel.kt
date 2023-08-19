@@ -49,8 +49,6 @@ open class YOLOModel :
     }
 
     override fun postProcess(output: IImageDetectionOutput<String>): IImageDetectionOutput<String> {
-        ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
-
         return ImageDetectionOutput(
             output.groups,
             output.input,

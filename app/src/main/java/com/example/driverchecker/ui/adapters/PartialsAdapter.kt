@@ -12,9 +12,12 @@ import kotlin.math.sqrt
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
-class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2, private var sizeHolder: Int = 50) : ColoredAdapter<PartialsAdapter.ViewHolder>() {
+class PartialsAdapter(
+    private val items: List<Pair<Int, List<Int>>>,
+    maxClasses:Int = 2,
+    private var sizeHolder: Int = 50
+) : ColoredAdapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
-    private val colorClasses: Map<Int, List<Int>>
 
     init {
         val square = round(sqrt(maxClasses.toDouble()))
@@ -25,7 +28,6 @@ class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2,
             maxClasses % square > 0 -> square+1
             else -> square
         }.toInt()
-        colorClasses = mapOf(1 to listOf(Color.GREEN, Color.CYAN, Color.BLUE))
     }
 
     /**
@@ -51,7 +53,6 @@ class PartialsAdapter(val items: List<Pair<Int, List<Int>>>, maxClasses:Int = 2,
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.predictionView.updateDimensions(Pair(dimension, dimension))
-//        val params = viewHolder.itemView.layoutParams
         viewHolder.itemView.layoutParams = ViewGroup.LayoutParams(sizeHolder, sizeHolder)
         viewHolder.predictionView.updateSize(
             Pair(viewHolder.itemView.layoutParams.width, viewHolder.itemView.layoutParams.height)

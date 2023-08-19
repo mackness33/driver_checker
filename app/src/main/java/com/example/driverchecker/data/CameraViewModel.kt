@@ -13,22 +13,16 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.SharedFlow
 
-class CameraViewModel (val imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
+class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
-    val passengerInfo: LiveData<Pair<Int, Int>>
-        get() = evaluationClient.passengerInfo
+    val passengerInfo: LiveData<Pair<Int, Int>>?
+        get() = evaluationClient.metricsPerGroup["passenger"]
 
-    val driverInfo: LiveData<Pair<Int, Int>>
-        get() = evaluationClient.driverInfo
-
-    // REFACTOR: move this array/function to the mlRepo
-    val simpleListClassesPredictions: List<Pair<Int, List<Int>>>
-        get() = evaluationClient.simpleListClassesPredictions
-
+    val driverInfo: LiveData<Pair<Int, Int>>?
+        get() = evaluationClient.metricsPerGroup["driver"]
 
     override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
-
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {

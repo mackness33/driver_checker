@@ -99,12 +99,6 @@ data class ClassificationFinalResult<S> (
 sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface
 
 // Represents different states for the LatestNews screen
-//sealed class LiveClassificationState<R : WithConfidence, S> : LiveEvaluationState<R>(), LiveClassificationStateInterface<R, S> {
-//    data class Start(val maxClassesPerGroup: Int) : LiveClassificationState<Nothing, Nothing>()
-//    data class End<S>(val exception: Throwable?, val finalResult: WithConfAndSuper<S>?) : LiveClassificationState<Nothing, S>()
-//}
-
-// Represents different states for the LatestNews screen
 sealed class LiveClassificationState : LiveEvaluationState(), LiveClassificationStateInterface {
     data class Start<S>(val maxClassesPerGroup: Int, val supergroups: List<S>) : LiveClassificationStateInterface
     data class Loading<S>(val index: Int, val partialResult: WithConfAndGroups<S>?) : LiveClassificationStateInterface

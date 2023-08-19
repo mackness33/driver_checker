@@ -68,7 +68,7 @@ class CameraFragment : Fragment() {
 
         binding.partialsView.layoutManager = GridLayoutManager(view.context, 5, RecyclerView.VERTICAL, true)
         binding.partialsView.itemAnimator = null
-        binding.partialsView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
+//        binding.partialsView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
 
         model.isEnabled.observe(viewLifecycleOwner) { enableLive ->
             Log.i("LiveData - LiveBtn", "Live Button is ${if (enableLive) "not" else ""} enabled")
@@ -114,11 +114,11 @@ class CameraFragment : Fragment() {
             binding.resultView.invalidate()
         }
 
-        model.passengerInfo.observe(viewLifecycleOwner) { info ->
+        model.passengerInfo?.observe(viewLifecycleOwner) { info ->
             binding.txtPassenger.text = String.format("%s:%s", info.first, info.second)
         }
 
-        model.driverInfo.observe(viewLifecycleOwner) { info ->
+        model.driverInfo?.observe(viewLifecycleOwner) { info ->
             binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
         }
 

@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.manipulators
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
 import com.example.driverchecker.machinelearning.data.*
@@ -24,32 +25,6 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
         produceInput(ImageDetectionInput(bitmap))
     }
 
-    // handling the add of a partial result to the main array
-    override fun insertPartialResult (partialResult: IImageDetectionOutput<String>) {
-        super.insertPartialResult(partialResult)
-
-        val classInfo: Pair<Int, List<Int>> = Pair(
-            1,
-            partialResult.listItems
-                .distinctBy { predictions -> predictions.classIndex }
-                .map { prediction -> prediction.classIndex}
-        )
-
-        arrayClassesPredictions.add(classInfo)
-        when (classInfo.first) {
-            0 -> mPassengerInfo.postValue(Pair((mPassengerInfo.value?.first ?: 0) + classInfo.first, (mPassengerInfo.value?.second ?: 0) + classInfo.second.count()))
-            1 -> mDriverInfo.postValue(Pair((mDriverInfo.value?.first ?: 0) + classInfo.first, (mDriverInfo.value?.second ?: 0) + classInfo.second.count()))
-        }
-    }
-
-    // handling the clearing of the main array
-    override fun clearPartialResults () {
-        arrayClassesPredictions.clear()
-        mPassengerInfo.postValue(Pair(0, 0))
-        mDriverInfo.postValue(Pair(0, 0))
-        super.clearPartialResults()
-    }
-
     // INNER CLASSES
     private inner class EvaluationImageDetectionListener :
         EvaluationClassificationListener {
@@ -58,16 +33,13 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override suspend fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading) {
-            // add the partialResult to the resultsArray
-            if (!(state.partialResult as IImageDetectionOutput<String>?)?.listItems.isNullOrEmpty()) super.onLiveEvaluationLoading(state)
-        }
-
         override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
-            if (state.finalResult != null)
-                mOutput.postValue(ImageDetectionFinalResult(state.finalResult!!.confidence, state.finalResult.supergroup))
-
             super.onLiveClassificationEnd(state)
+
+            if (state.finalResult != null)
+                mOutput.postValue(ImageDetectionFinalResult(state.finalResult.confidence, state.finalResult.supergroup))
+
+            Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
     }
 }
