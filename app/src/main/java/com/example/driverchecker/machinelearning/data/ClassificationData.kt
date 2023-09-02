@@ -40,7 +40,7 @@ data class Classification<S> (
 
 // ---------------------------------- TYPE ALIAS ----------------------------------
 
-typealias ClassificationSuperclassMap<Superclass> = Map<Superclass, ClassificationSet<Superclass>>
+typealias ClassificationSupergroupMap<Superclass> = Map<Superclass, ClassificationSet<Superclass>>
 typealias ClassificationSuperclassList<Superclass> = List<ClassificationSet<Superclass>>
 
 typealias ClassificationSet<Superclass> = Set<IClassification<Superclass>>
@@ -80,7 +80,7 @@ data class ClassificationItem<S> (
 data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
     override val groups: Map<S, Int>,
     override val input: I,
-    override val listItems: MachineLearningResultList<E>
+    override val listItems: MachineLearningItemList<E>
 ) : IClassificationOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
 }

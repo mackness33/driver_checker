@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.data.*
 open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClassifier<Superclass> {
     protected val _superclasses: MutableMap<Superclass, MutableSet<IClassification<Superclass>>>
 
-    constructor (newDataset: ClassificationSuperclassMap<Superclass>?) {
+    constructor (newDataset: ClassificationSupergroupMap<Superclass>?) {
         _superclasses = mutableMapOf()
 
         initClassifier(newDataset)
@@ -18,14 +18,14 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         initClassifier(newClassifier.superclasses)
     }
 
-    private fun initClassifier (newDataset: ClassificationSuperclassMap<Superclass>?) = load(newDataset)
+    private fun initClassifier (newDataset: ClassificationSupergroupMap<Superclass>?) = load(newDataset)
     private fun initClassifier (importedJson: ImportClassifier<Superclass>?) = load(importedJson)
 
-    override val superclasses : ClassificationSuperclassMap<Superclass>
+    override val superclasses : ClassificationSupergroupMap<Superclass>
         get() = _superclasses
 
 
-    override fun load(newDataset: ClassificationSuperclassMap<Superclass>?) : Boolean {
+    override fun load(newDataset: ClassificationSupergroupMap<Superclass>?) : Boolean {
         if (newDataset != null) {
             for ((group, set) in newDataset.entries)
                 _superclasses[group] = set.toMutableSet()

@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.models.pytorch
 import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
+import com.example.driverchecker.machinelearning.data.ClassificationSupergroupMap
 import com.example.driverchecker.machinelearning.data.ImageDetectionItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import kotlinx.serialization.decodeFromString
@@ -18,7 +18,7 @@ open class YOLOModel :
 
     constructor(modelPath: String? = null, classificationsJson: String? = null) : super(modelPath, classificationsJson)
 
-    constructor(modelPath: String? = null, newClassifications: ClassificationSuperclassMap<String>? = null) : super(modelPath, newClassifications)
+    constructor(modelPath: String? = null, newClassifications: ClassificationSupergroupMap<String>? = null) : super(modelPath, newClassifications)
 
     // model input image size
     protected val inputWidth = 640
@@ -60,7 +60,7 @@ open class YOLOModel :
         outputs: FloatArray,
         image: IImageDetectionInput
     ): IImageDetectionOutput<String> {
-        val results: MachineLearningResultArrayList<IImageDetectionItem<String>> = MachineLearningResultArrayList()
+        val results: MachineLearningItemMutableList<IImageDetectionItem<String>> = MachineLearningItemMutableList()
         val groupsFound: MutableMap<String, Int> = mutableMapOf()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability

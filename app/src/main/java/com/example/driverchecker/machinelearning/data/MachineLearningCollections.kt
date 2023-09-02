@@ -1,10 +1,10 @@
 package com.example.driverchecker.machinelearning.data
 
-interface MachineLearningResultList<Result> : List<Result>,  WithConfidence
+interface MachineLearningItemList<Result> : List<Result>,  WithConfidence
 
-open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<Result>, MachineLearningResultList<Result> {
+open class MachineLearningItemMutableList<E : WithConfidence> : ArrayList<E>, MachineLearningItemList<E> {
     constructor(initialCapacity: Int) : super(initialCapacity)
-    constructor(collection: Collection<Result>) : super(collection)
+    constructor(collection: Collection<E>) : super(collection)
     constructor() : super(10)
 
     final override var confidence: Float
@@ -29,16 +29,20 @@ open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<R
      *
      * @return `true` because the list is always modified as the result of this operation.
      */
-    override fun add(element: Result): Boolean {
+    override fun add(element: E): Boolean {
         val result: Boolean = super.add(element)
-        confidence = calculateConfidence()
+
+        if (result)
+            confidence = calculateConfidence()
 
         return result
     }
 
-    override fun remove(element: Result): Boolean {
+    override fun remove(element: E): Boolean {
         val result: Boolean = super.remove(element)
-        confidence = calculateConfidence()
+
+        if (result)
+            confidence = calculateConfidence()
 
         return result
     }
@@ -51,9 +55,11 @@ open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<R
      *
      * @return `true` if the list was changed as the result of the operation.
      */
-    override fun addAll(elements: Collection<Result>): Boolean {
+    override fun addAll(elements: Collection<E>): Boolean {
         val result: Boolean = super.addAll(elements)
-        confidence = calculateConfidence()
+
+        if (result)
+            confidence = calculateConfidence()
 
         return result
     }
@@ -63,22 +69,28 @@ open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<R
      *
      * @return `true` if the list was changed as the result of the operation.
      */
-    override fun addAll(index: Int, elements: Collection<Result>): Boolean {
+    override fun addAll(index: Int, elements: Collection<E>): Boolean {
         val result: Boolean = super.addAll(index, elements)
-        confidence = calculateConfidence()
+
+        if (result)
+            confidence = calculateConfidence()
 
         return result
     }
 
-    override fun removeAll(elements: Collection<Result>): Boolean {
-        val result: Boolean = super.removeAll(elements)
-        confidence = calculateConfidence()
+    override fun removeAll(elements: Collection<E>): Boolean {
+        val result: Boolean = super.removeAll(elements.toSet())
+
+        if (result)
+            confidence = calculateConfidence()
 
         return result
     }
-    override fun retainAll(elements: Collection<Result>): Boolean {
-        val result: Boolean = super.retainAll(elements)
-        confidence = calculateConfidence()
+    override fun retainAll(elements: Collection<E>): Boolean {
+        val result: Boolean = super.retainAll(elements.toSet())
+
+        if (result)
+            confidence = calculateConfidence()
 
         return result
     }
@@ -93,8 +105,8 @@ open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<R
      *
      * @return the element previously at the specified position.
      */
-    override operator fun set(index: Int, element: Result): Result {
-        val result: Result = super.set(index, element)
+    override operator fun set(index: Int, element: E): E {
+        val result: E = super.set(index, element)
         confidence = calculateConfidence()
 
         return result
@@ -103,7 +115,7 @@ open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<R
     /**
      * Inserts an element into the list at the specified [index].
      */
-    override fun add(index: Int, element: Result): Unit {
+    override fun add(index: Int, element: E): Unit {
         super.add(element)
         confidence = calculateConfidence()
     }
@@ -113,16 +125,8 @@ open class MachineLearningResultArrayList<Result : WithConfidence> : ArrayList<R
      *
      * @return the element that has been removed.
      */
-    override fun removeAt(index: Int): Result {
-        val result: Result = super.removeAt(index)
-        confidence = calculateConfidence()
-
-        return result
-    }
-
-    // View
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<Result> {
-        val result: MutableList<Result> = super.subList(fromIndex, toIndex)
+    override fun removeAt(index: Int): E {
+        val result: E = super.removeAt(index)
         confidence = calculateConfidence()
 
         return result

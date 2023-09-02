@@ -17,7 +17,7 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
         if (classificationsJson != null) initClassifier(classificationsJson)
     }
 
-    constructor(modelPath: String? = null, newClassifications: ClassificationSuperclassMap<Superclass>? = null) : super(modelPath) {
+    constructor(modelPath: String? = null, newClassifications: ClassificationSupergroupMap<Superclass>? = null) : super(modelPath) {
         if (newClassifications != null) initClassifier(newClassifications)
     }
 
@@ -26,9 +26,9 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
         get() = mClassifier
 
     private fun initClassifier(json: String?) : Boolean = loadClassifications(json)
-    private fun initClassifier(newClassifications: ClassificationSuperclassMap<Superclass>?) : Boolean = loadClassifications(newClassifications)
+    private fun initClassifier(newClassifications: ClassificationSupergroupMap<Superclass>?) : Boolean = loadClassifications(newClassifications)
 
-    override fun <ModelInit : ClassificationSuperclassMap<Superclass>> loadClassifications(init: ModelInit?): Boolean {
+    override fun <ModelInit : ClassificationSupergroupMap<Superclass>> loadClassifications(init: ModelInit?): Boolean {
         return mClassifier.load(init)
     }
 

@@ -2,11 +2,11 @@ package com.example.driverchecker.machinelearning.helpers.classifiers
 
 import com.example.driverchecker.machinelearning.data.ClassificationList
 import com.example.driverchecker.machinelearning.data.ClassificationSet
-import com.example.driverchecker.machinelearning.data.ClassificationSuperclassMap
+import com.example.driverchecker.machinelearning.data.ClassificationSupergroupMap
 import com.example.driverchecker.machinelearning.data.IClassification
 
 interface IClassifier<Superclass> {
-    val superclasses : ClassificationSuperclassMap<Superclass>
+    val superclasses : ClassificationSupergroupMap<Superclass>
 
     fun asList(outerComparator: Comparator<ClassificationSet<Superclass>>?, innerComparator: Comparator<IClassification<Superclass>>?) : ClassificationList<Superclass>
     fun asSortedList(listComparator: Comparator<IClassification<Superclass>>?) : ClassificationList<Superclass>
