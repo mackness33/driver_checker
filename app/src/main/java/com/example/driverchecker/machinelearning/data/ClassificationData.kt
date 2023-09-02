@@ -18,24 +18,88 @@ interface WithConfAndSuper<S> : WithConfidence {
     val supergroup: S
 }
 
-
 // with supergroup
 interface WithConfAndGroups<S> : WithConfidence {
     val groups: Map<S, Int>
 }
 
+interface IClassificationMetrics<S> : IClassification<S> {
+    val objectsFound: Int
+}
+
+interface IMutableClassificationMetrics<S> : IClassificationMetrics<S> {
+    fun inc()
+    fun dec()
+}
+
 interface IClassification<S> {
     val name: String
     val index: Int
+    val externalIndex: Int
+    val internalIndex: Int
     val supergroup: S
 }
+
 
 @Serializable
 data class Classification<S> (
     override val name: String,
     override val index: Int,
-    override val supergroup: S
+    override val supergroup: S,
+    override val externalIndex: Int = 1,
+    override val internalIndex: Int = 2
 ) : IClassification<S>
+
+data class ClassificationMetrics<S> (
+    override val name: String,
+    override val index: Int,
+    override val supergroup: S,
+    override val externalIndex: Int = 1,
+    override val internalIndex: Int = 2,
+    override val objectsFound: Int
+) : IClassificationMetrics<S>
+
+class MutableClassificationMetrics<S> : IMutableClassificationMetrics<S> {
+    override val name: String
+    override val index: Int
+    override val supergroup: S
+    override val externalIndex: Int
+    override val internalIndex: Int
+    override var objectsFound: Int
+
+    constructor (
+        name: String,
+        index: Int,
+        supergroup: S,
+        externalIndex: Int = 1,
+        internalIndex: Int = 2,
+        objectsFound: Int = 1,
+    ) {
+        this.name = name
+        this.index = index
+        this.supergroup = supergroup
+        this.externalIndex = externalIndex
+        this.internalIndex = internalIndex
+        this.objectsFound = objectsFound
+    }
+
+    constructor (classification: IClassification<S>, objFound: Int = 1) : this(
+        classification.name,
+        classification.index,
+        classification.supergroup,
+        classification.externalIndex,
+        classification.internalIndex,
+        objFound
+    )
+
+    override fun inc() {
+        objectsFound++
+    }
+
+    override fun dec() {
+        objectsFound--
+    }
+}
 
 
 // ---------------------------------- TYPE ALIAS ----------------------------------
@@ -80,7 +144,7 @@ data class ClassificationItem<S> (
 data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
     override val groups: Map<S, Int>,
     override val input: I,
-    override val listItems: MachineLearningItemList<E>
+    override val listItems: MachineLearningList<E>
 ) : IClassificationOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
 }

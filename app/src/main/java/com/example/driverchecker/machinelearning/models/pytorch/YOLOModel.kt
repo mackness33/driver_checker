@@ -60,7 +60,7 @@ open class YOLOModel :
         outputs: FloatArray,
         image: IImageDetectionInput
     ): IImageDetectionOutput<String> {
-        val results: MachineLearningItemMutableList<IImageDetectionItem<String>> = MachineLearningItemMutableList()
+        val results: MachineLearningMutableList<IImageDetectionItem<String>> = MachineLearningMutableList()
         val groupsFound: MutableMap<String, Int> = mutableMapOf()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
