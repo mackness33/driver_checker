@@ -13,9 +13,10 @@ import kotlin.math.sqrt
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
 class PartialsAdapter(
-    private val items: List<Pair<Int, List<Int>>>,
+    private val items: List<Map<String, Set<Int>>>,
     maxClasses:Int = 2,
-    private var sizeHolder: Int = 50
+    private var sizeHolder: Int = 50,
+    private var colorList: Set<String>
 ) : ColoredAdapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
 
@@ -57,8 +58,11 @@ class PartialsAdapter(
         viewHolder.predictionView.updateSize(
             Pair(viewHolder.itemView.layoutParams.width, viewHolder.itemView.layoutParams.height)
         )
-        viewHolder.predictionView.updateColors(colorManager.listFullColors[items[position].first])
-        viewHolder.predictionView.updateSelectedClasses(items[position].second)
+
+        val group = items[position].toList().first()
+        val indexColorGroup = colorList.indexOfFirst { it.contentEquals(group.first) }
+        viewHolder.predictionView.updateColors(colorManager.listFullColors[indexColorGroup])
+        viewHolder.predictionView.updateSelectedClasses(group.second.toList())
     }
 
     // Return the size of your dataset (invoked by the layout manager)

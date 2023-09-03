@@ -40,7 +40,6 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
             Log.d("ClassificationClient - EvaluationClassificationListener", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
         }
 
-
         override suspend fun onLiveEvaluationStart() {}
 
         override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start<S>) {
