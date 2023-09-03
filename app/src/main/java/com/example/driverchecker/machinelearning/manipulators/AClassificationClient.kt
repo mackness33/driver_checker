@@ -52,7 +52,8 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
             super.onLiveEvaluationStart()
             classifier = state.classifier
             mGroups.postValue(state.classifier.supergroups.keys)
-            mMetricsPerGroup.putAll(state.classifier.supergroups.keys.associateWith { MutableLiveData(Pair(0, 0)) })
+            mMetricsPerGroup.initialize(state.classifier.supergroups.keys)
+//            mMetricsPerGroup.putAll(state.classifier.supergroups.keys.associateWith { MutableLiveData(Pair(0, 0)) })
             Log.d("ClassificationClient - EvaluationClassificationListener", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
@@ -65,20 +66,23 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
         override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<S>) {
             super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
             try {
-                if (state.partialResult != null && state.partialResult.groups.isNotEmpty() && mMetricsPerGroup.keys.containsAll(state.partialResult.groups.keys)) {
-                    val partialResult: O = state.partialResult as O
-                    for (group in partialResult.groups) {
-                        val loadedValue = 1 to group.value.size
-                        val newValue: Pair<Int, Int> =
-                            if (mMetricsPerGroup[group.key]?.value == null)
-                                loadedValue
-                            else
-                                mMetricsPerGroup[group.key]!!.value!!.apply {
-                                    (this.first + loadedValue.first) to (this.second + loadedValue.second)
-                                }
+                if (state.partialResult != null && state.partialResult.groups.isNotEmpty()) {
+                    mMetricsPerGroup.add(state.partialResult)
 
-                        mMetricsPerGroup[group.key]?.postValue(newValue)
-                    }
+//                    val partialResult: O = state.partialResult as O
+//                    for (group in partialResult.groups) {
+//                        val loadedValue = 1 to group.value.size
+//                        val newValue: Pair<Int, Int> =
+//                            if (mMetricsPerGroup[group.key]?.value == null)
+//                                loadedValue
+//                            else
+//                                mMetricsPerGroup[group.key]!!.value!!.apply {
+//                                    (this.first + loadedValue.first) to (this.second + loadedValue.second)
+//                                }
+//
+//                        mMetricsPerGroup[group.key]?.postValue(newValue)
+//                    }
+
                 }
             } catch (e : Throwable) {
                 Log.e("ClassificationClient - EvaluationClassificationListener", "Client couldn't load the partial result properly", e)

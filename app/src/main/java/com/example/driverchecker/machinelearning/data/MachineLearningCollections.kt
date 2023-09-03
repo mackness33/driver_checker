@@ -298,6 +298,7 @@ interface ClientMetricsMap<S> {
     val liveMetrics: Map<S, StateLiveData<Triple<Int, Int, Int>?>>
     val metrics: Map<S, Triple<Int, Int, Int>>
 
+    fun initialize (keys: Set<S>)
     fun replace (element: WithConfAndGroups<S>)
     fun add (element: WithConfAndGroups<S>)
     fun subtract (element: WithConfAndGroups<S>)
@@ -312,33 +313,32 @@ open class ClientMetricsMutableMap<S> : ClientMetricsMap <S> {
     override val metrics: Map<S, Triple<Int, Int, Int>>
         get() = mMetrics.mapValues { entry -> entry.value.lastValue ?: Triple(0,0,0) }
 
+    override fun initialize(keys: Set<S>) {
+        mMetrics.putAll(keys.associateWith { StatefulLiveData(Triple(0, 0,0)) })
+    }
+
     override fun replace (element: WithConfAndGroups<S>) {
         element.groups.forEach { entry ->
-            if (mMetrics.containsKey(entry.key)) {
-                mMetrics[entry.key]!!.postValue(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
-            } else {
-                mMetrics[entry.key] = StatefulLiveData(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
-            }
+            mMetrics[entry.key]?.postValue(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
         }
     }
 
     override fun add (element: WithConfAndGroups<S>) {
         element.groups.forEach { entry ->
-            if (mMetrics.containsKey(entry.key)) {
-                mMetrics[entry.key]?.postValue(tripleSum(mMetrics[entry.key]!!.lastValue, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
-            } else {
-                mMetrics[entry.key] = StatefulLiveData(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
-            }
+            mMetrics[entry.key]?.postValue(tripleSum(mMetrics[entry.key]?.lastValue, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
+
+//            if (mMetrics.containsKey(entry.key)) {
+//            } else {
+//                mMetrics[entry.key] = StatefulLiveData(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
+//            }
         }
     }
 
     override fun subtract (element: WithConfAndGroups<S>) {
         element.groups.forEach { entry ->
-            if (mMetrics.containsKey(entry.key)) {
-                mMetrics[entry.key] = StatefulLiveData(
-                    tripleSubtract(mMetrics[entry.key]!!.lastValue, Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
-                )
-            }
+            mMetrics[entry.key]?.postValue(
+                tripleSubtract(mMetrics[entry.key]?.lastValue, Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
+            )
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.driverchecker.ui.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -60,6 +61,7 @@ class CameraFragment : Fragment() {
         private const val PICTURE_FILE_NAME: String = "driver_checker"
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
@@ -117,11 +119,16 @@ class CameraFragment : Fragment() {
         }
 
         model.passengerInfo?.observe(viewLifecycleOwner) { info ->
-            binding.txtPassenger.text = String.format("%s:%s", info.first, info.second)
+            if (info != null) {
+                binding.txtPassenger.text = String.format("%s:%s:%s", info.first, info.second, info.third)
+            }
         }
 
         model.driverInfo?.observe(viewLifecycleOwner) { info ->
-            binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
+            if (info != null) {
+                binding.txtPassenger.text =
+                    String.format("%s:%s:%s", info.first, info.second, info.third)
+            }
         }
 
         model.partialResultEvent.observe(viewLifecycleOwner) { state ->

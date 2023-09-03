@@ -9,6 +9,7 @@ import com.example.driverchecker.machinelearning.repositories.ImageDetectionFact
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
+import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,10 +17,10 @@ import kotlinx.coroutines.flow.SharedFlow
 class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
-    val passengerInfo: LiveData<Pair<Int, Int>>?
+    val passengerInfo: StateLiveData<Triple<Int, Int, Int>?>?
         get() = evaluationClient.metricsPerGroup["passenger"]
 
-    val driverInfo: LiveData<Pair<Int, Int>>?
+    val driverInfo: StateLiveData<Triple<Int, Int, Int>?>?
         get() = evaluationClient.metricsPerGroup["driver"]
 
     override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
