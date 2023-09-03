@@ -64,11 +64,13 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onClickRequestPermission(view, Manifest.permission.CAMERA)
 
-
-
         binding.partialsView.layoutManager = GridLayoutManager(view.context, 5, RecyclerView.VERTICAL, true)
         binding.partialsView.itemAnimator = null
-//        binding.partialsView.adapter = PartialsAdapter(model.simpleListClassesPredictions)
+        binding.partialsView.adapter = PartialsAdapter(model.coloredOutputs)
+
+        model.classificationGroups.observe(viewLifecycleOwner) { groups ->
+            (binding.partialsView.adapter as PartialsAdapter).updateGroupList(groups)
+        }
 
         model.isEnabled.observe(viewLifecycleOwner) { enableLive ->
             Log.i("LiveData - LiveBtn", "Live Button is ${if (enableLive) "not" else ""} enabled")

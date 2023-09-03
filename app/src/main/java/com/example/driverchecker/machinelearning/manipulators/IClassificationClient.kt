@@ -10,4 +10,5 @@ interface IClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSup
 
     val metricsPerGroup: Map<S, LiveData<Pair<Int, Int>>>
     val classifier: IClassifier<S>?
+    val groups: LiveData<Set<S>>
 }

@@ -28,6 +28,9 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val coloredOutputs: List<Map<String, Set<Int>>>
         get() = mColoredOutputs
 
+    val classificationGroups: LiveData<Set<String>>
+        get() = evaluationClient.groups
+
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
             (evaluationClient as ImageDetectionClient).produceImage(image)

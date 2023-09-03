@@ -23,6 +23,9 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
     override val evaluationListener: ClassificationListener<S> = EvaluationClassificationListener()
 
+    protected val mGroups: MutableLiveData<Set<S>> = MutableLiveData()
+    override val groups: LiveData<Set<S>>
+        get() = mGroups
 
     // INNER CLASSES
     protected open inner class EvaluationClassificationListener :
@@ -45,6 +48,7 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
         override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start<S>) {
             super.onLiveEvaluationStart()
             classifier = state.classifier
+            mGroups.postValue(state.classifier.supergroups.keys)
             mMetricsPerGroup.putAll(state.classifier.supergroups.keys.associateWith { MutableLiveData(Pair(0, 0)) })
             Log.d("ClassificationClient - EvaluationClassificationListener", "START: ${mPartialResultEvent.value} initialIndex")
         }

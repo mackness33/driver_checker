@@ -16,9 +16,9 @@ class PartialsAdapter(
     private val items: List<Map<String, Set<Int>>>,
     maxClasses:Int = 2,
     private var sizeHolder: Int = 50,
-    private var colorList: Set<String>
 ) : ColoredAdapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
+    private var colorList: Set<String>? = null
 
     init {
         val square = round(sqrt(maxClasses.toDouble()))
@@ -60,11 +60,15 @@ class PartialsAdapter(
         )
 
         val group = items[position].toList().first()
-        val indexColorGroup = colorList.indexOfFirst { it.contentEquals(group.first) }
-        viewHolder.predictionView.updateColors(colorManager.listFullColors[indexColorGroup])
+        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(group.first) }
+        viewHolder.predictionView.updateColors(colorManager.listFullColors[indexColorGroup ?: 0])
         viewHolder.predictionView.updateSelectedClasses(group.second.toList())
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = items.size
+
+    fun updateGroupList(groups: Set<String>) {
+        colorList = groups
+    }
 }
