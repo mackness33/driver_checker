@@ -54,18 +54,18 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
             try {
                 if (state.partialResult != null && state.partialResult.groups.isNotEmpty() && mMetricsPerGroup.keys.containsAll(state.partialResult.groups.keys)) {
                     val partialResult: O = state.partialResult as O
-                    for (group in partialResult.groups) {
-                        val loadedValue = 1 to group.value
-                        val newValue: Pair<Int, Int> =
-                            if (mMetricsPerGroup[group.key]?.value == null)
-                                loadedValue
-                            else
-                                mMetricsPerGroup[group.key]!!.value!!.apply {
-                                    (this.first + loadedValue.first) to (this.second + loadedValue.second)
-                                }
-
-                        mMetricsPerGroup[group.key]?.postValue(newValue)
-                    }
+//                    for (group in partialResult.groups) {
+//                        val loadedValue = 1 to group.value
+//                        val newValue: Pair<Int, Int> =
+//                            if (mMetricsPerGroup[group.key]?.value == null)
+//                                loadedValue
+//                            else
+//                                mMetricsPerGroup[group.key]!!.value!!.apply {
+//                                    (this.first + loadedValue.first) to (this.second + loadedValue.second)
+//                                }
+//
+//                        mMetricsPerGroup[group.key]?.postValue(newValue)
+//                    }
                 }
             } catch (e : Throwable) {
                 Log.e("ClassificationClient - EvaluationClassificationListener", "Client couldn't load the partial result properly", e)

@@ -18,12 +18,20 @@ abstract class AClassificationWindow<E : WithConfAndGroups<S>, S> (
             return
         }
 
-        if (!mSupergroupCounter.keys.containsAll(element.groups.keys)) throw Throwable("The value found is not part of the classification")
+//        if (!mSupergroupCounter.keys.containsAll(element.groups.keys)) throw Throwable("The value found is not part of the classification")
 
-        element.groups.forEach { group ->
-            mSupergroupCounter.merge(group.key, group.value) { newValue, oldValue ->
-                newValue + oldValue
-            }
+//        element.groups.forEach { group ->
+//            mSupergroupCounter.merge(group.key, group.value.size) { newValue, oldValue ->
+//                newValue + oldValue
+//            }
+//        }
+
+        val valueToDelete = window.first()
+        val allPossibleKeysToUpdate = valueToDelete.groups.keys.union(element.groups.keys).intersect(mSupergroupCounter.keys)
+
+        // for each key to update in the counter I add to the value of the element and sub the element that is going to be removed
+        allPossibleKeysToUpdate.forEach { key ->
+            mSupergroupCounter[key] = (mSupergroupCounter[key] ?: 0) + (element.groups[key]?.size ?: 0) - (valueToDelete.groups[key]?.size ?: 0)
         }
 
         super.next(element)

@@ -20,7 +20,7 @@ interface WithConfAndSuper<S> : WithConfidence {
 
 // with supergroup
 interface WithConfAndGroups<S> : WithConfidence {
-    val groups: Map<S, Int>
+    val groups: Map<S, Set<IClassificationMetrics<S>>>
 }
 
 interface IClassificationMetrics<S> : IClassification<S> {
@@ -143,7 +143,7 @@ data class ClassificationItem<S> (
 ) : IClassificationItem<S>
 
 data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
-    override val groups: Map<S, Int>,
+    override val groups: Map<S, Set<IClassificationMetrics<S>>>,
     override val input: I,
     override val listItems: MachineLearningList<E>
 ) : IClassificationOutput<I, E, S> {

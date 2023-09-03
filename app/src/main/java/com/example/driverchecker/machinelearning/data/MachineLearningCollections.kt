@@ -139,11 +139,8 @@ open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> : MachineLe
     constructor(collection: Collection<E>) : super(collection)
     constructor() : super()
 
-    final override val groups: Map<S, Int>
-        get() = emptyMap()
-
     protected val mutableGroups: MutableMap<S, MutableSet<IMutableClassificationMetrics<S>>> = mutableMapOf()
-    final val readOnlyGroup: Map<S, Set<IClassificationMetrics<S>>>
+    final override val groups: Map<S, Set<IClassificationMetrics<S>>>
         get() = mutableGroups
 
     protected open fun putClassification (element: E) {
