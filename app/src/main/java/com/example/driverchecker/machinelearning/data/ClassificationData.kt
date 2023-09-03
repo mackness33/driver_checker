@@ -34,7 +34,6 @@ interface IMutableClassificationMetrics<S> : IClassificationMetrics<S> {
 
 interface IClassification<S> {
     val name: String
-    val index: Int
     val externalIndex: Int
     val internalIndex: Int
     val supergroup: S
@@ -44,51 +43,45 @@ interface IClassification<S> {
 @Serializable
 data class Classification<S> (
     override val name: String,
-    override val index: Int,
+    override val externalIndex: Int,
+    override val internalIndex: Int,
     override val supergroup: S,
-    override val externalIndex: Int = 1,
-    override val internalIndex: Int = 2
 ) : IClassification<S>
 
 data class ClassificationMetrics<S> (
     override val name: String,
-    override val index: Int,
+    override val externalIndex: Int,
+    override val internalIndex: Int,
     override val supergroup: S,
-    override val externalIndex: Int = 1,
-    override val internalIndex: Int = 2,
-    override val objectsFound: Int
+    override val objectsFound: Int,
 ) : IClassificationMetrics<S>
 
 class MutableClassificationMetrics<S> : IMutableClassificationMetrics<S> {
     override val name: String
-    override val index: Int
-    override val supergroup: S
     override val externalIndex: Int
+    override val supergroup: S
     override val internalIndex: Int
     override var objectsFound: Int
 
     constructor (
         name: String,
         index: Int,
+        internalIndex: Int = 0,
         supergroup: S,
-        externalIndex: Int = 1,
-        internalIndex: Int = 2,
         objectsFound: Int = 1,
     ) {
         this.name = name
-        this.index = index
+        this.externalIndex = index
         this.supergroup = supergroup
-        this.externalIndex = externalIndex
         this.internalIndex = internalIndex
         this.objectsFound = objectsFound
     }
 
     constructor (classification: IClassification<S>, objFound: Int = 1) : this(
         classification.name,
-        classification.index,
-        classification.supergroup,
         classification.externalIndex,
         classification.internalIndex,
+        classification.supergroup,
         objFound
     )
 
@@ -99,6 +92,14 @@ class MutableClassificationMetrics<S> : IMutableClassificationMetrics<S> {
     override fun dec() {
         objectsFound--
     }
+
+    fun toReadOnly() : ClassificationMetrics<S> = ClassificationMetrics(
+        this.name,
+        this.externalIndex,
+        this.internalIndex,
+        this.supergroup,
+        this.objectsFound
+    )
 }
 
 

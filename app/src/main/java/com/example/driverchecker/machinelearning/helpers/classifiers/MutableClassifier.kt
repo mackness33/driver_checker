@@ -3,32 +3,32 @@ package com.example.driverchecker.machinelearning.helpers.classifiers
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 
-open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClassifier<Superclass> {
-    protected val _superclasses: MutableMap<Superclass, MutableSet<IClassification<Superclass>>>
+open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
+    protected val mSupergroups: MutableMap<S, MutableSet<IClassification<S>>>
 
-    constructor (newDataset: ClassificationSupergroupMap<Superclass>?) {
-        _superclasses = mutableMapOf()
+    constructor (newDataset: ClassificationSupergroupMap<S>?) {
+        mSupergroups = mutableMapOf()
 
         initClassifier(newDataset)
     }
 
-    constructor (newClassifier: IClassifier<Superclass>) {
-        _superclasses = mutableMapOf()
+    constructor (newClassifier: IClassifier<S>) {
+        mSupergroups = mutableMapOf()
 
         initClassifier(newClassifier.superclasses)
     }
 
-    private fun initClassifier (newDataset: ClassificationSupergroupMap<Superclass>?) = load(newDataset)
-    private fun initClassifier (importedJson: ImportClassifier<Superclass>?) = load(importedJson)
+    private fun initClassifier (newDataset: ClassificationSupergroupMap<S>?) = load(newDataset)
+    private fun initClassifier (importedJson: ImportClassifier<S>?) = load(importedJson)
 
-    override val superclasses : ClassificationSupergroupMap<Superclass>
-        get() = _superclasses
+    override val superclasses : ClassificationSupergroupMap<S>
+        get() = mSupergroups
 
 
-    override fun load(newDataset: ClassificationSupergroupMap<Superclass>?) : Boolean {
+    override fun load(newDataset: ClassificationSupergroupMap<S>?) : Boolean {
         if (newDataset != null) {
             for ((group, set) in newDataset.entries)
-                _superclasses[group] = set.toMutableSet()
+                mSupergroups[group] = set.toMutableSet()
 
             return true
         }
@@ -36,7 +36,7 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         return false
     }
 
-    override fun load(importedJson: ImportClassifier<Superclass>?) : Boolean {
+    override fun load(importedJson: ImportClassifier<S>?) : Boolean {
         if (importedJson != null) {
             try {
                 for ((group, set) in importedJson.value.entries)
@@ -55,78 +55,78 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         return false
     }
 
-    override fun add(name: String, group: Superclass) {
+    override fun add(name: String, group: S) {
         if (!exist(name)) {
-            _superclasses.putIfAbsent(group, mutableSetOf())
-            _superclasses[group]!!.add(Classification(name, size(), group))
+            mSupergroups.putIfAbsent(group, mutableSetOf())
+            mSupergroups[group]!!.add(Classification(name, size(), mSupergroups[group]!!.size, group))
         }
     }
 
-    override fun append(name: String, group: Superclass) {
-        if (!exist(name) && _superclasses.contains(group)) {
-            _superclasses[group]!!.add(Classification(name, size(), group))
+    override fun append(name: String, group: S) {
+        if (!exist(name) && mSupergroups.contains(group)) {
+            mSupergroups[group]!!.add(Classification(name, size(), mSupergroups[group]!!.size, group))
         }
     }
 
-    override fun put(newSuperclass: ClassificationSet<Superclass>, group: Superclass) {
-        _superclasses[group] = newSuperclass.toMutableSet()
+    override fun put(newSuperclass: ClassificationSet<S>, group: S) {
+        mSupergroups[group] = newSuperclass.toMutableSet()
     }
 
-    override fun putIfAbsent(newSuperclass: ClassificationSet<Superclass>, group: Superclass) {
-        _superclasses.putIfAbsent(group, newSuperclass.toMutableSet())
+    override fun putIfAbsent(newSuperclass: ClassificationSet<S>, group: S) {
+        mSupergroups.putIfAbsent(group, newSuperclass.toMutableSet())
     }
 
-    override fun asList(outerComparator: Comparator<ClassificationSet<Superclass>>?, innerComparator: Comparator<IClassification<Superclass>>?): ClassificationList<Superclass> {
+    override fun asList(outerComparator: Comparator<ClassificationSet<S>>?, innerComparator: Comparator<IClassification<S>>?): ClassificationList<S> {
         // assign default comparator if null passed
         val outer = outerComparator ?: Comparator { _, _ -> 0}
         val inner = innerComparator ?: Comparator { _, _ -> 0}
 
-        val output = mutableListOf<IClassification<Superclass>>()
+        val output = mutableListOf<IClassification<S>>()
 
-        for (outerSet in _superclasses.values.toList().sortedWith(outer)) {
+        for (outerSet in mSupergroups.values.toList().sortedWith(outer)) {
             output.plusAssign(outerSet.sortedWith(inner))
         }
 
         return output
     }
 
-    override fun asSortedList(listComparator: Comparator<IClassification<Superclass>>?): ClassificationList<Superclass> {
+    override fun asSortedList(listComparator: Comparator<IClassification<S>>?): ClassificationList<S> {
         // default sort is by index
-        val comparator = listComparator ?: Comparator { o1, o2 -> o2.index.compareTo(o1.index)}
-        val output = mutableListOf<IClassification<Superclass>>()
+        val comparator = listComparator ?: Comparator { o1, o2 -> o2.externalIndex.compareTo(o1.externalIndex)}
+        val output = mutableListOf<IClassification<S>>()
 
-        _superclasses.values.toList().forEach { outerSet -> output.plusAssign(outerSet) }
+        mSupergroups.values.toList().forEach { outerSet -> output.plusAssign(outerSet) }
 
         return output.sortedWith(comparator)
     }
 
-    override fun asUnsortedList(): ClassificationList<Superclass> {
-        val output = mutableListOf<IClassification<Superclass>>()
+    override fun asUnsortedList(): ClassificationList<S> {
+        val output = mutableListOf<IClassification<S>>()
 
-        _superclasses.values.toList().forEach { outerSet -> output.plusAssign(outerSet) }
+        mSupergroups.values.toList().forEach { outerSet -> output.plusAssign(outerSet) }
 
         return output
     }
 
-    override fun clear(group: Superclass?) {
+    override fun clear(group: S?) {
         if (group == null) {
-            _superclasses.clear()
+            mSupergroups.clear()
         } else {
-            _superclasses.remove(group)
+            mSupergroups.remove(group)
         }
     }
 
     override fun remove(name: String) : Boolean {
-        for ((group, set) in _superclasses.entries)
-            if (set.removeIf { element -> element.name == name } && _superclasses[group].isNullOrEmpty())
+        for ((group, set) in mSupergroups.entries)
+            if (set.removeIf { element -> element.name == name } && mSupergroups[group].isNullOrEmpty())
                 return true
 
         return false
     }
 
     override fun remove(index: Int)  : Boolean {
-        for ((group, set) in _superclasses.entries)
-            if (set.removeIf { element -> element.index == index })
+        for ((group, set) in mSupergroups.entries)
+            if (set.removeIf { element -> element.externalIndex == index })
                 return true
 
 
@@ -134,10 +134,10 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
     }
 
     override fun delete(name: String) : Boolean {
-        for ((group, set) in _superclasses.entries) {
+        for ((group, set) in mSupergroups.entries) {
             if (set.removeIf { element -> element.name == name }) {
-                if (_superclasses[group].isNullOrEmpty()) {
-                    _superclasses.remove(group)
+                if (mSupergroups[group].isNullOrEmpty()) {
+                    mSupergroups.remove(group)
                 }
 
                 return true
@@ -148,10 +148,10 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
     }
 
     override fun delete(index: Int) : Boolean {
-        for ((group, set) in _superclasses.entries) {
-            if (set.removeIf { element -> element.index == index }) {
-                if (_superclasses[group].isNullOrEmpty()) {
-                    _superclasses.remove(group)
+        for ((group, set) in mSupergroups.entries) {
+            if (set.removeIf { element -> element.externalIndex == index }) {
+                if (mSupergroups[group].isNullOrEmpty()) {
+                    mSupergroups.remove(group)
                 }
 
                 return true
@@ -161,8 +161,8 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         return false
     }
 
-    override fun get(name: String): IClassification<Superclass>? {
-        for (set in _superclasses.values) {
+    override fun get(name: String): IClassification<S>? {
+        for (set in mSupergroups.values) {
             val partial = set.find { classification -> classification.name == name }
 
             if (partial != null)
@@ -172,9 +172,9 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         return null
     }
 
-    override fun get(index: Int): IClassification<Superclass>? {
-        for (set in _superclasses.values) {
-            val partial = set.find { classification -> classification.index == index }
+    override fun get(index: Int): IClassification<S>? {
+        for (set in mSupergroups.values) {
+            val partial = set.find { classification -> classification.externalIndex == index }
 
             if (partial != null)
                 return partial
@@ -183,8 +183,12 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
         return null
     }
 
-    override fun get(classification: IClassification<Superclass>): IClassification<Superclass>? {
-        for (set in _superclasses.values) {
+    override fun get(index: Int, supergroup: S): IClassification<S>? {
+        return mSupergroups[supergroup]?.toList()?.get(index)
+    }
+
+    override fun get(classification: IClassification<S>): IClassification<S>? {
+        for (set in mSupergroups.values) {
             val partial = set.find { element -> element == classification }
 
             if (partial != null)
@@ -195,28 +199,32 @@ open class MutableClassifier<Superclass : Comparable<Superclass>> : IMutableClas
     }
 
     override fun exist(name: String): Boolean {
-        return _superclasses.values.find { set -> set.any { classification -> classification.name == name } } != null
+        return mSupergroups.values.find { set -> set.any { classification -> classification.name == name } } != null
     }
 
     override fun exist(index: Int): Boolean {
-        return _superclasses.values.find { set -> set.any { classification -> classification.index == index } } != null
+        return mSupergroups.values.find { set -> set.any { classification -> classification.externalIndex == index } } != null
     }
 
-    override fun exist(classification: IClassification<Superclass>): Boolean {
-        return _superclasses.values.find { supergroup -> supergroup.contains(classification) } != null
+    override fun exists(index: Int, supergroup: S): Boolean {
+        return mSupergroups[supergroup]?.toList()?.get(index) != null
     }
 
-    override fun getSuperclass(group: Superclass): ClassificationSet<Superclass>? {
-        return _superclasses[group]
+    override fun exist(classification: IClassification<S>): Boolean {
+        return mSupergroups.values.find { supergroup -> supergroup.contains(classification) } != null
+    }
+
+    override fun getSuperclass(group: S): ClassificationSet<S>? {
+        return mSupergroups[group]
     }
 
     override fun size(): Int {
-        return _superclasses.values.fold(0) { size, set -> size + set.size }
+        return mSupergroups.values.fold(0) { size, set -> size + set.size }
     }
 
     override fun sizeSuperClass(): Int {
-        return _superclasses.size
+        return mSupergroups.size
     }
 
-    override fun maxClassesInGroup(): Int = _superclasses.values.maxOf { set -> set.size }
+    override fun maxClassesInGroup(): Int = mSupergroups.values.maxOf { set -> set.size }
 }

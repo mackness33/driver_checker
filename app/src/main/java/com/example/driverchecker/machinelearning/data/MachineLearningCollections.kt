@@ -142,34 +142,34 @@ open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> : MachineLe
     final override val groups: Map<S, Int>
         get() = emptyMap()
 
-    protected val mutableGroups: MutableMap<S, MutableList<IMutableClassificationMetrics<S>>> = mutableMapOf()
-    final val readOnlyGroup: Map<S, List<IClassificationMetrics<S>>>
+    protected val mutableGroups: MutableMap<S, MutableSet<IMutableClassificationMetrics<S>>> = mutableMapOf()
+    final val readOnlyGroup: Map<S, Set<IClassificationMetrics<S>>>
         get() = mutableGroups
 
     protected open fun putClassification (element: E) {
         when {
             !mutableGroups.containsKey(element.classification.supergroup) -> {
-                mutableGroups[element.classification.supergroup] = mutableListOf(MutableClassificationMetrics(element.classification))
+                mutableGroups[element.classification.supergroup] = mutableSetOf(MutableClassificationMetrics(element.classification))
             }
             mutableGroups[element.classification.supergroup]!!.find { classMetric ->
-                classMetric.index == element.classification.index
+                classMetric.externalIndex == element.classification.externalIndex
             } == null -> {
                 mutableGroups[element.classification.supergroup]!!.add(MutableClassificationMetrics(element.classification))
             }
             else -> {
-                mutableGroups[element.classification.supergroup]!![element.classification.index].inc()
+                mutableGroups[element.classification.supergroup]!!.toList()[element.classification.externalIndex].inc()
             }
         }
     }
 
     protected open fun removeClassification (element: E) {
         if (mutableGroups[element.classification.supergroup]?.find { classMetric ->
-                classMetric.index == element.classification.index
+                classMetric.externalIndex == element.classification.externalIndex
             } != null) {
 
-            mutableGroups[element.classification.supergroup]!![element.classification.index].dec()
+            mutableGroups[element.classification.supergroup]!!.toList()[element.classification.externalIndex].dec()
 
-            if (mutableGroups[element.classification.supergroup]!![element.classification.index].objectsFound <= 0)
+            if (mutableGroups[element.classification.supergroup]!!.toList()[element.classification.externalIndex].objectsFound <= 0)
                 mutableGroups[element.classification.supergroup]!!.remove(element.classification)
 
             if (mutableGroups[element.classification.supergroup].isNullOrEmpty())

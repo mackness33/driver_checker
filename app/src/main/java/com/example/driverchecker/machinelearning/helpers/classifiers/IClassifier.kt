@@ -26,4 +26,6 @@ interface IClassifier<Superclass> {
     fun sizeSuperClass () : Int
 
     fun maxClassesInGroup () : Int
+    fun get(index: Int, supergroup: S): IClassification<S>?
+    fun exists(index: Int, supergroup: S): Boolean
 }

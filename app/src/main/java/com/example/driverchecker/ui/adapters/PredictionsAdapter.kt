@@ -7,14 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.BitmapUtils
 import com.example.driverchecker.R
-import com.example.driverchecker.machinelearning.data.IImageDetectionItem
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -51,7 +47,7 @@ class PredictionsAdapter(
             val bitmap: Bitmap? = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
             imageInput.setImageBitmap(bitmap)
             textIndex.text =
-                detectionItem.listItems.first().classification.index.toString()
+                detectionItem.listItems.first().classification.externalIndex.toString()
             textGroup.text = detectionItem.groups.keys.first()
         }
     }
