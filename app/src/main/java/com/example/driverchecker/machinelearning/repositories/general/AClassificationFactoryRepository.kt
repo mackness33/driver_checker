@@ -16,7 +16,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
 
     constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
 
-    override var window: IClassificationWindow<O, S> = ClassificationWindow(2, 0.5f, model?.classifier?.supergroups!!.keys)
+    override var window: IClassificationWindow<O, S> = ClassificationWindow(4, 0.5f, model?.classifier?.supergroups!!.keys)
 
     abstract override var model: IClassificationModel<I, O, S>?
 
@@ -42,8 +42,8 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
 
     override suspend fun onCompletionEvaluation (cause: Throwable?) {
         Log.d("ACClassification", "finally finished")
-
         if (cause != null && cause !is CorrectCancellationException) {
+            Log.e("ACClassification", "Just caught this: ${cause.message}", cause)
             mEvaluationFlowState.emit(
                 LiveClassificationState.End<S>(cause, null)
             )
@@ -62,7 +62,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
-        Log.d("JobClassification", "finally finished")
+//        Log.d("JobClassification", "finally finished")
         window.next(postProcessedResult)
 
         if (window.hasAcceptedLast) {

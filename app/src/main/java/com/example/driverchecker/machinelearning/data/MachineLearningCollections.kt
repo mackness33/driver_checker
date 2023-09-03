@@ -147,7 +147,7 @@ open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> :
     protected open fun putClassification (element: E) {
         when {
             !mutableGroups.containsKey(element.classification.supergroup) -> {
-                mutableGroups[element.classification.supergroup] = mutableSetOf(MutableClassificationMetrics(element.classification))
+                mutableGroups.putIfAbsent(element.classification.supergroup, mutableSetOf(MutableClassificationMetrics(element.classification)))
             }
             mutableGroups[element.classification.supergroup]!!.find { classMetric ->
                 classMetric.externalIndex == element.classification.externalIndex
@@ -155,7 +155,7 @@ open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> :
                 mutableGroups[element.classification.supergroup]!!.add(MutableClassificationMetrics(element.classification))
             }
             else -> {
-                mutableGroups[element.classification.supergroup]!!.toList()[element.classification.externalIndex].inc()
+                mutableGroups[element.classification.supergroup]!!.find { it.externalIndex == element.classification.externalIndex }?.inc()
             }
         }
     }

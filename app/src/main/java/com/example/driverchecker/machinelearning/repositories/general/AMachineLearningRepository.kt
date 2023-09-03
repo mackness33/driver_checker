@@ -100,7 +100,7 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
         return model?.processAndEvaluatesStream(input)
                     ?.onEach { postProcessedResult -> onEachEvaluation(postProcessedResult, onConditionSatisfied) }
                     ?.cancellable()
-                    ?.catch { cause -> onErrorEvaluation(cause) }
+//                    ?.catch { cause -> onErrorEvaluation(cause) }
                     ?.onCompletion { cause -> onCompletionEvaluation (cause) }
     }
 

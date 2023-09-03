@@ -26,12 +26,12 @@ abstract class AClassificationWindow<E : WithConfAndGroups<S>, S> (
 //            }
 //        }
 
-        val valueToDelete = window.first()
-        val allPossibleKeysToUpdate = valueToDelete.groups.keys.union(element.groups.keys).intersect(mSupergroupCounter.keys)
+        val valueToDelete: E? = if (window.size < size) null else window.first()
+        val allPossibleKeysToUpdate = (valueToDelete?.groups?.keys ?: emptySet()).union(element.groups.keys).intersect(mSupergroupCounter.keys)
 
         // for each key to update in the counter I add to the value of the element and sub the element that is going to be removed
         allPossibleKeysToUpdate.forEach { key ->
-            mSupergroupCounter[key] = (mSupergroupCounter[key] ?: 0) + (element.groups[key]?.size ?: 0) - (valueToDelete.groups[key]?.size ?: 0)
+            mSupergroupCounter[key] = (mSupergroupCounter[key] ?: 0) + (element.groups[key]?.size ?: 0) - (valueToDelete?.groups?.get(key)?.size ?: 0)
         }
 
         super.next(element)
