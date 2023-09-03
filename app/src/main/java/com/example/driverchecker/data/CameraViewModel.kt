@@ -24,6 +24,10 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
     override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
 
+    private val mColoredOutputs: MutableList<Map<String, Set<Int>>> = mutableListOf()
+    val coloredOutputs: List<Map<String, Set<Int>>>
+        get() = mColoredOutputs
+
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
             (evaluationClient as ImageDetectionClient).produceImage(image)
@@ -61,6 +65,16 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
         override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<String>) {
             super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
+
+            if (state.partialResult?.groups != null)
+                mColoredOutputs.add(state.partialResult.groups.mapValues { entry ->
+                    entry.value.map { classification -> classification.internalIndex }.toSet()
+                })
+        }
+
+        override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
+            super.onLiveEvaluationReady(state)
+            mColoredOutputs.clear()
         }
     }
 

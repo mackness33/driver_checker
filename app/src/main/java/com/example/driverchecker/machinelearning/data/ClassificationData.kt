@@ -145,7 +145,7 @@ data class ClassificationItem<S> (
 data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
     override val groups: Map<S, Set<IClassificationMetrics<S>>>,
     override val input: I,
-    override val listItems: MachineLearningList<E>
+    override val listItems: ClassificationItemList<E, S>
 ) : IClassificationOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
 }
@@ -165,7 +165,7 @@ sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface
 
 // Represents different states for the LatestNews screen
 sealed class LiveClassificationState : LiveEvaluationState(), LiveClassificationStateInterface {
-    data class Start<S>(val maxClassesPerGroup: Int, val supergroups: List<S>) : LiveClassificationStateInterface
+    data class Start<S>(val maxClassesPerGroup: Int, val classifier: IClassifier<S>) : LiveClassificationStateInterface
     data class Loading<S>(val index: Int, val partialResult: WithConfAndGroups<S>?) : LiveClassificationStateInterface
     data class End<S>(val exception: Throwable?, val finalResult: WithConfAndSuper<S>?) : LiveClassificationStateInterface
 }

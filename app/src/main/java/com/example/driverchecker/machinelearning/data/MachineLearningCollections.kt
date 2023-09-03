@@ -1,7 +1,7 @@
 package com.example.driverchecker.machinelearning.data
 
 interface MachineLearningList<E : WithConfidence> : List<E>,  WithConfidence
-interface ClassificationItemList<E : WithConfAndClass<S>, S> : List<E>,  WithConfAndGroups<S>
+interface ClassificationItemList<E : WithConfAndClass<S>, S> : MachineLearningList<E>,  WithConfAndGroups<S>
 
 open class MachineLearningMutableList<E : WithConfidence> : ArrayList<E>, MachineLearningList<E> {
     constructor(initialCapacity: Int) : super(initialCapacity)
@@ -134,7 +134,8 @@ open class MachineLearningMutableList<E : WithConfidence> : ArrayList<E>, Machin
     }
 }
 
-open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> : MachineLearningMutableList<E>, ClassificationItemList<E, S> {
+open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> :
+    MachineLearningMutableList<E>, ClassificationItemList<E, S> {
     constructor(initialCapacity: Int) : super(initialCapacity)
     constructor(collection: Collection<E>) : super(collection)
     constructor() : super()
@@ -288,3 +289,9 @@ open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> : MachineLe
         return result
     }
 }
+
+//interface ClientMetricsMap<S> : Map<>
+
+//open class ClientMetricsMutableClassifier<S> {
+//
+//}

@@ -16,7 +16,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
 
     constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
 
-    override var window: IClassificationWindow<O, S> = ClassificationWindow(2, 0.5f, model?.classifier?.superclasses!!.keys)
+    override var window: IClassificationWindow<O, S> = ClassificationWindow(2, 0.5f, model?.classifier?.supergroups!!.keys)
 
     abstract override var model: IClassificationModel<I, O, S>?
 
@@ -27,7 +27,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
                 if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && model != null && model?.classifier != null) {
                     mEvaluationFlowState.emit(LiveClassificationState.Start(
                         (model as IClassificationModel<I, O, S>).classifier.maxClassesInGroup(),
-                        (model as IClassificationModel<I, O, S>).classifier.superclasses.keys.toList())
+                        (model as IClassificationModel<I, O, S>).classifier)
                     )
 
                     flowEvaluation(input, ::cancel)?.collect()

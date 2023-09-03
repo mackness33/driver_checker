@@ -15,13 +15,13 @@ open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
     constructor (newClassifier: IClassifier<S>) {
         mSupergroups = mutableMapOf()
 
-        initClassifier(newClassifier.superclasses)
+        initClassifier(newClassifier.supergroups)
     }
 
     private fun initClassifier (newDataset: ClassificationSupergroupMap<S>?) = load(newDataset)
     private fun initClassifier (importedJson: ImportClassifier<S>?) = load(importedJson)
 
-    override val superclasses : ClassificationSupergroupMap<S>
+    override val supergroups : ClassificationSupergroupMap<S>
         get() = mSupergroups
 
 
