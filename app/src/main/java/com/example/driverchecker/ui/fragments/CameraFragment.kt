@@ -118,16 +118,25 @@ class CameraFragment : Fragment() {
             binding.resultView.invalidate()
         }
 
-        model.passengerInfo?.observe(viewLifecycleOwner) { info ->
-            if (info != null) {
-                binding.txtPassenger.text = String.format("%s:%s:%s", info.first, info.second, info.third)
-            }
-        }
 
-        model.driverInfo?.observe(viewLifecycleOwner) { info ->
-            if (info != null) {
-                binding.txtPassenger.text =
-                    String.format("%s:%s:%s", info.first, info.second, info.third)
+        model.areMetricsObservable.observe(viewLifecycleOwner) { bool ->
+            if (bool) {
+                model.passengerInfo?.observe(viewLifecycleOwner) { info ->
+                    if (info != null) {
+                        binding.txtPassenger.text =
+                            String.format("%s:%s:%s", info.first, info.second, info.third)
+                    }
+                }
+
+                model.driverInfo?.observe(viewLifecycleOwner) { info ->
+                    if (info != null) {
+                        binding.txtDriver.text =
+                            String.format("%s:%s:%s", info.first, info.second, info.third)
+                    }
+                }
+            } else {
+                binding.txtDriver.text = null
+                binding.txtPassenger.text = null
             }
         }
 

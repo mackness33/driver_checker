@@ -23,6 +23,9 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
     protected val mMetricsPerGroup = ClientMetricsMutableMap<S>()
     override val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>> = mMetricsPerGroup.liveMetrics
 
+    protected val mAreMetricsObservable = MutableLiveData(false)
+    override val areMetricsObservable: LiveData<Boolean>
+        get() = mAreMetricsObservable
 
     override val evaluationListener: ClassificationListener<S> = EvaluationClassificationListener()
 
@@ -43,6 +46,7 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
             super.onLiveEvaluationReady(state)
             mMetricsPerGroup.clear()
             classifier = null
+            mAreMetricsObservable.postValue(false)
             Log.d("ClassificationClient - EvaluationClassificationListener", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
         }
 
@@ -53,6 +57,7 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
             classifier = state.classifier
             mGroups.postValue(state.classifier.supergroups.keys)
             mMetricsPerGroup.initialize(state.classifier.supergroups.keys)
+            mAreMetricsObservable.postValue(true)
 //            mMetricsPerGroup.putAll(state.classifier.supergroups.keys.associateWith { MutableLiveData(Pair(0, 0)) })
             Log.d("ClassificationClient - EvaluationClassificationListener", "START: ${mPartialResultEvent.value} initialIndex")
         }

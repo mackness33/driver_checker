@@ -32,6 +32,9 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val classificationGroups: LiveData<Set<String>>
         get() = evaluationClient.groups
 
+    val areMetricsObservable: LiveData<Boolean>
+        get() = evaluationClient.areMetricsObservable
+
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
             (evaluationClient as ImageDetectionClient).produceImage(image)

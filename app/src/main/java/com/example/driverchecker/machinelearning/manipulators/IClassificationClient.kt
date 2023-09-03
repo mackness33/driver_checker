@@ -12,4 +12,5 @@ interface IClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSup
     val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>>
     val classifier: IClassifier<S>?
     val groups: LiveData<Set<S>>
+    val areMetricsObservable: LiveData<Boolean>
 }
