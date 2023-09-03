@@ -126,7 +126,9 @@ interface IClassificationItem<S> : IMachineLearningItem, WithConfAndClass<S>
 //    val classification: IClassification<S>
 //}
 
-interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E>, WithConfAndGroups<S>
+interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E>, WithConfAndGroups<S> {
+    override val listItems: ClassificationItemList<E, S>
+}
 //interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E> {
 //    val groups: Set<S>
 //}
@@ -143,11 +145,11 @@ data class ClassificationItem<S> (
 ) : IClassificationItem<S>
 
 data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
-    override val groups: Map<S, Set<IClassificationMetrics<S>>>,
     override val input: I,
     override val listItems: ClassificationItemList<E, S>
 ) : IClassificationOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
+    override val groups: Map<S, Set<IClassificationMetrics<S>>> = listItems.groups
 }
 
 data class ClassificationFinalResult<S> (

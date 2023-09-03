@@ -50,7 +50,6 @@ open class YOLOModel :
 
     override fun postProcess(output: IImageDetectionOutput<String>): IImageDetectionOutput<String> {
         return ImageDetectionOutput(
-            output.groups,
             output.input,
             ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
         )
@@ -60,8 +59,8 @@ open class YOLOModel :
         outputs: FloatArray,
         image: IImageDetectionInput
     ): IImageDetectionOutput<String> {
-        val results: MachineLearningMutableList<IImageDetectionItem<String>> = MachineLearningMutableList()
-        val groupsFound: MutableMap<String, Int> = mutableMapOf()
+        val results: ClassificationItemMutableList<IImageDetectionItem<String>, String> = ClassificationItemMutableList()
+//        val groupsFound: MutableMap<String, MutableSet<IClassification<String>>> = mutableMapOf()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
 
@@ -94,11 +93,12 @@ open class YOLOModel :
                     )
                 )
 
-                groupsFound.merge(mClassifier.get(clsIndex)!!.supergroup, 1) { newValue, oldValue -> newValue + oldValue }
+//                groupsFound.merge(mClassifier.get(clsIndex)!!.supergroup, mutableSetOf(mClassifier.get(clsIndex)!!)) { newValue, oldValue ->
+//                    newValue.union(oldValue).toMutableSet()
+//                }
             }
         }
         return ImageDetectionOutput(
-            groupsFound,
             image,
             results
         )
