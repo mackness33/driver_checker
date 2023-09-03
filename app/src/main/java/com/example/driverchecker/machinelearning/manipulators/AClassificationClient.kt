@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
+import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -18,8 +19,10 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
     override var classifier: IClassifier<S>? = null
         protected set
 
-    protected val mMetricsPerGroup = mutableMapOf<S, MutableLiveData<Pair<Int, Int>>>()
-    override val metricsPerGroup: Map<S, LiveData<Pair<Int, Int>>> = mMetricsPerGroup
+//    protected val mMetricsPerGroup = mutableMapOf<S, MutableLiveData<Pair<Int, Int>>>()
+    protected val mMetricsPerGroup = ClientMetricsMutableMap<S>()
+    override val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>> = mMetricsPerGroup.liveMetrics
+
 
     override val evaluationListener: ClassificationListener<S> = EvaluationClassificationListener()
 

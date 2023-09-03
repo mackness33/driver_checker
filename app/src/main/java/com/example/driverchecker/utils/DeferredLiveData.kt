@@ -1,13 +1,12 @@
 package com.example.driverchecker.utils
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 open class DeferredLiveData<T> (initialValue: T?, val cxt: CoroutineContext){
     protected var promise = CompletableDeferred<T?>()
-    protected val mLiveData = StateLiveData<T?>(null)
+    protected val mLiveData: MutableStateLiveData<T?> = StatefulLiveData<T?>(null)
     val value: StateLiveData<T?>
         get() = mLiveData
     val asLiveData: LiveData<T?>
