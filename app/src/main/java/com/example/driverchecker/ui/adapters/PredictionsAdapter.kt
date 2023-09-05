@@ -19,9 +19,7 @@ import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
 class PredictionsAdapter(
-    private val items: List<IImageDetectionOutput<String>>,
-    private var sizeHolder: Pair<Int, Int> = Pair(120, 64),
-    private val maxClassesPerSuperclass: Int = 2
+    private val items: List<IImageDetectionOutput<String>>
 ) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
 
     /**

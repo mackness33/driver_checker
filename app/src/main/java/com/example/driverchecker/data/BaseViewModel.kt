@@ -50,6 +50,9 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     val evaluatedItemsList: List<O>
         get() = evaluationClient.currentResultsList
 
+    val lastItemsList: List<O>
+        get() = evaluationClient.lastResultsList
+
     val output: StateLiveData<FR?>
         get() = evaluationClient.output
 
@@ -121,6 +124,8 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
             mIsEnabled.postValue(true)
         }
 
+        override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
+
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
@@ -132,7 +137,5 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
                 state.finalResult != null -> mShowResults.complete(mActualPage.value != null && mActualPage.value != Page.Result)
             }
         }
-
-        override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
     }
 }

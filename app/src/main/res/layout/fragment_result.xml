@@ -136,7 +136,7 @@ android:layout_height="match_parent">
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+        android:id="@+id/final_results_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintVertical_weight="1"

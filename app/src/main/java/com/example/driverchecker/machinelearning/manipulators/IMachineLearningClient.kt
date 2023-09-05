@@ -37,4 +37,6 @@ interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
     suspend fun start ()
 
     suspend fun stop (cause: ExternalCancellationException = ExternalCancellationException())
+
+    val lastResultsList: List<O>
 }

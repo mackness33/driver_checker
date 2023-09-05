@@ -44,13 +44,13 @@ class ResultFragment : Fragment() {
 //            Log.i("LiveData - showResults", "Evaluation ${if (show == true) "correctly ended" else "failed to end"}")
 //        }
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
-        binding.recyclerView.itemAnimator = null
-        binding.recyclerView.adapter = PredictionsAdapter(model.evaluatedItemsList)
+        binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+        binding.finalResultsView.itemAnimator = null
+        binding.finalResultsView.adapter = PredictionsAdapter(model.lastItemsList)
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
-        binding.recyclerView.itemAnimator = null
-        binding.recyclerView.adapter = MetricsTableAdapter(model.metricsPerGroup)
+        binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+        binding.groupTableBody.itemAnimator = null
+        binding.groupTableBody.adapter = MetricsTableAdapter(model.metricsPerGroup)
 
         model.setActualPage (Page.Result)
         model.resetShown()

@@ -39,7 +39,6 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     var metricsPerGroup: Map<String, Triple<Int, Int, Int>?> = emptyMap()
         private set
 
-
     val currentState: AtomicValue<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
 
@@ -64,17 +63,15 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
+        override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
+            super.onLiveEvaluationReady(state)
+            mColoredOutputs.clear()
+        }
+
         override suspend fun onLiveEvaluationStart() {}
 
         override suspend fun onLiveClassificationStart(state: LiveClassificationState.Start<String>) {
             super.onLiveEvaluationStart()
-        }
-
-        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
-
-        override suspend fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
-            super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
-            metricsPerGroup = evaluationClient.metricsPerGroup.metrics
         }
 
         override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
@@ -88,10 +85,13 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
                 })
         }
 
-        override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
-            super.onLiveEvaluationReady(state)
-            mColoredOutputs.clear()
+        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
+
+        override suspend fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
+            super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
+            metricsPerGroup = evaluationClient.metricsPerGroup.metrics
         }
+
     }
 
     override fun onCleared() {

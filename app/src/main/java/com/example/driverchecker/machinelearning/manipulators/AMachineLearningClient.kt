@@ -45,6 +45,8 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
     override val currentResultsList: List<O>
         get() = evaluatedItemsArray
 
+    override var lastResultsList: List<O> = emptyList()
+        protected set
 
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
@@ -83,11 +85,6 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
 
 
     // FUNCTIONS
-    // handling the add of a partial result to the main array
-    protected open fun insertPartialResult (partialResult: O) {
-    }
-
-
     override suspend fun produceInput (input: I) {
         mLiveInput.emit(input)
     }
@@ -136,6 +133,7 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
             mHasEnded.tryUpdate(state.finalResult != null)
+            lastResultsList = evaluatedItemsArray.toMutableList()
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
     }
