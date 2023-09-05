@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
     // LIVE DATA
-
     val hasEnded: LiveData<Boolean?>
 
     // last result evaluated by the mlRepo

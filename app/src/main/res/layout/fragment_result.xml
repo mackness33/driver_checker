@@ -33,17 +33,19 @@ android:layout_height="match_parent">
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
                     android:textAlignment="center"
-                    android:textSize="37sp"
-                    />
+                    android:textSize="30sp"
+                    android:labelFor="@id/editTitle"
+                    android:text="@string/result_title" />
 
                 <EditText
+                    android:id="@+id/editTitle"
                     android:layout_weight="2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:textAlignment="center"
                     android:inputType="text"
-                    android:textSize="40sp"
-                    />
+                    android:textSize="30sp"
+                    android:autofillHints="Name" />
 
             </LinearLayout>
 
@@ -60,8 +62,9 @@ android:layout_height="match_parent">
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
                     android:textAlignment="center"
-                    android:textSize="40sp"
-                    />
+                    android:textSize="30sp"
+                    android:labelFor="@id/txtResults"
+                    android:text="@string/result_value" />
 
                 <TextView
                     android:id="@+id/txtResults"
@@ -69,7 +72,7 @@ android:layout_height="match_parent">
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:textAlignment="center"
-                    android:textSize="40sp"
+                    android:textSize="30sp"
                     />
 
             </LinearLayout>
@@ -79,7 +82,7 @@ android:layout_height="match_parent">
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="3"
+                android:weightSum="4"
                 app:layout_constraintTop_toTopOf="parent"
                 >
 
@@ -88,7 +91,8 @@ android:layout_height="match_parent">
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
                     android:textAlignment="center"
-                    android:textSize="40sp"
+                    android:textSize="20sp"
+                    android:text="@string/table_header_name"
                     />
 
                 <TextView
@@ -96,7 +100,8 @@ android:layout_height="match_parent">
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:textAlignment="center"
-                    android:textSize="40sp"
+                    android:textSize="20sp"
+                    android:text="@string/table_header_images"
                     />
 
                 <TextView
@@ -104,7 +109,17 @@ android:layout_height="match_parent">
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:textAlignment="center"
-                    android:textSize="40sp"
+                    android:textSize="20sp"
+                    android:text="@string/table_header_classes"
+                    />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:text="@string/table_header_objects"
                     />
 
             </LinearLayout>
