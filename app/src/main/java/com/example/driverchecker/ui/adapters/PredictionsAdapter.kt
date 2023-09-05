@@ -33,8 +33,6 @@ class PredictionsAdapter(
         val textGroup: TextView = view.findViewById(R.id.txtGroup)
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 //        val colorGroupView: RecyclerView = view.findViewById(R.id.color_class_view)
-        var currentItem: IImageDetectionOutput<String>? = null
-            private set
 
 //        init {
 //            colorGroupView.layoutManager = LinearLayoutManager(view.context, RecyclerView.HORIZONTAL, true)
@@ -43,7 +41,6 @@ class PredictionsAdapter(
 //        }
 
         fun bind (detectionItem: IImageDetectionOutput<String>) {
-            currentItem = detectionItem
             val bitmap: Bitmap? = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
             imageInput.setImageBitmap(bitmap)
             textIndex.text =

@@ -7,14 +7,16 @@ import androidx.lifecycle.LiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
+import com.example.driverchecker.utils.AtomicValue
+import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
 class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
-    override val output: LiveData<IImageDetectionFinalResult<String>?>
+    override val output: StateLiveData<IImageDetectionFinalResult<String>?>
         get() = mOutput
-
+    
     // FUNCTIONS
 
     suspend fun produceImage (imgProxy: ImageProxy) {

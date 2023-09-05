@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
-import com.example.driverchecker.utils.AtomicLiveData
+import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,11 +31,12 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
         get () = mPartialResultEvent
 
 
-    protected open val mOutput: MutableLiveData<FR?> = MutableLiveData(null)
-    override val output: LiveData<FR?>
+    protected open val mOutput: MutableStateLiveData<FR?> = StatefulLiveData(null)
+    override val output: StateLiveData<FR?>
         get() = mOutput
 
-
+    override val currentState: AtomicValue<LiveEvaluationStateInterface?>
+        get() = evaluationListener.currentState
 
     // VARIABLES
     // array of evaluated items by the mlRepo

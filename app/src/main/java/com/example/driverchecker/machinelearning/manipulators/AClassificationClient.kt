@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
+import com.example.driverchecker.utils.AtomicValue
 import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.SharedFlow
 abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSuper<S>, S>
     : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
-    override val output: LiveData<FR?>
+    override val output: StateLiveData<FR?>
         get() = mOutput
 
     override var classifier: IClassifier<S>? = null
@@ -21,7 +22,8 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
 //    protected val mMetricsPerGroup = mutableMapOf<S, MutableLiveData<Pair<Int, Int>>>()
     protected val mMetricsPerGroup = ClientMetricsMutableMap<S>()
-    override val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>> = mMetricsPerGroup.liveMetrics
+//    override val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>> = mMetricsPerGroup.liveMetrics
+    override val metricsPerGroup: ClientMetricsMap<S> = mMetricsPerGroup
 
     protected val mAreMetricsObservable = MutableLiveData(false)
     override val areMetricsObservable: LiveData<Boolean>
@@ -32,6 +34,11 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
     protected val mGroups: MutableLiveData<Set<S>> = MutableLiveData()
     override val groups: LiveData<Set<S>>
         get() = mGroups
+
+
+    override val currentState: AtomicValue<LiveEvaluationStateInterface?>
+        get() = evaluationListener.currentState
+
 
     // INNER CLASSES
     protected open inner class EvaluationClassificationListener :
@@ -58,7 +65,6 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
             mGroups.postValue(state.classifier.supergroups.keys)
             mMetricsPerGroup.initialize(state.classifier.supergroups.keys)
             mAreMetricsObservable.postValue(true)
-//            mMetricsPerGroup.putAll(state.classifier.supergroups.keys.associateWith { MutableLiveData(Pair(0, 0)) })
             Log.d("ClassificationClient - EvaluationClassificationListener", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
@@ -70,29 +76,8 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
         override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<S>) {
             super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
-            try {
-                if (state.partialResult != null && state.partialResult.groups.isNotEmpty()) {
-                    mMetricsPerGroup.add(state.partialResult)
-
-//                    val partialResult: O = state.partialResult as O
-//                    for (group in partialResult.groups) {
-//                        val loadedValue = 1 to group.value.size
-//                        val newValue: Pair<Int, Int> =
-//                            if (mMetricsPerGroup[group.key]?.value == null)
-//                                loadedValue
-//                            else
-//                                mMetricsPerGroup[group.key]!!.value!!.apply {
-//                                    (this.first + loadedValue.first) to (this.second + loadedValue.second)
-//                                }
-//
-//                        mMetricsPerGroup[group.key]?.postValue(newValue)
-//                    }
-
-                }
-            } catch (e : Throwable) {
-                Log.e("ClassificationClient - EvaluationClassificationListener", "Client couldn't load the partial result properly", e)
-            } finally {
-                Log.d("ClassificationClient - EvaluationClassificationListener", "LOADING: ${state.partialResult} for the ${mPartialResultEvent.value} time")
+            if (state.partialResult != null && state.partialResult.groups.isNotEmpty()) {
+                mMetricsPerGroup.add(state.partialResult)
             }
         }
     }

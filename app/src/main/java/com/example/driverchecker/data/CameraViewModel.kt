@@ -9,6 +9,7 @@ import com.example.driverchecker.machinelearning.repositories.ImageDetectionFact
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
+import com.example.driverchecker.utils.AtomicValue
 import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.awaitFrame
@@ -18,10 +19,10 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
     val passengerInfo: StateLiveData<Triple<Int, Int, Int>?>?
-        get() = evaluationClient.metricsPerGroup["passenger"]
+        get() = evaluationClient.metricsPerGroup.liveMetrics["passenger"]
 
     val driverInfo: StateLiveData<Triple<Int, Int, Int>?>?
-        get() = evaluationClient.metricsPerGroup["driver"]
+        get() = evaluationClient.metricsPerGroup.liveMetrics["driver"]
 
     override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
 
@@ -34,6 +35,13 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
     val areMetricsObservable: LiveData<Boolean>
         get() = evaluationClient.areMetricsObservable
+
+    var metricsPerGroup: Map<String, Triple<Int, Int, Int>?> = emptyMap()
+        private set
+
+
+    val currentState: AtomicValue<LiveEvaluationStateInterface?>
+        get() = evaluationClient.currentState
 
     suspend fun produceImage (image: ImageProxy) {
         viewModelScope.launch {
@@ -66,6 +74,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
         override suspend fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
+            metricsPerGroup = evaluationClient.metricsPerGroup.metrics
         }
 
         override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}

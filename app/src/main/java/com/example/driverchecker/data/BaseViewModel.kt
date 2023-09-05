@@ -50,7 +50,7 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     val evaluatedItemsList: List<O>
         get() = evaluationClient.currentResultsList
 
-    val output: LiveData<FR?>
+    val output: StateLiveData<FR?>
         get() = evaluationClient.output
 
     protected val mShowResults = DeferredLiveData(false, viewModelScope.coroutineContext)

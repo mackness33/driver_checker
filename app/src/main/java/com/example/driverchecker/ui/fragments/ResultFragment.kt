@@ -14,6 +14,7 @@ import com.example.driverchecker.R
 import com.example.driverchecker.data.CameraViewModel
 import com.example.driverchecker.data.Page
 import com.example.driverchecker.databinding.FragmentResultBinding
+import com.example.driverchecker.ui.adapters.MetricsTableAdapter
 import com.example.driverchecker.ui.adapters.PredictionsAdapter
 
 class ResultFragment : Fragment() {
@@ -31,25 +32,25 @@ class ResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        model.output.observe(viewLifecycleOwner) { output ->
-//            binding.txtResult.text = String.format("%s with %s", output?.supergroup, output?.confidence?.times(100))
-//        }
 
-//        model.passengerInfo.observe(viewLifecycleOwner) { info ->
-//            binding.txtPassenger.text = String.format("%s:%s", info.first, info.second)
-//        }
-//
-//        model.driverInfo.observe(viewLifecycleOwner) { info ->
-//            binding.txtDriver.text = String.format("%s:%s", info.first, info.second)
-//        }
 
-        model.showResults.observe(viewLifecycleOwner) { show ->
-            Log.i("LiveData - showResults", "Evaluation ${if (show == true) "correctly ended" else "failed to end"}")
+        model.output.observe(viewLifecycleOwner) { output ->
+            binding.txtResults.text = String.format("%s with %s", output?.supergroup, output?.confidence?.times(100))
         }
+
+
+
+//        model.showResults.observe(viewLifecycleOwner) { show ->
+//            Log.i("LiveData - showResults", "Evaluation ${if (show == true) "correctly ended" else "failed to end"}")
+//        }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.recyclerView.itemAnimator = null
         binding.recyclerView.adapter = PredictionsAdapter(model.evaluatedItemsList)
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+        binding.recyclerView.itemAnimator = null
+        binding.recyclerView.adapter = MetricsTableAdapter(model.metricsPerGroup)
 
         model.setActualPage (Page.Result)
         model.resetShown()

@@ -142,7 +142,9 @@ interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfA
 data class ClassificationItem<S> (
     override val confidence: Float,
     override val classification: IClassification<S>,
-) : IClassificationItem<S>
+) : IClassificationItem<S> {
+    constructor(baseResult: WithConfAndClass<S>) : this(baseResult.confidence, baseResult.classification)
+}
 
 data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
     override val input: I,
@@ -155,7 +157,9 @@ data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
 data class ClassificationFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S
-) : IClassificationFinalResult<S>
+) : IClassificationFinalResult<S> {
+    constructor(baseResult: WithConfAndSuper<S>) : this(baseResult.confidence, baseResult.supergroup)
+}
 
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
