@@ -20,7 +20,8 @@ import java.util.*
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
 class PredictionsAdapter(
-    private val items: List<IImageDetectionOutput<String>>
+    private val items: List<IImageDetectionOutput<String>>,
+    private var colorList: Set<String>? = null
 ) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
 
     /**
@@ -65,7 +66,8 @@ class PredictionsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.bind(items[position])
-        viewHolder.textGroup.setTextColor(colorManager.listFullColors[position].scale[2] ?: Color.BLACK)
+        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(items[position].groups.keys.first()) } ?: Color.WHITE
+        viewHolder.textGroup.setTextColor(colorManager.listFullColors[indexColorGroup].scale[2])
 
 //        runBlocking (Dispatchers.Default) {
 //            val indexFoundClass = items[position].listItems

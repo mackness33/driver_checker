@@ -1,5 +1,6 @@
 package com.example.driverchecker.ui.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,8 +40,10 @@ class MetricsTableAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val mapKey = items.keys.elementAt(position)
-        viewHolder.nameView.text = mapKey.replaceFirstChar { if (it.isLowerCase()) it.titlecase(
-            Locale.getDefault()) else it.toString() }
+        viewHolder.nameView.text = mapKey.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        }
+        viewHolder.nameView.setTextColor(colorManager.listFullColors[position].scale[2])
         viewHolder.imagesView.text = items[mapKey]!!.first.toString()
         viewHolder.classesView.text = items[mapKey]!!.second.toString()
         viewHolder.objectsView.text = items[mapKey]!!.third.toString()

@@ -7,7 +7,9 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 import com.example.driverchecker.utils.AtomicValue
+import com.example.driverchecker.utils.MutableStateLiveData
 import com.example.driverchecker.utils.StateLiveData
+import com.example.driverchecker.utils.StatefulLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -31,8 +33,8 @@ abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfA
 
     override val evaluationListener: ClassificationListener<S> = EvaluationClassificationListener()
 
-    protected val mGroups: MutableLiveData<Set<S>> = MutableLiveData()
-    override val groups: LiveData<Set<S>>
+    protected val mGroups: MutableStateLiveData<Set<S>> = StatefulLiveData()
+    override val groups: StateLiveData<Set<S>>
         get() = mGroups
 
 

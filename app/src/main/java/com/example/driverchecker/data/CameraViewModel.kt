@@ -30,7 +30,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val coloredOutputs: List<Map<String, Set<Int>>>
         get() = mColoredOutputs
 
-    val classificationGroups: LiveData<Set<String>>
+    val classificationGroups: StateLiveData<Set<String>>
         get() = evaluationClient.groups
 
     val areMetricsObservable: LiveData<Boolean>

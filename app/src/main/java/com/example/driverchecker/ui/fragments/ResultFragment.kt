@@ -34,7 +34,6 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         model.output.observe(viewLifecycleOwner) { output ->
             binding.txtResults.text = String.format("%s",
                 output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
@@ -42,15 +41,9 @@ class ResultFragment : Fragment() {
             binding.txtConfidence.text = String.format("%s", output?.confidence?.times(100))
         }
 
-
-
-//        model.showResults.observe(viewLifecycleOwner) { show ->
-//            Log.i("LiveData - showResults", "Evaluation ${if (show == true) "correctly ended" else "failed to end"}")
-//        }
-
         binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.finalResultsView.itemAnimator = null
-        binding.finalResultsView.adapter = PredictionsAdapter(model.lastItemsList)
+        binding.finalResultsView.adapter = PredictionsAdapter(model.lastItemsList, model.classificationGroups.lastValue)
 
         binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.groupTableBody.itemAnimator = null

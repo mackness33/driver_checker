@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
 
-open class StatefulLiveData<T> (initialValue: T?) : MutableStateLiveData<T> {
+open class StatefulLiveData<T> (initialValue: T? = null) : MutableStateLiveData<T> {
         override var lastValue: T? = null
         protected set
     protected val mLiveData = MutableLiveData<T?>(null)

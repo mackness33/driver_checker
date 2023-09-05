@@ -71,7 +71,7 @@ class CameraFragment : Fragment() {
         binding.partialsView.adapter = PartialsAdapter(model.coloredOutputs)
 
         model.classificationGroups.observe(viewLifecycleOwner) { groups ->
-            (binding.partialsView.adapter as PartialsAdapter).updateGroupList(groups)
+            (binding.partialsView.adapter as PartialsAdapter).updateGroupList(groups ?: emptySet())
         }
 
         model.isEnabled.observe(viewLifecycleOwner) { enableLive ->
