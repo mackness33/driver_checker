@@ -28,14 +28,13 @@ android:layout_height="match_parent">
                 >
 
                 <TextView
-                    android:id="@+id/txtTitle"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
-                    android:textAlignment="center"
-                    android:textSize="30sp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:labelFor="@id/editTitle"
-                    android:text="@string/result_title" />
+                    android:text="@string/result_title"
+                    android:textAlignment="textEnd"
+                    android:textSize="25sp" />
 
                 <EditText
                     android:id="@+id/editTitle"
@@ -44,7 +43,7 @@ android:layout_height="match_parent">
                     android:layout_height="match_parent"
                     android:textAlignment="center"
                     android:inputType="text"
-                    android:textSize="30sp"
+                    android:textSize="25sp"
                     android:autofillHints="Name" />
 
             </LinearLayout>
@@ -58,21 +57,49 @@ android:layout_height="match_parent">
                 >
 
                 <TextView
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
-                    android:textAlignment="center"
-                    android:textSize="30sp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:labelFor="@id/txtResults"
-                    android:text="@string/result_value" />
+                    android:text="@string/result_value"
+                    android:textAlignment="textEnd"
+                    android:textSize="25sp" />
 
                 <TextView
                     android:id="@+id/txtResults"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:capitalize="none"
+                    android:textAlignment="center"
+                    android:textSize="25sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:labelFor="@id/txtConfidence"
+                    android:text="@string/confidence"
+                    android:textAlignment="textEnd"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/txtConfidence"
                     android:layout_weight="2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:textAlignment="center"
-                    android:textSize="30sp"
+                    android:textSize="25sp"
                     />
 
             </LinearLayout>

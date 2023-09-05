@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.BitmapUtils
 import com.example.driverchecker.R
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
+import java.util.*
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -43,7 +44,9 @@ class PredictionsAdapter(
             imageInput.setImageBitmap(bitmap)
             textIndex.text =
                 detectionItem.listItems.first().classification.externalIndex.toString()
-            textGroup.text = detectionItem.groups.keys.first()
+            textGroup.text = detectionItem.groups.keys.first().replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            }
         }
     }
 

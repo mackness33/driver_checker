@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
+import java.util.*
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -38,7 +39,8 @@ class MetricsTableAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val mapKey = items.keys.elementAt(position)
-        viewHolder.nameView.text = mapKey
+        viewHolder.nameView.text = mapKey.replaceFirstChar { if (it.isLowerCase()) it.titlecase(
+            Locale.getDefault()) else it.toString() }
         viewHolder.imagesView.text = items[mapKey]!!.first.toString()
         viewHolder.classesView.text = items[mapKey]!!.second.toString()
         viewHolder.objectsView.text = items[mapKey]!!.third.toString()

@@ -16,6 +16,7 @@ import com.example.driverchecker.data.Page
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
 import com.example.driverchecker.ui.adapters.PredictionsAdapter
+import java.util.*
 
 class ResultFragment : Fragment() {
     private lateinit var layout: View
@@ -35,7 +36,10 @@ class ResultFragment : Fragment() {
 
 
         model.output.observe(viewLifecycleOwner) { output ->
-            binding.txtResults.text = String.format("%s with %s", output?.supergroup, output?.confidence?.times(100))
+            binding.txtResults.text = String.format("%s",
+                output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+            )
+            binding.txtConfidence.text = String.format("%s", output?.confidence?.times(100))
         }
 
 

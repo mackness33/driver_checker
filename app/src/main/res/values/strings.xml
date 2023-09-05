@@ -18,4 +18,5 @@
     <string name="table_header_images">Images</string>
     <string name="table_header_classes">Classes</string>
     <string name="table_header_objects">Objects</string>
+    <string name="confidence">Confidence:</string>
 </resources>
