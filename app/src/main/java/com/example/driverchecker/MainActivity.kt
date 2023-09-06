@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main);
-//        model.setImageDetectionRepository(FileUtils.assetFilePath(this, "coco_detection_lite.ptl"), "https://detect.roboflow.com/checker-ei67f/1?api_key=R6X2vkBZa49KTGoYyv9y")
         model
         /* TOOLBAR */
         val toolbar: Toolbar = findViewById(R.id.material_toolbar)

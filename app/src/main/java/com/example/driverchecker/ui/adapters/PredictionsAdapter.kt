@@ -40,11 +40,10 @@ class PredictionsAdapter(
 //            colorGroupView.adapter = ItemColorsAdapter(listOf(false, true))
 //        }
 
-        fun bind (detectionItem: IImageDetectionOutput<String>) {
+        fun bind (detectionItem: IImageDetectionOutput<String>, position: Int) {
             val bitmap: Bitmap? = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
             imageInput.setImageBitmap(bitmap)
-            textIndex.text =
-                detectionItem.listItems.first().classification.externalIndex.toString()
+            textIndex.text = position.toString()
             textGroup.text = detectionItem.groups.keys.first().replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
@@ -65,7 +64,7 @@ class PredictionsAdapter(
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bind(items[position])
+        viewHolder.bind(items[position], position)
         val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(items[position].groups.keys.first()) } ?: Color.WHITE
         viewHolder.textGroup.setTextColor(colorManager.listFullColors[indexColorGroup].scale[2])
 

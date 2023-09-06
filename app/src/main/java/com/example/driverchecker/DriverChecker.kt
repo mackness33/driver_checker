@@ -13,7 +13,7 @@ class DriverChecker : Application() {
     // rather than when the application starts
 //    val defaultModel: Map<String, String> =
     val repository by lazy { ImageDetectionFactoryRepository.getInstance("YoloV5", mapOf(
-        "path" to FileUtils.assetFilePath(this, "two_classes.ptl"),
-        "classification" to FileUtils.assetLoadJson(this, "classification_example.json")
+        "path" to FileUtils.assetFilePath(this, "weak_four_classes.ptl"),
+        "classification" to FileUtils.assetLoadJson(this, "classification.json")
     )) }
 }
