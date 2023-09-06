@@ -1,8 +1,12 @@
 {
   "value": {
     "driver": [
-      "window",
-      "belt"
+      "left-window",
+      "left-belt"
+    ],
+    "passenger": [
+      "right-window",
+      "right-belt"
     ]
   }
 }
