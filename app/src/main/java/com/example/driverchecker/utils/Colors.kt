@@ -176,19 +176,19 @@ open class ColorManager () {
 
     init {
         mapColors = mapOf(
-            "orange" to ColorScale(orange),
-            "pink" to ColorScale(pink),
-            "brown" to ColorScale(brown),
-            "red" to ColorScale(red),
             "green" to ColorScale(green),
-            "lime" to ColorScale(lime),
-            "yellow" to ColorScale(yellow),
             "blue" to ColorScale(blue),
-            "grey" to ColorScale(grey),
-            "blue_gray" to ColorScale(blueGray),
-            "cyan" to ColorScale(cyan),
+            "orange" to ColorScale(orange),
             "teal" to ColorScale(teal),
+            "brown" to ColorScale(brown),
             "indigo" to ColorScale(indigo),
+            "red" to ColorScale(red),
+            "lime" to ColorScale(lime),
+            "pink" to ColorScale(pink),
+            "blue_gray" to ColorScale(blueGray),
+            "yellow" to ColorScale(yellow),
+            "cyan" to ColorScale(cyan),
+            "grey" to ColorScale(grey),
             "purple" to ColorScale(purple)
         )
         mapNonScalableColors = mapOf(
