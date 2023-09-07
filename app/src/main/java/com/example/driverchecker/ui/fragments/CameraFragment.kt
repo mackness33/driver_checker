@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageProxy
 import androidx.core.app.ActivityCompat
@@ -192,6 +193,16 @@ class CameraFragment : Fragment() {
                 model.updateLiveClassification()
             }
         }
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object: OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    Log.i("backPressedCallback", "CameraFragment")
+                    model.updateLiveClassification(true)
+                }
+            }
+        )
 
         model.ready()
         model.setActualPage(Page.Camera)

@@ -23,29 +23,36 @@ android:layout_height="match_parent">
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="3"
+                android:weightSum="6"
                 app:layout_constraintTop_toTopOf="parent"
                 >
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:labelFor="@id/editTitle"
                     android:text="@string/result_title"
                     android:textAlignment="textEnd"
+                    app:layout_constraintBaseline_toBaselineOf="@id/editTitle"
                     android:textSize="25sp" />
 
                 <EditText
                     android:id="@+id/editTitle"
-                    android:layout_weight="2"
+                    android:layout_weight="2.5"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:textAlignment="center"
                     android:inputType="text"
                     android:textSize="25sp"
                     android:autofillHints="Name" />
-
+                
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    app:layout_constraintBaseline_toBaselineOf="@id/editTitle"
+                    />
             </LinearLayout>
 
             <LinearLayout

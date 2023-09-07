@@ -87,19 +87,16 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     }
 
     // update of the live classification of the mlRepo
-    fun updateLiveClassification () {
+    fun updateLiveClassification (stopEvent: Boolean = false) {
         runBlocking(Dispatchers.Default) {
-            when (mIsEvaluating.value) {
-                false -> {
-//                    machineLearningRepository?.onStartLiveEvaluation(evaluationClient.liveInput, viewModelScope)
+            when {
+                mIsEvaluating.value == null -> {}
+                !(mIsEvaluating.value!! || stopEvent) -> {
                     evaluationClient.start()
                 }
-                true -> {
-//                    machineLearningRepository?.onStopLiveEvaluation()
+                mIsEvaluating.value!! -> {
                     evaluationClient.stop()
-//                    evaluationClient.ready()
                 }
-                else -> {}
             }
         }
     }
