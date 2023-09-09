@@ -26,11 +26,14 @@ class MainActivity : AppCompatActivity(){
     private val model: CameraViewModel by viewModels() {
         CameraViewModelFactory((application as DriverChecker).repository)
     }
+    private lateinit var menuItemsVisibility: Map<Int, Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main);
+
         model
+
         /* TOOLBAR */
         toolbar = findViewById(R.id.material_toolbar)
         setSupportActionBar(toolbar)
@@ -42,72 +45,35 @@ class MainActivity : AppCompatActivity(){
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration)
         NavigationUI.setupWithNavController(toolbar, navController)
 
+        /* TOOLBAR ACTIONS */
+        menuItemsVisibility = listOf(R.id.logFragment, R.id.aboutFragment, R.id.settingsFragment, R.id.infoFragment).associateWith { true }
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.logFragment -> {
-//                    toolbar.menu[R.id.aboutFragment].isVisible = true
-//                    toolbar.menu[R.id.settingsFragment].isVisible = false
-//                    toolbar.menu[R.id.infoFragment].isVisible = false
-//                    toolbar.menu[R.id.logFragment].isVisible = false
-                    changeVisibilityOfNonAction(info = false, about = true, settings = false)
-                    changeVisibilityOfAction(log = false)
+                    changeVisibilityOfMenu(info = false, about = true, settings = false, log = false)
                 }
                 R.id.cameraFragment -> {
-//                    toolbar.menu[R.id.aboutFragment].isVisible = true
-//                    toolbar.menu[R.id.settingsFragment].isVisible = true
-//                    toolbar.menu[R.id.infoFragment].isVisible = true
-//                    toolbar.menu[R.id.logFragment].isVisible = true
-                    changeVisibilityOfNonAction(info = true, about = true, settings = true)
-                    changeVisibilityOfAction(log = true)
+                    changeVisibilityOfMenu(info = true, about = true, settings = true, log = true)
                 }
                 R.id.resultFragment -> {
-//                    toolbar.menu[R.id.aboutFragment].isVisible = true
-//                    toolbar.menu[R.id.settingsFragment].isVisible = false
-//                    toolbar.menu[R.id.infoFragment].isVisible = false
-//                    toolbar.menu[R.id.logFragment].isVisible = true
-                    changeVisibilityOfNonAction(info = false, about = true, settings = false)
-                    changeVisibilityOfAction(log = true)
+                    changeVisibilityOfMenu(info = false, about = true, settings = false, log = true)
                 }
                 else -> {
-//                    toolbar.menu[R.id.aboutFragment].isVisible = false
-//                    toolbar.menu[R.id.settingsFragment].isVisible = false
-//                    toolbar.menu[R.id.infoFragment].isVisible = false
-//                    toolbar.menu[R.id.logFragment].isVisible = false
-                    changeVisibilityOfNonAction(info = false, about = false, settings = false)
-                    changeVisibilityOfAction(log = false)
+                    changeVisibilityOfMenu(info = false, about = false, settings = false, log = false)
                 }
             }
+            invalidateOptionsMenu()
         }
     }
 
-    @SuppressLint("RestrictedApi")
-    fun changeVisibilityOfNonAction (info: Boolean = true, about: Boolean = true, settings: Boolean = true) {
-        (toolbar.menu as MenuBuilder).nonActionItems.forEach { menuItem ->
-            when (menuItem.title) {
-                "Settings" -> {
-                    menuItem.isEnabled = settings
-//                    menuItem.isVisible = settings
-                }
-                "Info" -> {
-                    menuItem.isEnabled = info
-//                    menuItem.isVisible = info
-                }
-                "About" -> {
-                    menuItem.isEnabled = about
-//                    menuItem.isVisible = about
-                }
-            }
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    fun changeVisibilityOfAction (log: Boolean = true) {
-        (toolbar.menu as MenuBuilder).actionItems.forEach { menuItem ->
-            when (menuItem.title) {
-                "Log" -> {
-                    menuItem.isEnabled = log
-//                    menuItem.isVisible = log
-                }
+    private fun changeVisibilityOfMenu (log: Boolean, info: Boolean, about: Boolean, settings: Boolean) {
+        menuItemsVisibility = menuItemsVisibility.mapValues { menuEntry ->
+            when (menuEntry.key) {
+                R.id.logFragment -> log
+                R.id.aboutFragment -> about
+                R.id.settingsFragment -> settings
+                R.id.infoFragment -> info
+                else -> false
             }
         }
     }
@@ -127,6 +93,13 @@ class MainActivity : AppCompatActivity(){
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_bottom_nav, menu)
+
+        menuItemsVisibility.forEach { menuEntry ->
+            val item = menu?.findItem(menuEntry.key)
+            item?.isEnabled = menuEntry.value
+            item?.isVisible = menuEntry.value
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 

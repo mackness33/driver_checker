@@ -4,11 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
     app:startDestination="@id/cameraFragment">
-    <fragment
-        android:id="@+id/resultFragment"
-        android:name="com.example.driverchecker.ui.fragments.ResultFragment"
-        android:label="@string/label_result"
-        tools:layout="@layout/fragment_result" />
+
+    <!--  MAIN  -->
     <fragment
         android:id="@+id/cameraFragment"
         android:name="com.example.driverchecker.ui.fragments.CameraFragment"
@@ -18,11 +15,20 @@
             android:id="@+id/action_cameraFragment_to_resultFragment"
             app:destination="@id/resultFragment" />
     </fragment>
+
+    <!--  SECONDARY  -->
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.example.driverchecker.ui.fragments.ResultFragment"
+        android:label="@string/label_result"
+        tools:layout="@layout/fragment_result" />
     <fragment
         android:id="@+id/logFragment"
         android:name="com.example.driverchecker.ui.fragments.LogFragment"
         android:label="@string/label_log"
         tools:layout="@layout/fragment_log" />
+
+    <!--  INFORMATION  -->
     <fragment
         android:id="@+id/aboutFragment"
         android:name="com.example.driverchecker.ui.fragments.AboutFragment"

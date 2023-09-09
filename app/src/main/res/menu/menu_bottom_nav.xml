@@ -7,20 +7,20 @@
         android:id="@+id/logFragment"
         android:enabled="true"
         app:showAsAction="ifRoom"
-        android:title="Log" />
+        android:title="@string/log" />
     <item
-        android:id="@+id/action_cameraFragment_to_settingsFragment"
+        android:id="@+id/settingsFragment"
         android:enabled="true"
         app:showAsAction="never"
-        android:title="Settings" />
+        android:title="@string/settings" />
     <item
-        android:id="@+id/action_cameraFragment_to_infoFragment"
+        android:id="@+id/infoFragment"
         android:enabled="true"
         app:showAsAction="never"
-        android:title="Info" />
+        android:title="@string/info" />
     <item
-        android:id="@+id/action_cameraFragment_to_aboutFragment"
+        android:id="@+id/aboutFragment"
         android:enabled="true"
         app:showAsAction="never"
-        android:title="About" />
+        android:title="@string/about" />
 </menu>
