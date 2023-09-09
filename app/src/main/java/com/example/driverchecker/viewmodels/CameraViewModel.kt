@@ -1,4 +1,4 @@
-package com.example.driverchecker.data
+package com.example.driverchecker.viewmodels
 
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*

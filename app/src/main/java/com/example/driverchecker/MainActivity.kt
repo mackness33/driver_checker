@@ -14,8 +14,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import androidx.navigation.ui.NavigationUI.navigateUp
-import com.example.driverchecker.data.CameraViewModel
-import com.example.driverchecker.data.CameraViewModelFactory
+import com.example.driverchecker.viewmodels.CameraViewModel
+import com.example.driverchecker.viewmodels.CameraViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(){

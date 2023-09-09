@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.data.CameraViewModel
-import com.example.driverchecker.data.Page
+import com.example.driverchecker.viewmodels.CameraViewModel
+import com.example.driverchecker.viewmodels.Page
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
 import com.example.driverchecker.ui.adapters.PredictionsAdapter
