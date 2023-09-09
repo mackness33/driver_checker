@@ -18,4 +18,24 @@
             android:id="@+id/action_cameraFragment_to_resultFragment"
             app:destination="@id/resultFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/logFragment"
+        android:name="com.example.driverchecker.ui.fragments.LogFragment"
+        android:label="@string/label_log"
+        tools:layout="@layout/fragment_log" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.driverchecker.ui.fragments.AboutFragment"
+        android:label="@string/label_about"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.example.driverchecker.ui.fragments.AboutFragment"
+        android:label="@string/label_info"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.driverchecker.ui.fragments.AboutFragment"
+        android:label="@string/label_settings"
+        tools:layout="@layout/fragment_about" />
 </navigation>
