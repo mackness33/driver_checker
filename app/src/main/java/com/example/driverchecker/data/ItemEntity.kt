@@ -20,6 +20,6 @@ import androidx.room.PrimaryKey
 data class ItemEntity (
     @ColumnInfo(name = "confidence") val confidence: Float,
     @ColumnInfo(name = "classification") val classification: String,
-    @ColumnInfo(name = "partial_id") val partialId: String,
+    @ColumnInfo(name = "partial_id") val partialId: Int,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 )
