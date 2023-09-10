@@ -62,12 +62,13 @@
         android:id="@+id/btnLive"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="50dp"
         android:elevation="10dp"
         android:text="Start Live"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.500"
+        app:layout_constraintVertical_bias="0.950"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -77,7 +78,7 @@
         android:elevation="10dp"
         android:text="1:1:1"
         android:textAlignment="center"
-        android:textSize="50sp"
+        android:textSize="40sp"
         app:layout_constraintBaseline_toBaselineOf="@id/txtPassenger"
         app:layout_constraintBottom_toBottomOf="@id/btnLive"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,8 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:layout_marginBottom="5dp"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:text="0:0:0"
         android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -104,10 +104,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/partials_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="6dp"
-        android:layout_marginBottom="20dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:elevation="10dp"
+        android:layout_marginBottom="30dp"
+        tools:listitem="@layout/partial_item"
         app:layout_constraintBottom_toTopOf="@id/btnLive"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
 
 <!--    <com.example.driverchecker.ui.views.RectView-->
@@ -122,16 +127,24 @@
 <!--        app:layout_constraintBottom_toBottomOf="parent" />-->
 
 
-    <com.example.driverchecker.ui.views.ResultView
-        android:id="@+id/resultView"
+    <LinearLayout
+        android:id="@+id/result_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:elevation="5dp"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <com.example.driverchecker.ui.views.ResultView
+            android:id="@+id/result_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_centerline"
