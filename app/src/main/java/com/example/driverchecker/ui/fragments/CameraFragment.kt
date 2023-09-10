@@ -54,11 +54,11 @@ class CameraFragment : Fragment() {
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private val REQUIRED_PERMISSIONS_CHOOSE_PHOTO =
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET)
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         private val REQUIRED_PERMISSIONS_TAKE_PHOTO =
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.INTERNET)
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
         private val REQUIRED_PERMISSIONS_RECORD_VIDEO =
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.INTERNET)
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
         private const val PICTURE_FILE_NAME: String = "driver_checker"
     }
 
