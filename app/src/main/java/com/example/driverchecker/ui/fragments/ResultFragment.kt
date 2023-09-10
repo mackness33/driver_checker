@@ -31,7 +31,7 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model.output.observe(viewLifecycleOwner) { output ->
+        model.finalResult.observe(viewLifecycleOwner) { output ->
             binding.txtResults.text = String.format("%s",
                 output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )

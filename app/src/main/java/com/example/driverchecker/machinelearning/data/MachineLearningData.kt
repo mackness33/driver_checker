@@ -30,7 +30,9 @@ interface IMachineLearningOutput<I, E : IMachineLearningItem> : WithConfidence, 
     val listItems: MachineLearningList<E>
 }
 
-typealias IMachineLearningFinalResult = WithConfidence
+interface IMachineLearningFinalResult : WithConfidence {
+    val listOutputs: List<WithConfidence>
+}
 
 data class MachineLearningOutput <I, E : WithConfidence> (
     override val listItems: MachineLearningList<E>,
@@ -40,8 +42,9 @@ data class MachineLearningOutput <I, E : WithConfidence> (
 }
 
 data class MachineLearningFinalResult (
-    override val confidence: Float
-) : WithConfidence
+    override val confidence: Float,
+    override val listOutputs: List<WithConfidence>
+) : IMachineLearningFinalResult
 
 typealias MachineLearningItem = MachineLearningFinalResult
 

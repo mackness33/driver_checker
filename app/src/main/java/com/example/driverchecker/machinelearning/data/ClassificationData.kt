@@ -133,7 +133,9 @@ interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLear
 //    val groups: Set<S>
 //}
 
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndSuper<S>
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndSuper<S> {
+    override val listOutputs: List<WithConfAndGroups<S>>
+}
 //interface IClassificationFinalResult<S> : IMachineLearningFinalResult {
 //    val supergroup: S
 //}
@@ -156,9 +158,10 @@ data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
 
 data class ClassificationFinalResult<S> (
     override val confidence: Float,
-    override val supergroup: S
+    override val supergroup: S,
+    override val listOutputs: List<WithConfAndGroups<S>>,
 ) : IClassificationFinalResult<S> {
-    constructor(baseResult: WithConfAndSuper<S>) : this(baseResult.confidence, baseResult.supergroup)
+    constructor(baseResult: WithConfAndSuper<S>, outputs: List<WithConfAndGroups<S>>) : this(baseResult.confidence, baseResult.supergroup, outputs)
 }
 
 

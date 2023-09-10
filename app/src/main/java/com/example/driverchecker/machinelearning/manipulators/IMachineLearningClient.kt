@@ -22,7 +22,7 @@ interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 
-    val output: StateLiveData<FR?>
+    val finalResult: StateLiveData<FR?>
 
     suspend fun produceInput (input: I)
 

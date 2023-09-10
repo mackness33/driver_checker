@@ -31,9 +31,9 @@ abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence
         get () = mPartialResultEvent
 
 
-    protected open val mOutput: MutableStateLiveData<FR?> = StatefulLiveData(null)
-    override val output: StateLiveData<FR?>
-        get() = mOutput
+    protected open val mFinalResult: MutableStateLiveData<FR?> = StatefulLiveData(null)
+    override val finalResult: StateLiveData<FR?>
+        get() = mFinalResult
 
     override val currentState: AtomicValue<LiveEvaluationStateInterface?>
         get() = evaluationListener.currentState

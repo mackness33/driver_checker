@@ -53,8 +53,8 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     val lastItemsList: List<O>
         get() = evaluationClient.lastResultsList
 
-    val output: StateLiveData<FR?>
-        get() = evaluationClient.output
+    val finalResult: StateLiveData<FR?>
+        get() = evaluationClient.finalResult
 
     protected val mShowResults = DeferredLiveData(false, viewModelScope.coroutineContext)
     val showResults: StateLiveData<Boolean?>
@@ -74,7 +74,6 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     fun resetShown () {
         mShowResults.reset()
     }
-
 
     // enabling the button to start/stop the evaluation of the ml
     fun enable (enable: Boolean) {

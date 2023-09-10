@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.SharedFlow
 abstract class AClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSuper<S>, S>
     : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
-    override val output: StateLiveData<FR?>
-        get() = mOutput
+    override val finalResult: StateLiveData<FR?>
+        get() = mFinalResult
 
     override var classifier: IClassifier<S>? = null
         protected set
