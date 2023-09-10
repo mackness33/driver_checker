@@ -10,7 +10,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfidence> () :
+abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfidence> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
     // abstracted
     protected abstract val window: IMachineLearningWindow<O>
@@ -25,10 +25,6 @@ abstract class AMachineLearningRepository<I, O : WithConfidence, FR: WithConfide
     )
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
-
-
-    // TODO: The scope must be external (from the Application level or Activity level)
-    override val repositoryScope = CoroutineScope(SupervisorJob())
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()

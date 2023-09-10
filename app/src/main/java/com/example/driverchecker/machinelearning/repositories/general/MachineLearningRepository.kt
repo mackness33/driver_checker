@@ -7,9 +7,10 @@ import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListe
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.helpers.windows.MachineLearningWindow
+import kotlinx.coroutines.CoroutineScope
 
-open class MachineLearningRepository<I, O : WithConfidence, FR : WithConfidence> (importedModel: IMachineLearningModel<I, O>?) :
-    AMachineLearningRepository<I, O, FR> () {
+open class MachineLearningRepository<I, O : WithConfidence, FR : WithConfidence> (importedModel: IMachineLearningModel<I, O>?, repositoryScope: CoroutineScope) :
+    AMachineLearningRepository<I, O, FR> (repositoryScope) {
     override val window: IMachineLearningWindow<O> = MachineLearningWindow()
     override val model: IMachineLearningModel<I, O>? = importedModel
     override var clientListener: ClientStateListener? = ClientListener()

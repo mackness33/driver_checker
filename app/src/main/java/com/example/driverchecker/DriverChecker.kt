@@ -22,8 +22,12 @@ class DriverChecker : Application() {
     val database by lazy { DriverCheckerRoomDatabase.getDatabase(this, applicationScope) }
     val testRepository by lazy { TestRepo(database.testDao()) }
 
-    val repository by lazy { ImageDetectionFactoryRepository.getInstance("YoloV5", mapOf(
-        "path" to FileUtils.assetFilePath(this, "weak_four_classes.ptl"),
-        "classification" to FileUtils.assetLoadJson(this, "classification.json")
-    )) }
+    val repository by lazy { ImageDetectionFactoryRepository.getInstance(
+        "YoloV5",
+        mapOf(
+            "path" to FileUtils.assetFilePath(this, "weak_four_classes.ptl"),
+            "classification" to FileUtils.assetLoadJson(this, "classification.json"),
+        ),
+        applicationScope,
+    )}
 }

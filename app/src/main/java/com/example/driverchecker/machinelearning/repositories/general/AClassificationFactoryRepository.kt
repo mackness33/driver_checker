@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.collect
 
 abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR : WithConfAndSuper<S>, S>
     : AMachineLearningFactoryRepository<I, O, FR>, IClassificationRepository<I, O, FR, S> {
-    constructor() : super()
+    constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
 
-    constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
+    constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
     override var window: IClassificationWindow<O, S> = ClassificationWindow(4, 0.5f, model?.classifier?.supergroups!!.keys)
 

@@ -9,13 +9,14 @@ import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListe
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
+import kotlinx.coroutines.CoroutineScope
 
 class ImageDetectionFactoryRepository
     : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> {
 
-    constructor() : super()
+    constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
 
-    constructor(modelName: String, modelInit: Map<String, Any?>) : super(modelName, modelInit)
+    constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
     override var model: IClassificationModel<IImageDetectionInput, IImageDetectionOutput<String>, String>? = null
     override var clientListener: ClientStateListener? = ClientListener()
@@ -53,11 +54,11 @@ class ImageDetectionFactoryRepository
     companion object {
         @Volatile private var INSTANCE: ImageDetectionFactoryRepository? = null
 
-        fun getInstance(modelName: String, modelInit: Map<String, Any?>): ImageDetectionFactoryRepository =
-            INSTANCE ?: ImageDetectionFactoryRepository(modelName, modelInit)
+        fun getInstance(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope): ImageDetectionFactoryRepository =
+            INSTANCE ?: ImageDetectionFactoryRepository(modelName, modelInit, repositoryScope)
 
-        fun getInstance(): ImageDetectionFactoryRepository =
-            INSTANCE ?: ImageDetectionFactoryRepository()
+        fun getInstance(repositoryScope: CoroutineScope): ImageDetectionFactoryRepository =
+            INSTANCE ?: ImageDetectionFactoryRepository(repositoryScope)
     }
 
     override fun loadClassifications(json: String?): Boolean {
