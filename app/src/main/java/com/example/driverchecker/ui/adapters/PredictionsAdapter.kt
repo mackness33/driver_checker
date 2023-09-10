@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.BitmapUtils
+import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.R
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
+import com.example.driverchecker.utils.ColorManager
 import java.util.*
 
 
@@ -22,7 +23,7 @@ import java.util.*
 class PredictionsAdapter(
     private val items: List<IImageDetectionOutput<String>>,
     private var colorList: Set<String>? = null
-) : ColoredAdapter<PredictionsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
@@ -66,7 +67,7 @@ class PredictionsAdapter(
         // contents of the view with that element
         viewHolder.bind(items[position], position)
         val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(items[position].groups.keys.first()) } ?: Color.WHITE
-        viewHolder.textGroup.setTextColor(colorManager.listFullColors[indexColorGroup].scale[2])
+        viewHolder.textGroup.setTextColor(ColorManager.listFullColors[indexColorGroup].scale[2])
 
 //        runBlocking (Dispatchers.Default) {
 //            val indexFoundClass = items[position].listItems

@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
+import com.example.driverchecker.utils.ColorManager
 import java.util.*
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
 class MetricsTableAdapter(
     private val items: Map<String, Triple<Int, Int, Int>?>
-) : ColoredAdapter<MetricsTableAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<MetricsTableAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
@@ -43,7 +44,7 @@ class MetricsTableAdapter(
         viewHolder.nameView.text = mapKey.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
         }
-        viewHolder.nameView.setTextColor(colorManager.listFullColors[position].scale[2])
+        viewHolder.nameView.setTextColor(ColorManager.listFullColors[position].scale[2])
         viewHolder.imagesView.text = items[mapKey]!!.first.toString()
         viewHolder.classesView.text = items[mapKey]!!.second.toString()
         viewHolder.objectsView.text = items[mapKey]!!.third.toString()

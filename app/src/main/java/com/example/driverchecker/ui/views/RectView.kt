@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import com.example.driverchecker.ColorScale
-import com.example.driverchecker.IColorScale
+import com.example.driverchecker.utils.ColorScale
+import com.example.driverchecker.utils.IColorScale
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.

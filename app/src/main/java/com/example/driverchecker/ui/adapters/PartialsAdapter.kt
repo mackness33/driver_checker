@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.ui.views.RectView
+import com.example.driverchecker.utils.ColorManager
 import kotlin.math.round
 import kotlin.math.sqrt
 
@@ -16,7 +17,7 @@ class PartialsAdapter(
     private val items: List<Map<String, Set<Int>>>,
     maxClasses:Int = 2,
     private var sizeHolder: Int = 50,
-) : ColoredAdapter<PartialsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PartialsAdapter.ViewHolder>() {
     private val dimension: Int
     private var colorList: Set<String>? = null
 
@@ -61,7 +62,7 @@ class PartialsAdapter(
 
         val group = items[position].toList().first()
         val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(group.first) }
-        viewHolder.predictionView.updateColors(colorManager.listFullColors[indexColorGroup ?: 0])
+        viewHolder.predictionView.updateColors(ColorManager.listFullColors[indexColorGroup ?: 0])
         viewHolder.predictionView.updateSelectedClasses(group.second.toList())
     }
 

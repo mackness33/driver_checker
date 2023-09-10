@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.ui.views.ClassView
 import com.example.driverchecker.R
+import com.example.driverchecker.utils.ColorManager
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -18,7 +19,7 @@ class ItemColorsAdapter(
     private val items: List<Boolean>,
     private var sizeHolder: Pair<Int, Int> = Pair(120, 64),
     private val superclass: Int = 1
-) : ColoredAdapter<ItemColorsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ItemColorsAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
@@ -46,7 +47,7 @@ class ItemColorsAdapter(
 //        viewHolder.colorView.updateSize(
 //            Pair(viewHolder.itemView.layoutParams.width.toFloat(), viewHolder.itemView.layoutParams.height.toFloat())
 //        )
-        viewHolder.colorView.updateColors(colorManager.listFullColors[superclass].scale[position])
+        viewHolder.colorView.updateColors(ColorManager.listFullColors[superclass].scale[position])
         viewHolder.colorView.activate(showColor = items[position])
     }
 
