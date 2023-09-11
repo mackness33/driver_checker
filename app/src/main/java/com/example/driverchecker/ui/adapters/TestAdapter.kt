@@ -22,7 +22,7 @@ class TestAdapter : ListAdapter<TestEntity, TestAdapter.TestViewHolder>(TestsCom
     }
 
     class TestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val wordItemView: TextView = itemView.findViewById(R.id.textView)
+        private val wordItemView: TextView = itemView.findViewById(R.id.text_name)
 
         fun bind(text: String?) {
             wordItemView.text = text

@@ -24,7 +24,9 @@ class MainActivity : AppCompatActivity(){
     private lateinit var navController: NavController
     private lateinit var toolbar: Toolbar
     private val model: CameraViewModel by viewModels() {
-        CameraViewModelFactory((application as DriverChecker).repository)
+        CameraViewModelFactory(
+            (application as DriverChecker).repository,
+            (application as DriverChecker).evaluationRepository)
     }
     private lateinit var menuItemsVisibility: Map<Int, Boolean>
 

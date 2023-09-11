@@ -1,15 +1,15 @@
 package com.example.driverchecker.data
 
 import androidx.annotation.WorkerThread
-import com.example.driverchecker.machinelearning.data.ClassificationFinalResult
 import com.example.driverchecker.machinelearning.data.IClassificationFinalResult
-import com.example.driverchecker.machinelearning.data.ImageDetectionFinalResult
 import kotlinx.coroutines.flow.Flow
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO
 // instead of the whole database, because you only need access to the DAO
 class EvaluationRepository(
-    private val evaluationDao: EvaluationDao
+    private val evaluationDao: EvaluationDao,
+    private val partialDao: PartialDao,
+    private val itemDao: ItemDao
 ) {
 
     // Room executes all queries on a separate thread.
@@ -23,6 +23,18 @@ class EvaluationRepository(
     @WorkerThread
     suspend fun insert(evaluation: EvaluationEntity) {
         evaluationDao.insert(evaluation)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insert(partial: PartialEntity) {
+        partialDao.insert(partial)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insert(item: ItemEntity) {
+        itemDao.insert(item)
     }
 
     @Suppress("RedundantSuspendModifier")

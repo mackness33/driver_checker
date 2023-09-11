@@ -11,8 +11,8 @@ import androidx.room.PrimaryKey
     foreignKeys = [
         ForeignKey(
             entity = PartialEntity::class,
-            parentColumns = ["partial_id"],
-            childColumns = ["id"],
+            parentColumns = ["id"],
+            childColumns = ["partial_id"],
             onDelete = ForeignKey.CASCADE
         )
     ]

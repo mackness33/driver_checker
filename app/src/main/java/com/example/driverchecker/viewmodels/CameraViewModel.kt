@@ -4,6 +4,8 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import com.example.driverchecker.R
+import com.example.driverchecker.data.EvaluationEntity
+import com.example.driverchecker.data.EvaluationRepository
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
@@ -15,7 +17,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.SharedFlow
 
-class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository? = null) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
+class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val repository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
     val passengerInfo: StateLiveData<Triple<Int, Int, Int>?>?
@@ -42,17 +44,23 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val currentState: AtomicValue<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
 
-    suspend fun produceImage (image: ImageProxy) {
-        viewModelScope.launch {
-            (evaluationClient as ImageDetectionClient).produceImage(image)
-            image.close()
-        }
+    fun insert(name: String) = viewModelScope.launch {
+        repository.insert(
+            EvaluationEntity(
+            evaluationClient.finalResult.lastValue?.confidence ?: 5.5f,
+                name,
+                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
+            )
+        )
     }
 
-    fun ready () {
-        runBlocking {
-            evaluationClient.ready()
-        }
+    suspend fun produceImage (image: ImageProxy) = viewModelScope.launch {
+        (evaluationClient as ImageDetectionClient).produceImage(image)
+        image.close()
+    }
+
+    fun ready () = runBlocking {
+        evaluationClient.ready()
     }
 
     // INNER CLASSES
@@ -96,7 +104,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
     override fun onCleared() {
         super.onCleared()
-        imageDetectionRepository?.removeClient()
+        imageDetectionRepository.removeClient()
     }
 
     fun onResultsViewed () {
@@ -107,7 +115,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     init {
         evaluationListener.listen(viewModelScope, evaluationState)
         evaluationClient.listen(viewModelScope, evaluationState)
-        imageDetectionRepository?.addClient(evaluationClient.clientState)
+        imageDetectionRepository.addClient(evaluationClient.clientState)
     }
 }
 

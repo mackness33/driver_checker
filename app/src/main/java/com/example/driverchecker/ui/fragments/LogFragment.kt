@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.DriverChecker
 import com.example.driverchecker.R
+import com.example.driverchecker.data.EvaluationEntity
 import com.example.driverchecker.data.TestEntity
 import com.example.driverchecker.databinding.FragmentLogBinding
+import com.example.driverchecker.ui.adapters.EvaluationAdapter
 import com.example.driverchecker.ui.adapters.TestAdapter
 import com.example.driverchecker.viewmodels.LogViewModel
 import com.example.driverchecker.viewmodels.LogViewModelFactory
@@ -24,7 +26,7 @@ class LogFragment : Fragment() {
     private var _binding: FragmentLogBinding? = null
     private val binding get() = _binding!!
     private val logViewModel: LogViewModel by viewModels {
-        LogViewModelFactory((requireActivity().application as DriverChecker).testRepository)
+        LogViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
     }
 
 
@@ -38,24 +40,24 @@ class LogFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        val recyclerView = binding.recyclerview
-        val adapter = TestAdapter()
+        val adapter = EvaluationAdapter()
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
 
         // Add an observer on the LiveData returned by getAlphabetizedWords.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        logViewModel.allWords.observe(viewLifecycleOwner) { tests ->
+        logViewModel.allEvaluations.observe(viewLifecycleOwner) { evaluations ->
             // Update the cached copy of the words in the adapter.
-            tests.let { adapter.submitList(it) }
+            evaluations.let { adapter.submitList(it) }
         }
 
-        val button = binding.buttonSave
-        button.setOnClickListener {
-            if(!TextUtils.isEmpty(binding.editWord.text)) {
-                logViewModel.insert(TestEntity(binding.editWord.text.toString()))
-            }
-        }
+//        val button = binding.buttonSave
+//        button.setOnClickListener {
+//            if(!TextUtils.isEmpty(binding.editWord.text)) {
+//                logViewModel.insert(EvaluationEntity(binding.editWord.text.toString()))
+//            }
+//        }
     }
 
     override fun onDestroyView() {

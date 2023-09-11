@@ -9,33 +9,117 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 // Annotates class to be a Room Database with a table (entity) of the Word class
-@Database(entities = [TestEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [
+        EvaluationEntity::class,
+        PartialEntity::class,
+        ItemEntity::class
+    ],
+    version = 2,
+    exportSchema = false
+)
 abstract class DriverCheckerRoomDatabase : RoomDatabase() {
 
-    abstract fun testDao(): TestDao
+//    abstract fun testDao(): TestDao
+    abstract fun evaluationDao(): EvaluationDao
+    abstract fun partialDao(): PartialDao
+    abstract fun itemDao(): ItemDao
 
     private class DriverCheckerRoomDatabaseCallback(
         private val scope: CoroutineScope
     ) : Callback() {
 
+//        override fun onCreate(db: SupportSQLiteDatabase) {
+//            super.onCreate(db)
+//            INSTANCE?.let { database ->
+//                scope.launch {
+//                    val wordDao = database.testDao()
+//
+//                    // Delete all content here.
+//                    wordDao.deleteAll()
+//
+//                    // Add sample words.
+//                    var word = TestEntity("Hello")
+//                    wordDao.insert(word)
+//                    word = TestEntity("World!")
+//                    wordDao.insert(word)
+//
+//                    // TODO: Add your own words!
+//                    word = TestEntity("TODO!")
+//                    wordDao.insert(word)
+//                }
+//            }
+//        }
+
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch {
-                    val wordDao = database.testDao()
+                    val evaluationDao = database.evaluationDao()
+//                    val partialDao = database.partialDao()
+//                    val itemDao = database.itemDao()
 
                     // Delete all content here.
-                    wordDao.deleteAll()
+                    evaluationDao.deleteAll()
+//                    partialDao.deleteAll()
+//                    itemDao.deleteAll()
 
                     // Add sample words.
-                    var word = TestEntity("Hello")
-                    wordDao.insert(word)
-                    word = TestEntity("World!")
-                    wordDao.insert(word)
+                    var evaluation = EvaluationEntity(0.03f, "first", "driver")
+                    evaluationDao.insert(evaluation)
 
-                    // TODO: Add your own words!
-                    word = TestEntity("TODO!")
-                    wordDao.insert(word)
+//                    var partial = PartialEntity(0.20f, 1, evaluation.id)
+//                    partialDao.insert(partial)
+//
+//             aaa       var item = ItemEntity(0.21f, "right-belt", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.22f, "right-window", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.24f, "left-window", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.27f, "left-window", partial.id)
+//                    itemDao.insert(item)
+//
+//                    partial = PartialEntity(0.40f, 2, evaluation.id)
+//                    partialDao.insert(partial)
+//                    item = ItemEntity(0.44f, "left-window", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.47f, "left-belt", partial.id)
+//                    itemDao.insert(item)
+//
+//                    partial = PartialEntity(0.60f, 3, evaluation.id)
+//                    partialDao.insert(partial)
+//                    item = ItemEntity(0.64f, "left-window", partial.id)
+//                    itemDao.insert(item)
+
+
+
+                    evaluation = EvaluationEntity(0.06f, "second", "passenger")
+                    evaluationDao.insert(evaluation)
+
+//                    partial = PartialEntity(0.70f, 1, evaluation.id)
+//                    partialDao.insert(partial)
+//
+//                    item = ItemEntity(0.71f, "right-belt", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.72f, "right-window", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.74f, "left-window", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.77f, "left-window", partial.id)
+//                    itemDao.insert(item)
+//
+//                    partial = PartialEntity(0.80f, 2, evaluation.id)
+//                    partialDao.insert(partial)
+//                    item = ItemEntity(0.84f, "left-window", partial.id)
+//                    itemDao.insert(item)
+//                    item = ItemEntity(0.87f, "left-belt", partial.id)
+//                    itemDao.insert(item)
+//
+//                    partial = PartialEntity(0.90f, 3, evaluation.id)
+//                    partialDao.insert(partial)
+//                    item = ItemEntity(0.94f, "right-window", partial.id)
+//                    itemDao.insert(item)
                 }
             }
         }
@@ -58,6 +142,7 @@ abstract class DriverCheckerRoomDatabase : RoomDatabase() {
                     "test_database"
                 )
                  .addCallback(DriverCheckerRoomDatabaseCallback(scope))
+                 .fallbackToDestructiveMigration()
                  .build()
                 INSTANCE = instance
                 // return instance

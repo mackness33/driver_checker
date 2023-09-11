@@ -13,7 +13,7 @@ interface EvaluationDao {
     fun getEvaluations(): Flow<List<EvaluationEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(word: EvaluationEntity)
+    suspend fun insert(evaluation: EvaluationEntity)
 
     @Query("DELETE FROM evaluation")
     suspend fun deleteAll()

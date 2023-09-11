@@ -2,6 +2,7 @@ package com.example.driverchecker
 
 import android.app.Application
 import com.example.driverchecker.data.DriverCheckerRoomDatabase
+import com.example.driverchecker.data.EvaluationRepository
 import com.example.driverchecker.data.TestRepo
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.media.FileUtils
@@ -20,7 +21,8 @@ class DriverChecker : Application() {
     // Using by lazy so the database and the repository are only created when they're needed
     // rather than when the application starts
     val database by lazy { DriverCheckerRoomDatabase.getDatabase(this, applicationScope) }
-    val testRepository by lazy { TestRepo(database.testDao()) }
+//    val testRepository by lazy { TestRepo(database.testDao()) }
+    val evaluationRepository by lazy { EvaluationRepository(database.evaluationDao(), database.partialDao(), database.itemDao())}
 
     val repository by lazy { ImageDetectionFactoryRepository.getInstance(
         "YoloV5",
