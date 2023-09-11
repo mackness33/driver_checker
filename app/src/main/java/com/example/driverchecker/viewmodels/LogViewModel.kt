@@ -23,4 +23,8 @@ class LogViewModel(private val repository: EvaluationRepository) : ViewModel() {
     fun insert(evaluation: EvaluationEntity) = viewModelScope.launch {
         repository.insert(evaluation)
     }
+
+    fun delete(id: Int) = viewModelScope.launch {
+        repository.delete(id)
+    }
 }

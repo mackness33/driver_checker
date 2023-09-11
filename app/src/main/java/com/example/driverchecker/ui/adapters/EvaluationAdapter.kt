@@ -3,6 +3,7 @@ package com.example.driverchecker.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,7 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.data.EvaluationEntity
 
-class EvaluationAdapter : ListAdapter<EvaluationEntity, EvaluationAdapter.EvaluationViewHolder>(EvaluationsComparator()) {
+class EvaluationAdapter (
+    private val onClickItemListener: (Int) -> Unit,
+    private val onClickDeleteListener: (Int) -> Unit
+) : ListAdapter<EvaluationEntity, EvaluationAdapter.EvaluationViewHolder>(EvaluationsComparator()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EvaluationViewHolder {
         return EvaluationViewHolder.create(parent)
@@ -18,16 +22,19 @@ class EvaluationAdapter : ListAdapter<EvaluationEntity, EvaluationAdapter.Evalua
 
     override fun onBindViewHolder(holder: EvaluationViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current.name, current.confidence.toString())
+        holder.bind(current, onClickItemListener, onClickDeleteListener)
     }
 
     class EvaluationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameItemView: TextView = itemView.findViewById(R.id.text_name)
         private val confidenceItemView: TextView = itemView.findViewById(R.id.text_confidence)
+        private val deleteButton: Button = itemView.findViewById(R.id.button_delete)
 
-        fun bind(name: String?, confidence: String?) {
-            nameItemView.text = name
-            confidenceItemView.text = confidence
+        fun bind(evaluation: EvaluationEntity, itemListener: (Int) -> Unit, deleteListener: (Int) -> Unit ) {
+            nameItemView.text = evaluation.name
+            confidenceItemView.text = evaluation.confidence.toString()
+            deleteButton.setOnClickListener { deleteListener(evaluation.id) }
+            itemView.setOnClickListener { itemListener(evaluation.id) }
         }
 
         companion object {

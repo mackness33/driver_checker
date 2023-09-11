@@ -42,4 +42,16 @@ class EvaluationRepository(
     suspend fun insert(finalResult: IClassificationFinalResult<String>, name: String) {
         evaluationDao.insert(EvaluationEntity(finalResult.confidence, name, finalResult.supergroup))
     }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun delete(evaluationId: Int) {
+        evaluationDao.deleteById(evaluationId)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun delete(evaluation: EvaluationEntity) {
+        evaluationDao.delete(evaluation)
+    }
 }

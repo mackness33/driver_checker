@@ -3,11 +3,13 @@ package com.example.driverchecker.ui.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.DriverChecker
@@ -40,7 +42,7 @@ class LogFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        val recyclerView = binding.recyclerview
-        val adapter = EvaluationAdapter()
+        val adapter = EvaluationAdapter(::itemListener, ::deleteListener)
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
 
@@ -51,13 +53,6 @@ class LogFragment : Fragment() {
             // Update the cached copy of the words in the adapter.
             evaluations.let { adapter.submitList(it) }
         }
-
-//        val button = binding.buttonSave
-//        button.setOnClickListener {
-//            if(!TextUtils.isEmpty(binding.editWord.text)) {
-//                logViewModel.insert(EvaluationEntity(binding.editWord.text.toString()))
-//            }
-//        }
     }
 
     override fun onDestroyView() {
@@ -65,26 +60,12 @@ class LogFragment : Fragment() {
         _binding = null
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, intentData: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, intentData)
-//
-//        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-//            intentData?.getStringExtra(NewWordActivity.EXTRA_REPLY)?.let { reply ->
-//                val word = Word(reply)
-//                wordViewModel.insert(word)
-//            }
-//        } else {
-//            Toast.makeText(
-//                applicationContext,
-//                R.string.empty_not_saved,
-//                Toast.LENGTH_LONG
-//            ).show()
-//        }
-//    }
-
-
-    companion object {
-        const val EXTRA_REPLY = "com.example.driverchecker.REPLY"
+    private fun deleteListener(evaluationId: Int) {
+        logViewModel.delete(evaluationId)
     }
 
+    private fun itemListener(evaluationId: Int) {
+//        findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
+        Log.d("LogItemClick", "Item with id: $evaluationId has been pressed")
+    }
 }

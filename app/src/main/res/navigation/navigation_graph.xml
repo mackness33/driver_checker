@@ -26,7 +26,8 @@
         android:id="@+id/logFragment"
         android:name="com.example.driverchecker.ui.fragments.LogFragment"
         android:label="@string/label_log"
-        tools:layout="@layout/fragment_log" />
+        tools:layout="@layout/fragment_log" >
+    </fragment>
 
     <!--  INFORMATION  -->
     <fragment
