@@ -35,7 +35,7 @@ class ResultView : View {
         paintText.color = Color.WHITE
         paintText.strokeWidth = 0f
         paintText.style = Paint.Style.FILL
-        paintText.textSize = 30f
+        paintText.textSize = 27f
     }
 
     override fun onDraw(canvas: Canvas) {
