@@ -104,15 +104,16 @@
         app:layout_constraintBaseline_toBaselineOf="@id/edit_window_threshold"
         />
 
-    <EditText android:id="@+id/edit_window_threshold"
+    <EditText
+        android:id="@+id/edit_window_threshold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginVertical="5dp"
-        app:layout_constraintStart_toStartOf="@id/radio_window_frame"
-        app:layout_constraintEnd_toEndOf="@id/radio_window_frame"
-        app:layout_constraintTop_toBottomOf="@id/radio_window_frame"
+        android:inputType="number|numberDecimal"
         app:layout_constraintBottom_toTopOf="@id/edit_model_threshold"
-        />
+        app:layout_constraintEnd_toEndOf="@id/radio_window_frame"
+        app:layout_constraintStart_toStartOf="@id/radio_window_frame"
+        app:layout_constraintTop_toBottomOf="@id/radio_window_frame" />
 
 
     <!--  MODEL THRESHOLD  -->
@@ -133,6 +134,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginVertical="5dp"
+        android:inputType="number|numberDecimal"
         app:layout_constraintStart_toStartOf="@id/radio_window_frame"
         app:layout_constraintEnd_toEndOf="@id/radio_window_frame"
         app:layout_constraintBottom_toBottomOf="@id/layout_footer_button"
@@ -146,6 +148,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
+        android:layout_marginBottom="15dp"
         android:orientation="horizontal"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/edit_model_threshold"
