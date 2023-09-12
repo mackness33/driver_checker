@@ -185,7 +185,7 @@
                     android:id="@+id/group_table_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:listitem="@layout/group_item"
+                    tools:listitem="@layout/item_group"
                     android:layout_marginBottom="15dp"
                     android:orientation="vertical"
                     />
@@ -202,7 +202,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:elevation="6dp"
-        tools:listitem="@layout/prediction_item"
+        tools:listitem="@layout/item_prediction"
         app:layout_constraintTop_toBottomOf="@id/card_metrics"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

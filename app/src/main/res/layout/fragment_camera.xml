@@ -108,7 +108,7 @@
         android:layout_weight="1"
         android:elevation="10dp"
         android:layout_marginBottom="30dp"
-        tools:listitem="@layout/partial_item"
+        tools:listitem="@layout/item_partial"
         app:layout_constraintBottom_toTopOf="@id/btnLive"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

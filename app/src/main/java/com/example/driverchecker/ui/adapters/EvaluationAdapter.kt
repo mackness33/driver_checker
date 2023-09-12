@@ -40,7 +40,7 @@ class EvaluationAdapter (
         companion object {
             fun create(parent: ViewGroup): EvaluationViewHolder {
                 val view: View = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.test_item, parent, false)
+                    .inflate(R.layout.item_evaluation, parent, false)
                 return EvaluationViewHolder(view)
             }
         }

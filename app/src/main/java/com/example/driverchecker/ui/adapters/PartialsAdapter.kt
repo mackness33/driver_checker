@@ -1,6 +1,5 @@
 package com.example.driverchecker.ui.adapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +43,7 @@ class PartialsAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.partial_item, viewGroup, false)
+            .inflate(R.layout.item_partial, viewGroup, false)
 
         return ViewHolder(view)
     }
