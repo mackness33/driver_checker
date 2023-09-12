@@ -1,4 +1,4 @@
-package com.example.driverchecker.data
+package com.example.driverchecker.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -7,19 +7,19 @@ import androidx.room.PrimaryKey
 
 
 @Entity(
-    tableName = "item",
+    tableName = "partial",
     foreignKeys = [
         ForeignKey(
-            entity = PartialEntity::class,
+            entity = EvaluationEntity::class,
             parentColumns = ["id"],
-            childColumns = ["partial_id"],
+            childColumns = ["evaluation_id"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class ItemEntity (
+data class PartialEntity (
     @ColumnInfo(name = "confidence") val confidence: Float,
-    @ColumnInfo(name = "classification") val classification: String,
-    @ColumnInfo(name = "partial_id") val partialId: Int,
+    @ColumnInfo(name = "index") val index: Int,
+    @ColumnInfo(name = "evaluation_id") val evaluationId: Int,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 )

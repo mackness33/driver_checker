@@ -6,9 +6,7 @@ import com.example.driverchecker.machinelearning.helpers.listeners.GenericListen
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
-import com.example.driverchecker.utils.AtomicLiveData
-import com.example.driverchecker.utils.DeferredLiveData
-import com.example.driverchecker.utils.StateLiveData
+import com.example.driverchecker.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -19,12 +17,12 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
         get() = machineLearningRepository?.evaluationFlowState
 
 
-    // LISTENERS
+    // VARIABLES
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
-
-    // CLIENTS
     protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
+
+    protected open var settings: ISettings = Settings(3, 0.6f, 0.1f)
 
 
     // LIVE DATA
@@ -64,6 +62,8 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     val actualPage: LiveData<IPage?>
         get() = mActualPage.asLiveData
 
+
+
     // FUNCTIONS
     fun setActualPage (nextPage: IPage) {
         runBlocking {
@@ -83,6 +83,10 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     // start/stop the evaluation of the ml
     fun evaluate (record: Boolean) {
         mIsEvaluating.value = record
+    }
+
+    fun saveSettings (newSettings: ISettings) {
+        settings = newSettings
     }
 
     // update of the live classification of the mlRepo

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
-import com.example.driverchecker.data.TestEntity
+import com.example.driverchecker.database.TestEntity
 
 class TestAdapter : ListAdapter<TestEntity, TestAdapter.TestViewHolder>(TestsComparator()) {
 

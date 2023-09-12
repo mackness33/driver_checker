@@ -1,33 +1,28 @@
 package com.example.driverchecker.ui.fragments;
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.children
-import androidx.core.view.forEach
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.data.EvaluationEntity
+import com.example.driverchecker.R
 import com.example.driverchecker.databinding.DialogSettingsBinding
+import com.example.driverchecker.utils.Page
+import com.example.driverchecker.utils.Settings
+import com.example.driverchecker.utils.SettingsException
+import com.example.driverchecker.utils.showSnackbar
 import com.example.driverchecker.viewmodels.CameraViewModel
-import com.example.driverchecker.viewmodels.Page
-import com.example.driverchecker.databinding.FragmentResultBinding
-import com.example.driverchecker.ui.adapters.MetricsTableAdapter
-import com.example.driverchecker.ui.adapters.PredictionsAdapter
-import java.util.*
+import com.google.android.material.snackbar.Snackbar
 
 class SettingsDialog : DialogFragment() {
     private lateinit var layout: View
     private var _binding: DialogSettingsBinding? = null
     private val binding get() = _binding!!
-    private val model: CameraViewModel by activityViewModels()
+    private val activityModel: CameraViewModel by activityViewModels()
 //    private var radioGroupValue: Map<Int, Int> = emptyMap()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -78,6 +73,33 @@ class SettingsDialog : DialogFragment() {
          */
 
         binding.buttonSave.setOnClickListener {
+            try {
+                val possibleWindowFrame = binding.editWindowFrame.text.toString().toIntOrNull()
+                val windowFrame: Int = when {
+                    possibleWindowFrame == null -> throw SettingsException("The number of frames for the window is not valid", null)
+                    possibleWindowFrame > 11 || possibleWindowFrame < 1 -> throw SettingsException("The number of frames must be between then 1 and 11 included", null)
+                    else -> possibleWindowFrame
+                }
+
+                val possibleWindowThreshold = binding.editWindowThreshold.text.toString().toFloatOrNull()
+                val windowThreshold: Float = when {
+                    possibleWindowThreshold == null -> throw SettingsException("The threshold for the window is not valid", null)
+                    possibleWindowThreshold > 1.00f || possibleWindowThreshold < 0.00f -> throw SettingsException("The threshold for the window must be between 0.00 and 1.00", null)
+                    else -> possibleWindowThreshold
+                }
+
+                val possibleModelThreshold = binding.editModelThreshold.text.toString().toFloatOrNull()
+                val modelThreshold: Float = when {
+                    possibleModelThreshold == null -> throw SettingsException("The threshold for the model is not valid", null)
+                    possibleModelThreshold > 1.00f || possibleModelThreshold < 0.00f -> throw SettingsException("The threshold of the model must be between 0.00 and 1.00", null)
+                    else -> possibleModelThreshold
+                }
+
+                activityModel.saveSettings(Settings(windowFrame, windowThreshold, modelThreshold))
+            } catch (se: SettingsException) {
+                Toast.makeText(requireContext(), se.message, Toast.LENGTH_LONG).show()
+            }
+
             Log.d(TAG, "Save button has been pressed")
         }
 
@@ -86,8 +108,8 @@ class SettingsDialog : DialogFragment() {
             dismiss()
         }
 
-        model.setActualPage (Page.Result)
-        model.resetShown()
+        activityModel.setActualPage (Page.Result)
+        activityModel.resetShown()
     }
 
     override fun onDestroyView() {

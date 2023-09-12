@@ -1,9 +1,8 @@
 package com.example.driverchecker
 
 import android.app.Application
-import com.example.driverchecker.data.DriverCheckerRoomDatabase
-import com.example.driverchecker.data.EvaluationRepository
-import com.example.driverchecker.data.TestRepo
+import com.example.driverchecker.database.DriverCheckerRoomDatabase
+import com.example.driverchecker.database.EvaluationRepository
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.media.FileUtils
 import kotlinx.coroutines.CoroutineScope

@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.driverchecker.data.EvaluationEntity
-import com.example.driverchecker.data.EvaluationRepository
+import com.example.driverchecker.database.EvaluationEntity
+import com.example.driverchecker.database.EvaluationRepository
 import kotlinx.coroutines.launch
 
 class LogViewModel(private val repository: EvaluationRepository) : ViewModel() {

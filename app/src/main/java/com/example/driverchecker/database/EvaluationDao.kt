@@ -1,4 +1,4 @@
-package com.example.driverchecker.data
+package com.example.driverchecker.database
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow

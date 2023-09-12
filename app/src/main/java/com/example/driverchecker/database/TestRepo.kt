@@ -1,4 +1,4 @@
-package com.example.driverchecker.data
+package com.example.driverchecker.database
 
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow

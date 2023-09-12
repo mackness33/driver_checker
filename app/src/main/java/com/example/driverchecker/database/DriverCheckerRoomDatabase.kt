@@ -1,4 +1,4 @@
-package com.example.driverchecker.data
+package com.example.driverchecker.database
 
 import android.content.Context
 import androidx.room.Database

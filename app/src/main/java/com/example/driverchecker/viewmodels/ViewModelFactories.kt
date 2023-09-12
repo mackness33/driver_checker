@@ -2,8 +2,7 @@ package com.example.driverchecker.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.driverchecker.data.EvaluationRepository
-import com.example.driverchecker.data.TestRepo
+import com.example.driverchecker.database.EvaluationRepository
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 
 class CameraViewModelFactory(

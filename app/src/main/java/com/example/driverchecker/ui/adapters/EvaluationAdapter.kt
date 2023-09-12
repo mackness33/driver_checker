@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
-import com.example.driverchecker.data.EvaluationEntity
+import com.example.driverchecker.database.EvaluationEntity
 
 class EvaluationAdapter (
     private val onClickItemListener: (Int) -> Unit,

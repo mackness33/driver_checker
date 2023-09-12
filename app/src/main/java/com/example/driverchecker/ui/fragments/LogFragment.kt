@@ -1,27 +1,18 @@
 package com.example.driverchecker.ui.fragments
 
-import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.DriverChecker
-import com.example.driverchecker.R
-import com.example.driverchecker.data.EvaluationEntity
-import com.example.driverchecker.data.TestEntity
 import com.example.driverchecker.databinding.FragmentLogBinding
 import com.example.driverchecker.ui.adapters.EvaluationAdapter
-import com.example.driverchecker.ui.adapters.TestAdapter
 import com.example.driverchecker.viewmodels.LogViewModel
 import com.example.driverchecker.viewmodels.LogViewModelFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class LogFragment : Fragment() {
     private lateinit var layout: View

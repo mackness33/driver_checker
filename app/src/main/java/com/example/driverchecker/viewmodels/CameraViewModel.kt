@@ -2,10 +2,8 @@ package com.example.driverchecker.viewmodels
 
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import androidx.navigation.fragment.findNavController
-import com.example.driverchecker.R
-import com.example.driverchecker.data.EvaluationEntity
-import com.example.driverchecker.data.EvaluationRepository
+import com.example.driverchecker.database.EvaluationEntity
+import com.example.driverchecker.database.EvaluationRepository
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
@@ -14,7 +12,6 @@ import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClie
 import com.example.driverchecker.utils.AtomicValue
 import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
-import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.SharedFlow
 
 class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val repository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
@@ -117,11 +114,4 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         evaluationClient.listen(viewModelScope, evaluationState)
         imageDetectionRepository.addClient(evaluationClient.clientState)
     }
-}
-
-sealed interface IPage
-
-sealed class Page : IPage {
-    object Camera : Page()
-    object Result : Page()
 }

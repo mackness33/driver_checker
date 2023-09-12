@@ -1,29 +1,29 @@
-package com.example.driverchecker.data
+package com.example.driverchecker.database
 
 import androidx.annotation.WorkerThread
-import com.example.driverchecker.machinelearning.data.IImageDetectionItem
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import kotlinx.coroutines.flow.Flow
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO
 // instead of the whole database, because you only need access to the DAO
-class ItemRepository(private val itemDao: ItemDao) {
+class PartialRepository(private val partialDao: PartialDao) {
 
     // Room executes all queries on a separate thread.
     // Observed Flow will notify the observer when the data has changed.
-    val allItems: Flow<List<ItemEntity>> = itemDao.getItems()
+    val allPartials: Flow<List<PartialEntity>> = partialDao.getPartials()
 
     // By default Room runs suspend queries off the main thread, therefore, we don't need to
     // implement anything else to ensure we're not doing long running database work
     // off the main thread.
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(item: ItemEntity) {
-        itemDao.insert(item)
+    suspend fun insert(partial: PartialEntity) {
+        partialDao.insert(partial)
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(itemResult: IImageDetectionItem<String>, partialId: Int) {
-        itemDao.insert(ItemEntity(itemResult.confidence, itemResult.classification.name, partialId))
+    suspend fun insert(partialResult: IImageDetectionOutput<String>, evaluationId: Int) {
+        partialDao.insert(PartialEntity(partialResult.confidence, 2, evaluationId))
     }
 }
