@@ -18,14 +18,6 @@ abstract class AClassificationWindow<E : WithConfAndGroups<S>, S> (
             return
         }
 
-//        if (!mSupergroupCounter.keys.containsAll(element.groups.keys)) throw Throwable("The value found is not part of the classification")
-
-//        element.groups.forEach { group ->
-//            mSupergroupCounter.merge(group.key, group.value.size) { newValue, oldValue ->
-//                newValue + oldValue
-//            }
-//        }
-
         val valueToDelete: E? = if (window.size < size) null else window.first()
         val allPossibleKeysToUpdate = (valueToDelete?.groups?.keys ?: emptySet()).union(element.groups.keys).intersect(mSupergroupCounter.keys)
 
