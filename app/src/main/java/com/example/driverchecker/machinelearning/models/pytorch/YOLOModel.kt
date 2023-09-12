@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 
-open class YOLOModel :
+class YOLOModel :
     ImageDetectionTorchModel<String>
 {
     constructor() : super()
@@ -21,13 +21,12 @@ open class YOLOModel :
     constructor(modelPath: String? = null, newClassifications: ClassificationSupergroupMap<String>? = null) : super(modelPath, newClassifications)
 
     // model input image size
-    protected val inputWidth = 640
-    protected val inputHeight = 640
+    private val inputWidth = 640
+    private val inputHeight = 640
 
     // model output is of size 25200*(num_of_class+5)
-    protected val outputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
-    protected var threshold = 0.20f // score above which a detection is generated
-    protected val maxPredictionsLimit = 5
+    private val outputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
+    private val maxPredictionsLimit = 5
 
     override fun preProcess(data: IImageDetectionInput): IImageDetectionInput {
         val resizedBitmap = Bitmap.createScaledBitmap(data.input, inputWidth, inputHeight, true)
@@ -55,12 +54,11 @@ open class YOLOModel :
         )
     }
 
-    open fun outputsToNMSPredictions(
+    fun outputsToNMSPredictions(
         outputs: FloatArray,
         image: IImageDetectionInput
     ): IImageDetectionOutput<String> {
         val results: ClassificationItemMutableList<IImageDetectionItem<String>, String> = ClassificationItemMutableList()
-//        val groupsFound: MutableMap<String, MutableSet<IClassification<String>>> = mutableMapOf()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
 
@@ -92,12 +90,9 @@ open class YOLOModel :
                         mClassifier.get(clsIndex) ?: throw Throwable("Classifier didn't find any suitable class"),
                     )
                 )
-
-//                groupsFound.merge(mClassifier.get(clsIndex)!!.supergroup, mutableSetOf(mClassifier.get(clsIndex)!!)) { newValue, oldValue ->
-//                    newValue.union(oldValue).toMutableSet()
-//                }
             }
         }
+
         return ImageDetectionOutput(
             image,
             results
@@ -113,4 +108,5 @@ open class YOLOModel :
 
         return mClassifier.load(importedJson)
     }
+
 }

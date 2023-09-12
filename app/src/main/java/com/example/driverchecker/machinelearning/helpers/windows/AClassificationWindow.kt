@@ -3,8 +3,8 @@ package com.example.driverchecker.machinelearning.helpers.windows
 import com.example.driverchecker.machinelearning.data.*
 
 abstract class AClassificationWindow<E : WithConfAndGroups<S>, S> (
-    override val size: Int = 3,
-    override val threshold: Float = 0.15f,
+    size: Int = 3,
+    threshold: Float = 0.15f,
     supergroups: Set<S>
 ) : AMachineLearningWindow<E>(size, threshold), IClassificationWindow<E, S> {
 

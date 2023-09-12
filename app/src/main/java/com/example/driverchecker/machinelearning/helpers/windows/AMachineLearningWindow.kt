@@ -1,13 +1,20 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.WithConfidence
+import com.example.driverchecker.utils.ISettings
 
 abstract class AMachineLearningWindow<E : WithConfidence> (
-    open val size: Int = 3,
-    open val threshold: Float = 0.15f
+    initialSize: Int = 3,
+    initialThreshold: Float = 0.15f
 ) : IMachineLearningWindow<E> {
 
     protected val window : MutableList<E> = mutableListOf()
+
+    override var size: Int = initialSize
+        protected set
+
+    override var threshold: Float = initialThreshold
+        protected set
 
     override var confidence: Float = 0f
         protected set
@@ -24,6 +31,19 @@ abstract class AMachineLearningWindow<E : WithConfidence> (
     override fun totalWindowsDone() : Int = if (window.size >= size) window.size else 0
 
     override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
+
+    override fun updateSize (newSize: Int) {
+        size = newSize
+    }
+
+    override fun updateThreshold (newThreshold: Float) {
+        threshold = newThreshold
+    }
+
+    override fun updateSettings (settings: ISettings) {
+        threshold = settings.windowThreshold
+        size = settings.windowFrames
+    }
 
     override fun next (element: E) {
         window.add(element)

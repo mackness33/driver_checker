@@ -6,6 +6,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.ClassificationW
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
+import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -20,7 +21,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
 
     abstract override var model: IClassificationModel<I, O, S>?
 
-    override fun jobEvaluation (input: Flow<I>, scope: CoroutineScope): Job {
+    override fun jobEvaluation(input: Flow<I>, settings: ISettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             try {
@@ -30,6 +31,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
                         (model as IClassificationModel<I, O, S>).classifier)
                     )
 
+                    window.updateSettings(settings)
                     flowEvaluation(input, ::cancel)?.collect()
                 } else
                     throw Throwable("The stream is not ready yet")
@@ -54,15 +56,12 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
         }
 
         window.clean()
-
-//        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))
     }
 
     override suspend fun onEachEvaluation (
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
-//        Log.d("JobClassification", "finally finished")
         window.next(postProcessedResult)
 
         if (window.hasAcceptedLast) {

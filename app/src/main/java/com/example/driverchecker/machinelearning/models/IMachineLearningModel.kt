@@ -10,5 +10,9 @@ interface IMachineLearningModel <in Data, out Result> {
 
     fun <ModelInit> loadModel (init: ModelInit)
 
+    fun updateThreshold (newThreshold: Float)
+
     val isLoaded: StateFlow<Boolean>
+
+    val threshold: Float
 }

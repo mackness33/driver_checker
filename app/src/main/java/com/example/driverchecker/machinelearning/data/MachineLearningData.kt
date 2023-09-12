@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
+import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.flow.SharedFlow
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -80,7 +81,7 @@ sealed interface ClientStateInterface
 // Represents different states for the LatestNews screen
 sealed class ClientState : ClientStateInterface {
     object Ready : ClientState()
-    data class Start<E>(val input: SharedFlow<E>) : ClientState()
+    data class Start<E>(val input: SharedFlow<E>, val settings: ISettings) : ClientState()
     data class Stop(val cause: ExternalCancellationException) : ClientState()
 }
 

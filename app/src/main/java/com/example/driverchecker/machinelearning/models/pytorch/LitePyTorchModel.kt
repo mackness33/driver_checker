@@ -5,7 +5,7 @@ import com.example.driverchecker.machinelearning.models.MachineLearningModel
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
 
-abstract class LitePyTorchModel <Data, Result> () : MachineLearningModel<Data, Result>(){
+abstract class LitePyTorchModel <Data, Result> () : MachineLearningModel<Data, Result>() {
     protected var module: Module? = null
 
     constructor(modelPath: String? = null) : this() {

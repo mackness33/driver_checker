@@ -7,6 +7,8 @@ abstract class MachineLearningModel<Data, Result>  () : IMachineLearningModel<Da
     protected val loadingMap: Map<String, Boolean> = mutableMapOf()
     override val isLoaded: StateFlow<Boolean>
         get() = mIsLoaded
+    override var threshold = 0.20f // score above which a detection is generated
+        protected set
 
     override fun processAndEvaluate (input: Data): Result? {
         val data: Data = preProcess(input)
@@ -25,4 +27,8 @@ abstract class MachineLearningModel<Data, Result>  () : IMachineLearningModel<Da
     protected abstract fun evaluateData (input: Data) : Result
     protected abstract fun preProcess (data: Data) : Data
     protected abstract fun postProcess (output: Result) : Result
+
+    override fun updateThreshold (newThreshold: Float) {
+        threshold = newThreshold
+    }
 }

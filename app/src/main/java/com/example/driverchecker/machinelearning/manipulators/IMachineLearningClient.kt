@@ -3,6 +3,7 @@ package com.example.driverchecker.machinelearning.manipulators
 import androidx.lifecycle.LiveData
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.AtomicValue
+import com.example.driverchecker.utils.ISettings
 import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,11 +21,11 @@ interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
     // array of evaluated items by the mlRepo
     val currentResultsList: List<O>
 
-    fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
+    val lastResultsList: List<O>
+
+    val settings: ISettings
 
     val finalResult: StateLiveData<FR?>
-
-    suspend fun produceInput (input: I)
 
     val liveInput: SharedFlow<I>
 
@@ -32,11 +33,15 @@ interface IMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> {
 
     val currentState: AtomicValue<LiveEvaluationStateInterface?>
 
+    fun updateSettings(newSettings: ISettings)
+
+    fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
+
+    suspend fun produceInput (input: I)
+
     suspend fun ready ()
 
     suspend fun start ()
 
     suspend fun stop (cause: ExternalCancellationException = ExternalCancellationException())
-
-    val lastResultsList: List<O>
 }
