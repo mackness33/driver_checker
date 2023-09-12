@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_cameraFragment_to_resultFragment"
             app:destination="@id/resultFragment" />
+        <action
+            android:id="@+id/action_cameraFragment_to_settingsDialog"
+            app:destination="@id/settingsDialog" />
     </fragment>
 
     <!--  SECONDARY  -->
@@ -40,9 +43,9 @@
         android:name="com.example.driverchecker.ui.fragments.AboutFragment"
         android:label="@string/label_info"
         tools:layout="@layout/fragment_about" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.driverchecker.ui.fragments.AboutFragment"
+    <dialog
+        android:id="@+id/settingsDialog"
+        android:name="com.example.driverchecker.ui.fragments.SettingsDialog"
         android:label="@string/label_settings"
-        tools:layout="@layout/fragment_about" />
+        tools:layout="@layout/dialog_settings" />
 </navigation>

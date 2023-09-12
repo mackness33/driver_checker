@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(){
         NavigationUI.setupWithNavController(toolbar, navController)
 
         /* TOOLBAR ACTIONS */
-        menuItemsVisibility = listOf(R.id.logFragment, R.id.aboutFragment, R.id.settingsFragment, R.id.infoFragment).associateWith { true }
+        menuItemsVisibility = listOf(R.id.logFragment, R.id.aboutFragment, R.id.settingsDialog, R.id.infoFragment).associateWith { true }
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.logFragment -> {
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(){
             when (menuEntry.key) {
                 R.id.logFragment -> log
                 R.id.aboutFragment -> about
-                R.id.settingsFragment -> settings
+                R.id.settingsDialog -> settings
                 R.id.infoFragment -> info
                 else -> false
             }

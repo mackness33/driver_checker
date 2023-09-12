@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom"
         android:title="@string/log" />
     <item
-        android:id="@+id/settingsFragment"
+        android:id="@+id/action_cameraFragment_to_settingsDialog"
         android:enabled="true"
         app:showAsAction="never"
         android:title="@string/settings" />
