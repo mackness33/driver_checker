@@ -1,5 +1,6 @@
 package com.example.driverchecker.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,11 +59,15 @@ class PartialsAdapter(
         viewHolder.predictionView.updateSize(
             Pair(viewHolder.itemView.layoutParams.width, viewHolder.itemView.layoutParams.height)
         )
-
-        val group = items[position].toList().first()
-        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(group.first) }
-        viewHolder.predictionView.updateColors(ColorManager.listFullColors[indexColorGroup ?: 0])
-        viewHolder.predictionView.updateSelectedClasses(group.second.toList())
+        
+        try {
+            val group = items[position].toList().first()
+            val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(group.first) }
+            viewHolder.predictionView.updateColors(ColorManager.listFullColors[indexColorGroup ?: 0])
+            viewHolder.predictionView.updateSelectedClasses(group.second.toList())
+        } catch (e: Throwable) {
+            Log.e("PartialsAdapter", e.message.toString(), e)
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -32,6 +32,7 @@ abstract class AClassificationFactoryRepository<I, O : WithConfAndGroups<S>, FR 
                     )
 
                     window.updateSettings(settings)
+                    model?.updateThreshold(settings.modelThreshold)
                     flowEvaluation(input, ::cancel)?.collect()
                 } else
                     throw Throwable("The stream is not ready yet")

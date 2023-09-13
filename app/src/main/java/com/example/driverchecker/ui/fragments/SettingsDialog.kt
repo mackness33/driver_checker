@@ -29,7 +29,6 @@ class SettingsDialog : DialogFragment() {
                               savedInstanceState: Bundle?): View {
         _binding = DialogSettingsBinding.inflate(inflater, container, false)
         layout = binding.root
-        isCancelable = true
         return layout
     }
 
@@ -107,9 +106,6 @@ class SettingsDialog : DialogFragment() {
             Log.d(TAG, "Cancel button has been pressed")
             dismiss()
         }
-
-        activityModel.setActualPage (Page.Result)
-        activityModel.resetShown()
     }
 
     override fun onDestroyView() {
