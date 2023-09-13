@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-open class DeferredLiveData<T> (initialValue: T?, val cxt: CoroutineContext){
+open class DeferredLiveData<T> (initialValue: T?, protected val cxt: CoroutineContext){
     protected var promise = CompletableDeferred<T?>()
     protected val mLiveData: MutableStateLiveData<T?> = StatefulLiveData<T?>(null)
     val value: StateLiveData<T?>

@@ -72,7 +72,7 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
         }
     }
 
-    fun resetShown () {
+    open fun resetShown () {
         mShowResults.reset()
     }
 

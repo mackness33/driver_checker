@@ -12,7 +12,9 @@ import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
 import com.example.driverchecker.ui.adapters.PredictionsAdapter
+import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.utils.Page
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class ResultFragment : Fragment() {
@@ -36,6 +38,18 @@ class ResultFragment : Fragment() {
                 output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )
             binding.textConfidence.text = String.format("%.2f", output?.confidence?.times(100))
+        }
+
+        activityModel.saveImages.observe(viewLifecycleOwner) { images ->
+            if (images != null) {
+                runBlocking {
+                    BitmapUtils.saveMultipleBitmapInStorage(
+                        images.map { BitmapUtils.rotateBitmap(it, -90.0f) },
+                        requireContext()
+                    )
+                }
+                binding.buttonSave.text = "Update"
+            }
         }
 
         binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)

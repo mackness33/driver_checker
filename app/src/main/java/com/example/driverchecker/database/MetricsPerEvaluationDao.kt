@@ -12,6 +12,10 @@ interface MetricsPerEvaluationDao {
     @Query("SELECT * FROM metrics_per_evaluation WHERE id = :metricsPerEvaluationId")
     fun getMetrics(metricsPerEvaluationId: Long): MetricsPerEvaluationEntity
 
+    @Query("SELECT * FROM metrics_per_evaluation WHERE evaluation_id = :evaluationId")
+    fun getMetricsPerEvaluation(evaluationId: Long): List<MetricsPerEvaluationEntity>
+
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(metricsPerEvaluationId: MetricsPerEvaluationEntity) : Long
 

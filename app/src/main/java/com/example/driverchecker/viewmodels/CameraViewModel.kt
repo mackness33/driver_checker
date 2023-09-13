@@ -1,5 +1,6 @@
 package com.example.driverchecker.viewmodels
 
+import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
 import com.example.driverchecker.database.EvaluationEntity
@@ -10,6 +11,7 @@ import com.example.driverchecker.machinelearning.helpers.listeners.Classificatio
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
 import com.example.driverchecker.utils.AtomicValue
+import com.example.driverchecker.utils.DeferredLiveData
 import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
@@ -38,8 +40,25 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     var metricsPerGroup: Map<String, Triple<Int, Int, Int>?> = emptyMap()
         private set
 
+    private val mSaveImages = DeferredLiveData<List<Bitmap>?>(null, viewModelScope.coroutineContext)
+    val saveImages: StateLiveData<List<Bitmap>?>
+        get() = mSaveImages.value
+
     val currentState: AtomicValue<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
+
+    fun save(name: String) = viewModelScope.launch {
+//        evaluationRepository.insert(
+//            EvaluationEntity(
+//            evaluationClient.finalResult.lastValue?.confidence ?: 5.5f,
+//                name,
+//                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
+//            )
+//        )
+        if (evaluationClient.finalResult.lastValue != null) {
+            if (mSaveImages.isCompleted()) update(name) else insert(name)
+        }
+    }
 
     fun insert(name: String) = viewModelScope.launch {
 //        evaluationRepository.insert(
@@ -49,15 +68,24 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 //                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
 //            )
 //        )
-        if (evaluationClient.finalResult.lastValue != null){
-            val evalId = evaluationRepository.insert(evaluationClient.finalResult.lastValue!!, name)
-            evaluationRepository.insert(metricsPerGroup, evalId)
-        }
+        mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
+        val evalId = evaluationRepository.insert(evaluationClient.finalResult.lastValue!!, name)
+        evaluationRepository.insert(metricsPerGroup, evalId)
+    }
+
+
+    fun update(name: String) = viewModelScope.launch {
+//        evaluationRepository.update(name)
     }
 
     suspend fun produceImage (image: ImageProxy) = viewModelScope.launch {
         (evaluationClient as ImageDetectionClient).produceImage(image)
         image.close()
+    }
+
+    override fun resetShown () {
+        super.resetShown()
+        mSaveImages.deferredAwait()
     }
 
     fun ready () = runBlocking {
@@ -88,17 +116,22 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<String>) {
             super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
 
-            if (state.partialResult?.groups != null)
+            if (state.partialResult?.groups != null) {
                 mColoredOutputs.add(state.partialResult.groups.mapValues { entry ->
                     entry.value.map { classification -> classification.internalIndex }.toSet()
                 })
+            }
         }
 
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
         override suspend fun onLiveClassificationEnd(state: LiveClassificationState.End<String>) {
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
-            metricsPerGroup = evaluationClient.metricsPerGroup.metrics
+
+            if (state.finalResult != null) {
+                metricsPerGroup = evaluationClient.metricsPerGroup.metrics
+                mSaveImages.reset()
+            }
         }
 
     }
