@@ -1,7 +1,9 @@
 package com.example.driverchecker.database
 
+import android.util.Log
 import androidx.annotation.WorkerThread
-import com.example.driverchecker.machinelearning.data.IClassificationFinalResult
+import com.example.driverchecker.machinelearning.data.IImageDetectionFinalResult
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import kotlinx.coroutines.flow.Flow
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO
@@ -14,7 +16,7 @@ class EvaluationRepository(
 
     // Room executes all queries on a separate thread.
     // Observed Flow will notify the observer when the data has changed.
-    val allEvaluations: Flow<List<EvaluationEntity>> = evaluationDao.getEvaluations()
+    val allEvaluations: Flow<List<EvaluationEntity>> = evaluationDao.getAllEvaluations()
 
     // By default Room runs suspend queries off the main thread, therefore, we don't need to
     // implement anything else to ensure we're not doing long running database work
@@ -39,8 +41,13 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(finalResult: IClassificationFinalResult<String>, name: String) {
-        evaluationDao.insert(EvaluationEntity(finalResult.confidence, name, finalResult.supergroup))
+    suspend fun insert(finalResult: IImageDetectionFinalResult<String>, name: String) {
+        val id = evaluationDao.insert(EvaluationEntity(finalResult.confidence, name, finalResult.supergroup))
+
+        Log.d("EvalRepo", "Eval inserted with: $id")
+//        finalResult.listOutputs.forEach {
+//            partialDao.insert(it as IImageDetectionOutput<String>, )
+//        }
     }
 
     @Suppress("RedundantSuspendModifier")

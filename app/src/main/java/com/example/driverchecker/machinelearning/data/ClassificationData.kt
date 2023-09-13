@@ -161,7 +161,9 @@ data class ClassificationFinalResult<S> (
     override val supergroup: S,
     override val listOutputs: List<WithConfAndGroups<S>>,
 ) : IClassificationFinalResult<S> {
-    constructor(baseResult: WithConfAndSuper<S>, outputs: List<WithConfAndGroups<S>>) : this(baseResult.confidence, baseResult.supergroup, outputs)
+    constructor(baseResult: WithConfAndSuper<S>, outputs: List<WithConfAndGroups<S>>) : this(
+        baseResult.confidence, baseResult.supergroup, outputs
+    )
 }
 
 

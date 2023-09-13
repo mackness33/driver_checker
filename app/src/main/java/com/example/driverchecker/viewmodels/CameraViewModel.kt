@@ -14,7 +14,7 @@ import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 
-class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val repository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
+class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
     val passengerInfo: StateLiveData<Triple<Int, Int, Int>?>?
@@ -42,13 +42,15 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         get() = evaluationClient.currentState
 
     fun insert(name: String) = viewModelScope.launch {
-        repository.insert(
-            EvaluationEntity(
-            evaluationClient.finalResult.lastValue?.confidence ?: 5.5f,
-                name,
-                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
-            )
-        )
+//        evaluationRepository.insert(
+//            EvaluationEntity(
+//            evaluationClient.finalResult.lastValue?.confidence ?: 5.5f,
+//                name,
+//                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
+//            )
+//        )
+        if (evaluationClient.finalResult.lastValue != null)
+            evaluationRepository.insert(evaluationClient.finalResult.lastValue!!, name)
     }
 
     suspend fun produceImage (image: ImageProxy) = viewModelScope.launch {
@@ -107,7 +109,6 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     fun onResultsViewed () {
         mShowResults.reset()
     }
-
 
     init {
         evaluationListener.listen(viewModelScope, evaluationState)

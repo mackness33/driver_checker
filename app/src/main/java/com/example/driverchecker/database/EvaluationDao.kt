@@ -7,10 +7,13 @@ import kotlinx.coroutines.flow.Flow
 interface EvaluationDao {
 
     @Query("SELECT * FROM evaluation")
-    fun getEvaluations(): Flow<List<EvaluationEntity>>
+    fun getAllEvaluations(): Flow<List<EvaluationEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(evaluation: EvaluationEntity)
+    @Query("SELECT * FROM evaluation WHERE id = :evaluationId")
+    fun getEvaluation(evaluationId: Int): EvaluationEntity
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insert(evaluation: EvaluationEntity) : Long
     
     @Delete
     suspend fun delete(evaluation: EvaluationEntity)

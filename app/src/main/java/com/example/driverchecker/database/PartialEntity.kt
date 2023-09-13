@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 
 
 @Entity(
@@ -22,4 +23,10 @@ data class PartialEntity (
     @ColumnInfo(name = "index") val index: Int,
     @ColumnInfo(name = "evaluation_id") val evaluationId: Int,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-)
+) {
+    constructor(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evalId: Int) : this (
+        confidence = partialResult.confidence,
+        index = outputIndex,
+        evaluationId = evalId
+    )
+}
