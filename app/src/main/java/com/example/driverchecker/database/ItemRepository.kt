@@ -23,7 +23,7 @@ class ItemRepository(private val itemDao: ItemDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(itemResult: IImageDetectionItem<String>, partialId: Int) {
+    suspend fun insert(itemResult: IImageDetectionItem<String>, partialId: Long) {
         itemDao.insert(ItemEntity(itemResult.confidence, itemResult.classification.name, partialId))
     }
 }

@@ -24,7 +24,7 @@ class LogViewModel(private val repository: EvaluationRepository) : ViewModel() {
         repository.insert(evaluation)
     }
 
-    fun delete(id: Int) = viewModelScope.launch {
+    fun delete(id: Long) = viewModelScope.launch {
         repository.delete(id)
     }
 }

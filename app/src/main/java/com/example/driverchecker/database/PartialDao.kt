@@ -10,10 +10,10 @@ interface PartialDao {
     fun getAllPartials(): Flow<List<PartialEntity>>
 
     @Query("SELECT * FROM partial WHERE id = :partialId")
-    fun getPartial(partialId: Int): PartialEntity
+    fun getPartial(partialId: Long): PartialEntity
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(partial: PartialEntity)
+    suspend fun insert(partial: PartialEntity) : Long
 
     @Delete
     suspend fun delete(partial: PartialEntity)
@@ -22,5 +22,5 @@ interface PartialDao {
     suspend fun deleteAll()
 
     @Query("DELETE FROM partial WHERE id = :partialId")
-    suspend fun deleteById(partialId: Int)
+    suspend fun deleteById(partialId: Long)
 }

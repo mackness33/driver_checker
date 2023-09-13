@@ -57,11 +57,11 @@ class LogFragment : Fragment() {
         _binding = null
     }
 
-    private fun deleteListener(evaluationId: Int) {
+    private fun deleteListener(evaluationId: Long) {
         logViewModel.delete(evaluationId)
     }
 
-    private fun itemListener(evaluationId: Int) {
+    private fun itemListener(evaluationId: Long) {
         val bundle = bundleOf("evaluationId" to evaluationId)
         findNavController().navigate(R.id.resultFragment, bundle)
         Log.d("LogItemClick", "Item with id: $evaluationId has been pressed")

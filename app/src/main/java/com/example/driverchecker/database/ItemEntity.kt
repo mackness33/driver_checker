@@ -21,10 +21,10 @@ import com.example.driverchecker.machinelearning.data.IImageDetectionItem
 data class ItemEntity (
     @ColumnInfo(name = "confidence") val confidence: Float,
     @ColumnInfo(name = "classification") val classification: String,
-    @ColumnInfo(name = "partial_id") val partialId: Int,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "partial_id") val partialId: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) {
-    constructor(itemResult: IImageDetectionItem<String>, partId: Int) : this (
+    constructor(itemResult: IImageDetectionItem<String>, partId: Long) : this (
         confidence = itemResult.confidence,
         classification = itemResult.classification.supergroup,
         partialId = partId

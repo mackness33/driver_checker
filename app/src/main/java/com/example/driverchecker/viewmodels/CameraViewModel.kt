@@ -49,8 +49,10 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 //                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
 //            )
 //        )
-        if (evaluationClient.finalResult.lastValue != null)
-            evaluationRepository.insert(evaluationClient.finalResult.lastValue!!, name)
+        if (evaluationClient.finalResult.lastValue != null){
+            val evalId = evaluationRepository.insert(evaluationClient.finalResult.lastValue!!, name)
+            evaluationRepository.insert(metricsPerGroup, evalId)
+        }
     }
 
     suspend fun produceImage (image: ImageProxy) = viewModelScope.launch {

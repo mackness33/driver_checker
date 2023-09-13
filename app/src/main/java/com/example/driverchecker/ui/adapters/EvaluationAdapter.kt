@@ -15,8 +15,8 @@ import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
 
 class EvaluationAdapter (
-    private val onClickItemListener: (Int) -> Unit,
-    private val onClickDeleteListener: (Int) -> Unit,
+    private val onClickItemListener: (Long) -> Unit,
+    private val onClickDeleteListener: (Long) -> Unit,
     private var colorList: Set<String>? = null
 ) : ListAdapter<EvaluationEntity, EvaluationAdapter.EvaluationViewHolder>(EvaluationsComparator()) {
 
@@ -40,7 +40,7 @@ class EvaluationAdapter (
         private val confidenceItemView: TextView = itemView.findViewById(R.id.text_confidence)
         private val deleteButton: Button = itemView.findViewById(R.id.button_delete)
 
-        fun bind(evaluation: EvaluationEntity, itemListener: (Int) -> Unit, deleteListener: (Int) -> Unit, colorScheme: IColorScale) {
+        fun bind(evaluation: EvaluationEntity, itemListener: (Long) -> Unit, deleteListener: (Long) -> Unit, colorScheme: IColorScale) {
             nameItemView.text = evaluation.name
             confidenceItemView.text = evaluation.confidence.toString()
             deleteButton.setOnClickListener { deleteListener(evaluation.id) }

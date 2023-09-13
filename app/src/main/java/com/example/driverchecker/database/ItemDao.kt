@@ -13,7 +13,7 @@ interface ItemDao {
     fun getItems(): Flow<List<ItemEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(word: ItemEntity)
+    suspend fun insert(word: ItemEntity) : Long
 
     @Query("DELETE FROM item")
     suspend fun deleteAll()

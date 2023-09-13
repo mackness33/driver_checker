@@ -11,15 +11,18 @@ import kotlinx.coroutines.flow.Flow
 class EvaluationRepository(
     private val evaluationDao: EvaluationDao,
     private val partialDao: PartialDao,
-    private val itemDao: ItemDao
+    private val itemDao: ItemDao,
+    private val metricsDao: MetricsPerEvaluationDao
 ) {
 
+    /* GET ALL */
     // Room executes all queries on a separate thread.
     // Observed Flow will notify the observer when the data has changed.
     val allEvaluations: Flow<List<EvaluationEntity>> = evaluationDao.getAllEvaluations()
     val allPartials: Flow<List<PartialEntity>> = partialDao.getAllPartials()
 
 
+    /* INSERT */
     // By default Room runs suspend queries off the main thread, therefore, we don't need to
     // implement anything else to ensure we're not doing long running database work
     // off the main thread.
@@ -43,18 +46,41 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(finalResult: IImageDetectionFinalResult<String>, name: String) {
+    suspend fun insert(finalResult: IImageDetectionFinalResult<String>, name: String) : Long {
         val id = evaluationDao.insert(EvaluationEntity(finalResult.confidence, name, finalResult.supergroup))
-
         Log.d("EvalRepo", "Eval inserted with: $id")
 //        finalResult.listOutputs.forEach {
 //            partialDao.insert(it as IImageDetectionOutput<String>, )
 //        }
+        return id
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun delete(evaluationId: Int) {
+    suspend fun insert(metrics: Map<String, Triple<Int, Int, Int>?>, evalId: Long) : List<Long> {
+        val ids = mutableListOf<Long>()
+
+        metrics.forEach { entry ->
+            val id = metricsDao.insert(MetricsPerEvaluationEntity(
+                entry.toPair(), evalId
+            ))
+
+            ids.add(id)
+        }
+
+        Log.d("EvalRepo", "Metrics inserted with: $ids")
+//        finalResult.listOutputs.forEach {
+//            partialDao.insert(it as IImageDetectionOutput<String>, )
+//        }
+        return ids
+    }
+
+
+
+    /* DELETE */
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun delete(evaluationId: Long) {
         evaluationDao.deleteById(evaluationId)
     }
 

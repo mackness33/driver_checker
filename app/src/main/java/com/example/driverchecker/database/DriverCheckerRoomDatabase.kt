@@ -13,43 +13,22 @@ import kotlinx.coroutines.launch
     entities = [
         EvaluationEntity::class,
         PartialEntity::class,
-        ItemEntity::class
+        ItemEntity::class,
+        MetricsPerEvaluationEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class DriverCheckerRoomDatabase : RoomDatabase() {
 
-//    abstract fun testDao(): TestDao
     abstract fun evaluationDao(): EvaluationDao
     abstract fun partialDao(): PartialDao
     abstract fun itemDao(): ItemDao
+    abstract fun metricsDao (): MetricsPerEvaluationDao
 
     private class DriverCheckerRoomDatabaseCallback(
         private val scope: CoroutineScope
     ) : Callback() {
-
-//        override fun onCreate(db: SupportSQLiteDatabase) {
-//            super.onCreate(db)
-//            INSTANCE?.let { database ->
-//                scope.launch {
-//                    val wordDao = database.testDao()
-//
-//                    // Delete all content here.
-//                    wordDao.deleteAll()
-//
-//                    // Add sample words.
-//                    var word = TestEntity("Hello")
-//                    wordDao.insert(word)
-//                    word = TestEntity("World!")
-//                    wordDao.insert(word)
-//
-//                    // TODO: Add your own words!
-//                    word = TestEntity("TODO!")
-//                    wordDao.insert(word)
-//                }
-//            }
-//        }
 
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)

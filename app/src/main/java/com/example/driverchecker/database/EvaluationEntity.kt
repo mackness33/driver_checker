@@ -14,7 +14,7 @@ data class EvaluationEntity (
     @ColumnInfo(name = "confidence") val confidence: Float,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "group") val group: String,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) {
     constructor(finalResult: IImageDetectionFinalResult<String>, title: String) : this (
         confidence = finalResult.confidence,

@@ -10,7 +10,7 @@ interface EvaluationDao {
     fun getAllEvaluations(): Flow<List<EvaluationEntity>>
 
     @Query("SELECT * FROM evaluation WHERE id = :evaluationId")
-    fun getEvaluation(evaluationId: Int): EvaluationEntity
+    fun getEvaluation(evaluationId: Long): EvaluationEntity
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(evaluation: EvaluationEntity) : Long
@@ -22,5 +22,5 @@ interface EvaluationDao {
     suspend fun deleteAll()
 
     @Query("DELETE FROM evaluation WHERE id = :evaluationId")
-    suspend fun deleteById(evaluationId: Int)
+    suspend fun deleteById(evaluationId: Long)
 }

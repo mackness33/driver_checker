@@ -10,7 +10,7 @@ class PartialRepository(private val partialDao: PartialDao) {
 
     // Room executes all queries on a separate thread.
     // Observed Flow will notify the observer when the data has changed.
-    val allPartials: Flow<List<PartialEntity>> = partialDao.getPartials()
+    val allPartials: Flow<List<PartialEntity>> = partialDao.getAllPartials()
 
     // By default Room runs suspend queries off the main thread, therefore, we don't need to
     // implement anything else to ensure we're not doing long running database work
@@ -23,7 +23,7 @@ class PartialRepository(private val partialDao: PartialDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(partialResult: IImageDetectionOutput<String>, evaluationId: Int) {
-        partialDao.insert(PartialEntity(partialResult.confidence, 2, evaluationId))
+    suspend fun insert(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evaluationId: Long) {
+        partialDao.insert(PartialEntity(partialResult, outputIndex, evaluationId))
     }
 }
