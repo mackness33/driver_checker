@@ -1,5 +1,6 @@
 package com.example.driverchecker.ui.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.database.EvaluationEntity
+import com.example.driverchecker.utils.ColorManager
+import com.example.driverchecker.utils.IColorScale
 
 class EvaluationAdapter (
     private val onClickItemListener: (Int) -> Unit,
-    private val onClickDeleteListener: (Int) -> Unit
+    private val onClickDeleteListener: (Int) -> Unit,
+    private var colorList: Set<String>? = null
 ) : ListAdapter<EvaluationEntity, EvaluationAdapter.EvaluationViewHolder>(EvaluationsComparator()) {
+
+    init {
+        // TODO: make the set of name of groups automatic
+        colorList = setOf("driver", "passenger")
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EvaluationViewHolder {
         return EvaluationViewHolder.create(parent)
@@ -22,7 +31,8 @@ class EvaluationAdapter (
 
     override fun onBindViewHolder(holder: EvaluationViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current, onClickItemListener, onClickDeleteListener)
+        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(current.group) } ?: 7
+        holder.bind(current, onClickItemListener, onClickDeleteListener, ColorManager.listFullColors[indexColorGroup])
     }
 
     class EvaluationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,11 +40,12 @@ class EvaluationAdapter (
         private val confidenceItemView: TextView = itemView.findViewById(R.id.text_confidence)
         private val deleteButton: Button = itemView.findViewById(R.id.button_delete)
 
-        fun bind(evaluation: EvaluationEntity, itemListener: (Int) -> Unit, deleteListener: (Int) -> Unit ) {
+        fun bind(evaluation: EvaluationEntity, itemListener: (Int) -> Unit, deleteListener: (Int) -> Unit, colorScheme: IColorScale) {
             nameItemView.text = evaluation.name
             confidenceItemView.text = evaluation.confidence.toString()
             deleteButton.setOnClickListener { deleteListener(evaluation.id) }
             itemView.setOnClickListener { itemListener(evaluation.id) }
+            itemView.setBackgroundColor(colorScheme.scale[2])
         }
 
         companion object {

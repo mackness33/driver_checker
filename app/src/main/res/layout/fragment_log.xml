@@ -9,11 +9,17 @@
         android:id="@+id/recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        tools:listitem="@layout/item_evaluation"
+        android:isScrollContainer="true"
         android:padding="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/item_evaluation" />
+
+
+<!--    android:divider="@drawable/vertical_divider"-->
+<!--    android:dividerPadding="10dp"-->
+<!--    android:showDividers="middle"-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

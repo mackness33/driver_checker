@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.driverchecker.DriverChecker
@@ -18,6 +19,7 @@ class LogFragment : Fragment() {
     private lateinit var layout: View
     private var _binding: FragmentLogBinding? = null
     private val binding get() = _binding!!
+    private val activityViewModel: LogViewModel by activityViewModels()
     private val logViewModel: LogViewModel by viewModels {
         LogViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
     }
