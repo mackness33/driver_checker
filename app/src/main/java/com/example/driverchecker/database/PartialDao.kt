@@ -1,20 +1,26 @@
 package com.example.driverchecker.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PartialDao {
 
     @Query("SELECT * FROM partial")
-    fun getPartials(): Flow<List<PartialEntity>>
+    fun getAllPartials(): Flow<List<PartialEntity>>
+
+    @Query("SELECT * FROM partial WHERE id = :partialId")
+    fun getPartial(partialId: Int): PartialEntity
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(word: PartialEntity)
+    suspend fun insert(partial: PartialEntity)
+
+    @Delete
+    suspend fun delete(partial: PartialEntity)
 
     @Query("DELETE FROM partial")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM partial WHERE id = :partialId")
+    suspend fun deleteById(partialId: Int)
 }

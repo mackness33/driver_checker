@@ -21,12 +21,14 @@ import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 data class PartialEntity (
     @ColumnInfo(name = "confidence") val confidence: Float,
     @ColumnInfo(name = "index") val index: Int,
+    @ColumnInfo(name = "group") val group: String,
     @ColumnInfo(name = "evaluation_id") val evaluationId: Int,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) {
     constructor(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evalId: Int) : this (
         confidence = partialResult.confidence,
         index = outputIndex,
+        group = partialResult.groups.keys.first(),
         evaluationId = evalId
     )
 }

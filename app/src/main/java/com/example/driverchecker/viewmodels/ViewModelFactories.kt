@@ -27,3 +27,13 @@ class LogViewModelFactory(private val repository: EvaluationRepository) : ViewMo
         throw IllegalArgumentException("Unknown ViewModel class $modelClass")
     }
 }
+
+class DisplayResultViewModelFactory(private val repository: EvaluationRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(DisplayResultViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return DisplayResultViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class $modelClass")
+    }
+}

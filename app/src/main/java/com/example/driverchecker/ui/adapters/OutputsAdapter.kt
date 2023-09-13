@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.R
+import com.example.driverchecker.database.PartialEntity
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import com.example.driverchecker.utils.ColorManager
 import java.util.*
@@ -20,10 +21,10 @@ import java.util.*
 // this adapter is actually the itemColorRecyclerView of the item in predictionAdapter.
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
-class PredictionsAdapter(
-    private val items: List<IImageDetectionOutput<String>>,
+class OutputsAdapter(
+    private val items: List<PartialEntity>,
     private var colorList: Set<String>? = setOf("driver", "passenger")
-) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<OutputsAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
@@ -34,11 +35,11 @@ class PredictionsAdapter(
         val textGroup: TextView = view.findViewById(R.id.txtGroup)
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
-        fun bind (detectionItem: IImageDetectionOutput<String>, position: Int) {
-            val bitmap: Bitmap? = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
-            imageInput.setImageBitmap(bitmap)
+        fun bind (detectionItem: PartialEntity, position: Int) {
+//            val bitmap: Bitmap? = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
+//            imageInput.setImageBitmap(bitmap)
             textIndex.text = position.toString()
-            textGroup.text = detectionItem.groups.keys.first().replaceFirstChar {
+            textGroup.text = detectionItem.group.replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
         }
@@ -59,7 +60,7 @@ class PredictionsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.bind(items[position], position)
-        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(items[position].groups.keys.first()) } ?: Color.WHITE
+        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(items[position].group) } ?: 7
         viewHolder.textGroup.setTextColor(ColorManager.listFullColors[indexColorGroup].scale[2])
     }
 
