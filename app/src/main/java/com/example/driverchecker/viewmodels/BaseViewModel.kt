@@ -22,7 +22,8 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
 
     protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
 
-    protected open var settings: ISettings = Settings(3, 0.6f, 0.1f)
+    open val settings: ISettings
+        get() = evaluationClient.settings
 
 
     // LIVE DATA
@@ -86,7 +87,7 @@ abstract class BaseViewModel<I, O : WithConfidence, FR : WithConfidence> (privat
     }
 
     fun saveSettings (newSettings: ISettings) {
-        settings = newSettings
+        evaluationClient.updateSettings(newSettings)
     }
 
     // update of the live classification of the mlRepo

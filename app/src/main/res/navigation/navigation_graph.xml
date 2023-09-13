@@ -14,9 +14,6 @@
         <action
             android:id="@+id/action_cameraFragment_to_resultFragment"
             app:destination="@id/resultFragment" />
-        <action
-            android:id="@+id/action_cameraFragment_to_settingsDialog"
-            app:destination="@id/settingsDialog" />
     </fragment>
 
     <!--  SECONDARY  -->

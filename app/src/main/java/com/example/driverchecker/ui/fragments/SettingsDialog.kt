@@ -71,6 +71,16 @@ class SettingsDialog : DialogFragment() {
 
          */
 
+        binding.editWindowFrame.setText(
+            String.format("%d", activityModel.settings.windowFrames)
+        )
+        binding.editWindowThreshold.setText(
+            String.format("%.2f", activityModel.settings.windowThreshold)
+        )
+        binding.editModelThreshold.setText(
+            String.format("%.2f", activityModel.settings.modelThreshold)
+        )
+
         binding.buttonSave.setOnClickListener {
             try {
                 val possibleWindowFrame = binding.editWindowFrame.text.toString().toIntOrNull()
@@ -95,6 +105,7 @@ class SettingsDialog : DialogFragment() {
                 }
 
                 activityModel.saveSettings(Settings(windowFrame, windowThreshold, modelThreshold))
+                Toast.makeText(requireContext(), "The new settings have been saved", Toast.LENGTH_LONG).show()
             } catch (se: SettingsException) {
                 Toast.makeText(requireContext(), se.message, Toast.LENGTH_LONG).show()
             }
