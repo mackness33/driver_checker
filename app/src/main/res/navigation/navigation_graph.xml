@@ -21,12 +21,20 @@
         android:id="@+id/resultFragment"
         android:name="com.example.driverchecker.ui.fragments.ResultFragment"
         android:label="@string/label_result"
-        tools:layout="@layout/fragment_result" />
+        tools:layout="@layout/fragment_result" >
+        <argument
+            android:name="evaluationId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
     <fragment
         android:id="@+id/logFragment"
         android:name="com.example.driverchecker.ui.fragments.LogFragment"
         android:label="@string/label_log"
         tools:layout="@layout/fragment_log" >
+        <action
+            android:id="@+id/action_logFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
     </fragment>
 
     <!--  INFORMATION  -->

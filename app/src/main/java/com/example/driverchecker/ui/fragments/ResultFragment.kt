@@ -19,7 +19,7 @@ class ResultFragment : Fragment() {
     private lateinit var layout: View
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
-    private val model: CameraViewModel by activityViewModels()
+    private val activityModel: CameraViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -31,7 +31,7 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model.finalResult.observe(viewLifecycleOwner) { output ->
+        activityModel.finalResult.observe(viewLifecycleOwner) { output ->
             binding.textResults.text = String.format("%s",
                 output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )
@@ -40,20 +40,20 @@ class ResultFragment : Fragment() {
 
         binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.finalResultsView.itemAnimator = null
-        binding.finalResultsView.adapter = PredictionsAdapter(model.lastItemsList, model.classificationGroups.lastValue)
+        binding.finalResultsView.adapter = PredictionsAdapter(activityModel.lastItemsList, activityModel.classificationGroups.lastValue)
 
         binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.groupTableBody.itemAnimator = null
-        binding.groupTableBody.adapter = MetricsTableAdapter(model.metricsPerGroup)
+        binding.groupTableBody.adapter = MetricsTableAdapter(activityModel.metricsPerGroup)
 
         binding.buttonSave.text = "Save"
 
         binding.buttonSave.setOnClickListener { _ ->
-            model.insert(binding.editTitle.text.toString())
+            activityModel.insert(binding.editTitle.text.toString())
         }
 
-        model.setActualPage (Page.Result)
-        model.resetShown()
+        activityModel.setActualPage (Page.Result)
+        activityModel.resetShown()
     }
 
 

@@ -5,11 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.driverchecker.DriverChecker
+import com.example.driverchecker.R
 import com.example.driverchecker.databinding.FragmentLogBinding
 import com.example.driverchecker.ui.adapters.EvaluationAdapter
 import com.example.driverchecker.viewmodels.LogViewModel
@@ -58,7 +62,8 @@ class LogFragment : Fragment() {
     }
 
     private fun itemListener(evaluationId: Int) {
-//        findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
+        val bundle = bundleOf("evaluationId" to evaluationId)
+        findNavController().navigate(R.id.resultFragment, bundle)
         Log.d("LogItemClick", "Item with id: $evaluationId has been pressed")
     }
 }
