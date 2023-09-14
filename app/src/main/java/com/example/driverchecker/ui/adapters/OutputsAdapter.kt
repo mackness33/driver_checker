@@ -65,8 +65,10 @@ class OutputsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.bind(items[position], position, onPartialClickListener)
-        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(items[position].group) } ?: 7
-        viewHolder.textGroup.setTextColor(ColorManager.listFullColors[indexColorGroup].scale[2])
+
+        var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(items[position].group) }
+        indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 7 else indexOfGroup
+        viewHolder.textGroup.setTextColor(ColorManager.listFullColors[indexOfGroup].scale[2])
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -31,8 +31,10 @@ class EvaluationAdapter (
 
     override fun onBindViewHolder(holder: EvaluationViewHolder, position: Int) {
         val current = getItem(position)
-        val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(current.group) } ?: 7
-        holder.bind(current, onClickItemListener, onClickDeleteListener, ColorManager.listFullColors[indexColorGroup])
+        var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(current.group) }
+        indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
+
+        holder.bind(current, onClickItemListener, onClickDeleteListener, ColorManager.listFullColors[indexOfGroup])
     }
 
     class EvaluationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -62,8 +62,10 @@ class PartialsAdapter(
         
         try {
             val group = items[position].toList().first()
-            val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(group.first) }
-            viewHolder.predictionView.updateColors(ColorManager.listFullColors[indexColorGroup ?: 0])
+
+            var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(group.first) }
+            indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 9 else indexOfGroup
+            viewHolder.predictionView.updateColors(ColorManager.listFullColors[indexOfGroup ?: 0])
             viewHolder.predictionView.updateSelectedClasses(group.second.toList())
         } catch (e: Throwable) {
             Log.e("PartialsAdapter", e.message.toString(), e)

@@ -51,7 +51,11 @@ class ResultView : View {
                 item.rect.bottom * (height / 640) - paintRectangle.strokeWidth,
             )
 
-            actualColorScale = ColorManager.listFullColors[colorList?.indexOfFirst { it.contentEquals(item.group) } ?: 6]
+
+            var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(item.group) }
+            indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
+
+            actualColorScale = ColorManager.listFullColors[indexOfGroup]
 
             drawBox(canvas, item.internalIndex)
             drawPath(canvas)
