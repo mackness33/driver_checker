@@ -22,7 +22,6 @@ class ResultView : View {
     private var rectPath: RectF = RectF()
     private var resizedRect: RectF = RectF()
     private var actualColorScale: IColorScale = ColorManager.listColors.first()
-    private var outputs: IImageDetectionOutput<String>? = null
     private var itemResults: List<DrawableItemResult>? = null
     private var colorList: Set<String>? = null
 
@@ -46,8 +45,8 @@ class ResultView : View {
 
         itemResults?.forEach { item ->
             resizedRect.set(
-                item.rect.left * (width / 640) - paintRectangle.strokeWidth,
-                item.rect.top * (height / 640) - paintRectangle.strokeWidth,
+                item.rect.left * (width / 640) + paintRectangle.strokeWidth,
+                item.rect.top * (height / 640) + paintRectangle.strokeWidth,
                 item.rect.right * (width / 640) - paintRectangle.strokeWidth,
                 item.rect.bottom * (height / 640) - paintRectangle.strokeWidth,
             )

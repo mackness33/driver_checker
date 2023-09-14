@@ -39,7 +39,7 @@ class StaticPhotoFragment : Fragment() {
             val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(path)
             if (bitmap != null) {
                 val resizedBitmap: Bitmap? = Bitmap.createScaledBitmap(bitmap, binding.imageView.width, binding.imageView.height, false)
-                binding.imageView.setImageBitmap(bitmap)
+                binding.imageView.setImageBitmap(resizedBitmap)
             }
         }
 

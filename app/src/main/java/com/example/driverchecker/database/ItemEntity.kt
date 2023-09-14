@@ -26,7 +26,7 @@ data class ItemEntity (
 ) {
     constructor(itemResult: IImageDetectionItem<String>, partId: Long) : this (
         confidence = itemResult.confidence,
-        classification = itemResult.classification.supergroup,
+        classification = itemResult.classification.name,
         internalIndex = itemResult.classification.internalIndex,
         partialId = partId,
         rect = RectangleF(itemResult.rect)
