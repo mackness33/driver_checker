@@ -13,4 +13,5 @@ interface IClassificationClient<I, O : WithConfAndGroups<S>, FR : WithConfAndSup
     val classifier: IClassifier<S>?
     val groups: StateLiveData<Set<S>>
     val areMetricsObservable: LiveData<Boolean>
+    val lastMetricsPerGroup: Map<S, Triple<Int, Int, Int>?>
 }

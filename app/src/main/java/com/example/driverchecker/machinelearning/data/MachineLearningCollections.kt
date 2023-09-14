@@ -326,11 +326,6 @@ open class ClientMetricsMutableMap<S> : ClientMetricsMap <S> {
     override fun add (element: WithConfAndGroups<S>) {
         element.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(tripleSum(mMetrics[entry.key]?.lastValue, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
-
-//            if (mMetrics.containsKey(entry.key)) {
-//            } else {
-//                mMetrics[entry.key] = StatefulLiveData(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
-//            }
         }
     }
 

@@ -37,8 +37,8 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val areMetricsObservable: LiveData<Boolean>
         get() = evaluationClient.areMetricsObservable
 
-    var metricsPerGroup: Map<String, Triple<Int, Int, Int>?> = emptyMap()
-        private set
+    val metricsPerGroup: Map<String, Triple<Int, Int, Int>?>
+        get() = evaluationClient.lastMetricsPerGroup
 
     private val mSaveImages = DeferredLiveData<List<Bitmap>?>(null, viewModelScope.coroutineContext)
     val saveImages: StateLiveData<List<Bitmap>?>
@@ -132,7 +132,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
 
             if (state.finalResult != null) {
-                metricsPerGroup = evaluationClient.metricsPerGroup.metrics
+//                metricsPerGroup = evaluationClient.metricsPerGroup.metrics
                 mSaveImages.reset()
                 mAwaitImagesPaths.reset()
                 mAwaitEndInsert.reset()
