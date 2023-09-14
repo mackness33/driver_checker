@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
         ItemEntity::class,
         MetricsPerEvaluationEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class DriverCheckerRoomDatabase : RoomDatabase() {

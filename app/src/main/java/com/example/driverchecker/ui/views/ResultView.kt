@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import com.example.driverchecker.database.ItemEntity
 import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
 import com.example.driverchecker.machinelearning.data.IImageDetectionItem
@@ -22,6 +23,7 @@ class ResultView : View {
     private var resizedRect: RectF = RectF()
     private var actualColorScale: IColorScale = ColorManager.listColors.first()
     private var outputs: IImageDetectionOutput<String>? = null
+    private var itemResults: List<DrawableItemResult>? = null
     private var colorList: Set<String>? = null
 
     constructor(context: Context?) : super(context)
@@ -40,11 +42,9 @@ class ResultView : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (outputs == null) return
+        if (itemResults == null) return
 
-        val res: IImageDetectionOutput<String> = outputs!!
-
-        for (item: IImageDetectionItem<String> in res.listItems) {
+        itemResults?.forEach { item ->
             resizedRect.set(
                 item.rect.left * (width / 640) - paintRectangle.strokeWidth,
                 item.rect.top * (height / 640) - paintRectangle.strokeWidth,
@@ -52,20 +52,20 @@ class ResultView : View {
                 item.rect.bottom * (height / 640) - paintRectangle.strokeWidth,
             )
 
-            actualColorScale = ColorManager.listFullColors[colorList?.indexOfFirst { it.contentEquals(item.classification.supergroup) } ?: 6]
+            actualColorScale = ColorManager.listFullColors[colorList?.indexOfFirst { it.contentEquals(item.group) } ?: 6]
 
-            drawBox(canvas, item.classification.internalIndex)
+            drawBox(canvas, item.internalIndex)
             drawPath(canvas)
             drawText(canvas, item)
         }
     }
 
-    private fun drawText (canvas: Canvas, item: IImageDetectionItem<String>) {
+    private fun drawText (canvas: Canvas, item: DrawableItemResult) {
         paintText.color = Color.WHITE
         canvas.drawText(
             String.format(
                 "%s %.2f",
-                item.classification.name,
+                item.classification,
                 item.confidence
             ),
             resizedRect.left + TEXT_X,
@@ -94,11 +94,39 @@ class ResultView : View {
     }
 
     fun setResults (imageDetectionOutputs: IImageDetectionOutput<String>?) {
-        outputs = imageDetectionOutputs
+        itemResults = imageDetectionOutputs?.listItems?.map { DrawableItemResult(it) }
     }
 
-    fun setColorScheme (groupList: Set<String>?) {
+    fun setResults (items: List<ItemEntity>, group: String) {
+        itemResults = items.map { DrawableItemResult(it, group) }
+    }
+
+    fun setColorSchemes (groupList: Set<String>?) {
         colorList = groupList
+    }
+
+    data class DrawableItemResult (
+        val rect: RectF,
+        val internalIndex: Int,
+        val classification: String,
+        val confidence: Float,
+        val group: String
+    ) {
+        constructor(imageDetectionItem: IImageDetectionItem<String>) : this (
+            rect = imageDetectionItem.rect,
+            internalIndex = imageDetectionItem.classification.internalIndex,
+            classification = imageDetectionItem.classification.name,
+            confidence = imageDetectionItem.confidence,
+            group = imageDetectionItem.classification.supergroup
+        )
+
+        constructor(item: ItemEntity, group: String) : this (
+            rect = RectF(item.rect.left, item.rect.top, item.rect.right, item.rect.bottom),
+            internalIndex = item.internalIndex,
+            classification = item.classification,
+            confidence = item.confidence,
+            group = group
+        )
     }
 
     companion object {

@@ -3,7 +3,9 @@ package com.example.driverchecker.viewmodels
 import androidx.lifecycle.*
 import com.example.driverchecker.database.EvaluationEntity
 import com.example.driverchecker.database.EvaluationRepository
+import com.example.driverchecker.database.ItemEntity
 import com.example.driverchecker.database.PartialEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class StaticPhotoViewModel(private val repository: EvaluationRepository) : ViewModel() {
@@ -12,37 +14,29 @@ class StaticPhotoViewModel(private val repository: EvaluationRepository) : ViewM
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
 
-    var evaluationId: Long? = null
+    var partialId: Long? = null
         private set
 
-    private val mEvaluation: MutableLiveData<EvaluationEntity> = MutableLiveData(null)
-    val evaluation: LiveData<EvaluationEntity>
-        get() = mEvaluation
+//    private val mPartial: MutableLiveData<PartialEntity> = MutableLiveData(null)
+//    val partial: LiveData<PartialEntity>
+//        get() = mPartial
 
-    private val mPartials: MutableLiveData<List<PartialEntity>> = MutableLiveData(null)
-    val partials: LiveData<List<PartialEntity>>
-        get() = mPartials
-
-    private val mMetricsPerGroup: MutableLiveData<Map<String, Triple<Int, Int, Int>?>> = MutableLiveData(null)
-    val metricsPerGroup: LiveData<Map<String, Triple<Int, Int, Int>?>>
-        get() = mMetricsPerGroup
+    private val mItems: MutableLiveData<Triple<List<ItemEntity>, Set<String>, String>> = MutableLiveData(null)
+    val items: LiveData<Triple<List<ItemEntity>, Set<String>, String>>
+        get() = mItems
 
     fun initEvaluationId (id: Long?) = viewModelScope.launch {
         if (id == null) {
             return@launch
         }
 
-        evaluationId = id
+        partialId = id
 
-        launch {
-            repository.getAllMetricsOfEvaluationAsMap(id).collect { mMetricsPerGroup.postValue(it) }
-        }
-        launch {
-            repository.getAllPartialsOfEvaluation(id).collect { mPartials.postValue(it) }
-        }
-
-        launch {
-            repository.getEvaluation(id).collect { mEvaluation.postValue(it) }
+        launch(Dispatchers.IO) {
+            val partial = repository.getPartial(id)
+            val metrics = repository.getAllMetricsOfEvaluationAsMap(partial.evaluationId)
+            val items = repository.getAllItemsOfPartial(id)
+            mItems.postValue(Triple(items, metrics.keys, partial.group))
         }
     }
 
@@ -50,7 +44,7 @@ class StaticPhotoViewModel(private val repository: EvaluationRepository) : ViewM
      * Launching a new coroutine to insert the data in a non-blocking way
      */
     fun update(name: String) = viewModelScope.launch {
-        if (evaluationId != null && evaluationId!! > 0)
-            repository.updateById(evaluationId!!, name)
+        if (partialId != null && partialId!! > 0)
+            repository.updateById(partialId!!, name)
     }
 }

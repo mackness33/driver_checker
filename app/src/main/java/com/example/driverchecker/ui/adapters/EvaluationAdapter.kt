@@ -45,7 +45,7 @@ class EvaluationAdapter (
             confidenceItemView.text = evaluation.confidence.toString()
             deleteButton.setOnClickListener { deleteListener(evaluation.id) }
             itemView.setOnClickListener { itemListener(evaluation.id) }
-            itemView.setBackgroundColor(colorScheme.scale[2])
+            itemView.setBackgroundColor(colorScheme.scale[4])
         }
 
         companion object {

@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.example.driverchecker.database.EvaluationEntity
 import com.example.driverchecker.database.EvaluationRepository
 import com.example.driverchecker.database.PartialEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DisplayResultViewModel(private val repository: EvaluationRepository) : ViewModel() {
@@ -34,15 +35,13 @@ class DisplayResultViewModel(private val repository: EvaluationRepository) : Vie
 
         evaluationId = id
 
-        launch {
-            repository.getAllMetricsOfEvaluationAsMap(id).collect { mMetricsPerGroup.postValue(it) }
-        }
-        launch {
-            repository.getAllPartialsOfEvaluation(id).collect { mPartials.postValue(it) }
+        launch(Dispatchers.IO) {
+            mMetricsPerGroup.postValue(repository.getAllMetricsOfEvaluationAsMap(id))
+            mEvaluation.postValue(repository.getEvaluation(id))
         }
 
-        launch {
-            repository.getEvaluation(id).collect { mEvaluation.postValue(it) }
+        launch(Dispatchers.IO) {
+            repository.getAllPartialsOfEvaluation(id).collect { mPartials.postValue(it) }
         }
     }
 

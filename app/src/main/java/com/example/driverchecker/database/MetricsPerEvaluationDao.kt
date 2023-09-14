@@ -10,10 +10,10 @@ interface MetricsPerEvaluationDao {
     fun getAllMetrics(): Flow<List<MetricsPerEvaluationEntity>>
 
     @Query("SELECT * FROM metrics_per_evaluation WHERE id = :metricsPerEvaluationId")
-    fun getMetrics(metricsPerEvaluationId: Long): Flow<MetricsPerEvaluationEntity>
+    fun getMetrics(metricsPerEvaluationId: Long): MetricsPerEvaluationEntity
 
     @Query("SELECT * FROM metrics_per_evaluation WHERE evaluation_id = :evaluationId")
-    fun getMetricsPerEvaluation(evaluationId: Long): Flow<List<MetricsPerEvaluationEntity>>
+    fun getMetricsPerEvaluation(evaluationId: Long): List<MetricsPerEvaluationEntity>
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

@@ -13,7 +13,7 @@ interface ItemDao {
     fun getItems(): Flow<List<ItemEntity>>
 
     @Query("SELECT * FROM item WHERE partial_id = :partialId")
-    fun getItemsPerPartial (partialId: Long): Flow<List<ItemEntity>>
+    fun getItemsPerPartial (partialId: Long): List<ItemEntity>
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

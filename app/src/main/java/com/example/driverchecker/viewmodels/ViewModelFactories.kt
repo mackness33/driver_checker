@@ -37,3 +37,14 @@ class DisplayResultViewModelFactory(private val repository: EvaluationRepository
         throw IllegalArgumentException("Unknown ViewModel class $modelClass")
     }
 }
+
+
+class StaticPhotoViewModelFactory(private val repository: EvaluationRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(StaticPhotoViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return StaticPhotoViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class $modelClass")
+    }
+}

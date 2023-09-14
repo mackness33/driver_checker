@@ -23,30 +23,30 @@ class EvaluationRepository(
     val allPartials: Flow<List<PartialEntity>> = partialDao.getAllPartials()
 
     /* QUERY */
-    fun getAllMetricsOfEvaluation (evaluationId: Long) : Flow<List<MetricsPerEvaluationEntity>> {
+    fun getAllMetricsOfEvaluation (evaluationId: Long) : List<MetricsPerEvaluationEntity> {
         return metricsDao.getMetricsPerEvaluation(evaluationId)
     }
 
-    fun getAllMetricsOfEvaluationAsMap (evaluationId: Long) : Flow<Map<String, Triple<Int, Int, Int>>> {
-        return metricsDao.getMetricsPerEvaluation(evaluationId).map { metricList ->
-            val metricMap: MutableMap<String, Triple<Int, Int, Int>> = mutableMapOf()
-            metricList.forEach { metric ->
-                metricMap[metric.group] = Triple(metric.totImages, metric.totClasses, metric.totObjects)
-            }
-            metricMap
+    fun getAllMetricsOfEvaluationAsMap (evaluationId: Long) : Map<String, Triple<Int, Int, Int>> {
+        val metricMap: MutableMap<String, Triple<Int, Int, Int>> = mutableMapOf()
+        metricsDao.getMetricsPerEvaluation(evaluationId).forEach { metric ->
+            metricMap[metric.group] = Triple(metric.totImages, metric.totClasses, metric.totObjects)
         }
+
+        return metricMap
     }
 
     fun getAllPartialsOfEvaluation (evaluationId: Long) : Flow<List<PartialEntity>> {
         return partialDao.getPartialsPerEvaluation(evaluationId)
     }
 
-    fun getAllItemsOfPartial (partialId: Long) : Flow<List<ItemEntity>> {
+    fun getAllItemsOfPartial (partialId: Long) : List<ItemEntity> {
         return itemDao.getItemsPerPartial(partialId)
     }
 
-    fun getEvaluation (evaluationId: Long) : Flow<EvaluationEntity> = evaluationDao.getEvaluation(evaluationId)
+    fun getEvaluation (evaluationId: Long) : EvaluationEntity = evaluationDao.getEvaluation(evaluationId)
 
+    fun getPartial (partialId: Long) : PartialEntity = partialDao.getPartial(partialId)
 
     /* INSERT */
     // By default Room runs suspend queries off the main thread, therefore, we don't need to
