@@ -1,5 +1,6 @@
 package com.example.driverchecker.ui.fragments;
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.driverchecker.DriverChecker
 import com.example.driverchecker.databinding.FragmentStaticPhotoBinding
+import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.viewmodels.*
 
 class StaticPhotoFragment : Fragment() {
@@ -31,13 +33,22 @@ class StaticPhotoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        staticPhotoViewModel.initEvaluationId(arguments?.getLong("evaluationId"))
+        staticPhotoViewModel.initPartialId(arguments?.getLong("partialId"))
 
+        staticPhotoViewModel.partial.observe(viewLifecycleOwner) { path ->
+            val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(path)
+            if (bitmap != null) {
+                val resizedBitmap: Bitmap? = Bitmap.createScaledBitmap(bitmap, binding.imageView.width, binding.imageView.height, false)
+                binding.imageView.setImageBitmap(bitmap)
+            }
+        }
 
         staticPhotoViewModel.items.observe(viewLifecycleOwner) { triple ->
-            binding.resultView.setColorSchemes(triple.second)
-            binding.resultView.setResults(triple.first, triple.third)
-            binding.resultView.invalidate()
+            if (triple != null) {
+                binding.resultView.setColorSchemes(triple.second)
+                binding.resultView.setResults(triple.first, triple.third)
+                binding.resultView.invalidate()
+            }
         }
     }
 

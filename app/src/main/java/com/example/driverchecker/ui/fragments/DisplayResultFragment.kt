@@ -1,15 +1,19 @@
 package com.example.driverchecker.ui.fragments;
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.DriverChecker
+import com.example.driverchecker.R
 import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
@@ -46,9 +50,13 @@ class DisplayResultFragment : Fragment() {
         binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.groupTableBody.itemAnimator = null
 
-        displayResultViewModel.partials.observe(viewLifecycleOwner) {
-            if (it != null)
-                binding.finalResultsView.adapter = OutputsAdapter(it)
+        displayResultViewModel.partials.observe(viewLifecycleOwner) { listPartials ->
+            if (listPartials != null)
+                binding.finalResultsView.adapter = OutputsAdapter(listPartials) { partialId ->
+                    val bundle = bundleOf("partialId" to partialId)
+                    findNavController().navigate(R.id.staticPhotoFragment, bundle)
+                    Log.d("DisplayResultItemClick", "Item with id: $partialId has been pressed")
+                }
         }
 
         displayResultViewModel.metricsPerGroup.observe(viewLifecycleOwner) {

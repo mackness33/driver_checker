@@ -41,6 +41,16 @@
             app:argType="long"
             android:defaultValue="-1L" />
     </fragment>
+    <fragment
+        android:id="@+id/staticPhotoFragment"
+        android:name="com.example.driverchecker.ui.fragments.StaticPhotoFragment"
+        android:label=""
+        tools:layout="@layout/fragment_static_photo" >
+        <argument
+            android:name="partialId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
 
     <!--  INFORMATION  -->
     <fragment

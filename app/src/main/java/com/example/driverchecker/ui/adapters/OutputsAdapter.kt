@@ -23,7 +23,8 @@ import java.util.*
 //   made of all the classView
 class OutputsAdapter(
     private val items: List<PartialEntity>,
-    private var colorList: Set<String>? = setOf("driver", "passenger")
+    private var colorList: Set<String>? = setOf("driver", "passenger"),
+    private val onPartialClickListener: (Long) -> Unit
 ) : RecyclerView.Adapter<OutputsAdapter.ViewHolder>() {
 
     /**
@@ -31,16 +32,20 @@ class OutputsAdapter(
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textIndex: TextView = view.findViewById(R.id.txtIndex)
+        private val textIndex: TextView = view.findViewById(R.id.txtIndex)
         val textGroup: TextView = view.findViewById(R.id.txtGroup)
-        val imageInput: ImageView = view.findViewById(R.id.imgInput)
+        private val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
-        fun bind (detectionItem: PartialEntity, position: Int) {
+        fun bind (detectionItem: PartialEntity, position: Int, onPartialClickListener: (Long) -> Unit) {
             val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(detectionItem.path)
             imageInput.setImageBitmap(bitmap)
             textIndex.text = position.toString()
             textGroup.text = detectionItem.group.replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            }
+
+            itemView.setOnClickListener { _ ->
+                    onPartialClickListener(detectionItem.id)
             }
         }
     }
@@ -59,7 +64,7 @@ class OutputsAdapter(
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bind(items[position], position)
+        viewHolder.bind(items[position], position, onPartialClickListener)
         val indexColorGroup = colorList?.indexOfFirst { it.contentEquals(items[position].group) } ?: 7
         viewHolder.textGroup.setTextColor(ColorManager.listFullColors[indexColorGroup].scale[2])
     }
