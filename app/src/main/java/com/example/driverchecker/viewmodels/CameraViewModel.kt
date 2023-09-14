@@ -70,7 +70,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         evaluationRepository.insertAllMetrics(metricsPerGroup, evalId)
 
         mAwaitImagesPaths.await()
-        evaluationRepository.insertAllPartials(evaluationClient.lastResultsList, evalId)
+        evaluationRepository.insertAllPartials(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value.lastValue)
 
         mAwaitEndInsert.complete(evalId)
     }

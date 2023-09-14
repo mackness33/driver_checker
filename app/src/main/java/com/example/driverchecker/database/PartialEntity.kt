@@ -22,13 +22,15 @@ data class PartialEntity (
     @ColumnInfo(name = "confidence") val confidence: Float,
     @ColumnInfo(name = "index") val index: Int,
     @ColumnInfo(name = "group") val group: String,
+    @ColumnInfo(name = "path") val path: String?,
     @ColumnInfo(name = "evaluation_id") val evaluationId: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) {
-    constructor(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evalId: Long) : this (
+    constructor(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evalId: Long, imagePath: String?) : this (
         confidence = partialResult.confidence,
         index = outputIndex,
         group = partialResult.groups.keys.first(),
+        path = imagePath,
         evaluationId = evalId
     )
 }

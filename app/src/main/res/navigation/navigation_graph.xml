@@ -34,7 +34,7 @@
     <fragment
         android:id="@+id/displayResultFragment"
         android:name="com.example.driverchecker.ui.fragments.DisplayResultFragment"
-        android:label="@string/label_result"
+        android:label="Display Result"
         tools:layout="@layout/fragment_result" >
         <argument
             android:name="evaluationId"

@@ -93,11 +93,11 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutput<String>>, evalId: Long) : List<Long> {
+    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
-        partialResults.forEach {
-            val id = partialDao.insert(PartialEntity(it, ids.size, evalId))
+        for (index in partialResults.indices) {
+            val id = partialDao.insert(PartialEntity(partialResults[index], ids.size, evalId, paths?.get(index)))
             ids.add(id)
         }
 

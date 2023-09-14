@@ -87,7 +87,10 @@ object BitmapUtils {
         return myPath.absolutePath
     }
 
-    fun loadImageFromStorage(path: String) : Bitmap? {
+    fun loadImageFromStorage(path: String?) : Bitmap? {
+        if (path == null)
+            return null
+
         var bitmap: Bitmap? = null
         try {
             val (directory_path, pic_name) = path.substringBeforeLast("/") to path.substringAfterLast("/")

@@ -21,9 +21,9 @@ class PartialRepository(private val partialDao: PartialDao) {
         partialDao.insert(partial)
     }
 
-    @Suppress("RedundantSuspendModifier")
-    @WorkerThread
-    suspend fun insert(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evaluationId: Long) {
-        partialDao.insert(PartialEntity(partialResult, outputIndex, evaluationId))
-    }
+//    @Suppress("RedundantSuspendModifier")
+//    @WorkerThread
+//    suspend fun insert(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evaluationId: Long) {
+//        partialDao.insert(PartialEntity(partialResult, outputIndex, evaluationId))
+//    }
 }

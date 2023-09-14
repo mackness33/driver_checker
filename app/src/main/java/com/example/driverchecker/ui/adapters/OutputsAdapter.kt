@@ -36,8 +36,8 @@ class OutputsAdapter(
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
         fun bind (detectionItem: PartialEntity, position: Int) {
-//            val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(detectionItem.path)
-//            imageInput.setImageBitmap(bitmap)
+            val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(detectionItem.path)
+            imageInput.setImageBitmap(bitmap)
             textIndex.text = position.toString()
             textGroup.text = detectionItem.group.replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
