@@ -20,10 +20,6 @@ class LogViewModel(private val repository: EvaluationRepository) : ViewModel() {
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
      */
-    fun insert(evaluation: EvaluationEntity) = viewModelScope.launch {
-        repository.insert(evaluation)
-    }
-
     fun delete(id: Long) = viewModelScope.launch {
         repository.delete(id)
     }

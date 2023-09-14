@@ -6,7 +6,7 @@ import kotlin.coroutines.CoroutineContext
 
 open class DeferredLiveData<T> (initialValue: T?, protected val cxt: CoroutineContext){
     protected var promise = CompletableDeferred<T?>()
-    protected val mLiveData: MutableStateLiveData<T?> = StatefulLiveData<T?>(null)
+    protected val mLiveData: MutableStateLiveData<T?> = StatefulLiveData(null)
     val value: StateLiveData<T?>
         get() = mLiveData
     val asLiveData: LiveData<T?>
@@ -33,10 +33,9 @@ open class DeferredLiveData<T> (initialValue: T?, protected val cxt: CoroutineCo
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun tryAwait () {
         if (promise.isCompleted) {
-            mLiveData.postValue(promise.getCompleted())
+            mLiveData.postValue(value.lastValue)
         }
     }
 

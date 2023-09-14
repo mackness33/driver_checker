@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,13 +44,20 @@ class ResultFragment : Fragment() {
         activityModel.saveImages.observe(viewLifecycleOwner) { images ->
             if (images != null) {
                 runBlocking {
-                    BitmapUtils.saveMultipleBitmapInStorage(
+                    val paths = BitmapUtils.saveMultipleBitmapInStorage(
                         images.map { BitmapUtils.rotateBitmap(it, -90.0f) },
                         requireContext()
                     )
+
+                    activityModel.usePaths(paths)
                 }
                 binding.buttonSave.text = "Update"
             }
+        }
+
+        activityModel.awaitEndInsert.observe(viewLifecycleOwner) { hasEnd ->
+            if (hasEnd == true)
+                Toast.makeText(requireContext(), "The evaluation has been correctly saved!", Toast.LENGTH_SHORT).show()
         }
 
         binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
@@ -63,7 +71,7 @@ class ResultFragment : Fragment() {
         binding.buttonSave.text = "Save"
 
         binding.buttonSave.setOnClickListener { _ ->
-            activityModel.insert(binding.editTitle.text.toString())
+            activityModel.save(binding.editTitle.text.toString())
         }
 
         activityModel.setActualPage (Page.Result)

@@ -3,8 +3,8 @@ package com.example.driverchecker.viewmodels
 import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.example.driverchecker.database.EvaluationEntity
 import com.example.driverchecker.database.EvaluationRepository
+import com.example.driverchecker.database.PartialEntity
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
@@ -44,33 +44,35 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val saveImages: StateLiveData<List<Bitmap>?>
         get() = mSaveImages.value
 
+    private val mAwaitImagesPaths = DeferredLiveData<List<String>?>(null, viewModelScope.coroutineContext)
+    private val mAwaitEndInsert = DeferredLiveData(false, viewModelScope.coroutineContext)
+    val awaitEndInsert: LiveData<Boolean?>
+        get() = mAwaitEndInsert.asLiveData
+
     val currentState: AtomicValue<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
 
+    fun usePaths (paths: List<String>?) {
+        mAwaitImagesPaths.complete(paths)
+    }
+
     fun save(name: String) = viewModelScope.launch {
-//        evaluationRepository.insert(
-//            EvaluationEntity(
-//            evaluationClient.finalResult.lastValue?.confidence ?: 5.5f,
-//                name,
-//                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
-//            )
-//        )
         if (evaluationClient.finalResult.lastValue != null) {
             if (mSaveImages.isCompleted()) update(name) else insert(name)
         }
     }
 
     fun insert(name: String) = viewModelScope.launch {
-//        evaluationRepository.insert(
-//            EvaluationEntity(
-//            evaluationClient.finalResult.lastValue?.confidence ?: 5.5f,
-//                name,
-//                evaluationClient.finalResult.lastValue?.supergroup ?: "Nothing"
-//            )
-//        )
+        mAwaitEndInsert.deferredAwait()
         mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
-        val evalId = evaluationRepository.insert(evaluationClient.finalResult.lastValue!!, name)
-        evaluationRepository.insert(metricsPerGroup, evalId)
+
+        val evalId = evaluationRepository.insertEvaluation(evaluationClient.finalResult.lastValue!!, name)
+        evaluationRepository.insertAllMetrics(metricsPerGroup, evalId)
+
+        mAwaitImagesPaths.await()
+        evaluationRepository.insertAllPartials(evaluationClient.lastResultsList, evalId)
+
+        mAwaitEndInsert.complete(true)
     }
 
 
@@ -131,9 +133,10 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
             if (state.finalResult != null) {
                 metricsPerGroup = evaluationClient.metricsPerGroup.metrics
                 mSaveImages.reset()
+                mAwaitImagesPaths.reset()
+                mAwaitEndInsert.reset()
             }
         }
-
     }
 
     override fun onCleared() {

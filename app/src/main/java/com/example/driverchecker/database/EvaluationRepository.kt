@@ -28,36 +28,33 @@ class EvaluationRepository(
     // off the main thread.
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(evaluation: EvaluationEntity) {
+    suspend fun insertEvaluation(evaluation: EvaluationEntity) {
         evaluationDao.insert(evaluation)
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(partial: PartialEntity) {
+    suspend fun insertPartial(partial: PartialEntity) {
         partialDao.insert(partial)
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(item: ItemEntity) {
+    suspend fun insertItem(item: ItemEntity) {
         itemDao.insert(item)
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(finalResult: IImageDetectionFinalResult<String>, name: String) : Long {
+    suspend fun insertEvaluation(finalResult: IImageDetectionFinalResult<String>, name: String) : Long {
         val id = evaluationDao.insert(EvaluationEntity(finalResult.confidence, name, finalResult.supergroup))
         Log.d("EvalRepo", "Eval inserted with: $id")
-//        finalResult.listOutputs.forEach {
-//            partialDao.insert(it as IImageDetectionOutput<String>, )
-//        }
         return id
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(metrics: Map<String, Triple<Int, Int, Int>?>, evalId: Long) : List<Long> {
+    suspend fun insertAllMetrics(metrics: Map<String, Triple<Int, Int, Int>?>, evalId: Long) : List<Long> {
         val ids = mutableListOf<Long>()
 
         metrics.forEach { entry ->
@@ -69,13 +66,22 @@ class EvaluationRepository(
         }
 
         Log.d("EvalRepo", "Metrics inserted with: $ids")
-//        finalResult.listOutputs.forEach {
-//            partialDao.insert(it as IImageDetectionOutput<String>, )
-//        }
         return ids
     }
 
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutput<String>>, evalId: Long) : List<Long> {
+        val ids = mutableListOf<Long>()
 
+        partialResults.forEach {
+            val id = partialDao.insert(PartialEntity(it, ids.size, evalId))
+            ids.add(id)
+        }
+
+        Log.d("EvalRepo", "Partials inserted with: $ids")
+        return ids
+    }
 
     /* DELETE */
     @Suppress("RedundantSuspendModifier")

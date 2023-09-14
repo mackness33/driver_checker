@@ -23,7 +23,9 @@ abstract class AClassificationWindow<E : WithConfAndGroups<S>, S> (
 
         // for each key to update in the counter I add to the value of the element and sub the element that is going to be removed
         allPossibleKeysToUpdate.forEach { key ->
-            mSupergroupCounter[key] = (mSupergroupCounter[key] ?: 0) + (element.groups[key]?.size ?: 0) - (valueToDelete?.groups?.get(key)?.size ?: 0)
+            val isInsertedElGroupPresent = if (element.groups[key] == null) 0 else 1
+            val isRemovedElGroupPresent = if (valueToDelete?.groups?.get(key) == null) 0 else 1
+            mSupergroupCounter[key] = (mSupergroupCounter[key] ?: 0) + isInsertedElGroupPresent - isRemovedElGroupPresent
         }
 
         super.next(element)
