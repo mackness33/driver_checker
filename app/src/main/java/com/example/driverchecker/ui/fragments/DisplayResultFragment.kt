@@ -14,10 +14,8 @@ import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
 import com.example.driverchecker.ui.adapters.OutputsAdapter
-import com.example.driverchecker.ui.adapters.PredictionsAdapter
-import com.example.driverchecker.utils.Page
 import com.example.driverchecker.viewmodels.DisplayResultViewModel
-import com.example.driverchecker.viewmodels.LogViewModel
+import com.example.driverchecker.viewmodels.DisplayResultViewModelFactory
 import com.example.driverchecker.viewmodels.LogViewModelFactory
 import java.util.*
 
@@ -27,7 +25,7 @@ class DisplayResultFragment : Fragment() {
     private val binding get() = _binding!!
     private val activityModel: CameraViewModel by activityViewModels()
     private val displayResultViewModel: DisplayResultViewModel by viewModels {
-        LogViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
+        DisplayResultViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -40,20 +38,34 @@ class DisplayResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        activityModel.finalResult.observe(viewLifecycleOwner) { output ->
-//            binding.textResults.text = String.format("%s",
-//                output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-//            )
-//            binding.textConfidence.text = String.format("%.2f", output?.confidence?.times(100))
-//        }
+
+        displayResultViewModel.initEvaluationId(arguments?.getLong("evaluationId"))
 
         binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.finalResultsView.itemAnimator = null
-//        binding.finalResultsView.adapter = OutputsAdapter(activityModel.lastItemsList)
-
         binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.groupTableBody.itemAnimator = null
-//        binding.groupTableBody.adapter = MetricsTableAdapter(activityModel.metricsPerGroup)
+
+        displayResultViewModel.partials.observe(viewLifecycleOwner) {
+            if (it != null)
+                binding.finalResultsView.adapter = OutputsAdapter(it)
+        }
+
+        displayResultViewModel.metricsPerGroup.observe(viewLifecycleOwner) {
+            if (it != null)
+                binding.groupTableBody.adapter = MetricsTableAdapter(it)
+        }
+
+        displayResultViewModel.evaluation.observe(viewLifecycleOwner) { output ->
+            if (output != null) {
+                binding.textResults.text = String.format("%s",
+                    output.group.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                )
+                binding.textConfidence.text = String.format("%.2f", output.confidence.times(100))
+
+                binding.editTitle.setText(output.name)
+            }
+        }
 
         binding.buttonSave.text = "Update"
 

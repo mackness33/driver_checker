@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 import com.example.driverchecker.machinelearning.data.IImageDetectionFinalResult
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO
 // instead of the whole database, because you only need access to the DAO
@@ -20,6 +21,27 @@ class EvaluationRepository(
     // Observed Flow will notify the observer when the data has changed.
     val allEvaluations: Flow<List<EvaluationEntity>> = evaluationDao.getAllEvaluations()
     val allPartials: Flow<List<PartialEntity>> = partialDao.getAllPartials()
+
+    /* QUERY */
+    fun getAllMetricsOfEvaluation (evaluationId: Long) : Flow<List<MetricsPerEvaluationEntity>> {
+        return metricsDao.getMetricsPerEvaluation(evaluationId)
+    }
+
+    fun getAllMetricsOfEvaluationAsMap (evaluationId: Long) : Flow<Map<String, Triple<Int, Int, Int>>> {
+        return metricsDao.getMetricsPerEvaluation(evaluationId).map { metricList ->
+            val metricMap: MutableMap<String, Triple<Int, Int, Int>> = mutableMapOf()
+            metricList.forEach { metric ->
+                metricMap[metric.group] = Triple(metric.totImages, metric.totClasses, metric.totObjects)
+            }
+            metricMap
+        }
+    }
+
+    fun getAllPartialsOfEvaluation (evaluationId: Long) : Flow<List<PartialEntity>> {
+        return partialDao.getPartialsPerEvaluation(evaluationId)
+    }
+
+    fun getEvaluation (evaluationId: Long) : Flow<EvaluationEntity> = evaluationDao.getEvaluation(evaluationId)
 
 
     /* INSERT */

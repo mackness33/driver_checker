@@ -44,7 +44,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val saveImages: StateLiveData<List<Bitmap>?>
         get() = mSaveImages.value
 
-    private val mAwaitImagesPaths = DeferredLiveData<List<String>?>(null, viewModelScope.coroutineContext)
+    private val mAwaitImagesPaths = DeferredLiveData<List<String?>?>(null, viewModelScope.coroutineContext)
     private val mAwaitEndInsert = DeferredLiveData<Long?>(null, viewModelScope.coroutineContext)
     val awaitEndInsert: LiveData<Long?>
         get() = mAwaitEndInsert.asLiveData
@@ -52,7 +52,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val currentState: AtomicValue<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
 
-    fun usePaths (paths: List<String>?) {
+    fun usePaths (paths: List<String?>) {
         mAwaitImagesPaths.complete(paths)
     }
 

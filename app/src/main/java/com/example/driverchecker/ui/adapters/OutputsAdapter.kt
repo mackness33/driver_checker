@@ -36,7 +36,7 @@ class OutputsAdapter(
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
         fun bind (detectionItem: PartialEntity, position: Int) {
-//            val bitmap: Bitmap? = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
+//            val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(detectionItem.path)
 //            imageInput.setImageBitmap(bitmap)
             textIndex.text = position.toString()
             textGroup.text = detectionItem.group.replaceFirstChar {

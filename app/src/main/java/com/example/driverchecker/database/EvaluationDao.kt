@@ -10,7 +10,7 @@ interface EvaluationDao {
     fun getAllEvaluations(): Flow<List<EvaluationEntity>>
 
     @Query("SELECT * FROM evaluation WHERE id = :evaluationId")
-    fun getEvaluation(evaluationId: Long): EvaluationEntity
+    fun getEvaluation(evaluationId: Long): Flow<EvaluationEntity>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(evaluation: EvaluationEntity) : Long

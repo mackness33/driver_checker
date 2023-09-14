@@ -1,17 +1,18 @@
 package com.example.driverchecker.utils
 
+import android.R
 import android.content.ContentValues
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
+import java.io.*
 
 
 // items are a list of map with keys the number of the superclass and as value a list of all the classes found
@@ -59,8 +60,48 @@ object BitmapUtils {
         return path
     }
 
-    fun saveMultipleBitmapInStorage(bitmaps: List<Bitmap>, context: Context) : List<String> {
-        return bitmaps.map { saveBitmapInStorage(it, context) }
+    fun saveMultipleBitmapInStorage(bitmaps: List<Bitmap>, context: Context) : List<String?> {
+        return bitmaps.map { saveToInternalStorage(it, context) }
+    }
+
+    fun saveToInternalStorage(bitmapImage: Bitmap, context: Context): String? {
+        val cw = ContextWrapper(context)
+        // path to /data/data/yourapp/app_data/imageDir
+        val directory = cw.getDir("imageDir", Context.MODE_PRIVATE)
+        // Create imageDir
+        val myPath = File(directory, "DriveChecker_+${System.currentTimeMillis()}.jpg")
+        var fos: FileOutputStream? = null
+        try {
+            fos = FileOutputStream(myPath)
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            try {
+                fos!!.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return myPath.absolutePath
+    }
+
+    fun loadImageFromStorage(path: String) : Bitmap? {
+        var bitmap: Bitmap? = null
+        try {
+            val (directory_path, pic_name) = path.substringBeforeLast("/") to path.substringAfterLast("/")
+            val file = File(directory_path, pic_name)
+            bitmap = BitmapFactory.decodeStream(FileInputStream(file))
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+
+        return bitmap
+    }
+
+    fun loadMultipleBitmapFromStorage(paths: List<String>, context: Context) : List<Bitmap?> {
+        return paths.map { loadImageFromStorage(it) }
     }
 }
 
