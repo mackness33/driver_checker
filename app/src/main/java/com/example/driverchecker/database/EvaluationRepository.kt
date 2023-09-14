@@ -41,6 +41,10 @@ class EvaluationRepository(
         return partialDao.getPartialsPerEvaluation(evaluationId)
     }
 
+    fun getAllItemsOfPartial (partialId: Long) : Flow<List<ItemEntity>> {
+        return itemDao.getItemsPerPartial(partialId)
+    }
+
     fun getEvaluation (evaluationId: Long) : Flow<EvaluationEntity> = evaluationDao.getEvaluation(evaluationId)
 
 
@@ -98,6 +102,25 @@ class EvaluationRepository(
 
         for (index in partialResults.indices) {
             val id = partialDao.insert(PartialEntity(partialResults[index], ids.size, evalId, paths?.get(index)))
+            ids.add(id)
+        }
+
+        Log.d("EvalRepo", "Partials inserted with: $ids")
+        return ids
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insertAllPartialsAndItems(partialResults: List<IImageDetectionOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+        val ids = mutableListOf<Long>()
+
+        for (index in partialResults.indices) {
+            val id = partialDao.insert(PartialEntity(partialResults[index], ids.size, evalId, paths?.get(index)))
+            val itemsIds = mutableListOf<Long>()
+
+            partialResults[index].listItems.forEach { itemsIds.add(itemDao.insert(ItemEntity(it, id))) }
+            Log.d("EvalRepo", "Items inserted with: $itemsIds")
+
             ids.add(id)
         }
 
