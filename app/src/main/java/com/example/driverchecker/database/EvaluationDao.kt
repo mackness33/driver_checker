@@ -14,6 +14,9 @@ interface EvaluationDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(evaluation: EvaluationEntity) : Long
+
+    @Query("UPDATE evaluation SET name = :name WHERE id = :evaluationId")
+    suspend fun updateById(evaluationId: Long, name: String)
     
     @Delete
     suspend fun delete(evaluation: EvaluationEntity)

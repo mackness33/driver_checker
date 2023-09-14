@@ -83,6 +83,13 @@ class EvaluationRepository(
         return ids
     }
 
+    /* UPDATE */
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun updateById (evaluationId: Long, name: String) {
+        evaluationDao.updateById(evaluationId, name)
+    }
+
     /* DELETE */
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

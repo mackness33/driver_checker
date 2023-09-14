@@ -45,8 +45,8 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         get() = mSaveImages.value
 
     private val mAwaitImagesPaths = DeferredLiveData<List<String>?>(null, viewModelScope.coroutineContext)
-    private val mAwaitEndInsert = DeferredLiveData(false, viewModelScope.coroutineContext)
-    val awaitEndInsert: LiveData<Boolean?>
+    private val mAwaitEndInsert = DeferredLiveData<Long?>(null, viewModelScope.coroutineContext)
+    val awaitEndInsert: LiveData<Long?>
         get() = mAwaitEndInsert.asLiveData
 
     val currentState: AtomicValue<LiveEvaluationStateInterface?>
@@ -72,12 +72,13 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         mAwaitImagesPaths.await()
         evaluationRepository.insertAllPartials(evaluationClient.lastResultsList, evalId)
 
-        mAwaitEndInsert.complete(true)
+        mAwaitEndInsert.complete(evalId)
     }
 
 
     fun update(name: String) = viewModelScope.launch {
-//        evaluationRepository.update(name)
+        if (mAwaitEndInsert.value.lastValue != null && mAwaitEndInsert.value.lastValue!! > 0)
+            evaluationRepository.updateById(mAwaitEndInsert.value.lastValue!!, name)
     }
 
     suspend fun produceImage (image: ImageProxy) = viewModelScope.launch {

@@ -55,8 +55,8 @@ class ResultFragment : Fragment() {
             }
         }
 
-        activityModel.awaitEndInsert.observe(viewLifecycleOwner) { hasEnd ->
-            if (hasEnd == true)
+        activityModel.awaitEndInsert.observe(viewLifecycleOwner) { evaluationId ->
+            if (evaluationId != null && evaluationId > 0)
                 Toast.makeText(requireContext(), "The evaluation has been correctly saved!", Toast.LENGTH_SHORT).show()
         }
 
