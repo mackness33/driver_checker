@@ -22,32 +22,55 @@ data class MachineLearningInput<I>(
     override val input: I,
 ) : IMachineLearningInput<I>
 
-
 // ---------------------------------- OUTPUT ----------------------------------
-
 typealias IMachineLearningItem = WithConfidence
 
-interface IMachineLearningOutput<I, E : IMachineLearningItem> : WithConfidence, WithInput<I> {
+interface IMachineLearningOutput<E : IMachineLearningItem> : WithConfidence {
     val listItems: MachineLearningList<E>
 }
 
-interface IMachineLearningFinalResult : WithConfidence {
-    val listOutputs: List<WithConfidence>
-}
+interface IMachineLearningFinalResult : WithConfidence
 
-data class MachineLearningOutput <I, E : WithConfidence> (
+data class MachineLearningOutput <E : WithConfidence> (
     override val listItems: MachineLearningList<E>,
-    override val input: I,
-) : IMachineLearningOutput<I, E> {
+) : IMachineLearningOutput<E> {
     override val confidence: Float = listItems.confidence
 }
 
 data class MachineLearningFinalResult (
     override val confidence: Float,
-    override val listOutputs: List<WithConfidence>
 ) : IMachineLearningFinalResult
 
-typealias MachineLearningItem = MachineLearningFinalResult
+data class MachineLearningItem (
+    override val confidence: Float
+) : IMachineLearningItem
+
+
+// ---------------------------------- OUTPUT ----------------------------------
+
+typealias IMachineLearningFullItem = IMachineLearningItem
+
+interface IMachineLearningFullOutput<I, E : IMachineLearningFullItem> : IMachineLearningOutput<E>, WithInput<I> {
+    override val listItems: MachineLearningList<E>
+}
+
+interface IMachineLearningFullFinalResult : IMachineLearningFinalResult {
+    val listOutputs: List<WithConfidence>
+}
+
+data class MachineLearningFullOutput <I, E : WithConfidence> (
+    override val listItems: MachineLearningList<E>,
+    override val input: I,
+) : IMachineLearningFullOutput<I, E> {
+    override val confidence: Float = listItems.confidence
+}
+
+data class MachineLearningFullFinalResult (
+    override val confidence: Float,
+    override val listOutputs: List<WithConfidence>
+) : IMachineLearningFullFinalResult
+
+typealias MachineLearningFullItem = IMachineLearningFullItem
 
 
 // ---------------------------------- SEALED CLASSES/INTERFACES ----------------------------------

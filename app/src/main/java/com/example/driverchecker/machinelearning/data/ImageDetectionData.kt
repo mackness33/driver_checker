@@ -23,11 +23,11 @@ data class ImageDetectionItem<S> (
     override val classification: IClassification<S>
 ) : IImageDetectionItem<S>
 
-typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionInput, IImageDetectionItem<S>, S>
-typealias IImageDetectionFinalResult<S> = IClassificationFinalResult<S>
+typealias IImageDetectionOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionItem<S>, S>
+typealias IImageDetectionFinalResult<S> = IClassificationFullFinalResult<S>
 
-typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionInput, IImageDetectionItem<S>, S>
-typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
+typealias ImageDetectionOutput<S> = ClassificationFullOutput<IImageDetectionInput, IImageDetectionItem<S>, S>
+typealias ImageDetectionFinalResult<S> = ClassificationFullFinalResult<S>
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 

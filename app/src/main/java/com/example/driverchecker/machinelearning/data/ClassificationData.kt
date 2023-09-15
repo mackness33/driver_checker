@@ -121,19 +121,19 @@ typealias StringClassifier = IClassifier<String>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IClassificationItem<S> : IMachineLearningItem, WithConfAndClass<S>
+interface IClassificationItem<S> : IMachineLearningFullItem, WithConfAndClass<S>
 //interface IClassificationItem<S> : IMachineLearningItem {
 //    val classification: IClassification<S>
 //}
 
-interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E>, WithConfAndGroups<S> {
+interface IClassificationFullOutput<I, E : IClassificationItem<S>, S> : IMachineLearningFullOutput<I, E>, WithConfAndGroups<S> {
     override val listItems: ClassificationItemList<E, S>
 }
 //interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E> {
 //    val groups: Set<S>
 //}
 
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithConfAndSuper<S> {
+interface IClassificationFullFinalResult<S> : IMachineLearningFullFinalResult, WithConfAndSuper<S> {
     override val listOutputs: List<WithConfAndGroups<S>>
 }
 //interface IClassificationFinalResult<S> : IMachineLearningFinalResult {
@@ -148,19 +148,19 @@ data class ClassificationItem<S> (
     constructor(baseResult: WithConfAndClass<S>) : this(baseResult.confidence, baseResult.classification)
 }
 
-data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
+data class ClassificationFullOutput<I, E : IClassificationItem<S>, S> (
     override val input: I,
     override val listItems: ClassificationItemList<E, S>
-) : IClassificationOutput<I, E, S> {
+) : IClassificationFullOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
 }
 
-data class ClassificationFinalResult<S> (
+data class ClassificationFullFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
     override val listOutputs: List<WithConfAndGroups<S>>,
-) : IClassificationFinalResult<S> {
+) : IClassificationFullFinalResult<S> {
     constructor(baseResult: WithConfAndSuper<S>, outputs: List<WithConfAndGroups<S>>) : this(
         baseResult.confidence, baseResult.supergroup, outputs
     )

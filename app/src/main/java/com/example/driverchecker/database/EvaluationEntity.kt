@@ -3,10 +3,7 @@ package com.example.driverchecker.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.driverchecker.machinelearning.data.IClassificationFinalResult
 import com.example.driverchecker.machinelearning.data.IImageDetectionFinalResult
-import com.example.driverchecker.machinelearning.data.ImageDetectionFinalResult
-import com.example.driverchecker.machinelearning.data.WithConfAndGroups
 
 
 @Entity(tableName = "evaluation")

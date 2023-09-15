@@ -9,6 +9,6 @@ open class ClassificationWindow<E : WithConfAndGroups<S>, S> (
 ) : AClassificationWindow<E, S>(size, threshold, supergroups) {
 
     override fun getFinalResults() : WithConfAndSuper<S> {
-        return ClassificationFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key, window)
+        return ClassificationFullFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key, window)
     }
 }
