@@ -4,7 +4,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
 import kotlinx.coroutines.CoroutineScope
 
-abstract class AMachineLearningFactoryRepository<I, O : IMachineLearningOutputMetrics, FR : IMachineLearningFinalResult>
+abstract class AMachineLearningFactoryRepository<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult>
     : AMachineLearningRepository<I, O, FR>, IMachineLearningFactory<I, O, FR> {
 
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)

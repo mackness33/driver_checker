@@ -2,6 +2,7 @@ package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
 import com.example.driverchecker.machinelearning.helpers.classifiers.MutableClassifier
+import com.example.driverchecker.utils.ISettings
 import kotlinx.serialization.Serializable
 
 
@@ -21,6 +22,11 @@ interface WithSupergroup<S> {
 // with supergroup
 interface WithGroups<S> {
     val groups: Map<S, Set<IClassificationWithMetrics<S>>>
+}
+
+
+interface IClassificationMetrics : IMetrics {
+    val groupMetrics: Map<String, Triple<Int, Int, Int>>
 }
 
 
@@ -128,13 +134,15 @@ interface IClassificationItem<S> : IMachineLearningItem, WithClassification<S> {
     override val classification: IClassification<S>
 }
 
-interface IClassificationOutputMetrics<S> : IMachineLearningOutputMetrics, WithGroups<S>
+interface IClassificationOutputStats<S> : IMachineLearningOutputStats, WithGroups<S>
 
-interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearningOutput<E>, IClassificationOutputMetrics<S> {
+interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearningOutput<E>, IClassificationOutputStats<S> {
     override val listItems: ClassificationItemList<E, S>
 }
 
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithSupergroup<S>
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithSupergroup<S> {
+    override val metrics: IClassificationMetrics?
+}
 
 
 data class ClassificationItem<S> (
@@ -144,10 +152,10 @@ data class ClassificationItem<S> (
     constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
 }
 
-data class ClassificationOutputMetrics<S> (
+data class ClassificationOutputStats<S> (
     override val confidence: Float,
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>>
-) : IClassificationOutputMetrics<S>
+) : IClassificationOutputStats<S>
 
 data class ClassificationOutput<E : IClassificationItem<S>, S> (
     override val listItems: ClassificationItemList<E, S>
@@ -159,9 +167,11 @@ data class ClassificationOutput<E : IClassificationItem<S>, S> (
 data class ClassificationFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
+    override val settings: ISettings? = null,
+    override val metrics: IClassificationMetrics? = null,
 ) : IClassificationFinalResult<S> {
     constructor(baseResult: IClassificationFinalResult<S>) : this(
-        baseResult.confidence, baseResult.supergroup
+        baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics
     )
 }
 
@@ -192,9 +202,11 @@ data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
 data class ClassificationFullFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
+    override val settings: ISettings? = null,
+    override val metrics: IClassificationMetrics? = null,
 ) : IClassificationFullFinalResult<S> {
     constructor(baseResult: IClassificationFinalResult<S>) : this(
-        baseResult.confidence, baseResult.supergroup
+        baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics
     )
 }
 
@@ -209,6 +221,6 @@ sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface
 // Represents different states for the LatestNews screen
 sealed class LiveClassificationState : LiveEvaluationState(), LiveClassificationStateInterface {
     data class Start<S>(val maxClassesPerGroup: Int, val classifier: IClassifier<S>) : LiveClassificationStateInterface
-    data class Loading<S>(val index: Int, val partialResult: IClassificationOutputMetrics<S>?) : LiveClassificationStateInterface
+    data class Loading<S>(val index: Int, val partialResult: IClassificationOutputStats<S>?) : LiveClassificationStateInterface
     data class End<S>(val exception: Throwable?, val finalResult: IClassificationFinalResult<S>?) : LiveClassificationStateInterface
 }

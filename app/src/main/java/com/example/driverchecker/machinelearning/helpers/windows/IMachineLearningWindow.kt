@@ -1,10 +1,11 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningOutputMetrics
+import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
+import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
 import com.example.driverchecker.machinelearning.data.WithConfidence
 import com.example.driverchecker.utils.ISettings
 
-interface IMachineLearningWindow<E : IMachineLearningOutputMetrics> : WithConfidence {
+interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfidence {
     val lastResult : E?
 
     val hasAcceptedLast: Boolean
@@ -23,7 +24,7 @@ interface IMachineLearningWindow<E : IMachineLearningOutputMetrics> : WithConfid
 
     fun clean ()
 
-    fun getFinalResults() : WithConfidence
+    fun getFinalResults() : IMachineLearningFinalResult
 
     fun updateSize(newSize: Int)
 

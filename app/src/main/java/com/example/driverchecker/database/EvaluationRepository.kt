@@ -95,7 +95,7 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutputMetrics<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutputStats<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
         for (index in partialResults.indices) {

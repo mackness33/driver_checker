@@ -10,6 +10,19 @@ interface WithConfidence {
     val confidence: Float
 }
 
+interface WithSettings {
+    val settings: ISettings?
+}
+
+interface WithMetrics {
+    val metrics: IMetrics?
+}
+
+interface IMetrics {
+    val totalTime: Float
+    val totalWindows: Int
+}
+
 // ---------------------------------- INPUT ----------------------------------
 
 interface WithInput<I> {
@@ -25,13 +38,13 @@ data class MachineLearningInput<I>(
 // ---------------------------------- BASIC OUTPUT ----------------------------------
 typealias IMachineLearningItem = WithConfidence
 
-typealias IMachineLearningOutputMetrics = WithConfidence
+typealias IMachineLearningOutputStats = WithConfidence
 
-interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOutputMetrics {
+interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOutputStats {
     val listItems: MachineLearningList<E>
 }
 
-typealias IMachineLearningFinalResult = WithConfidence
+interface IMachineLearningFinalResult : WithConfidence, WithMetrics, WithSettings
 
 data class MachineLearningOutput <E : WithConfidence> (
     override val listItems: MachineLearningList<E>,
@@ -41,6 +54,8 @@ data class MachineLearningOutput <E : WithConfidence> (
 
 data class MachineLearningFinalResult (
     override val confidence: Float,
+    override val settings: ISettings? = null,
+    override val metrics: IMetrics? = null,
 ) : IMachineLearningFinalResult
 
 data class MachineLearningItem (
@@ -52,9 +67,7 @@ data class MachineLearningItem (
 
 typealias IMachineLearningFullItem = IMachineLearningItem
 
-interface IMachineLearningFullOutput<I, E : IMachineLearningFullItem> : IMachineLearningOutput<E>, WithInput<I> {
-    override val listItems: MachineLearningList<E>
-}
+interface IMachineLearningFullOutput<I, E : IMachineLearningFullItem> : IMachineLearningOutput<E>, WithInput<I>
 
 interface IMachineLearningFullFinalResult : IMachineLearningFinalResult
 
@@ -66,7 +79,9 @@ data class MachineLearningFullOutput <I, E : WithConfidence> (
 }
 
 data class MachineLearningFullFinalResult (
-    override val confidence: Float
+    override val confidence: Float,
+    override val settings: ISettings? = null,
+    override val metrics: IMetrics? = null
 ) : IMachineLearningFullFinalResult
 
 typealias MachineLearningFullItem = IMachineLearningFullItem
@@ -80,7 +95,7 @@ sealed interface LiveEvaluationStateInterface
 // Represents different states for the LatestNews screen
 sealed class LiveEvaluationState : LiveEvaluationStateInterface {
     data class Ready(val isReady: Boolean) : LiveEvaluationStateInterface
-    data class Loading(val index: Int, val partialResult: IMachineLearningOutputMetrics?) : LiveEvaluationStateInterface
+    data class Loading(val index: Int, val partialResult: IMachineLearningOutputStats?) : LiveEvaluationStateInterface
     object Start : LiveEvaluationStateInterface
     data class End(val exception: Throwable?, val finalResult: IMachineLearningFinalResult?) : LiveEvaluationStateInterface
 }

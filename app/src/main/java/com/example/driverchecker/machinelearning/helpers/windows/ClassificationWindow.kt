@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.*
 
-open class ClassificationWindow<E : IClassificationOutputMetrics<S>, S> (
+open class ClassificationWindow<E : IClassificationOutputStats<S>, S> (
     size: Int = 3,
     threshold: Float = 0.15f,
     supergroups: Set<S>

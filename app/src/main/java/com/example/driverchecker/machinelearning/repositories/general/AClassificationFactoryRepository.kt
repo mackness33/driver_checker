@@ -11,7 +11,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
-abstract class AClassificationFactoryRepository<I, O : IClassificationOutputMetrics<S>, FR : IClassificationFinalResult<S>, S>
+abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningFactoryRepository<I, O, FR>, IClassificationRepository<I, O, FR, S> {
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
 

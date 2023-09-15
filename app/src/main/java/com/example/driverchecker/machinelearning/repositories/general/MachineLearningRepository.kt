@@ -9,7 +9,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearnin
 import com.example.driverchecker.machinelearning.helpers.windows.MachineLearningWindow
 import kotlinx.coroutines.CoroutineScope
 
-open class MachineLearningRepository<I, O : IMachineLearningOutputMetrics, FR : IMachineLearningFinalResult> (importedModel: IMachineLearningModel<I, O>?, repositoryScope: CoroutineScope) :
+open class MachineLearningRepository<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> (importedModel: IMachineLearningModel<I, O>?, repositoryScope: CoroutineScope) :
     AMachineLearningRepository<I, O, FR> (repositoryScope) {
     override val window: IMachineLearningWindow<O> = MachineLearningWindow()
     override val model: IMachineLearningModel<I, O>? = importedModel
