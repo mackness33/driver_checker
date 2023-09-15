@@ -144,19 +144,19 @@ open class ClassificationItemMutableList<E : WithConfAndClass<S>, S> :
     constructor(collection: Collection<E>) : super(collection)
     constructor() : super()
 
-    protected val mutableGroups: MutableMap<S, MutableSet<IMutableClassificationMetrics<S>>> = mutableMapOf()
-    final override val groups: Map<S, Set<IClassificationMetrics<S>>>
+    protected val mutableGroups: MutableMap<S, MutableSet<IMutableClassificationWithMetrics<S>>> = mutableMapOf()
+    final override val groups: Map<S, Set<IClassificationWithMetrics<S>>>
         get() = mutableGroups
 
     protected open fun putClassification (element: E) {
         when {
             !mutableGroups.containsKey(element.classification.supergroup) -> {
-                mutableGroups[element.classification.supergroup] = mutableSetOf(MutableClassificationMetrics(element.classification))
+                mutableGroups[element.classification.supergroup] = mutableSetOf(MutableClassificationWithMetrics(element.classification))
             }
             mutableGroups[element.classification.supergroup]!!.find { classMetric ->
                 classMetric.externalIndex == element.classification.externalIndex
             } == null -> {
-                mutableGroups[element.classification.supergroup]!!.add(MutableClassificationMetrics(element.classification))
+                mutableGroups[element.classification.supergroup]!!.add(MutableClassificationWithMetrics(element.classification))
             }
             else -> {
                 mutableGroups[element.classification.supergroup]!!.find { it.externalIndex == element.classification.externalIndex }?.inc()
@@ -345,7 +345,7 @@ open class ClientMetricsMutableMap<S> : ClientMetricsMap <S> {
         mMetrics.clear()
     }
 
-    private fun sumAllObjectsFound (setOfClassifications: Set<IClassificationMetrics<S>>) : Int {
+    private fun sumAllObjectsFound (setOfClassifications: Set<IClassificationWithMetrics<S>>) : Int {
         return setOfClassifications.fold(0) { sum, next ->
             sum + next.objectsFound
         }

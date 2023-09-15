@@ -20,14 +20,14 @@ interface WithConfAndSuper<S> : WithConfidence {
 
 // with supergroup
 interface WithConfAndGroups<S> : WithConfidence {
-    val groups: Map<S, Set<IClassificationMetrics<S>>>
+    val groups: Map<S, Set<IClassificationWithMetrics<S>>>
 }
 
-interface IClassificationMetrics<S> : IClassification<S> {
+interface IClassificationWithMetrics<S> : IClassification<S> {
     val objectsFound: Int
 }
 
-interface IMutableClassificationMetrics<S> : IClassificationMetrics<S> {
+interface IMutableClassificationWithMetrics<S> : IClassificationWithMetrics<S> {
     fun inc()
     fun dec()
 }
@@ -48,15 +48,15 @@ data class Classification<S> (
     override val supergroup: S,
 ) : IClassification<S>
 
-data class ClassificationMetrics<S> (
+data class ClassificationWithMetrics<S> (
     override val name: String,
     override val externalIndex: Int,
     override val internalIndex: Int,
     override val supergroup: S,
     override val objectsFound: Int,
-) : IClassificationMetrics<S>
+) : IClassificationWithMetrics<S>
 
-class MutableClassificationMetrics<S> : IMutableClassificationMetrics<S> {
+class MutableClassificationWithMetrics<S> : IMutableClassificationWithMetrics<S> {
     override val name: String
     override val externalIndex: Int
     override val supergroup: S
@@ -93,7 +93,7 @@ class MutableClassificationMetrics<S> : IMutableClassificationMetrics<S> {
         objectsFound--
     }
 
-    fun toReadOnly() : ClassificationMetrics<S> = ClassificationMetrics(
+    fun toReadOnly() : ClassificationWithMetrics<S> = ClassificationWithMetrics(
         this.name,
         this.externalIndex,
         this.internalIndex,
@@ -153,7 +153,7 @@ data class ClassificationOutput<I, E : IClassificationItem<S>, S> (
     override val listItems: ClassificationItemList<E, S>
 ) : IClassificationOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
-    override val groups: Map<S, Set<IClassificationMetrics<S>>> = listItems.groups
+    override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
 }
 
 data class ClassificationFinalResult<S> (
