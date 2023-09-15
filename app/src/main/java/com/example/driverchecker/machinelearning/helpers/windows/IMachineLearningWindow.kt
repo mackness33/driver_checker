@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
+import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResultStats
 import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
 import com.example.driverchecker.machinelearning.data.WithConfidence
 import com.example.driverchecker.utils.ISettings
@@ -24,7 +25,7 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
 
     fun clean ()
 
-    fun getFinalResults() : IMachineLearningFinalResult
+    fun getFinalResults() : IMachineLearningFinalResultStats
 
     fun updateSize(newSize: Int)
 

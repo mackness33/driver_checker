@@ -10,6 +10,10 @@ import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
+
 
 abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningFactoryRepository<I, O, FR>, IClassificationRepository<I, O, FR, S> {
@@ -33,6 +37,8 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
                     window.updateSettings(settings)
                     model?.updateThreshold(settings.modelThreshold)
+
+                    timer.markStart()
                     flowEvaluation(input, ::cancel)?.collect()
                 } else
                     throw Throwable("The stream is not ready yet")
@@ -51,11 +57,20 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                 LiveClassificationState.End<S>(cause, null)
             )
         } else {
+            timer.markEnd()
             mEvaluationFlowState.emit(
-                LiveClassificationState.End(null, window.getFinalResults())
+                LiveClassificationState.End(
+                    null,
+                    ClassificationFinalResult(
+                        window.getFinalResults(),
+                        null,
+                        ClassificationMetrics(timer.diff() ?: 0.milliseconds, window.totalWindowsDone())
+                    )
+                )
             )
         }
 
+        timer.reset()
         window.clean()
     }
 

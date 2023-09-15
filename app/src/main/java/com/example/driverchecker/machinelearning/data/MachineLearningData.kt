@@ -3,6 +3,7 @@ package com.example.driverchecker.machinelearning.data
 import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.flow.SharedFlow
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration
 
 // ---------------------------------- CLASSES ----------------------------------
 
@@ -19,9 +20,15 @@ interface WithMetrics {
 }
 
 interface IMetrics {
-    val totalTime: Float
+    val totalTime: Duration
     val totalWindows: Int
 }
+
+
+data class MachineLearningMetrics (
+    override val totalTime: Duration,
+    override val totalWindows: Int
+) : IMetrics
 
 // ---------------------------------- INPUT ----------------------------------
 
@@ -44,7 +51,9 @@ interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOut
     val listItems: MachineLearningList<E>
 }
 
-interface IMachineLearningFinalResult : WithConfidence, WithMetrics, WithSettings
+typealias IMachineLearningFinalResultStats = WithConfidence
+
+interface IMachineLearningFinalResult : IMachineLearningFinalResultStats, WithMetrics, WithSettings
 
 data class MachineLearningOutput <E : WithConfidence> (
     override val listItems: MachineLearningList<E>,
@@ -56,7 +65,12 @@ data class MachineLearningFinalResult (
     override val confidence: Float,
     override val settings: ISettings? = null,
     override val metrics: IMetrics? = null,
-) : IMachineLearningFinalResult
+) : IMachineLearningFinalResult {
+
+    constructor(main: IMachineLearningFinalResultStats, settings: ISettings?, metrics: IMetrics?) : this (
+        main.confidence, settings, metrics
+    )
+}
 
 data class MachineLearningItem (
     override val confidence: Float

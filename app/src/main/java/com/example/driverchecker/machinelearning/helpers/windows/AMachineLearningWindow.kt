@@ -28,7 +28,9 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> (
     override var lastResult : E? = null
         protected set
 
-    override fun totalWindowsDone() : Int = if (window.size >= size) window.size else 0
+    override fun totalWindowsDone() : Int {
+        return if (window.size >= size) (totEvaluationsDone + 1) - window.size else 0
+    }
 
     override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
 

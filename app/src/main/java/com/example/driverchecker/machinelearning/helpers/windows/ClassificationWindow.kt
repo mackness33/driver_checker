@@ -7,7 +7,7 @@ open class ClassificationWindow<E : IClassificationOutputStats<S>, S> (
     threshold: Float = 0.15f,
     supergroups: Set<S>
 ) : AClassificationWindow<E, S>(size, threshold, supergroups) {
-    override fun getFinalResults() : IClassificationFinalResult<S> {
+    override fun getFinalResults() : IClassificationFinalResultStats<S> {
         return ClassificationFullFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
     }
 }

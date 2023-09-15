@@ -8,9 +8,15 @@ import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearnin
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import com.example.driverchecker.utils.ISettings
 import com.example.driverchecker.utils.Settings
+import com.example.driverchecker.utils.Timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
@@ -27,6 +33,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     )
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
+    protected val timer = Timer()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()
@@ -82,6 +89,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
                 window.updateSettings(settings)
                 model?.updateThreshold(settings.modelThreshold)
+
+                timer.markStart()
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
                 mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
@@ -109,13 +118,21 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 LiveEvaluationState.End(cause, null)
             )
         } else {
+            timer.markEnd()
             mEvaluationFlowState.emit(
-                LiveEvaluationState.End(null, window.getFinalResults())
+                LiveEvaluationState.End(
+                    null,
+                    MachineLearningFinalResult(
+                        window.getFinalResults(),
+                        null,
+                        MachineLearningMetrics(timer.diff() ?: 0.milliseconds, window.totalWindowsDone())
+                    )
+                )
             )
         }
 
+        timer.reset()
         window.clean()
-//        mEvaluationFlowState.emit(LiveEvaluationState.Ready(model?.isLoaded?.value ?: false))signal
     }
 
     protected open suspend fun onEachEvaluation (
@@ -188,7 +205,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         }
 
         override fun onLiveEvaluationStop(state: ClientState.Stop) {
-//            liveEvaluationJob?.cancel(state.cause)
             onStopLiveEvaluation(state.cause)
         }
     }
