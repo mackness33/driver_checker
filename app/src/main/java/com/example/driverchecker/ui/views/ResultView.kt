@@ -67,7 +67,7 @@ class ResultView : View {
         paintText.color = Color.WHITE
         canvas.drawText(
             String.format(
-                "%s %.2f",
+                "%s %.2f%%",
                 item.classification,
                 item.confidence
             ),
@@ -133,7 +133,7 @@ class ResultView : View {
     }
 
     companion object {
-        private const val TEXT_X = 40
+        private const val TEXT_X = 70
         private const val TEXT_Y = 35
         private const val TEXT_WIDTH = 260
         private const val TEXT_HEIGHT = 50

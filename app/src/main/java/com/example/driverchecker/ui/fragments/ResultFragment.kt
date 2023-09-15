@@ -38,7 +38,7 @@ class ResultFragment : Fragment() {
             binding.textResults.text = String.format("%s",
                 output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )
-            binding.textConfidence.text = String.format("%.2f", output?.confidence?.times(100))
+            binding.textConfidence.text = String.format("%.2f%%", output?.confidence?.times(100))
         }
 
         activityModel.saveImages.observe(viewLifecycleOwner) { images ->
