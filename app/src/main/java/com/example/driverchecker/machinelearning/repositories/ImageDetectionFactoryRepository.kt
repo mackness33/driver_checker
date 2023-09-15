@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.repositories
 
-import android.graphics.ColorSpace.Model
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
@@ -12,13 +11,13 @@ import com.example.driverchecker.machinelearning.repositories.general.AClassific
 import kotlinx.coroutines.CoroutineScope
 
 class ImageDetectionFactoryRepository
-    : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String> {
+    : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>, String> {
 
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
 
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
-    override var model: IClassificationModel<IImageDetectionInput, IImageDetectionOutput<String>, String>? = null
+    override var model: IClassificationModel<IImageDetectionInput, IImageDetectionFullOutput<String>, String>? = null
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
@@ -40,7 +39,7 @@ class ImageDetectionFactoryRepository
         return false
     }
 
-    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInput, IImageDetectionOutput<String>, String>? {
+    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInput, IImageDetectionFullOutput<String>, String>? {
         return when (modelName){
             "YoloV5" -> {
                 val path = modelInit["path"] as String?

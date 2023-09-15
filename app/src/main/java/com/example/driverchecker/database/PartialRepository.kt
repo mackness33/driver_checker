@@ -1,7 +1,6 @@
 package com.example.driverchecker.database
 
 import androidx.annotation.WorkerThread
-import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import kotlinx.coroutines.flow.Flow
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO

@@ -10,9 +10,9 @@ import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IImageDetectionFinalResult<String>, String>() {
+class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
-    override val finalResult: StateLiveData<IImageDetectionFinalResult<String>?>
+    override val finalResult: StateLiveData<IImageDetectionFullFinalResult<String>?>
         get() = mFinalResult
     
     // FUNCTIONS
@@ -37,7 +37,7 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
             super.onLiveClassificationEnd(state)
 
             if (state.finalResult != null)
-                mFinalResult.postValue(ImageDetectionFinalResult(state.finalResult.confidence, state.finalResult.supergroup, evaluatedItemsArray))
+                mFinalResult.postValue(ImageDetectionFullFinalResult(state.finalResult.confidence, state.finalResult.supergroup, evaluatedItemsArray))
 
             Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }

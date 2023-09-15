@@ -7,7 +7,7 @@ import com.example.driverchecker.utils.StateLiveData
 interface MachineLearningList<E : IMachineLearningItem> : List<E>,  IMachineLearningOutputMetrics
 interface ClassificationItemList<E : IClassificationItem<S>, S> : MachineLearningList<E>,  IClassificationOutputMetrics<S>
 
-open class MachineLearningMutableList<E : WithConfidence> : ArrayList<E>, MachineLearningList<E> {
+open class MachineLearningMutableList<E : IMachineLearningItem> : ArrayList<E>, MachineLearningList<E> {
     constructor(initialCapacity: Int) : super(initialCapacity)
     constructor(collection: Collection<E>) : super(collection)
     constructor() : super(10)

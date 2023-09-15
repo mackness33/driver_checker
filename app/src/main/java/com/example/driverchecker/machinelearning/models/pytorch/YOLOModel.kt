@@ -33,7 +33,7 @@ class YOLOModel :
         return ImageDetectionInput(resizedBitmap)
     }
 
-    override fun evaluateData(input: IImageDetectionInput): IImageDetectionOutput<String> {
+    override fun evaluateData(input: IImageDetectionInput): IImageDetectionFullOutput<String> {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.input,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
@@ -47,8 +47,8 @@ class YOLOModel :
         return outputsToNMSPredictions(predictions, input)
     }
 
-    override fun postProcess(output: IImageDetectionOutput<String>): IImageDetectionOutput<String> {
-        return ImageDetectionOutput(
+    override fun postProcess(output: IImageDetectionFullOutput<String>): IImageDetectionFullOutput<String> {
+        return ImageDetectionFullOutput(
             output.input,
             ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
         )
@@ -57,7 +57,7 @@ class YOLOModel :
     fun outputsToNMSPredictions(
         outputs: FloatArray,
         image: IImageDetectionInput
-    ): IImageDetectionOutput<String> {
+    ): IImageDetectionFullOutput<String> {
         val results: ClassificationItemMutableList<IImageDetectionFullItem<String>, String> = ClassificationItemMutableList()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
@@ -93,7 +93,7 @@ class YOLOModel :
             }
         }
 
-        return ImageDetectionOutput(
+        return ImageDetectionFullOutput(
             image,
             results
         )

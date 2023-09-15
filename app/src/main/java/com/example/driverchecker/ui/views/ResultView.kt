@@ -8,7 +8,7 @@ import com.example.driverchecker.database.ItemEntity
 import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
 import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem
-import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
+import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.
@@ -96,7 +96,7 @@ class ResultView : View {
         canvas.drawRect(resizedRect, paintRectangle)
     }
 
-    fun setResults (imageDetectionOutputs: IImageDetectionOutput<String>?) {
+    fun setResults (imageDetectionOutputs: IImageDetectionFullOutput<String>?) {
         itemResults = imageDetectionOutputs?.listItems?.map { DrawableItemResult(it) }
     }
 

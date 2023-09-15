@@ -9,28 +9,40 @@ import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchM
 typealias ImageDetectionInput = MachineLearningInput<Bitmap>
 typealias IImageDetectionInput = IMachineLearningInput<Bitmap>
 
-// ---------------------------------- OUTPUT ----------------------------------
+// ---------------------------------- BASIC OUTPUT ----------------------------------
 
-interface IImageDetectionFullItem<S> : IClassificationFullItem<S> {
+interface IImageDetectionItem<S> : IClassificationItem<S> {
     var classIndex: Int
     var rect: RectF
 }
 
-data class ImageDetectionFullItem<S> (
+data class ImageDetectionItem<S> (
     override var classIndex: Int,
     override var rect: RectF,
     override val confidence: Float,
     override val classification: IClassification<S>
-) : IImageDetectionFullItem<S>
+) : IImageDetectionItem<S>
 
-typealias IImageDetectionOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
-typealias IImageDetectionFinalResult<S> = IClassificationFullFinalResult<S>
+typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionItem<S>, S>
+typealias IImageDetectionFinalResult<S> = IClassificationFinalResult<S>
 
-typealias ImageDetectionOutput<S> = ClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
-typealias ImageDetectionFinalResult<S> = ClassificationFullFinalResult<S>
+typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionItem<S>, S>
+typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
+
+// ---------------------------------- FULL OUTPUT ----------------------------------
+
+typealias IImageDetectionFullItem<S> = IClassificationFullItem<S>
+
+typealias ImageDetectionFullItem<S> = ImageDetectionItem<S>
+
+typealias IImageDetectionFullOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
+typealias IImageDetectionFullFinalResult<S> = IClassificationFullFinalResult<S>
+
+typealias ImageDetectionFullOutput<S> = ClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
+typealias ImageDetectionFullFinalResult<S> = ClassificationFullFinalResult<S>
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
-typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionInput, IImageDetectionOutput<S>, S>
+typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionInput, IImageDetectionFullOutput<S>, S>
 
 //typealias ImageDetectionRepository<S> = ClassificationRepository<IImageDetectionInput, IImageDetectionOutput<S>, S>

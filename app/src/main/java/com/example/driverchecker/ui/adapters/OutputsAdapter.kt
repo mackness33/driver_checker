@@ -1,7 +1,6 @@
 package com.example.driverchecker.ui.adapters
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.R
 import com.example.driverchecker.database.PartialEntity
-import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import com.example.driverchecker.utils.ColorManager
 import java.util.*
 
