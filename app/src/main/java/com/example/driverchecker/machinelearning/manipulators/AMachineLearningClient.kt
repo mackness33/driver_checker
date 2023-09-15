@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-abstract class AMachineLearningClient<I, O : WithConfidence, FR : WithConfidence> : IMachineLearningClient<I, O, FR>{
+abstract class AMachineLearningClient<I, O : IMachineLearningOutputMetrics, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR>{
 
     // LIVE DATA
     protected val mHasEnded = AtomicLiveData(false)

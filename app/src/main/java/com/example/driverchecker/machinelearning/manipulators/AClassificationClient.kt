@@ -13,7 +13,7 @@ import com.example.driverchecker.utils.StatefulLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-abstract class AClassificationClient<I, O : IClassificationOutput<S>, FR : IClassificationFinalResult<S>, S>
+abstract class AClassificationClient<I, O : IClassificationOutputMetrics<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
     override val finalResult: StateLiveData<FR?>

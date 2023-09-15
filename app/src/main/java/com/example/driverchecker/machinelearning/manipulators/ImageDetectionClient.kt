@@ -37,7 +37,7 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
             super.onLiveClassificationEnd(state)
 
             if (state.finalResult != null)
-                mFinalResult.postValue(ImageDetectionFullFinalResult(state.finalResult.confidence, state.finalResult.supergroup, evaluatedItemsArray))
+                mFinalResult.postValue(ImageDetectionFullFinalResult(state.finalResult.confidence, state.finalResult.supergroup))
 
             Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
