@@ -1,9 +1,11 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
+import com.example.driverchecker.machinelearning.data.IClassificationOutputMetrics
+import com.example.driverchecker.machinelearning.data.IMachineLearningOutputMetrics
 import com.example.driverchecker.machinelearning.data.WithConfidence
 import com.example.driverchecker.utils.ISettings
 
-abstract class AMachineLearningWindow<E : WithConfidence> (
+abstract class AMachineLearningWindow<E : IMachineLearningOutputMetrics> (
     initialSize: Int = 3,
     initialThreshold: Float = 0.15f
 ) : IMachineLearningWindow<E> {

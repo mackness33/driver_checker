@@ -1,9 +1,10 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
+import com.example.driverchecker.machinelearning.data.IMachineLearningOutputMetrics
 import com.example.driverchecker.machinelearning.data.WithConfidence
 import com.example.driverchecker.utils.ISettings
 
-interface IMachineLearningWindow<E : WithConfidence> : WithConfidence {
+interface IMachineLearningWindow<E : IMachineLearningOutputMetrics> : WithConfidence {
     val lastResult : E?
 
     val hasAcceptedLast: Boolean
