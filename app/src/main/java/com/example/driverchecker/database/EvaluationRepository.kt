@@ -2,8 +2,7 @@ package com.example.driverchecker.database
 
 import android.util.Log
 import androidx.annotation.WorkerThread
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullFinalResult
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
+import com.example.driverchecker.machinelearning.data.*
 import kotlinx.coroutines.flow.Flow
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO
@@ -71,7 +70,7 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertEvaluation(finalResult: IImageDetectionFullFinalResult<String>, name: String) : Long {
+    suspend fun insertEvaluation(finalResult: IImageDetectionFinalResult<String>, name: String) : Long {
         val id = evaluationDao.insert(EvaluationEntity(finalResult.confidence, name, finalResult.supergroup))
         Log.d("EvalRepo", "Eval inserted with: $id")
         return id
@@ -96,7 +95,7 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartials(partialResults: List<IImageDetectionFullOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutputMetrics<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
         for (index in partialResults.indices) {
@@ -110,7 +109,7 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartialsAndItems(partialResults: List<IImageDetectionFullOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+    suspend fun insertAllPartialsAndItems(partialResults: List<IImageDetectionOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
         for (index in partialResults.indices) {
