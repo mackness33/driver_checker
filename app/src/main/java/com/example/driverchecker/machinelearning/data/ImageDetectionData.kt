@@ -11,22 +11,22 @@ typealias IImageDetectionInput = IMachineLearningInput<Bitmap>
 
 // ---------------------------------- OUTPUT ----------------------------------
 
-interface IImageDetectionItem<S> : IClassificationItem<S> {
+interface IImageDetectionFullItem<S> : IClassificationFullItem<S> {
     var classIndex: Int
     var rect: RectF
 }
 
-data class ImageDetectionItem<S> (
+data class ImageDetectionFullItem<S> (
     override var classIndex: Int,
     override var rect: RectF,
     override val confidence: Float,
     override val classification: IClassification<S>
-) : IImageDetectionItem<S>
+) : IImageDetectionFullItem<S>
 
-typealias IImageDetectionOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionItem<S>, S>
+typealias IImageDetectionOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
 typealias IImageDetectionFinalResult<S> = IClassificationFullFinalResult<S>
 
-typealias ImageDetectionOutput<S> = ClassificationFullOutput<IImageDetectionInput, IImageDetectionItem<S>, S>
+typealias ImageDetectionOutput<S> = ClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
 typealias ImageDetectionFinalResult<S> = ClassificationFullFinalResult<S>
 
 // ---------------------------------- TYPE ALIASES ----------------------------------

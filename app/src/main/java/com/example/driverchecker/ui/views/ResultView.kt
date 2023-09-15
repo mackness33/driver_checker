@@ -7,7 +7,7 @@ import android.view.View
 import com.example.driverchecker.database.ItemEntity
 import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
-import com.example.driverchecker.machinelearning.data.IImageDetectionItem
+import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
@@ -115,7 +115,7 @@ class ResultView : View {
         val confidence: Float,
         val group: String
     ) {
-        constructor(imageDetectionItem: IImageDetectionItem<String>) : this (
+        constructor(imageDetectionItem: IImageDetectionFullItem<String>) : this (
             rect = imageDetectionItem.rect,
             internalIndex = imageDetectionItem.classification.internalIndex,
             classification = imageDetectionItem.classification.name,

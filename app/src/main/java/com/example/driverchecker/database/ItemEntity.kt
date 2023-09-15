@@ -2,7 +2,7 @@ package com.example.driverchecker.database
 
 import android.graphics.RectF
 import androidx.room.*
-import com.example.driverchecker.machinelearning.data.IImageDetectionItem
+import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem
 
 
 @Entity(
@@ -24,7 +24,7 @@ data class ItemEntity (
     @Embedded val rect: RectangleF,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) {
-    constructor(itemResult: IImageDetectionItem<String>, partId: Long) : this (
+    constructor(itemResult: IImageDetectionFullItem<String>, partId: Long) : this (
         confidence = itemResult.confidence,
         classification = itemResult.classification.name,
         internalIndex = itemResult.classification.internalIndex,

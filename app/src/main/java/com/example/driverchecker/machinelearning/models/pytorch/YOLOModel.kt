@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ClassificationSupergroupMap
-import com.example.driverchecker.machinelearning.data.ImageDetectionItem
+import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -58,7 +58,7 @@ class YOLOModel :
         outputs: FloatArray,
         image: IImageDetectionInput
     ): IImageDetectionOutput<String> {
-        val results: ClassificationItemMutableList<IImageDetectionItem<String>, String> = ClassificationItemMutableList()
+        val results: ClassificationItemMutableList<IImageDetectionFullItem<String>, String> = ClassificationItemMutableList()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
 
@@ -83,7 +83,7 @@ class YOLOModel :
                 }
 
                 results.add(
-                    ImageDetectionItem(
+                    ImageDetectionFullItem(
                         clsIndex,
                         rect,
                         outputs[i * outputColumn + 4],

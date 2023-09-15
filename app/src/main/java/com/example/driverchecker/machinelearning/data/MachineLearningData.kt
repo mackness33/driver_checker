@@ -22,14 +22,16 @@ data class MachineLearningInput<I>(
     override val input: I,
 ) : IMachineLearningInput<I>
 
-// ---------------------------------- OUTPUT ----------------------------------
+// ---------------------------------- BASIC OUTPUT ----------------------------------
 typealias IMachineLearningItem = WithConfidence
 
-interface IMachineLearningOutput<E : IMachineLearningItem> : WithConfidence {
+typealias IMachineLearningOutputMetrics = WithConfidence
+
+interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOutputMetrics {
     val listItems: MachineLearningList<E>
 }
 
-interface IMachineLearningFinalResult : WithConfidence
+typealias IMachineLearningFinalResult = WithConfidence
 
 data class MachineLearningOutput <E : WithConfidence> (
     override val listItems: MachineLearningList<E>,
@@ -46,7 +48,7 @@ data class MachineLearningItem (
 ) : IMachineLearningItem
 
 
-// ---------------------------------- OUTPUT ----------------------------------
+// ---------------------------------- FULL OUTPUT ----------------------------------
 
 typealias IMachineLearningFullItem = IMachineLearningItem
 
@@ -54,9 +56,7 @@ interface IMachineLearningFullOutput<I, E : IMachineLearningFullItem> : IMachine
     override val listItems: MachineLearningList<E>
 }
 
-interface IMachineLearningFullFinalResult : IMachineLearningFinalResult {
-    val listOutputs: List<WithConfidence>
-}
+interface IMachineLearningFullFinalResult : IMachineLearningFinalResult
 
 data class MachineLearningFullOutput <I, E : WithConfidence> (
     override val listItems: MachineLearningList<E>,
@@ -66,8 +66,7 @@ data class MachineLearningFullOutput <I, E : WithConfidence> (
 }
 
 data class MachineLearningFullFinalResult (
-    override val confidence: Float,
-    override val listOutputs: List<WithConfidence>
+    override val confidence: Float
 ) : IMachineLearningFullFinalResult
 
 typealias MachineLearningFullItem = IMachineLearningFullItem
@@ -81,9 +80,9 @@ sealed interface LiveEvaluationStateInterface
 // Represents different states for the LatestNews screen
 sealed class LiveEvaluationState : LiveEvaluationStateInterface {
     data class Ready(val isReady: Boolean) : LiveEvaluationStateInterface
-    data class Loading(val index: Int, val partialResult: WithConfidence?) : LiveEvaluationStateInterface
+    data class Loading(val index: Int, val partialResult: IMachineLearningOutputMetrics?) : LiveEvaluationStateInterface
     object Start : LiveEvaluationStateInterface
-    data class End(val exception: Throwable?, val finalResult: WithConfidence?) : LiveEvaluationStateInterface
+    data class End(val exception: Throwable?, val finalResult: IMachineLearningFinalResult?) : LiveEvaluationStateInterface
 }
 
 // Represents different states for the LatestNews screen

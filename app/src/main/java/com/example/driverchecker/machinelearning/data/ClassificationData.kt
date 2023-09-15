@@ -9,19 +9,22 @@ import kotlinx.serialization.Serializable
 // ---------------------------------- CLASSES ----------------------------------
 
 // with classification
-interface WithConfAndClass<S> : WithConfidence {
+interface WithClassification<S> {
     val classification: IClassification<S>
 }
 
 // with supergroup
-interface WithConfAndSuper<S> : WithConfidence {
+interface WithSupergroup<S> {
     val supergroup: S
 }
 
 // with supergroup
-interface WithConfAndGroups<S> : WithConfidence {
+interface WithGroups<S> {
     val groups: Map<S, Set<IClassificationWithMetrics<S>>>
 }
+
+
+// ---------------------------------- CLASSIFICATION ----------------------------------
 
 interface IClassificationWithMetrics<S> : IClassification<S> {
     val objectsFound: Int
@@ -119,36 +122,61 @@ typealias StringMutableClassifier = MutableClassifier<String>
 typealias StringClassifier = IClassifier<String>
 
 
-// ---------------------------------- OUTPUT ----------------------------------
+// ---------------------------------- BASIC OUTPUT ----------------------------------
+// with classification
+interface IClassificationItem<S> : IMachineLearningItem, WithClassification<S> {
+    override val classification: IClassification<S>
+}
 
-interface IClassificationItem<S> : IMachineLearningFullItem, WithConfAndClass<S>
-//interface IClassificationItem<S> : IMachineLearningItem {
-//    val classification: IClassification<S>
-//}
+interface IClassificationOutputMetrics<S> : IMachineLearningOutputMetrics, WithGroups<S>
 
-interface IClassificationFullOutput<I, E : IClassificationItem<S>, S> : IMachineLearningFullOutput<I, E>, WithConfAndGroups<S> {
+interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearningOutput<E>, IClassificationOutputMetrics<S> {
     override val listItems: ClassificationItemList<E, S>
 }
-//interface IClassificationOutput<I, E : IClassificationItem<S>, S> : IMachineLearningOutput<I, E> {
-//    val groups: Set<S>
-//}
 
-interface IClassificationFullFinalResult<S> : IMachineLearningFullFinalResult, WithConfAndSuper<S> {
-    override val listOutputs: List<WithConfAndGroups<S>>
-}
-//interface IClassificationFinalResult<S> : IMachineLearningFinalResult {
-//    val supergroup: S
-//}
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult, WithSupergroup<S>
 
 
 data class ClassificationItem<S> (
     override val confidence: Float,
     override val classification: IClassification<S>,
-) : IClassificationItem<S> {
-    constructor(baseResult: WithConfAndClass<S>) : this(baseResult.confidence, baseResult.classification)
+) : IClassificationFullItem<S> {
+    constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
 }
 
-data class ClassificationFullOutput<I, E : IClassificationItem<S>, S> (
+data class ClassificationOutput<E : IClassificationItem<S>, S> (
+    override val listItems: ClassificationItemList<E, S>
+) : IClassificationOutput<E, S> {
+    override val confidence: Float = listItems.confidence
+    override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
+}
+
+data class ClassificationFinalResult<S> (
+    override val confidence: Float,
+    override val supergroup: S,
+) : IClassificationFinalResult<S> {
+    constructor(baseResult: IClassificationFinalResult<S>) : this(
+        baseResult.confidence, baseResult.supergroup
+    )
+}
+
+// ---------------------------------- FULL OUTPUT ----------------------------------
+
+interface IClassificationFullItem<S> : IMachineLearningFullItem, IClassificationItem<S>
+
+interface IClassificationFullOutput<I, E : IClassificationFullItem<S>, S> : IMachineLearningFullOutput<I, E>, IClassificationOutput<E, S>
+
+interface IClassificationFullFinalResult<S> : IMachineLearningFullFinalResult, IClassificationFinalResult<S>
+
+
+data class ClassificationFullItem<S> (
+    override val confidence: Float,
+    override val classification: IClassification<S>,
+) : IClassificationFullItem<S> {
+    constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
+}
+
+data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
     override val input: I,
     override val listItems: ClassificationItemList<E, S>
 ) : IClassificationFullOutput<I, E, S> {
@@ -159,10 +187,9 @@ data class ClassificationFullOutput<I, E : IClassificationItem<S>, S> (
 data class ClassificationFullFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
-    override val listOutputs: List<WithConfAndGroups<S>>,
 ) : IClassificationFullFinalResult<S> {
-    constructor(baseResult: WithConfAndSuper<S>, outputs: List<WithConfAndGroups<S>>) : this(
-        baseResult.confidence, baseResult.supergroup, outputs
+    constructor(baseResult: IClassificationFinalResult<S>) : this(
+        baseResult.confidence, baseResult.supergroup
     )
 }
 
@@ -177,6 +204,6 @@ sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface
 // Represents different states for the LatestNews screen
 sealed class LiveClassificationState : LiveEvaluationState(), LiveClassificationStateInterface {
     data class Start<S>(val maxClassesPerGroup: Int, val classifier: IClassifier<S>) : LiveClassificationStateInterface
-    data class Loading<S>(val index: Int, val partialResult: WithConfAndGroups<S>?) : LiveClassificationStateInterface
-    data class End<S>(val exception: Throwable?, val finalResult: WithConfAndSuper<S>?) : LiveClassificationStateInterface
+    data class Loading<S>(val index: Int, val partialResult: IClassificationOutputMetrics<S>?) : LiveClassificationStateInterface
+    data class End<S>(val exception: Throwable?, val finalResult: IClassificationFinalResult<S>?) : LiveClassificationStateInterface
 }
