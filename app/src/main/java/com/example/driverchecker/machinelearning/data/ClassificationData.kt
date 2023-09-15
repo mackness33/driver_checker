@@ -144,6 +144,11 @@ data class ClassificationItem<S> (
     constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
 }
 
+data class ClassificationOutputMetrics<S> (
+    override val confidence: Float,
+    override val groups: Map<S, Set<IClassificationWithMetrics<S>>>
+) : IClassificationOutputMetrics<S>
+
 data class ClassificationOutput<E : IClassificationItem<S>, S> (
     override val listItems: ClassificationItemList<E, S>
 ) : IClassificationOutput<E, S> {
