@@ -7,9 +7,9 @@ import com.example.driverchecker.machinelearning.data.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superclass>> :
-    LitePyTorchModel<Data, Result>,
-    IClassificationModel<Data, Result, Superclass>
+abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
+    LitePyTorchModel<I, O>,
+    IClassificationModel<I, O, S>
 {
     constructor() : super()
 
@@ -17,18 +17,18 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
         if (classificationsJson != null) initClassifier(classificationsJson)
     }
 
-    constructor(modelPath: String? = null, newClassifications: ClassificationSupergroupMap<Superclass>? = null) : super(modelPath) {
+    constructor(modelPath: String? = null, newClassifications: ClassificationSupergroupMap<S>? = null) : super(modelPath) {
         if (newClassifications != null) initClassifier(newClassifications)
     }
 
-    protected val mClassifier = MutableClassifier<Superclass>(null)
-    override val classifier: IClassifier<Superclass>
+    protected val mClassifier = MutableClassifier<S>(null)
+    override val classifier: IClassifier<S>
         get() = mClassifier
 
     private fun initClassifier(json: String?) : Boolean = loadClassifications(json)
-    private fun initClassifier(newClassifications: ClassificationSupergroupMap<Superclass>?) : Boolean = loadClassifications(newClassifications)
+    private fun initClassifier(newClassifications: ClassificationSupergroupMap<S>?) : Boolean = loadClassifications(newClassifications)
 
-    override fun <ModelInit : ClassificationSupergroupMap<Superclass>> loadClassifications(init: ModelInit?): Boolean {
+    override fun <ModelInit : ClassificationSupergroupMap<S>> loadClassifications(init: ModelInit?): Boolean {
         return mClassifier.load(init)
     }
 
@@ -37,7 +37,7 @@ abstract class ClassifierTorchModel<Data, Result, Superclass : Comparable<Superc
             return false
 
         // TODO: For now ImportClassifier can "understand" only String for simplicity
-        val importedJson = Json.decodeFromString<ImportClassifier<Superclass>>(json)
+        val importedJson = Json.decodeFromString<ImportClassifier<S>>(json)
 
         return mClassifier.load(importedJson)
     }

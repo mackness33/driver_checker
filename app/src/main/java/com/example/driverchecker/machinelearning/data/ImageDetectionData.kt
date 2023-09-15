@@ -31,9 +31,14 @@ typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
 
 // ---------------------------------- FULL OUTPUT ----------------------------------
 
-typealias IImageDetectionFullItem<S> = IClassificationFullItem<S>
+interface IImageDetectionFullItem<S> : IClassificationFullItem<S>, IImageDetectionItem<S>
 
-typealias ImageDetectionFullItem<S> = ImageDetectionItem<S>
+data class ImageDetectionFullItem<S> (
+    override var classIndex: Int,
+    override var rect: RectF,
+    override val confidence: Float,
+    override val classification: IClassification<S>
+) : IImageDetectionFullItem<S>
 
 typealias IImageDetectionFullOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
 typealias IImageDetectionFullFinalResult<S> = IClassificationFullFinalResult<S>
