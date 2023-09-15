@@ -82,7 +82,7 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
 
         override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<S>) {
             super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
-            if (state.partialResult != null && state.partialResult.groups.isNotEmpty()) {
+            if (state.partialResult != null && state.partialResult.groups.isNotEmpty() && mHasEnded.value == false) {
                 mMetricsPerGroup.add(state.partialResult)
             }
         }

@@ -37,7 +37,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> (
             mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
         }
 
-        confidence = (supergroupCounter.values.max() / window.size).toFloat()
+        confidence = supergroupCounter.values.max().toFloat() / window.size
     }
 
     override fun clean () {
