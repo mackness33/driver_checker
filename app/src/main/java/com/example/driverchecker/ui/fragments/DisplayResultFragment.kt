@@ -67,9 +67,10 @@ class DisplayResultFragment : Fragment() {
         displayResultViewModel.evaluation.observe(viewLifecycleOwner) { output ->
             if (output != null) {
                 binding.textResults.text = String.format("%s",
-                    output.group.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                    output.supergroup.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                 )
                 binding.textConfidence.text = String.format("%.2f%%", output.confidence.times(100))
+                binding.textTime.text = String.format("%.2fs", output.metrics?.totalTime)
 
                 binding.editTitle.setText(output.name)
             }

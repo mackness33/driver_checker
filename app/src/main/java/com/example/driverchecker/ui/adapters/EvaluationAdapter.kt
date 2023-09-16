@@ -31,7 +31,7 @@ class EvaluationAdapter (
 
     override fun onBindViewHolder(holder: EvaluationViewHolder, position: Int) {
         val current = getItem(position)
-        var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(current.group) }
+        var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(current.supergroup) }
         indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
 
         holder.bind(current, onClickItemListener, onClickDeleteListener, ColorManager.listFullColors[indexOfGroup])

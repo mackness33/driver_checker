@@ -1,10 +1,18 @@
 package com.example.driverchecker.utils
 
+import androidx.room.ColumnInfo
+
 data class Settings (
-    override val windowFrames: Int,
-    override val windowThreshold: Float,
-    override val modelThreshold: Float
-) : ISettings
+    @ColumnInfo(name = "window_frames") override val windowFrames: Int,
+    @ColumnInfo(name = "window_threshold") override val windowThreshold: Float,
+    @ColumnInfo(name = "model_threshold") override val modelThreshold: Float
+) : ISettings {
+    constructor(copy: ISettings?) : this (
+        copy?.windowFrames ?: 0,
+        copy?.windowThreshold ?: 0.0f,
+        copy?.modelThreshold ?: 0.0f
+    )
+}
 
 interface ISettings {
     val windowFrames: Int

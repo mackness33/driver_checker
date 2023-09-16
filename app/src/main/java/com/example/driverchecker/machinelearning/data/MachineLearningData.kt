@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
+import androidx.room.ColumnInfo
 import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.flow.SharedFlow
 import kotlin.coroutines.cancellation.CancellationException
@@ -26,9 +27,14 @@ interface IMetrics {
 
 
 data class MachineLearningMetrics (
-    override val totalTime: Double,
-    override val totalWindows: Int
-) : IMetrics
+    @ColumnInfo(name = "total_time") override val totalTime: Double,
+    @ColumnInfo(name = "total_windows") override val totalWindows: Int
+) : IMetrics {
+    constructor(copy: IMetrics?) : this (
+        copy?.totalTime ?: 0.0,
+        copy?.totalWindows ?: 0,
+    )
+}
 
 // ---------------------------------- INPUT ----------------------------------
 

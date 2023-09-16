@@ -25,23 +25,6 @@ interface WithGroups<S> {
 }
 
 
-interface IClassificationMetrics<S> : IMetrics {
-    val groupMetrics: Map<S, Triple<Int, Int, Int>>?
-}
-
-data class ClassificationMetrics<S> (
-    override val totalTime: Double,
-    override val totalWindows: Int,
-    override val groupMetrics: Map<S, Triple<Int, Int, Int>>? = null,
-) : IClassificationMetrics<S> {
-    constructor (main: IMetrics, groupMetrics: Map<S, Triple<Int, Int, Int>>? = null) : this (
-        main.totalTime,
-        main.totalWindows,
-        groupMetrics
-    )
-}
-
-
 // ---------------------------------- CLASSIFICATION ----------------------------------
 
 interface IClassificationWithMetrics<S> : IClassification<S> {
@@ -154,9 +137,7 @@ interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearnin
 
 interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
 
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult, IClassificationFinalResultStats<S> {
-    override val metrics: IClassificationMetrics<S>?
-}
+interface IClassificationFinalResult<S> : IMachineLearningFinalResult, IClassificationFinalResultStats<S>
 
 
 data class ClassificationItem<S> (
@@ -182,13 +163,13 @@ data class ClassificationFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
     override val settings: ISettings? = null,
-    override val metrics: IClassificationMetrics<S>? = null,
+    override val metrics: IMetrics? = null,
 ) : IClassificationFinalResult<S> {
     constructor(baseResult: IClassificationFinalResult<S>) : this(
         baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics
     )
 
-    constructor(main: IClassificationFinalResultStats<S>, settings: ISettings?, metrics: IClassificationMetrics<S>?) : this (
+    constructor(main: IClassificationFinalResultStats<S>, settings: ISettings?, metrics: IMetrics?) : this (
         main.confidence, main.supergroup, settings, metrics
     )
 }
@@ -221,7 +202,7 @@ data class ClassificationFullFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
     override val settings: ISettings? = null,
-    override val metrics: IClassificationMetrics<S>? = null,
+    override val metrics: IMetrics? = null,
 ) : IClassificationFullFinalResult<S> {
     constructor(baseResult: IClassificationFinalResult<S>) : this(
         baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics

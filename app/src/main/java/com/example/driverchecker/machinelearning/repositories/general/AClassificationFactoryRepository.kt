@@ -64,7 +64,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     ClassificationFinalResult(
                         window.getFinalResults(),
                         null,
-                        ClassificationMetrics(timer.diff() ?: 0.0, window.totalWindowsDone())
+                        MachineLearningMetrics(timer.diff() ?: 0.0, window.totalWindowsDone())
                     )
                 )
             )

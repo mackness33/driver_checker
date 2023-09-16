@@ -71,7 +71,7 @@ class EvaluationRepository(
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insertEvaluation(finalResult: IImageDetectionFinalResult<String>, name: String) : Long {
-        val id = evaluationDao.insert(EvaluationEntity(finalResult.confidence, name, finalResult.supergroup))
+        val id = evaluationDao.insert(EvaluationEntity(finalResult, name))
         Log.d("EvalRepo", "Eval inserted with: $id")
         return id
     }
