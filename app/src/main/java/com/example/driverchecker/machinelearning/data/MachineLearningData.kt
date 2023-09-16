@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.flow.SharedFlow
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.Duration
 
 // ---------------------------------- CLASSES ----------------------------------
 
@@ -25,6 +24,25 @@ interface IMetrics {
     val totalWindows: Int
 }
 
+interface IWindowMetrics : IMetrics {
+    val type: String
+}
+
+interface IAdditionalMetrics
+
+interface WithWindowMetrics {
+    val metrics: Map<IWindowMetrics, IAdditionalMetrics?>
+}
+
+data class WindowMetrics (
+    override val totalTime: Double, override val totalWindows: Int, override val type: String
+) : IWindowMetrics {
+    constructor(copy: IWindowMetrics) : this(
+        copy.totalTime, copy.totalWindows, copy.type
+    )
+
+    constructor() : this(0.0, 0,"")
+}
 
 data class MachineLearningMetrics (
     @ColumnInfo(name = "total_time") override val totalTime: Double,

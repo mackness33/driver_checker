@@ -24,6 +24,15 @@ interface WithGroups<S> {
     val groups: Map<S, Set<IClassificationWithMetrics<S>>>
 }
 
+interface IGroupMetrics : IAdditionalMetrics {
+    val groupMetrics : Map<String, Triple<Int, Int, Int>>
+}
+
+/**
+ * ICFR {
+ *     metrics: Map<IWindowMetrics, IGroupMetrics?>
+ *  }
+ **/
 
 // ---------------------------------- CLASSIFICATION ----------------------------------
 
