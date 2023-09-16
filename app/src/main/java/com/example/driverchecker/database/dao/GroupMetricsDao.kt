@@ -15,7 +15,7 @@ interface GroupMetricsDao {
 
 
     @Query("SELECT * FROM group_metrics WHERE id = :groupMetricsId")
-    fun getGroupMetrics(groupMetricsId: Long): GroupMetricsEntity
+    fun getGroupMetricsw(groupMetricsId: Long): GroupMetricsEntity
 
     @Query("SELECT * FROM group_metrics WHERE windowMetricsId = :windowMetricsId")
     fun getGroupMetricsByWindowMetrics(windowMetricsId: Long): List<GroupMetricsEntity>

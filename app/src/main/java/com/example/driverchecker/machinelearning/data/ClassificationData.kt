@@ -23,14 +23,23 @@ interface WithGroups<S> {
     val groups: Map<S, Set<IClassificationWithMetrics<S>>>
 }
 
-interface IGroupMetrics : IAdditionalMetrics {
-    val groupMetrics : Map<String, Triple<Int, Int, Int>>
+interface IGroupMetrics<S> : IAdditionalMetrics {
+    val groupMetrics : Map<S, Triple<Int, Int, Int>>
 }
 
-data class GroupMetrics (
-    override val groupMetrics: Map<String, Triple<Int, Int, Int>>
-) : IGroupMetrics {
-    constructor (listCopyEntity: List<Pair<String, Triple<Int, Int, Int>>>) : this (
+interface IMutableGroupMetrics<S> : IGroupMetrics<S> {
+    fun initialize (keys: Set<S>)
+    fun replace (element: IClassificationOutputStats<S>)
+    fun add (element: IClassificationOutputStats<S>)
+    fun subtract (element: IClassificationOutputStats<S>)
+    fun remove (keys: Set<S>)
+    fun clear ()
+}
+
+data class GroupMetrics<S> (
+    override val groupMetrics: Map<S, Triple<Int, Int, Int>>
+) : IGroupMetrics<S> {
+    constructor (listCopyEntity: List<Pair<S, Triple<Int, Int, Int>>>) : this (
         listCopyEntity.toMap()
     )
 

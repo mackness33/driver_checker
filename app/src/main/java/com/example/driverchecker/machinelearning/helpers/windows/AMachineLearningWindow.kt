@@ -1,14 +1,24 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
+import com.example.driverchecker.machinelearning.data.IAdditionalMetrics
 import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
+import com.example.driverchecker.machinelearning.data.IWindowMetrics
+import com.example.driverchecker.machinelearning.data.WindowMetrics
 import com.example.driverchecker.utils.ISettings
+import com.example.driverchecker.utils.Timer
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
-abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> (
+@OptIn(ExperimentalTime::class)
+abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> constructor(
     initialSize: Int = 3,
-    initialThreshold: Float = 0.15f
+    initialThreshold: Float = 0.15f,
+    newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) : IMachineLearningWindow<E> {
 
     protected val window : MutableList<E> = mutableListOf()
+
+    protected val timer: Timer = Timer(newStart)
 
     override var size: Int = initialSize
         protected set
@@ -28,9 +38,13 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> (
     override var lastResult : E? = null
         protected set
 
-    override fun totalWindowsDone() : Int {
-        return if (window.size >= size) (totEvaluationsDone + 1) - window.size else 0
-    }
+    override var totalTime: Double = 0.0
+        get() = timer.diff() ?: 0.0
+        protected set
+
+    override var totalWindows: Int = 0
+        get() = if (window.size >= size) (totEvaluationsDone + 1) - window.size else 0
+        protected set
 
     override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
 
@@ -60,21 +74,31 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> (
         hasAcceptedLast = true
     }
 
-    // TODO: Clean also the last evaluation done
     override fun clean () {
         window.clear()
         confidence = 0f
         totEvaluationsDone = 0
         hasAcceptedLast = false
         lastResult = null
+        totalWindows = 0
+        totalTime = 0.0
+        timer.reset()
     }
 
-    // TODO: Change the calculation of the confidence
     protected open fun update () {
         if (window.size == 0) {
             confidence = 0.0f
         }
 
         confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
+    }
+
+
+    override fun getMetrics() : IWindowMetrics {
+        return WindowMetrics(totalTime, totalWindows, type)
+    }
+
+    override fun getFullMetrics() : Pair<IWindowMetrics, IAdditionalMetrics?> {
+        return Pair(getMetrics(), null)
     }
 }

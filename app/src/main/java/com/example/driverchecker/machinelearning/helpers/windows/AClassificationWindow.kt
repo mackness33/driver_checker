@@ -1,16 +1,25 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
+import com.example.driverchecker.machinelearning.collections.ClassificationMetricsMutableMap
 import com.example.driverchecker.machinelearning.data.*
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
-abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> (
+@OptIn(ExperimentalTime::class)
+abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> constructor(
     size: Int = 3,
     threshold: Float = 0.15f,
+    newStart: TimeSource.Monotonic.ValueTimeMark? = null,
     supergroups: Set<S>
-) : AMachineLearningWindow<E>(size, threshold), IClassificationWindow<E, S> {
+) : AMachineLearningWindow<E>(size, threshold, newStart), IClassificationWindow<E, S> {
 
     protected val mSupergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
+    override val supergroupCounter: Map<S, Int>
+        get() = mSupergroupCounter
 
-    override val supergroupCounter: Map<S, Int> = mSupergroupCounter
+//    protected val mGroupMetrics: IMutableGroupMetrics<S> = ClassificationMetricsMutableMap()
+//    override val groupMetrics: IGroupMetrics<S>
+//        get() = mGroupMetrics
 
     override fun next (element: E) {
         if (element.groups.isEmpty()) {
@@ -38,10 +47,15 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> (
         }
 
         confidence = supergroupCounter.values.max().toFloat() / window.size
+//        if (lastResult != null) mGroupMetrics.add(lastResult!!)
     }
 
     override fun clean () {
         super.clean()
         mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
     }
+
+//    override fun getFullMetrics() : Pair<IWindowMetrics, IGroupMetrics<S>> {
+//        return Pair(getMetrics(), groupMetrics)
+//    }
 }

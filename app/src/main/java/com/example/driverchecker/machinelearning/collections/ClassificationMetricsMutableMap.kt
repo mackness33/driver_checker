@@ -2,13 +2,15 @@ package com.example.driverchecker.machinelearning.collections
 
 import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
 import com.example.driverchecker.machinelearning.data.IClassificationWithMetrics
+import com.example.driverchecker.machinelearning.data.IMutableGroupMetrics
 import com.example.driverchecker.utils.*
 
-open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S> {
+open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S>,
+    IMutableGroupMetrics<S> {
     protected val mMetrics: MutableMap<S, AtomicObservableData<Triple<Int, Int, Int>>> = mutableMapOf()
     override val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
         get() = mMetrics
-    override val metrics: Map<S, Triple<Int, Int, Int>>
+    override val groupMetrics: Map<S, Triple<Int, Int, Int>>
         get() = mMetrics.mapValues { entry -> entry.value.value }
 
     override fun initialize(keys: Set<S>) {

@@ -1,12 +1,9 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResultStats
-import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
-import com.example.driverchecker.machinelearning.data.WithConfidence
+import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.ISettings
 
-interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfidence {
+interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfidence, IWindowMetrics {
     val lastResult : E?
 
     val hasAcceptedLast: Boolean
@@ -17,8 +14,6 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
 
     val threshold: Float
 
-    fun totalWindowsDone() : Int
-
     fun isSatisfied() : Boolean
 
     fun next (element: E)
@@ -26,6 +21,10 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
     fun clean ()
 
     fun getFinalResults() : IMachineLearningFinalResultStats
+
+    fun getMetrics() : IWindowMetrics
+
+    fun getFullMetrics() : Pair<IWindowMetrics, IAdditionalMetrics?>
 
     fun updateSize(newSize: Int)
 

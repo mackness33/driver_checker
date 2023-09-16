@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 
 open class MachineLearningRepository<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> (importedModel: IMachineLearningModel<I, O>?, repositoryScope: CoroutineScope) :
     AMachineLearningRepository<I, O, FR> (repositoryScope) {
-    override val window: IMachineLearningWindow<O> = MachineLearningWindow()
+    override val window: IMachineLearningWindow<O> = MachineLearningWindow(type = "MachineLearningWindow")
     override val model: IMachineLearningModel<I, O>? = importedModel
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = ModelListener()

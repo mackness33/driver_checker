@@ -4,9 +4,15 @@ import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResul
 import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResultStats
 import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
 import com.example.driverchecker.machinelearning.data.MachineLearningFullFinalResult
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
-open class MachineLearningWindow<E : IMachineLearningOutputStats> (size: Int = 3, threshold: Float = 0.15f) :
-    AMachineLearningWindow<E> (size, threshold) {
+@OptIn(ExperimentalTime::class)
+open class MachineLearningWindow<E : IMachineLearningOutputStats> (
+    size: Int = 3, threshold: Float = 0.15f, override val type: String,
+    newStart: TimeSource.Monotonic.ValueTimeMark? = null
+) :
+    AMachineLearningWindow<E> (size, threshold, newStart) {
     override fun getFinalResults() : IMachineLearningFinalResultStats {
         return MachineLearningFullFinalResult(confidence)
     }

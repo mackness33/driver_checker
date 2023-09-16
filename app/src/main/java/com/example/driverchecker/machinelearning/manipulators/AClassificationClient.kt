@@ -86,7 +86,7 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
         override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<S>) {
-            lastMetricsPerGroup = mMetricsPerGroup.metrics
+            lastMetricsPerGroup = mMetricsPerGroup.groupMetrics
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
         }
 

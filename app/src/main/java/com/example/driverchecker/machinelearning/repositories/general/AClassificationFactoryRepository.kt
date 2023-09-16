@@ -18,7 +18,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
-    override var window: IClassificationWindow<O, S> = ClassificationWindow(4, 0.5f, model?.classifier?.supergroups!!.keys)
+    override var window: IClassificationWindow<O, S> = ClassificationWindow(4, 0.5f, model?.classifier?.supergroups!!.keys, "ClassificationWindow")
 
     abstract override var model: IClassificationModel<I, O, S>?
 
@@ -63,7 +63,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     ClassificationFinalResult(
                         window.getFinalResults(),
                         settings,
-                        MachineLearningMetrics(timer.diff() ?: 0.0, window.totalWindowsDone())
+                        MachineLearningMetrics(window.getMetrics())
                     )
                 )
             )
