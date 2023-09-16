@@ -30,7 +30,7 @@ interface IClassificationMetrics<S> : IMetrics {
 }
 
 data class ClassificationMetrics<S> (
-    override val totalTime: Duration,
+    override val totalTime: Double,
     override val totalWindows: Int,
     override val groupMetrics: Map<S, Triple<Int, Int, Int>>? = null,
 ) : IClassificationMetrics<S> {

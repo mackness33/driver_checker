@@ -125,7 +125,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                     MachineLearningFinalResult(
                         window.getFinalResults(),
                         null,
-                        MachineLearningMetrics(timer.diff() ?: 0.milliseconds, window.totalWindowsDone())
+                        MachineLearningMetrics(timer.diff() ?: 0.0, window.totalWindowsDone())
                     )
                 )
             )

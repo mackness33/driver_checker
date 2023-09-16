@@ -50,7 +50,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
 
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
-    override var settings: ISettings = Settings(2, 0.80f, 0.20f)
+    override var settings: ISettings = Settings(4, 0.80f, 0.10f)
         protected set
 
     // producer flow of the data in input of mlRepository

@@ -1,6 +1,7 @@
 package com.example.driverchecker.utils
 
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -25,10 +26,10 @@ class Timer {
         end = timeSource.markNow()
     }
 
-    fun diff() : Duration? {
+    fun diff() : Double? {
         return if (start == null || end == null)
             null
         else
-            end!! - start!!
+            (end!! - start!!).toDouble(DurationUnit.SECONDS)
     }
 }

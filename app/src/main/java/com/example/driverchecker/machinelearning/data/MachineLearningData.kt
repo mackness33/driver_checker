@@ -20,13 +20,13 @@ interface WithMetrics {
 }
 
 interface IMetrics {
-    val totalTime: Duration
+    val totalTime: Double
     val totalWindows: Int
 }
 
 
 data class MachineLearningMetrics (
-    override val totalTime: Duration,
+    override val totalTime: Double,
     override val totalWindows: Int
 ) : IMetrics
 
