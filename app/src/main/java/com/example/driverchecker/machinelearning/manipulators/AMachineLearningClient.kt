@@ -33,8 +33,8 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
         get () = mPartialResultEvent
 
 
-    protected open val mFinalResult: MutableStateLiveData<FR?> = StatefulLiveData(null)
-    override val finalResult: StateLiveData<FR?>
+    protected open val mFinalResult: MutableObservableData<FR?> = StatefulData(null)
+    override val finalResult: ObservableData<FR?>
         get() = mFinalResult
 
     override val currentState: ObservableData<LiveEvaluationStateInterface?>

@@ -1,7 +1,5 @@
 package com.example.driverchecker.machinelearning.helpers.listeners
 
-import com.example.driverchecker.utils.AtomicData
-import com.example.driverchecker.utils.AtomicValue
 import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

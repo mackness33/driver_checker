@@ -10,8 +10,7 @@ import com.example.driverchecker.machinelearning.repositories.ImageDetectionFact
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
-import com.example.driverchecker.utils.AtomicValue
-import com.example.driverchecker.utils.DeferredLiveData
+import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
@@ -20,10 +19,10 @@ import kotlinx.coroutines.flow.SharedFlow
 class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>>(imageDetectionRepository) {
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>, String> = ImageDetectionClient()
 
-    val passengerInfo: StateLiveData<Triple<Int, Int, Int>?>?
+    val passengerInfo: ObservableData<Triple<Int, Int, Int>>?
         get() = evaluationClient.metricsPerGroup.liveMetrics["passenger"]
 
-    val driverInfo: StateLiveData<Triple<Int, Int, Int>?>?
+    val driverInfo: ObservableData<Triple<Int, Int, Int>>?
         get() = evaluationClient.metricsPerGroup.liveMetrics["driver"]
 
     override val evaluationListener: ClassificationListener<String> = EvaluationClassificationListener()
@@ -32,7 +31,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val coloredOutputs: List<Map<String, Set<Int>>>
         get() = mColoredOutputs
 
-    val classificationGroups: StateLiveData<Set<String>>
+    val classificationGroups: ObservableData<Set<String>>
         get() = evaluationClient.groups
 
     val areMetricsObservable: LiveData<Boolean>
@@ -41,14 +40,14 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val metricsPerGroup: Map<String, Triple<Int, Int, Int>?>
         get() = evaluationClient.lastMetricsPerGroup
 
-    private val mSaveImages = DeferredLiveData<List<Bitmap>?>(null, viewModelScope.coroutineContext)
-    val saveImages: StateLiveData<List<Bitmap>?>
-        get() = mSaveImages.value
+    private val mSaveImages = DeferrableData<List<Bitmap>?>(null, viewModelScope.coroutineContext)
+    val saveImages: LiveData<List<Bitmap>?>
+        get() = mSaveImages.liveData
 
-    private val mAwaitImagesPaths = DeferredLiveData<List<String?>?>(null, viewModelScope.coroutineContext)
-    private val mAwaitEndInsert = DeferredLiveData<Long?>(null, viewModelScope.coroutineContext)
+    private val mAwaitImagesPaths = DeferrableData<List<String?>?>(null, viewModelScope.coroutineContext)
+    private val mAwaitEndInsert = DeferrableData<Long?>(null, viewModelScope.coroutineContext)
     val awaitEndInsert: LiveData<Long?>
-        get() = mAwaitEndInsert.asLiveData
+        get() = mAwaitEndInsert.liveData
 
     val currentState: ObservableData<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
@@ -58,7 +57,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     }
 
     fun save(name: String) = viewModelScope.launch {
-        if (evaluationClient.finalResult.lastValue != null) {
+        if (evaluationClient.finalResult.value != null) {
             if (mSaveImages.isCompleted()) update(name) else insert(name)
         }
     }
@@ -67,19 +66,19 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         mAwaitEndInsert.deferredAwait()
         mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
 
-        val evalId = evaluationRepository.insertEvaluation(evaluationClient.finalResult.lastValue!!, name)
+        val evalId = evaluationRepository.insertEvaluation(evaluationClient.finalResult.value!!, name)
         evaluationRepository.insertAllMetrics(metricsPerGroup, evalId)
 
         mAwaitImagesPaths.await()
-        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value.lastValue)
+        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
 
         mAwaitEndInsert.complete(evalId)
     }
 
 
     fun update(name: String) = viewModelScope.launch {
-        if (mAwaitEndInsert.value.lastValue != null && mAwaitEndInsert.value.lastValue!! > 0)
-            evaluationRepository.updateById(mAwaitEndInsert.value.lastValue!!, name)
+        if (mAwaitEndInsert.value != null && mAwaitEndInsert.value!! > 0)
+            evaluationRepository.updateById(mAwaitEndInsert.value!!, name)
     }
 
     suspend fun produceImage (image: ImageProxy) = viewModelScope.launch {

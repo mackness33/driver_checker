@@ -63,7 +63,7 @@ class ResultFragment : Fragment() {
 
         binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.finalResultsView.itemAnimator = null
-        binding.finalResultsView.adapter = PredictionsAdapter(activityModel.lastItemsList, activityModel.classificationGroups.lastValue)
+        binding.finalResultsView.adapter = PredictionsAdapter(activityModel.lastItemsList, activityModel.classificationGroups.value)
 
         binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.groupTableBody.itemAnimator = null

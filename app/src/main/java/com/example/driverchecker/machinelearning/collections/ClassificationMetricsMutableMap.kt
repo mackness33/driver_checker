@@ -2,37 +2,35 @@ package com.example.driverchecker.machinelearning.collections
 
 import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
 import com.example.driverchecker.machinelearning.data.IClassificationWithMetrics
-import com.example.driverchecker.utils.MutableStateLiveData
-import com.example.driverchecker.utils.StateLiveData
-import com.example.driverchecker.utils.StatefulLiveData
+import com.example.driverchecker.utils.*
 
 open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S> {
-    protected val mMetrics: MutableMap<S, MutableStateLiveData<Triple<Int, Int, Int>?>> = mutableMapOf()
-    override val liveMetrics: Map<S, StateLiveData<Triple<Int, Int, Int>?>>
+    protected val mMetrics: MutableMap<S, AtomicObservableData<Triple<Int, Int, Int>>> = mutableMapOf()
+    override val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
         get() = mMetrics
     override val metrics: Map<S, Triple<Int, Int, Int>>
-        get() = mMetrics.mapValues { entry -> entry.value.lastValue ?: Triple(0,0,0) }
+        get() = mMetrics.mapValues { entry -> entry.value.value }
 
     override fun initialize(keys: Set<S>) {
-        mMetrics.putAll(keys.associateWith { StatefulLiveData(Triple(0, 0,0)) })
+        mMetrics.putAll(keys.associateWith { LockableData(Triple(0, 0,0)) })
     }
 
     override fun replace (element: IClassificationOutputStats<S>) {
         element.groups.forEach { entry ->
-            mMetrics[entry.key]?.postValue(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
+            mMetrics[entry.key]?.tryUpdate(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
         }
     }
 
     override fun add (element: IClassificationOutputStats<S>) {
         element.groups.forEach { entry ->
-            mMetrics[entry.key]?.postValue(tripleSum(mMetrics[entry.key]?.lastValue, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
+            mMetrics[entry.key]?.tryUpdate(tripleSum(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
         }
     }
 
     override fun subtract (element: IClassificationOutputStats<S>) {
         element.groups.forEach { entry ->
-            mMetrics[entry.key]?.postValue(
-                tripleSubtract(mMetrics[entry.key]?.lastValue, Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
+            mMetrics[entry.key]?.tryUpdate(
+                tripleSubtract(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
             )
         }
     }

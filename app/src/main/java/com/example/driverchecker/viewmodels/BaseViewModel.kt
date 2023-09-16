@@ -53,12 +53,12 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
     val lastItemsList: List<O>
         get() = evaluationClient.lastResultsList
 
-    val finalResult: StateLiveData<FR?>
+    val finalResult: ObservableData<FR?>
         get() = evaluationClient.finalResult
 
-    protected val mShowResults = DeferredLiveData(false, viewModelScope.coroutineContext)
-    val showResults: StateLiveData<Boolean?>
-        get() = mShowResults.value
+    protected val mShowResults = DeferrableData(false, viewModelScope.coroutineContext)
+    val showResults: LiveData<Boolean>
+        get() = mShowResults.liveData
 
     protected val mActualPage: AtomicObservableData<IPage?> = LockableData(null)
     val actualPage: LiveData<IPage?>
@@ -136,7 +136,9 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
 
             when {
                 state.exception != null -> evaluationClient.ready()
-                state.finalResult != null -> mShowResults.complete(mActualPage.value != null && mActualPage.value != Page.Result)
+                state.finalResult != null -> mShowResults.complete(
+                    mActualPage.value != null && mActualPage.value != Page.Result
+                )
             }
         }
     }

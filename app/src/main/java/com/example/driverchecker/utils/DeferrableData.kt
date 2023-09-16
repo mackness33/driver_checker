@@ -21,7 +21,8 @@ open class DeferrableData<T> (protected val initialValue: T, protected val cxt: 
 
     override fun tryAwait () : Boolean {
         if (!promise.isCompleted) {
-            return tryApply(value)
+            deferredAwait()
+            return true
         }
 
         return false

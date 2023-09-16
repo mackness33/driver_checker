@@ -23,7 +23,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
 
     val settings: ISettings
 
-    val finalResult: StateLiveData<FR?>
+    val finalResult: ObservableData<FR?>
 
     val liveInput: SharedFlow<I>
 

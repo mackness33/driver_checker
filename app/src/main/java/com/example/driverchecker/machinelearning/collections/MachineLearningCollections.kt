@@ -4,6 +4,7 @@ import com.example.driverchecker.machinelearning.data.IClassificationItem
 import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
 import com.example.driverchecker.machinelearning.data.IMachineLearningItem
 import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
+import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.utils.StateLiveData
 
 interface MachineLearningItemList<E : IMachineLearningItem> : List<E>, IMachineLearningOutputStats
@@ -11,7 +12,7 @@ interface ClassificationItemList<E : IClassificationItem<S>, S> : MachineLearnin
     IClassificationOutputStats<S>
 
 interface ClassificationMetricsMap<S> {
-    val liveMetrics: Map<S, StateLiveData<Triple<Int, Int, Int>?>>
+    val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
     val metrics: Map<S, Triple<Int, Int, Int>>
 
     fun initialize (keys: Set<S>)

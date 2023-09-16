@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
-    override val finalResult: StateLiveData<FR?>
+    override val finalResult: ObservableData<FR?>
         get() = mFinalResult
 
     override var classifier: IClassifier<S>? = null
@@ -35,8 +35,8 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
 
     override val evaluationListener: ClassificationListener<S> = EvaluationClassificationListener()
 
-    protected val mGroups: MutableStateLiveData<Set<S>> = StatefulLiveData()
-    override val groups: StateLiveData<Set<S>>
+    protected val mGroups: MutableObservableData<Set<S>> = StatefulData(emptySet())
+    override val groups: ObservableData<Set<S>>
         get() = mGroups
 
 
