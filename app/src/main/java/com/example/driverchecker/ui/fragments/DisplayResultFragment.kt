@@ -42,7 +42,6 @@ class DisplayResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         displayResultViewModel.initEvaluationId(arguments?.getLong("evaluationId"))
 
         binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)

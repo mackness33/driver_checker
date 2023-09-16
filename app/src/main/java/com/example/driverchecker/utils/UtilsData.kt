@@ -12,6 +12,8 @@ data class Settings (
         copy?.windowThreshold ?: 0.0f,
         copy?.modelThreshold ?: 0.0f
     )
+
+    constructor() : this (0, 0.0f, 0.0f)
 }
 
 interface ISettings {
