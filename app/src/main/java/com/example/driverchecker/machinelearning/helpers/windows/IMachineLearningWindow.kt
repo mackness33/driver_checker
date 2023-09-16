@@ -2,6 +2,8 @@ package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.ISettings
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
 interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfidence, IWindowMetrics {
     val lastResult : E?
@@ -31,4 +33,7 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
     fun updateThreshold(newThreshold: Float)
 
     fun updateSettings(settings: ISettings)
+
+    @OptIn(ExperimentalTime::class)
+    fun updateStart (newStart: TimeSource.Monotonic.ValueTimeMark)
 }

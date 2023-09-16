@@ -10,6 +10,7 @@ import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlin.time.ExperimentalTime
 
 
 abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
@@ -22,6 +23,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     abstract override var model: IClassificationModel<I, O, S>?
 
+    @OptIn(ExperimentalTime::class)
     override fun jobEvaluation(input: Flow<I>, newSettings: ISettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
@@ -38,6 +40,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     settings = newSettings
 
                     timer.markStart()
+                    window.updateStart(timer.start!!)
                     flowEvaluation(input, ::cancel)?.collect()
                 } else
                     throw Throwable("The stream is not ready yet")

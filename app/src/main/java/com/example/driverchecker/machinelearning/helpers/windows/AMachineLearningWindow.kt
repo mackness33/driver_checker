@@ -72,6 +72,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         lastResult = element
         totEvaluationsDone++
         hasAcceptedLast = true
+        if (isSatisfied()) timer.markEnd()
     }
 
     override fun clean () {
@@ -100,5 +101,9 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
     override fun getFullMetrics() : Pair<IWindowMetrics, IAdditionalMetrics?> {
         return Pair(getMetrics(), null)
+    }
+
+    override fun updateStart(newStart: TimeSource.Monotonic.ValueTimeMark) {
+        timer.initStart(newStart)
     }
 }

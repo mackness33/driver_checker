@@ -12,6 +12,7 @@ import com.example.driverchecker.utils.Timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
+import kotlin.time.ExperimentalTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
@@ -77,6 +78,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         return window.lastResult
     }
 
+    @OptIn(ExperimentalTime::class)
     protected open fun jobEvaluation (input: Flow<I>, newSettings: ISettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
@@ -89,6 +91,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 settings = newSettings
 
                 timer.markStart()
+                window.updateStart(timer.start!!)
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
                 mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
