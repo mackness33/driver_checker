@@ -1,10 +1,12 @@
-package com.example.driverchecker.machinelearning.data
+package com.example.driverchecker.machinelearning.collections
 
+import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
+import com.example.driverchecker.machinelearning.data.IClassificationWithMetrics
 import com.example.driverchecker.utils.MutableStateLiveData
 import com.example.driverchecker.utils.StateLiveData
 import com.example.driverchecker.utils.StatefulLiveData
 
-open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap <S> {
+open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S> {
     protected val mMetrics: MutableMap<S, MutableStateLiveData<Triple<Int, Int, Int>?>> = mutableMapOf()
     override val liveMetrics: Map<S, StateLiveData<Triple<Int, Int, Int>?>>
         get() = mMetrics

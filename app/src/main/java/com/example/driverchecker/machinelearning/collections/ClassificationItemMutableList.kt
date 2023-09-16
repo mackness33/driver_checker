@@ -1,4 +1,9 @@
-package com.example.driverchecker.machinelearning.data
+package com.example.driverchecker.machinelearning.collections
+
+import com.example.driverchecker.machinelearning.data.IClassificationItem
+import com.example.driverchecker.machinelearning.data.IClassificationWithMetrics
+import com.example.driverchecker.machinelearning.data.IMutableClassificationWithMetrics
+import com.example.driverchecker.machinelearning.data.MutableClassificationWithMetrics
 
 open class ClassificationItemMutableList<E : IClassificationItem<S>, S> :
     MachineLearningItemMutableList<E>, ClassificationItemList<E, S> {
@@ -13,12 +18,16 @@ open class ClassificationItemMutableList<E : IClassificationItem<S>, S> :
     protected open fun putClassification (element: E) {
         when {
             !mutableGroups.containsKey(element.classification.supergroup) -> {
-                mutableGroups[element.classification.supergroup] = mutableSetOf(MutableClassificationWithMetrics(element.classification))
+                mutableGroups[element.classification.supergroup] = mutableSetOf(
+                    MutableClassificationWithMetrics(element.classification)
+                )
             }
             mutableGroups[element.classification.supergroup]!!.find { classMetric ->
                 classMetric.externalIndex == element.classification.externalIndex
             } == null -> {
-                mutableGroups[element.classification.supergroup]!!.add(MutableClassificationWithMetrics(element.classification))
+                mutableGroups[element.classification.supergroup]!!.add(
+                    MutableClassificationWithMetrics(element.classification)
+                )
             }
             else -> {
                 mutableGroups[element.classification.supergroup]!!.find { it.externalIndex == element.classification.externalIndex }?.inc()

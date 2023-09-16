@@ -1,6 +1,9 @@
-package com.example.driverchecker.machinelearning.data
+package com.example.driverchecker.machinelearning.collections
 
-open class MachineLearningItemMutableList<E : IMachineLearningItem> : ArrayList<E>, MachineLearningItemList<E> {
+import com.example.driverchecker.machinelearning.data.IMachineLearningItem
+
+open class MachineLearningItemMutableList<E : IMachineLearningItem> : ArrayList<E>,
+    MachineLearningItemList<E> {
     constructor(initialCapacity: Int) : super(initialCapacity)
     constructor(collection: Collection<E>) : super(collection)
     constructor() : super(10)

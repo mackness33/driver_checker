@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.data
 
 import androidx.room.ColumnInfo
+import com.example.driverchecker.machinelearning.collections.MachineLearningItemList
 import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.flow.SharedFlow
 import kotlin.coroutines.cancellation.CancellationException

@@ -2,6 +2,7 @@ package com.example.driverchecker.machinelearning.models.pytorch
 
 import android.graphics.Bitmap
 import android.graphics.RectF
+import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
