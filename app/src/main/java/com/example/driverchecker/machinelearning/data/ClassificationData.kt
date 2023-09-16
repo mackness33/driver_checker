@@ -1,10 +1,8 @@
 package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
-import com.example.driverchecker.machinelearning.helpers.classifiers.MutableClassifier
 import com.example.driverchecker.utils.ISettings
 import kotlinx.serialization.Serializable
-import kotlin.time.Duration
 
 
 // ---------------------------------- CLASSES ----------------------------------
@@ -138,7 +136,7 @@ interface IClassificationItem<S> : IMachineLearningItem, WithClassification<S> {
 interface IClassificationOutputStats<S> : IMachineLearningOutputStats, WithGroups<S>
 
 interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearningOutput<E>, IClassificationOutputStats<S> {
-    override val listItems: ClassificationItemList<E, S>
+    override val listItems: ClassificationItemMutableList<E, S>
 }
 
 interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
@@ -159,7 +157,7 @@ data class ClassificationOutputStats<S> (
 ) : IClassificationOutputStats<S>
 
 data class ClassificationOutput<E : IClassificationItem<S>, S> (
-    override val listItems: ClassificationItemList<E, S>
+    override val listItems: ClassificationItemMutableList<E, S>
 ) : IClassificationOutput<E, S> {
     override val confidence: Float = listItems.confidence
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
@@ -198,7 +196,7 @@ data class ClassificationFullItem<S> (
 
 data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
     override val input: I,
-    override val listItems: ClassificationItemList<E, S>
+    override val listItems: ClassificationItemMutableList<E, S>
 ) : IClassificationFullOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups

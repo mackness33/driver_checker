@@ -23,9 +23,9 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
         protected set
 
 //    protected val mMetricsPerGroup = mutableMapOf<S, MutableLiveData<Pair<Int, Int>>>()
-    protected val mMetricsPerGroup = ClientMetricsMutableMap<S>()
+    protected val mMetricsPerGroup = ClassificationMetricsMutableMap<S>()
 //    override val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>> = mMetricsPerGroup.liveMetrics
-    override val metricsPerGroup: ClientMetricsMap<S> = mMetricsPerGroup
+    override val metricsPerGroup: ClassificationMetricsMap<S> = mMetricsPerGroup
 
     protected val mAreMetricsObservable = MutableLiveData(false)
     override val areMetricsObservable: LiveData<Boolean>

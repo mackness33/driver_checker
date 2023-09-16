@@ -41,7 +41,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
     // VARIABLES
     // array of evaluated items by the mlRepo
     protected val evaluatedItemsArray =
-        MachineLearningMutableList<O>()
+        MachineLearningItemMutableList<O>()
     override val currentResultsList: List<O>
         get() = evaluatedItemsArray
 

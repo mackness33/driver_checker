@@ -9,7 +9,7 @@ interface IClassificationClient<I, O : IClassificationOutputStats<S>, FR : IClas
     // LIVE DATA
     override val finalResult: StateLiveData<FR?>
 
-    val metricsPerGroup: ClientMetricsMap<S>
+    val metricsPerGroup: ClassificationMetricsMap<S>
     val classifier: IClassifier<S>?
     val groups: StateLiveData<Set<S>>
     val areMetricsObservable: LiveData<Boolean>

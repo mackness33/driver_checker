@@ -21,10 +21,10 @@ object ImageDetectionUtils {
      * - threshold: used to decide whether boxes overlap too much
      */
     fun <S> nonMaxSuppression(
-        boxes: ClassificationItemList<IImageDetectionFullItem<S>, S>,
+        boxes: ClassificationItemMutableList<IImageDetectionFullItem<S>, S>,
         limit: Int = Int.MAX_VALUE,
         threshold: Float
-    ): ClassificationItemList<IImageDetectionFullItem<S>, S> {
+    ): ClassificationItemMutableList<IImageDetectionFullItem<S>, S> {
 
         // Do an argument sort on the confidence scores, from high to low.
 //        val res = boxes.listItems.sort { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
