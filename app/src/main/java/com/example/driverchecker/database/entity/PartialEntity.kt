@@ -1,4 +1,4 @@
-package com.example.driverchecker.database
+package com.example.driverchecker.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

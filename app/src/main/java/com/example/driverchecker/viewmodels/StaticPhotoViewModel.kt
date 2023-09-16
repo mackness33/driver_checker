@@ -1,10 +1,8 @@
 package com.example.driverchecker.viewmodels
 
 import androidx.lifecycle.*
-import com.example.driverchecker.database.EvaluationEntity
 import com.example.driverchecker.database.EvaluationRepository
-import com.example.driverchecker.database.ItemEntity
-import com.example.driverchecker.database.PartialEntity
+import com.example.driverchecker.database.entity.ItemEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

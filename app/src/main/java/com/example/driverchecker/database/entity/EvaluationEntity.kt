@@ -1,4 +1,4 @@
-package com.example.driverchecker.database
+package com.example.driverchecker.database.entity
 
 import android.text.BoringLayout
 import androidx.room.ColumnInfo

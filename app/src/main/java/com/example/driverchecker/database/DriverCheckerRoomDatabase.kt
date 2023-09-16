@@ -4,9 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.driverchecker.database.dao.EvaluationDao
+import com.example.driverchecker.database.dao.ItemDao
+import com.example.driverchecker.database.dao.MetricsPerEvaluationDao
+import com.example.driverchecker.database.dao.PartialDao
+import com.example.driverchecker.database.entity.EvaluationEntity
+import com.example.driverchecker.database.entity.ItemEntity
+import com.example.driverchecker.database.entity.MetricsPerEvaluationEntity
+import com.example.driverchecker.database.entity.PartialEntity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 // Annotates class to be a Room Database with a table (entity) of the Word class
 @Database(

@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.R
-import com.example.driverchecker.database.PartialEntity
+import com.example.driverchecker.database.entity.PartialEntity
 import com.example.driverchecker.utils.ColorManager
 import java.util.*
 

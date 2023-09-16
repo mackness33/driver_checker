@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import com.example.driverchecker.database.ItemEntity
+import com.example.driverchecker.database.entity.ItemEntity
 import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
 import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem

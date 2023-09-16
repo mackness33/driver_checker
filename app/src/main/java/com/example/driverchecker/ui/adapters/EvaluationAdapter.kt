@@ -1,6 +1,5 @@
 package com.example.driverchecker.ui.adapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
-import com.example.driverchecker.database.EvaluationEntity
+import com.example.driverchecker.database.entity.EvaluationEntity
 import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
 

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.driverchecker.database.EvaluationEntity
+import com.example.driverchecker.database.entity.EvaluationEntity
 import com.example.driverchecker.database.EvaluationRepository
 import kotlinx.coroutines.launch
 

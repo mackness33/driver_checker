@@ -2,6 +2,14 @@ package com.example.driverchecker.database
 
 import android.util.Log
 import androidx.annotation.WorkerThread
+import com.example.driverchecker.database.dao.EvaluationDao
+import com.example.driverchecker.database.dao.ItemDao
+import com.example.driverchecker.database.dao.MetricsPerEvaluationDao
+import com.example.driverchecker.database.dao.PartialDao
+import com.example.driverchecker.database.entity.EvaluationEntity
+import com.example.driverchecker.database.entity.ItemEntity
+import com.example.driverchecker.database.entity.MetricsPerEvaluationEntity
+import com.example.driverchecker.database.entity.PartialEntity
 import com.example.driverchecker.machinelearning.data.*
 import kotlinx.coroutines.flow.Flow
 
@@ -82,9 +90,11 @@ class EvaluationRepository(
         val ids = mutableListOf<Long>()
 
         metrics.forEach { entry ->
-            val id = metricsDao.insert(MetricsPerEvaluationEntity(
+            val id = metricsDao.insert(
+                MetricsPerEvaluationEntity(
                 entry.toPair(), evalId
-            ))
+            )
+            )
 
             ids.add(id)
         }

@@ -1,8 +1,7 @@
-package com.example.driverchecker.database
+package com.example.driverchecker.database.entity
 
 import android.graphics.RectF
 import androidx.room.*
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem
 import com.example.driverchecker.machinelearning.data.IImageDetectionItem
 
 

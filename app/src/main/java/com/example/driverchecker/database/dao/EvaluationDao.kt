@@ -1,6 +1,7 @@
-package com.example.driverchecker.database
+package com.example.driverchecker.database.dao
 
 import androidx.room.*
+import com.example.driverchecker.database.entity.EvaluationEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
