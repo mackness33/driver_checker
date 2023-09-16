@@ -3,7 +3,6 @@ package com.example.driverchecker.machinelearning.models.pytorch
 import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.data.ClassificationSupergroupMap
 import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import kotlinx.serialization.decodeFromString
@@ -18,7 +17,7 @@ class YOLOModel :
 
     constructor(modelPath: String? = null, classificationsJson: String? = null) : super(modelPath, classificationsJson)
 
-    constructor(modelPath: String? = null, newClassifications: ClassificationSupergroupMap<String>? = null) : super(modelPath, newClassifications)
+    constructor(modelPath: String? = null, newClassifications: Map<String, Set<IClassification<String>>>? = null) : super(modelPath, newClassifications)
 
     // model input image size
     private val inputWidth = 640

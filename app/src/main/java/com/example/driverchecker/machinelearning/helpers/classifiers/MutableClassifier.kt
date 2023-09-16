@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.data.*
 open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
     protected val mSupergroups: MutableMap<S, MutableSet<IClassification<S>>>
 
-    constructor (newDataset: ClassificationSupergroupMap<S>?) {
+    constructor (newDataset: Map<S, Set<IClassification<S>>>?) {
         mSupergroups = mutableMapOf()
 
         initClassifier(newDataset)
@@ -18,14 +18,14 @@ open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
         initClassifier(newClassifier.supergroups)
     }
 
-    private fun initClassifier (newDataset: ClassificationSupergroupMap<S>?) = load(newDataset)
+    private fun initClassifier (newDataset: Map<S, Set<IClassification<S>>>?) = load(newDataset)
     private fun initClassifier (importedJson: ImportClassifier<S>?) = load(importedJson)
 
-    override val supergroups : ClassificationSupergroupMap<S>
+    override val supergroups : Map<S, Set<IClassification<S>>>
         get() = mSupergroups
 
 
-    override fun load(newDataset: ClassificationSupergroupMap<S>?) : Boolean {
+    override fun load(newDataset: Map<S, Set<IClassification<S>>>?) : Boolean {
         if (newDataset != null) {
             for ((group, set) in newDataset.entries)
                 mSupergroups[group] = set.toMutableSet()
@@ -68,15 +68,15 @@ open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
         }
     }
 
-    override fun put(newSuperclass: ClassificationSet<S>, group: S) {
+    override fun put(newSuperclass: Set<IClassification<S>>, group: S) {
         mSupergroups[group] = newSuperclass.toMutableSet()
     }
 
-    override fun putIfAbsent(newSuperclass: ClassificationSet<S>, group: S) {
+    override fun putIfAbsent(newSuperclass: Set<IClassification<S>>, group: S) {
         mSupergroups.putIfAbsent(group, newSuperclass.toMutableSet())
     }
 
-    override fun asList(outerComparator: Comparator<ClassificationSet<S>>?, innerComparator: Comparator<IClassification<S>>?): ClassificationList<S> {
+    override fun asList(outerComparator: Comparator<Set<IClassification<S>>>?, innerComparator: Comparator<IClassification<S>>?): List<IClassification<S>> {
         // assign default comparator if null passed
         val outer = outerComparator ?: Comparator { _, _ -> 0}
         val inner = innerComparator ?: Comparator { _, _ -> 0}
@@ -90,7 +90,7 @@ open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
         return output
     }
 
-    override fun asSortedList(listComparator: Comparator<IClassification<S>>?): ClassificationList<S> {
+    override fun asSortedList(listComparator: Comparator<IClassification<S>>?): List<IClassification<S>> {
         // default sort is by index
         val comparator = listComparator ?: Comparator { o1, o2 -> o2.externalIndex.compareTo(o1.externalIndex)}
         val output = mutableListOf<IClassification<S>>()
@@ -100,7 +100,7 @@ open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
         return output.sortedWith(comparator)
     }
 
-    override fun asUnsortedList(): ClassificationList<S> {
+    override fun asUnsortedList(): List<IClassification<S>> {
         val output = mutableListOf<IClassification<S>>()
 
         mSupergroups.values.toList().forEach { outerSet -> output.plusAssign(outerSet) }
@@ -214,7 +214,7 @@ open class MutableClassifier<S : Comparable<S>> : IMutableClassifier<S> {
         return mSupergroups.values.find { supergroup -> supergroup.contains(classification) } != null
     }
 
-    override fun getSuperclass(group: S): ClassificationSet<S>? {
+    override fun getSuperclass(group: S): Set<IClassification<S>>? {
         return mSupergroups[group]
     }
 

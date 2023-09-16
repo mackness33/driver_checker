@@ -1,7 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.classifiers
 
 import com.example.driverchecker.machinelearning.data.ImportClassifier
-import com.example.driverchecker.machinelearning.data.ClassificationSupergroupMap
 import com.example.driverchecker.machinelearning.data.IClassification
 
 interface IMutableClassifier<Superclass> : IClassifier<Superclass> {
@@ -19,7 +18,7 @@ interface IMutableClassifier<Superclass> : IClassifier<Superclass> {
     fun delete (name: String) : Boolean
     fun delete (index: Int) : Boolean
 
-    fun load(newDataset: ClassificationSupergroupMap<Superclass>?) : Boolean
+    fun load(newDataset: Map<Superclass, Set<IClassification<Superclass>>>?) : Boolean
 
     fun load(importedJson: ImportClassifier<Superclass>?) : Boolean
 }

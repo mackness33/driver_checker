@@ -125,22 +125,9 @@ class MutableClassificationWithMetrics<S> : IMutableClassificationWithMetrics<S>
     )
 }
 
-
-// ---------------------------------- TYPE ALIAS ----------------------------------
-
-typealias ClassificationSupergroupMap<Superclass> = Map<Superclass, ClassificationSet<Superclass>>
-typealias ClassificationSuperclassList<Superclass> = List<ClassificationSet<Superclass>>
-
-typealias ClassificationSet<Superclass> = Set<IClassification<Superclass>>
-typealias ClassificationList<Superclass> = List<IClassification<Superclass>>
-
 // ---------------------------------- SERIALIZABLE ----------------------------------
 @Serializable
 data class ImportClassifier<Superclass> (val value: Map<Superclass, Set<String>>)
-
-typealias StringMutableClassifier = MutableClassifier<String>
-typealias StringClassifier = IClassifier<String>
-
 
 // ---------------------------------- BASIC OUTPUT ----------------------------------
 // with classification
