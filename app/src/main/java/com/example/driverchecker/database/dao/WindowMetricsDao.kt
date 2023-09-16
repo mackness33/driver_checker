@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WindowMetricsDao {
 
-    @Query("SELECT * FROM metrics_per_evaluation")
+    @Query("SELECT * FROM window_metrics")
     fun getAllWindowMetrics(): Flow<List<WindowMetricsEntity>>
 
     @Query("SELECT * FROM window_metrics WHERE id = :windowMetricsId")

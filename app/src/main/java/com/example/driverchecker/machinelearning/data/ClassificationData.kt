@@ -28,6 +28,16 @@ interface IGroupMetrics : IAdditionalMetrics {
     val groupMetrics : Map<String, Triple<Int, Int, Int>>
 }
 
+data class GroupMetrics (
+    override val groupMetrics: Map<String, Triple<Int, Int, Int>>
+) : IGroupMetrics {
+    constructor (listCopyEntity: List<Pair<String, Triple<Int, Int, Int>>>) : this (
+        listCopyEntity.toMap()
+    )
+
+    constructor () : this (emptyMap())
+}
+
 /**
  * ICFR {
  *     metrics: Map<IWindowMetrics, IGroupMetrics?>
