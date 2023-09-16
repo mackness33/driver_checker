@@ -1,6 +1,7 @@
 package com.example.driverchecker.viewmodels
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
 import com.example.driverchecker.database.EvaluationRepository
@@ -11,6 +12,7 @@ import com.example.driverchecker.machinelearning.manipulators.IClassificationCli
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
 import com.example.driverchecker.utils.AtomicValue
 import com.example.driverchecker.utils.DeferredLiveData
+import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
@@ -48,7 +50,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val awaitEndInsert: LiveData<Long?>
         get() = mAwaitEndInsert.asLiveData
 
-    val currentState: AtomicValue<LiveEvaluationStateInterface?>
+    val currentState: ObservableData<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
 
     fun usePaths (paths: List<String?>) {
@@ -101,6 +103,21 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         constructor () : super()
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
+
+        override suspend fun collectStates (state: LiveEvaluationStateInterface) {
+            try {
+                super.genericCollectStates(state)
+
+                when (state) {
+                    is LiveClassificationState.Start<*> -> onLiveClassificationStart(state as LiveClassificationState.Start<String>)
+                    is LiveClassificationState.Loading<*> -> onLiveClassificationLoading(state as LiveClassificationState.Loading<String>)
+                    is LiveClassificationState.End<*> -> onLiveClassificationEnd(state as LiveClassificationState.End<String>)
+                    else -> super.collectStates(state)
+                }
+            } catch (e : Throwable) {
+                Log.d("ClassificationListener", "Bad cast to Start<S> or End<S>", e)
+            }
+        }
 
         override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             super.onLiveEvaluationReady(state)

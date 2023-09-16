@@ -1,6 +1,8 @@
 package com.example.driverchecker.machinelearning.helpers.listeners
 
+import com.example.driverchecker.utils.AtomicData
 import com.example.driverchecker.utils.AtomicValue
+import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharedFlow
@@ -12,11 +14,9 @@ interface IGenericListener<S> {
         job?.cancel()
     }
 
-    suspend fun collectStates (state: S) {
-        currentState.update(state)
-    }
+    suspend fun collectStates (state: S)
 
-    val currentState: AtomicValue<S?>
+    val currentState: ObservableData<S?>
 
     val job: Job?
 }

@@ -57,14 +57,19 @@ interface MutableObservableData<T> : MutableData<T>, ObservableData<T> {
 }
 
 interface AtomicData<T> : MutableData<T> {
-    fun tryUpdate (next: T)
+    fun tryUpdate (next: T) : Boolean
     suspend fun update (next: T)
+    fun isLocked(): Boolean
 }
 
 interface AtomicObservableData<T> : AtomicData<T>, MutableObservableData<T>
 
 interface CompletableData<T> : ObservableData<T> {
+    val promise: Deferred<T>
+
     suspend fun await ()
+
+    fun tryAwait () : Boolean
 
     fun deferredAwait ()
 

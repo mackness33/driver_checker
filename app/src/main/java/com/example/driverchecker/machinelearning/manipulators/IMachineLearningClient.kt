@@ -2,15 +2,13 @@ package com.example.driverchecker.machinelearning.manipulators
 
 import androidx.lifecycle.LiveData
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.utils.AtomicValue
-import com.example.driverchecker.utils.ISettings
-import com.example.driverchecker.utils.StateLiveData
+import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
 interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> {
     // LIVE DATA
-    val hasEnded: LiveData<Boolean?>
+    val hasEnded: LiveData<Boolean>
 
     // last result evaluated by the mlRepo
     val lastResult: LiveData<O?>
@@ -31,7 +29,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
 
     val clientState: SharedFlow<ClientStateInterface>
 
-    val currentState: AtomicValue<LiveEvaluationStateInterface?>
+    val currentState: ObservableData<LiveEvaluationStateInterface?>
 
     fun updateSettings(newSettings: ISettings)
 

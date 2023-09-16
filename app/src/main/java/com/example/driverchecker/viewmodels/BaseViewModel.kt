@@ -2,6 +2,7 @@ package com.example.driverchecker.viewmodels
 
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.listeners.AMachineLearningListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
@@ -59,9 +60,9 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
     val showResults: StateLiveData<Boolean?>
         get() = mShowResults.value
 
-    protected val mActualPage: AtomicLiveData<IPage?> = AtomicLiveData(null)
+    protected val mActualPage: AtomicObservableData<IPage?> = LockableData(null)
     val actualPage: LiveData<IPage?>
-        get() = mActualPage.asLiveData
+        get() = mActualPage.liveData
 
 
 
@@ -107,7 +108,7 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
 
 
     // INNER CLASSES
-    protected open inner class EvaluationListener : MachineLearningListener, GenericListener<LiveEvaluationStateInterface> {
+    protected open inner class EvaluationListener : AMachineLearningListener {
 
         constructor () : super()
 

@@ -5,18 +5,6 @@ import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterfa
 
 interface MachineLearningListener : IGenericListener<LiveEvaluationStateInterface> {
 
-    override suspend fun collectStates (state: LiveEvaluationStateInterface) {
-        super.collectStates(state)
-
-        when (state) {
-            is LiveEvaluationState.Ready -> onLiveEvaluationReady(state)
-            is LiveEvaluationState.Start -> onLiveEvaluationStart()
-            is LiveEvaluationState.Loading -> onLiveEvaluationLoading(state)
-            is LiveEvaluationState.End -> onLiveEvaluationEnd(state)
-            else -> {}
-        }
-    }
-
     // handler of mlRepo in ready
     suspend fun onLiveEvaluationReady (state: LiveEvaluationState.Ready)
 

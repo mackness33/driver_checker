@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemMutableList
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.listeners.AMachineLearningListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.utils.*
@@ -17,9 +18,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR>{
 
     // LIVE DATA
-    protected val mHasEnded = AtomicLiveData(false)
-    override val hasEnded: LiveData<Boolean?>
-        get() = mHasEnded.asLiveData
+    protected val mHasEnded: AtomicObservableData<Boolean> = LockableData(false)
+    override val hasEnded: LiveData<Boolean>
+        get() = mHasEnded.liveData
 
     // last result evaluated by the mlRepo
     protected val mLastResult: MutableLiveData<O?> = MutableLiveData(null)
@@ -36,7 +37,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
     override val finalResult: StateLiveData<FR?>
         get() = mFinalResult
 
-    override val currentState: AtomicValue<LiveEvaluationStateInterface?>
+    override val currentState: ObservableData<LiveEvaluationStateInterface?>
         get() = evaluationListener.currentState
 
     // VARIABLES
@@ -101,7 +102,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
     }
 
     // INNER CLASSES
-    protected open inner class EvaluationListener : MachineLearningListener, GenericListener<LiveEvaluationStateInterface> {
+    protected open inner class EvaluationListener : AMachineLearningListener {
 
         constructor () : super()
 
@@ -109,7 +110,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
 
         override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             evaluatedItemsArray.clear()
-            mHasEnded.tryUpdate(false)
+            mHasEnded.update(false)
             mPartialResultEvent.postValue(PartialEvaluationState.Clear)
             mLastResult.postValue(null)
             Log.d("MachineLearningClient - EvaluationListener", "READY: ${state.isReady} with index ${mPartialResultEvent.value} but array.size is ${evaluatedItemsArray.size}")
@@ -139,7 +140,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
-            mHasEnded.tryUpdate(state.finalResult != null)
+            mHasEnded.update(state.finalResult != null)
             lastResultsList = evaluatedItemsArray.toMutableList()
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }

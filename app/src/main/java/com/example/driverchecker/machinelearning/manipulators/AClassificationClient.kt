@@ -8,10 +8,7 @@ import com.example.driverchecker.machinelearning.collections.ClassificationMetri
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
-import com.example.driverchecker.utils.AtomicValue
-import com.example.driverchecker.utils.MutableStateLiveData
-import com.example.driverchecker.utils.StateLiveData
-import com.example.driverchecker.utils.StatefulLiveData
+import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -43,10 +40,6 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
         get() = mGroups
 
 
-    override val currentState: AtomicValue<LiveEvaluationStateInterface?>
-        get() = evaluationListener.currentState
-
-
     // INNER CLASSES
     protected open inner class EvaluationClassificationListener :
         ClassificationListener<S>,
@@ -55,6 +48,21 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
         constructor () : super()
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
+
+        override suspend fun collectStates (state: LiveEvaluationStateInterface) {
+            try {
+                super.genericCollectStates(state)
+
+                when (state) {
+                    is LiveClassificationState.Start<*> -> onLiveClassificationStart(state as LiveClassificationState.Start<S>)
+                    is LiveClassificationState.Loading<*> -> onLiveClassificationLoading(state as LiveClassificationState.Loading<S>)
+                    is LiveClassificationState.End<*> -> onLiveClassificationEnd(state as LiveClassificationState.End<S>)
+                    else -> super.collectStates(state)
+                }
+            } catch (e : Throwable) {
+                Log.d("ClassificationListener", "Bad cast to Start<S> or End<S>", e)
+            }
+        }
 
         override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
             super.onLiveEvaluationReady(state)

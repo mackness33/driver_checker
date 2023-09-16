@@ -183,7 +183,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         clientListener?.destroy()
     }
 
-    protected open inner class ClientListener : ClientStateListener, GenericListener<ClientStateInterface> {
+    protected open inner class ClientListener : AClientStateListener {
         constructor () : super()
 
         constructor (scope: CoroutineScope, clientFlow: SharedFlow<ClientStateInterface>) : super(scope, clientFlow)
