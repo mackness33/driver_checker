@@ -10,9 +10,6 @@ import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
 
 
 abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
@@ -25,7 +22,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     abstract override var model: IClassificationModel<I, O, S>?
 
-    override fun jobEvaluation(input: Flow<I>, settings: ISettings): Job {
+    override fun jobEvaluation(input: Flow<I>, newSettings: ISettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             try {
@@ -35,8 +32,10 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                         (model as IClassificationModel<I, O, S>).classifier)
                     )
 
-                    window.updateSettings(settings)
-                    model?.updateThreshold(settings.modelThreshold)
+                    window.updateSettings(newSettings)
+                    model?.updateThreshold(newSettings.modelThreshold)
+
+                    settings = newSettings
 
                     timer.markStart()
                     flowEvaluation(input, ::cancel)?.collect()
@@ -63,7 +62,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     null,
                     ClassificationFinalResult(
                         window.getFinalResults(),
-                        null,
+                        settings,
                         MachineLearningMetrics(timer.diff() ?: 0.0, window.totalWindowsDone())
                     )
                 )
@@ -71,6 +70,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         }
 
         timer.reset()
+        settings = null
         window.clean()
     }
 

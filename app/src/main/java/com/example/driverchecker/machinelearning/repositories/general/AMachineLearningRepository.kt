@@ -12,11 +12,6 @@ import com.example.driverchecker.utils.Timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
@@ -34,6 +29,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
     protected val timer = Timer()
+    protected var settings: ISettings? = null
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()
@@ -81,14 +77,16 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         return window.lastResult
     }
 
-    protected open fun jobEvaluation (input: Flow<I>, settings: ISettings): Job {
+    protected open fun jobEvaluation (input: Flow<I>, newSettings: ISettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 mEvaluationFlowState.emit(LiveEvaluationState.Start)
 
-                window.updateSettings(settings)
-                model?.updateThreshold(settings.modelThreshold)
+                window.updateSettings(newSettings)
+                model?.updateThreshold(newSettings.modelThreshold)
+
+                settings = newSettings
 
                 timer.markStart()
                 flowEvaluation(input, ::cancel)?.collect()
@@ -124,7 +122,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                     null,
                     MachineLearningFinalResult(
                         window.getFinalResults(),
-                        null,
+                        settings,
                         MachineLearningMetrics(timer.diff() ?: 0.0, window.totalWindowsDone())
                     )
                 )
@@ -132,6 +130,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         }
 
         timer.reset()
+        settings = null
         window.clean()
     }
 
