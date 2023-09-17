@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR>{
+abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
 
     // LIVE DATA
     protected val mHasEnded: AtomicObservableData<Boolean> = LockableData(false)
@@ -41,8 +41,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
 
     // VARIABLES
     // array of evaluated items by the mlRepo
-    protected val evaluatedItemsArray =
-        MachineLearningItemMutableList<O>()
+    protected val evaluatedItemsArray = MachineLearningItemMutableList<O>()
     override val currentResultsList: List<O>
         get() = evaluatedItemsArray
 
@@ -86,7 +85,11 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
         mClientState.emit(ClientState.Stop(cause))
     }
 
-    override fun updateSettings (newSettings: IOldSettings) {
+    override suspend fun updateSettings (newSettings: ISettings) {
+        mClientState.emit(ClientState.UpdateSettings(newSettings))
+    }
+
+    override fun updateoldSettings (newSettings: IOldSettings) {
         settings = newSettings
     }
 

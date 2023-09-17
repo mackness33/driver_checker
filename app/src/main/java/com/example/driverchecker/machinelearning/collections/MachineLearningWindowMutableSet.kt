@@ -37,6 +37,8 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
         protected set
     override var threshold: Float = 0.0f
         protected set
+    override var settings: ISettings = Settings(emptyList(), emptyList(), emptyList(), 0.0f)
+        protected set
 
     /*  WINDOWS  */
     @OptIn(ExperimentalTime::class)
@@ -88,6 +90,12 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
     override fun updateStart(newStart: TimeSource.Monotonic.ValueTimeMark) {
         mWindows.forEach { it.updateStart(newStart) }
     }
+
+    override fun updateSettings(newSettings: ISettings) {
+        settings = newSettings
+    }
+
+
 
     /*  SET  */
     override fun contains(element: W): Boolean {

@@ -1,6 +1,8 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
+import com.example.driverchecker.machinelearning.collections.MachineLearningWindowMutableSet
+import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsSet
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
@@ -28,7 +30,9 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
     protected val timer = Timer()
-    protected var settings: IOldSettings? = null
+    protected var oldSettings: IOldSettings? = null
+    protected var settings: ISettings? = null
+    protected val windowsSet: MachineLearningWindowsSet<O, IMachineLearningWindow<O>> = MachineLearningWindowMutableSet()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()
@@ -84,7 +88,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 mEvaluationFlowState.emit(LiveEvaluationState.Start)
 
                 model?.updateThreshold(newSettings.modelThreshold)
-                settings = newSettings
+                oldSettings = newSettings
                 timer.markStart()
                 window.initialize(newSettings, timer.start!!)
 
@@ -121,7 +125,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                     null,
                     MachineLearningFinalResult(
                         window.getFinalResults(),
-                        settings,
+                        oldSettings,
                         MachineLearningOldMetrics(window.getMetrics())
                     )
                 )
@@ -129,7 +133,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         }
 
         timer.reset()
-        settings = null
+        oldSettings = null
         window.clean()
     }
 
@@ -204,6 +208,11 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override fun onLiveEvaluationStop(state: ClientState.Stop) {
             onStopLiveEvaluation(state.cause)
+        }
+
+        override fun onLiveEvaluationUpdateSettings(state: ClientState.UpdateSettings) {
+            model?.updateThreshold(state.settings.modelThreshold)
+            windowsSet.updateSettings(state.settings)
         }
     }
 

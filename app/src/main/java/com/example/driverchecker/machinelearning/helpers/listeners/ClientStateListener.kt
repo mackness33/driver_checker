@@ -11,4 +11,6 @@ interface ClientStateListener : IGenericListener<ClientStateInterface> {
 
     // handler of mlRepo on end
     fun onLiveEvaluationStop (state: ClientState.Stop)
+
+    fun onLiveEvaluationUpdateSettings (state: ClientState.UpdateSettings)
 }

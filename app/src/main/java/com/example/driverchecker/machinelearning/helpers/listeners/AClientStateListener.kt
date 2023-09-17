@@ -16,6 +16,7 @@ abstract class AClientStateListener : ClientStateListener, AGenericListener<Clie
             is ClientState.Ready -> onLiveEvaluationReady()
             is ClientState.Start<*> -> onLiveEvaluationStart(state)
             is ClientState.Stop -> onLiveEvaluationStop(state)
+            is ClientState.UpdateSettings -> onLiveEvaluationUpdateSettings(state)
         }
     }
 }

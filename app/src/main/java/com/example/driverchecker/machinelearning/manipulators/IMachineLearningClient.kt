@@ -31,7 +31,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
 
     val currentState: ObservableData<LiveEvaluationStateInterface?>
 
-    fun updateSettings(newSettings: IOldSettings)
+    fun updateoldSettings(newSettings: IOldSettings)
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 
@@ -42,4 +42,6 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
     suspend fun start ()
 
     suspend fun stop (cause: ExternalCancellationException = ExternalCancellationException())
+
+    suspend fun updateSettings(newSettings: ISettings)
 }

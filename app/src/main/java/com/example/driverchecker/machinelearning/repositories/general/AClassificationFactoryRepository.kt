@@ -34,7 +34,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     )
 
                     model?.updateThreshold(newSettings.modelThreshold)
-                    settings = newSettings
+                    oldSettings = newSettings
                     timer.markStart()
                     window.initialize(
                         newSettings, timer.start!!,
@@ -65,7 +65,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     null,
                     ClassificationFinalResult(
                         window.getFinalResults(),
-                        settings,
+                        oldSettings,
                         MachineLearningOldMetrics(window.getMetrics())
                     )
                 )
@@ -73,7 +73,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         }
 
         timer.reset()
-        settings = null
+        oldSettings = null
         window.clean()
     }
 

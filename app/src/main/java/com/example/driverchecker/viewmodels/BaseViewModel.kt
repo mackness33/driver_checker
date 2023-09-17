@@ -87,7 +87,7 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
     }
 
     fun saveSettings (newSettings: IOldSettings) {
-        evaluationClient.updateSettings(newSettings)
+        evaluationClient.updateoldSettings(newSettings)
     }
 
     // update of the live classification of the mlRepo
