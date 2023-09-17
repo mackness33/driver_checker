@@ -68,13 +68,13 @@ class SettingsDialog : DialogFragment() {
          */
 
         binding.editWindowFrame.setText(
-            String.format("%d", activityModel.settings.windowFrames)
+            String.format("%d", activityModel.oldSettings.windowFrames)
         )
         binding.editWindowThreshold.setText(
-            String.format("%.2f", activityModel.settings.windowThreshold)
+            String.format("%.2f", activityModel.oldSettings.windowThreshold)
         )
         binding.editModelThreshold.setText(
-            String.format("%.2f", activityModel.settings.modelThreshold)
+            String.format("%.2f", activityModel.oldSettings.modelThreshold)
         )
 
         binding.buttonSave.setOnClickListener {

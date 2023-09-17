@@ -8,6 +8,9 @@ import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
+import com.example.driverchecker.utils.MutableObservableData
+import com.example.driverchecker.utils.ObservableData
+import com.example.driverchecker.utils.StatefulData
 import com.example.driverchecker.utils.Timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
@@ -31,7 +34,20 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected var loadingModelJob: Job? = null
     protected val timer = Timer()
     protected var oldSettings: IOldSettings? = null
-    protected var settings: ISettings? = null
+    override val availableSettings : IMultipleWindowSettings = Settings (
+        listOf(1, 3, 5, 10, 20, 30),
+        listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
+        listOf("Basic Window"),
+        0.10f
+    )
+    protected val mSettings: MutableObservableData<ISettings> = StatefulData(Settings(
+        listOf(availableSettings.multipleWindowsFrames[2]),
+        listOf(availableSettings.multipleWindowsThresholds[0]),
+        listOf(availableSettings.multipleTypes[0]),
+        0.10f
+    ))
+    override val settings: ObservableData<ISettings>
+        get() = mSettings
     protected val windowsSet: MachineLearningWindowsSet<O, IMachineLearningWindow<O>> = MachineLearningWindowMutableSet()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?

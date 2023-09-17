@@ -1,9 +1,7 @@
 package com.example.driverchecker.machinelearning.repositories
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResult
-import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
-import com.example.driverchecker.machinelearning.data.IOldSettings
-import com.example.driverchecker.machinelearning.data.LiveEvaluationStateInterface
+import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -21,4 +19,6 @@ interface IMachineLearningRepository<in I, out O : IMachineLearningOutputStats, 
 
     val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
     val repositoryScope: CoroutineScope
+    val availableSettings: IMultipleWindowSettings
+    val settings: ObservableData<ISettings>
 }

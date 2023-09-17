@@ -10,11 +10,11 @@ import com.example.driverchecker.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> (private var machineLearningRepository: IMachineLearningFactory<I, O, FR>? = null): ViewModel(){
+abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> (private var machineLearningRepository: IMachineLearningFactory<I, O, FR>): ViewModel(){
     // SHARED FLOWS
     // progress flow of the evaluation by the mlRepository
     val evaluationState: SharedFlow<LiveEvaluationStateInterface>?
-        get() = machineLearningRepository?.evaluationFlowState
+        get() = machineLearningRepository.evaluationFlowState
 
 
     // VARIABLES
@@ -22,9 +22,14 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
 
     protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
 
-    open val settings: IOldSettings
+    open val oldSettings: IOldSettings
         get() = evaluationClient.settings
 
+    val availableSettings: IMultipleWindowSettings
+        get() = machineLearningRepository.availableSettings
+
+    val actualSettings: LiveData<ISettings>
+        get() = machineLearningRepository.settings.liveData
 
     // LIVE DATA
     // last result evaluated by the mlRepo
