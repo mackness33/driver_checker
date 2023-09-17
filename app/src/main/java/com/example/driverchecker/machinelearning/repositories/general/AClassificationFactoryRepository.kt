@@ -34,13 +34,14 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                         (model as IClassificationModel<I, O, S>).classifier)
                     )
 
-                    window.updateSettings(newSettings)
                     model?.updateThreshold(newSettings.modelThreshold)
-
                     settings = newSettings
-
                     timer.markStart()
-                    window.updateStart(timer.start!!)
+                    window.initialize(
+                        newSettings, timer.start!!,
+                        (model as IClassificationModel<I, O, S>).classifier.supergroups.keys
+                    )
+
                     flowEvaluation(input, ::cancel)?.collect()
                 } else
                     throw Throwable("The stream is not ready yet")

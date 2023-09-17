@@ -48,6 +48,12 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
     override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
 
+    override fun initialize(settings: ISettings, start: TimeSource.Monotonic.ValueTimeMark?) {
+        size = settings.windowFrames
+        threshold = settings.windowThreshold
+        timer.initStart(start)
+    }
+
     override fun updateSize (newSize: Int) {
         size = newSize
     }
@@ -62,14 +68,26 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     }
 
     override fun next (element: E) {
+        hasAcceptedLast = preUpdate(element)
+        if (!hasAcceptedLast)
+            return
+
+        update()
+
+        postUpdate()
+    }
+
+    override fun preUpdate (element: E) : Boolean {
         window.add(element)
 
         if (window.size > size)
             window.removeFirst()
 
-        update()
+        return true
+    }
 
-        lastResult = element
+    override fun postUpdate () {
+        lastResult = window.last()
         totEvaluationsDone++
         hasAcceptedLast = true
         if (isSatisfied()) timer.markEnd()

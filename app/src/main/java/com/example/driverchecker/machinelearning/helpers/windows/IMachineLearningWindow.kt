@@ -16,6 +16,11 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
 
     val threshold: Float
 
+    @OptIn(ExperimentalTime::class)
+    fun initialize(
+        settings: ISettings, newStart: TimeSource.Monotonic.ValueTimeMark?
+    )
+
     fun isSatisfied() : Boolean
 
     fun next (element: E)
@@ -36,4 +41,8 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
 
     @OptIn(ExperimentalTime::class)
     fun updateStart (newStart: TimeSource.Monotonic.ValueTimeMark)
+
+    fun preUpdate(element: E): Boolean
+
+    fun postUpdate()
 }

@@ -85,13 +85,11 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 mEvaluationFlowState.emit(LiveEvaluationState.Start)
 
-                window.updateSettings(newSettings)
                 model?.updateThreshold(newSettings.modelThreshold)
-
                 settings = newSettings
-
                 timer.markStart()
-                window.updateStart(timer.start!!)
+                window.initialize(newSettings, timer.start!!)
+
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
                 mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
