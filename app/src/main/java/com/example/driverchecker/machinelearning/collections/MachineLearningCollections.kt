@@ -13,8 +13,7 @@ interface ClassificationMetricsMap<S> : IGroupMetrics<S> {
     val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
 }
 
-interface MachineLearningWindowsSet <E : IMachineLearningItem> : IMachineLearningWindow<E> {
-    val windows: Set<IMachineLearningWindow<E>>
-
-
+interface MachineLearningWindowsSet <E : IMachineLearningItem, W : IMachineLearningWindow<E>> : IMachineLearningWindow<E>, Set<W> {
+    val inactiveWindows: Set<W>
+    val activeWindows: Set<W>
 }

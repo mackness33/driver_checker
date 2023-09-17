@@ -1,9 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IAdditionalMetrics
-import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
-import com.example.driverchecker.machinelearning.data.IWindowMetrics
-import com.example.driverchecker.machinelearning.data.WindowMetrics
+import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.ISettings
 import com.example.driverchecker.utils.Timer
 import kotlin.time.ExperimentalTime
@@ -14,7 +11,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     initialSize: Int = 3,
     initialThreshold: Float = 0.15f,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
-) : IMachineLearningWindow<E> {
+) : IMachineLearningWindow<E>, WithConfidence, IWindowMetrics{
 
     protected val window : MutableList<E> = mutableListOf()
 
@@ -35,8 +32,9 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override var totEvaluationsDone: Int = 0
         protected set
 
-    override var lastResult : E? = null
-        protected set
+    override val lastResult: E?
+        get() = if (window.isEmpty()) null else window.last()
+
 
     override var totalTime: Double = 0.0
         get() = timer.diff() ?: 0.0
@@ -54,20 +52,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         timer.initStart(start)
     }
 
-    override fun updateSize (newSize: Int) {
-        size = newSize
-    }
-
-    override fun updateThreshold (newThreshold: Float) {
-        threshold = newThreshold
-    }
-
-    override fun updateSettings (settings: ISettings) {
-        threshold = settings.windowThreshold
-        size = settings.windowFrames
-    }
-
-    override fun next (element: E) {
+    final override fun next (element: E) {
         hasAcceptedLast = preUpdate(element)
         if (!hasAcceptedLast)
             return
@@ -77,7 +62,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         postUpdate()
     }
 
-    override fun preUpdate (element: E) : Boolean {
+    protected open fun preUpdate (element: E) : Boolean {
         window.add(element)
 
         if (window.size > size)
@@ -86,8 +71,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         return true
     }
 
-    override fun postUpdate () {
-        lastResult = window.last()
+    protected open fun postUpdate () {
         totEvaluationsDone++
         hasAcceptedLast = true
         if (isSatisfied()) timer.markEnd()
@@ -98,7 +82,6 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         confidence = 0f
         totEvaluationsDone = 0
         hasAcceptedLast = false
-        lastResult = null
         totalWindows = 0
         totalTime = 0.0
         timer.reset()

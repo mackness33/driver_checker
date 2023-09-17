@@ -5,9 +5,7 @@ import com.example.driverchecker.utils.ISettings
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfidence, IWindowMetrics {
-    val lastResult : E?
-
+interface IMachineLearningWindow<E : IMachineLearningOutputStats> {
     val hasAcceptedLast: Boolean
 
     val totEvaluationsDone: Int
@@ -15,6 +13,8 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
     val size: Int
 
     val threshold: Float
+
+    val lastResult: E?
 
     @OptIn(ExperimentalTime::class)
     fun initialize(
@@ -33,16 +33,6 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : WithConfiden
 
     fun getFullMetrics() : Pair<IWindowMetrics, IAdditionalMetrics?>
 
-    fun updateSize(newSize: Int)
-
-    fun updateThreshold(newThreshold: Float)
-
-    fun updateSettings(settings: ISettings)
-
     @OptIn(ExperimentalTime::class)
     fun updateStart (newStart: TimeSource.Monotonic.ValueTimeMark)
-
-    fun preUpdate(element: E): Boolean
-
-    fun postUpdate()
 }
