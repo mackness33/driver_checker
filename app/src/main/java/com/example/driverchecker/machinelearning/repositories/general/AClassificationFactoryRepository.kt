@@ -6,7 +6,6 @@ import com.example.driverchecker.machinelearning.helpers.windows.ClassificationW
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
-import com.example.driverchecker.utils.ISettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect

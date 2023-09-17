@@ -1,12 +1,8 @@
 package com.example.driverchecker.machinelearning.collections
 
-import com.example.driverchecker.machinelearning.data.IAdditionalMetrics
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResultStats
-import com.example.driverchecker.machinelearning.data.IMachineLearningItem
-import com.example.driverchecker.machinelearning.data.IWindowMetrics
+import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.helpers.windows.WindowFactory
-import com.example.driverchecker.utils.ISettings
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 

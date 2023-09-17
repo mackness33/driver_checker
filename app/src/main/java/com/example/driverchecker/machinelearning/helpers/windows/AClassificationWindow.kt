@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.collections.ClassificationMetricsMutableMap
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.utils.ISettings
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
