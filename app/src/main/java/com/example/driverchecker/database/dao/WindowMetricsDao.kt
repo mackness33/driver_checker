@@ -1,29 +1,27 @@
 package com.example.driverchecker.database.dao
 
 import androidx.room.*
-import com.example.driverchecker.database.entity.MetricsPerEvaluationEntity
-import com.example.driverchecker.database.entity.WindowMetricsEntity
-import com.example.driverchecker.machinelearning.data.WindowMetrics
+import com.example.driverchecker.database.entity.WindowOldMetricsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WindowMetricsDao {
 
     @Query("SELECT * FROM window_metrics")
-    fun getAllWindowMetrics(): Flow<List<WindowMetricsEntity>>
+    fun getAllWindowMetrics(): Flow<List<WindowOldMetricsEntity>>
 
     @Query("SELECT * FROM window_metrics WHERE id = :windowMetricsId")
-    fun getWindowMetrics(windowMetricsId: Long): WindowMetricsEntity
+    fun getWindowMetrics(windowMetricsId: Long): WindowOldMetricsEntity
 
     @Query("SELECT * FROM window_metrics WHERE evaluation_id = :evaluationId")
-    fun getWindowMetricsByEvaluation(evaluationId: Long): List<WindowMetricsEntity>
+    fun getWindowMetricsByEvaluation(evaluationId: Long): List<WindowOldMetricsEntity>
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(windowMetrics: WindowMetricsEntity) : Long
+    suspend fun insert(windowMetrics: WindowOldMetricsEntity) : Long
 
     @Delete
-    suspend fun delete(windowMetrics: WindowMetricsEntity)
+    suspend fun delete(windowMetrics: WindowOldMetricsEntity)
 
     @Query("DELETE FROM window_metrics")
     suspend fun deleteAll()

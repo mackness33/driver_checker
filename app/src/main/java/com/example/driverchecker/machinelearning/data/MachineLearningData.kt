@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
-import androidx.room.ColumnInfo
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemList
-import kotlinx.coroutines.flow.SharedFlow
 import kotlin.coroutines.cancellation.CancellationException
 
 // ---------------------------------- CLASSES ----------------------------------
@@ -35,7 +33,7 @@ interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOut
 
 typealias IMachineLearningFinalResultStats = WithConfidence
 
-interface IMachineLearningFinalResult : IMachineLearningFinalResultStats, WithMetrics, WithSettings
+interface IMachineLearningFinalResult : IMachineLearningFinalResultStats, WithOldMetrics, WithOldSettings
 
 data class MachineLearningOutput <E : WithConfidence> (
     override val listItems: MachineLearningItemList<E>,
@@ -45,11 +43,11 @@ data class MachineLearningOutput <E : WithConfidence> (
 
 data class MachineLearningFinalResult (
     override val confidence: Float,
-    override val settings: ISettings? = null,
-    override val metrics: IMetrics? = null,
+    override val settings: IOldSettings? = null,
+    override val metrics: IOldMetrics? = null,
 ) : IMachineLearningFinalResult {
 
-    constructor(main: IMachineLearningFinalResultStats, settings: ISettings?, metrics: IMetrics?) : this (
+    constructor(main: IMachineLearningFinalResultStats, settings: IOldSettings?, metrics: IOldMetrics?) : this (
         main.confidence, settings, metrics
     )
 }
@@ -76,8 +74,8 @@ data class MachineLearningFullOutput <I, E : WithConfidence> (
 
 data class MachineLearningFullFinalResult (
     override val confidence: Float,
-    override val settings: ISettings? = null,
-    override val metrics: IMetrics? = null
+    override val settings: IOldSettings? = null,
+    override val metrics: IOldMetrics? = null
 ) : IMachineLearningFullFinalResult
 
 typealias MachineLearningFullItem = IMachineLearningFullItem

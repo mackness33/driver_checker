@@ -1,6 +1,5 @@
 package com.example.driverchecker.database.entity
 
-import android.text.BoringLayout
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
@@ -13,15 +12,15 @@ data class EvaluationEntity (
     override val confidence: Float,
     val name: String,
     @ColumnInfo(name = "group") override val supergroup: String,
-    @Embedded override val settings: Settings?,
-    @Embedded override val metrics: MachineLearningMetrics?,
+    @Embedded override val settings: OldSettings?,
+    @Embedded override val metrics: MachineLearningOldMetrics?,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) : IImageDetectionFinalResult<String> {
     constructor(finalResult: IImageDetectionFinalResult<String>, title: String) : this (
         confidence = finalResult.confidence,
         name = title,
         supergroup = finalResult.supergroup,
-        settings = Settings(finalResult.settings),
-        metrics = MachineLearningMetrics(finalResult.metrics)
+        settings = OldSettings(finalResult.settings),
+        metrics = MachineLearningOldMetrics(finalResult.metrics)
     )
 }

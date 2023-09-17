@@ -2,9 +2,6 @@ package com.example.driverchecker.database.dao
 
 import androidx.room.*
 import com.example.driverchecker.database.entity.GroupMetricsEntity
-import com.example.driverchecker.database.entity.MetricsPerEvaluationEntity
-import com.example.driverchecker.database.entity.WindowMetricsEntity
-import com.example.driverchecker.machinelearning.data.WindowMetrics
 import kotlinx.coroutines.flow.Flow
 
 @Dao

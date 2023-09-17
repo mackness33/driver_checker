@@ -9,14 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import com.example.driverchecker.R
 import com.example.driverchecker.databinding.DialogSettingsBinding
-import com.example.driverchecker.machinelearning.data.Settings
+import com.example.driverchecker.machinelearning.data.OldSettings
 import com.example.driverchecker.machinelearning.data.SettingsException
-import com.example.driverchecker.utils.Page
-import com.example.driverchecker.utils.showSnackbar
 import com.example.driverchecker.viewmodels.CameraViewModel
-import com.google.android.material.snackbar.Snackbar
 
 class SettingsDialog : DialogFragment() {
     private lateinit var layout: View
@@ -104,7 +100,7 @@ class SettingsDialog : DialogFragment() {
                     else -> possibleModelThreshold
                 }
 
-                activityModel.saveSettings(Settings(windowFrame, windowThreshold, modelThreshold))
+                activityModel.saveSettings(OldSettings(windowFrame, windowThreshold, modelThreshold))
                 Toast.makeText(requireContext(), "The new settings have been saved", Toast.LENGTH_LONG).show()
             } catch (se: SettingsException) {
                 Toast.makeText(requireContext(), se.message, Toast.LENGTH_LONG).show()

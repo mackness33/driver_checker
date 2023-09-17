@@ -3,7 +3,6 @@ package com.example.driverchecker.viewmodels
 import androidx.lifecycle.*
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.AMachineLearningListener
-import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.machinelearning.manipulators.IMachineLearningClient
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningFactory
@@ -23,7 +22,7 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
 
     protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
 
-    open val settings: ISettings
+    open val settings: IOldSettings
         get() = evaluationClient.settings
 
 
@@ -87,7 +86,7 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
         mIsEvaluating.value = record
     }
 
-    fun saveSettings (newSettings: ISettings) {
+    fun saveSettings (newSettings: IOldSettings) {
         evaluationClient.updateSettings(newSettings)
     }
 

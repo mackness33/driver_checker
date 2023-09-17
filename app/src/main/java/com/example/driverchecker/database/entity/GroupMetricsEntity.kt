@@ -4,14 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.example.driverchecker.machinelearning.data.IGroupMetrics
-import com.example.driverchecker.machinelearning.data.IWindowMetrics
 
 @Entity(
     tableName = "group_metrics",
     foreignKeys = [
         ForeignKey(
-            entity = WindowMetricsEntity::class,
+            entity = WindowOldMetricsEntity::class,
             parentColumns = ["id"],
             childColumns = ["window_metrics_id"],
             onDelete = ForeignKey.CASCADE

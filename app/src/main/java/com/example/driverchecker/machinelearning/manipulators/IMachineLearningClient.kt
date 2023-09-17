@@ -21,7 +21,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
 
     val lastResultsList: List<O>
 
-    val settings: ISettings
+    val settings: IOldSettings
 
     val finalResult: ObservableData<FR?>
 
@@ -31,7 +31,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
 
     val currentState: ObservableData<LiveEvaluationStateInterface?>
 
-    fun updateSettings(newSettings: ISettings)
+    fun updateSettings(newSettings: IOldSettings)
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 

@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemMutableList
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.AMachineLearningListener
-import com.example.driverchecker.machinelearning.helpers.listeners.GenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
 import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +51,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
 
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
-    override var settings: ISettings = Settings(4, 0.80f, 0.10f)
+    override var settings: IOldSettings = OldSettings(4, 0.80f, 0.10f)
         protected set
 
     // producer flow of the data in input of mlRepository
@@ -87,7 +86,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
         mClientState.emit(ClientState.Stop(cause))
     }
 
-    override fun updateSettings (newSettings: ISettings) {
+    override fun updateSettings (newSettings: IOldSettings) {
         settings = newSettings
     }
 

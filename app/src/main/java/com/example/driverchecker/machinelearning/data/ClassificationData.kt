@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
-import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
-import kotlinx.serialization.Serializable
 
 
 // ---------------------------------- CLASSES ----------------------------------
@@ -63,14 +61,14 @@ data class ClassificationOutput<E : IClassificationItem<S>, S> (
 data class ClassificationFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
-    override val settings: ISettings? = null,
-    override val metrics: IMetrics? = null,
+    override val settings: IOldSettings? = null,
+    override val metrics: IOldMetrics? = null,
 ) : IClassificationFinalResult<S> {
     constructor(baseResult: IClassificationFinalResult<S>) : this(
         baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics
     )
 
-    constructor(main: IClassificationFinalResultStats<S>, settings: ISettings?, metrics: IMetrics?) : this (
+    constructor(main: IClassificationFinalResultStats<S>, settings: IOldSettings?, metrics: IOldMetrics?) : this (
         main.confidence, main.supergroup, settings, metrics
     )
 }
@@ -102,8 +100,8 @@ data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
 data class ClassificationFullFinalResult<S> (
     override val confidence: Float,
     override val supergroup: S,
-    override val settings: ISettings? = null,
-    override val metrics: IMetrics? = null,
+    override val settings: IOldSettings? = null,
+    override val metrics: IOldMetrics? = null,
 ) : IClassificationFullFinalResult<S> {
     constructor(baseResult: IClassificationFinalResult<S>) : this(
         baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics

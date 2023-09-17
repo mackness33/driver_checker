@@ -28,7 +28,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
     protected val timer = Timer()
-    protected var settings: ISettings? = null
+    protected var settings: IOldSettings? = null
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()
@@ -70,14 +70,14 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         return result
     }
 
-    override suspend fun continuousEvaluation(input: Flow<I>, settings: ISettings): O? {
+    override suspend fun continuousEvaluation(input: Flow<I>, settings: IOldSettings): O? {
         jobEvaluation(input, settings).join()
 
         return window.lastResult
     }
 
     @OptIn(ExperimentalTime::class)
-    protected open fun jobEvaluation (input: Flow<I>, newSettings: ISettings): Job {
+    protected open fun jobEvaluation (input: Flow<I>, newSettings: IOldSettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
@@ -122,7 +122,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                     MachineLearningFinalResult(
                         window.getFinalResults(),
                         settings,
-                        MachineLearningMetrics(window.getMetrics())
+                        MachineLearningOldMetrics(window.getMetrics())
                     )
                 )
             )
@@ -159,7 +159,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         input: SharedFlow<I>
     ) {
         if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && liveEvaluationJob?.isCompleted != false) {
-            liveEvaluationJob = jobEvaluation(input.buffer(2), Settings(1,1f,1f))
+            liveEvaluationJob = jobEvaluation(input.buffer(2), OldSettings(1,1f,1f))
         }
     }
 

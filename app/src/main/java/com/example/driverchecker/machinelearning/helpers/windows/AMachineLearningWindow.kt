@@ -10,7 +10,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     initialSize: Int = 3,
     initialThreshold: Float = 0.15f,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
-) : IMachineLearningWindow<E>, WithConfidence, IWindowMetrics{
+) : IMachineLearningWindow<E>, WithConfidence, IWindowOldMetrics{
 
     protected val window : MutableList<E> = mutableListOf()
 
@@ -45,7 +45,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
     override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
 
-    override fun initialize(settings: ISettings, start: TimeSource.Monotonic.ValueTimeMark?) {
+    override fun initialize(settings: IOldSettings, start: TimeSource.Monotonic.ValueTimeMark?) {
         size = settings.windowFrames
         threshold = settings.windowThreshold
         timer.initStart(start)
@@ -95,11 +95,11 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     }
 
 
-    override fun getMetrics() : IWindowMetrics {
-        return WindowMetrics(totalTime, totalWindows, type)
+    override fun getMetrics() : IWindowOldMetrics {
+        return WindowOldMetrics(totalTime, totalWindows, type)
     }
 
-    override fun getFullMetrics() : Pair<IWindowMetrics, IAdditionalMetrics?> {
+    override fun getFullMetrics() : Pair<IWindowOldMetrics, IAdditionalMetrics?> {
         return Pair(getMetrics(), null)
     }
 

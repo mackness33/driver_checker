@@ -22,7 +22,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         get() = mGroupMetrics
 
     override fun initialize(
-        settings: ISettings, newStart: TimeSource.Monotonic.ValueTimeMark?, supergroups: Set<S>
+        settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?, supergroups: Set<S>
     ) {
         initialize(settings, newStart)
         mGroupMetrics.initialize(supergroups)
@@ -62,7 +62,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         mGroupMetrics.clear()
     }
 
-    override fun getFullMetrics() : Pair<IWindowMetrics, IGroupMetrics<S>> {
+    override fun getFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>> {
         return Pair(getMetrics(), groupMetrics)
     }
 }

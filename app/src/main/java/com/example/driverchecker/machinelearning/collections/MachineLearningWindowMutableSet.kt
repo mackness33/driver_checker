@@ -41,7 +41,7 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
     /*  WINDOWS  */
     @OptIn(ExperimentalTime::class)
     // Moment when I'm going to create the different types of Windows to add to the set, based on the settings
-    override fun initialize(settings: ISettings, newStart: TimeSource.Monotonic.ValueTimeMark?) {
+    override fun initialize(settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?) {
         mWindows.forEach { it.initialize(settings, newStart) }
     }
 
@@ -75,12 +75,12 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
     }
 
     // TODO("NEED TO BE UPDATE") metrics need to return another type of metrics
-    override fun getMetrics(): IWindowMetrics {
+    override fun getMetrics(): IWindowOldMetrics {
         return first().getMetrics()
     }
 
     // TODO("NEED TO BE UPDATE") also this one will require a different type of metrics
-    override fun getFullMetrics(): Pair<IWindowMetrics, IAdditionalMetrics?> {
+    override fun getFullMetrics(): Pair<IWindowOldMetrics, IAdditionalMetrics?> {
         return first().getFullMetrics()
     }
 

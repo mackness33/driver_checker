@@ -17,7 +17,7 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> {
 
     @OptIn(ExperimentalTime::class)
     fun initialize(
-        settings: ISettings, newStart: TimeSource.Monotonic.ValueTimeMark?
+        settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?
     )
 
     fun isSatisfied() : Boolean
@@ -28,9 +28,9 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> {
 
     fun getFinalResults() : IMachineLearningFinalResultStats
 
-    fun getMetrics() : IWindowMetrics
+    fun getMetrics() : IWindowOldMetrics
 
-    fun getFullMetrics() : Pair<IWindowMetrics, IAdditionalMetrics?>
+    fun getFullMetrics() : Pair<IWindowOldMetrics, IAdditionalMetrics?>
 
     @OptIn(ExperimentalTime::class)
     fun updateStart (newStart: TimeSource.Monotonic.ValueTimeMark)

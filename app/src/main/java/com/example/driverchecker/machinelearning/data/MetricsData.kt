@@ -3,41 +3,89 @@ package com.example.driverchecker.machinelearning.data
 import androidx.room.ColumnInfo
 
 
-/* METRICS */
-interface WithMetrics {
-    val metrics: IMetrics?
+/* NEW METRICS */
+interface IAdditionalMetrics
+
+interface WithWindowData {
+    val metrics: Map<IWindowData, IAdditionalMetrics?>
 }
 
-interface IMetrics {
+interface IWindowData : IWindowMetrics, IWindowSettings
+
+data class WindowData (
+    @ColumnInfo(name = "total_time") override val totalTime: Double,
+    @ColumnInfo(name = "total_windows") override val totalWindows: Int,
+    @ColumnInfo(name = "window_frames") override val windowFrames: Int,
+    @ColumnInfo(name = "window_threshold") override val windowThreshold: Float,
+    @ColumnInfo(name = "type") override val type: String
+) : IWindowData {
+    constructor(copy: IWindowData) : this (
+        copy.totalTime,
+        copy.totalWindows,
+        copy.windowFrames,
+        copy.windowThreshold,
+        copy.type
+    )
+
+    constructor(copyMetrics: IWindowMetrics, copySettings: IWindowSettings) : this (
+        copyMetrics.totalTime,
+        copyMetrics.totalWindows,
+        copySettings.windowFrames,
+        copySettings.windowThreshold,
+        copySettings.type
+    )
+}
+
+interface WithMetrics {
+    val metrics: IWindowMetrics?
+}
+
+
+interface IWindowMetrics {
     val totalTime: Double
     val totalWindows: Int
 }
 
-interface IWindowMetrics : IMetrics {
+data class WindowMetrics (
+    @ColumnInfo(name = "total_time") override val totalTime: Double,
+    @ColumnInfo(name = "total_windows") override val totalWindows: Int
+) : IWindowMetrics {
+    constructor(copy: IWindowMetrics?) : this (
+        copy?.totalTime ?: 0.0,
+        copy?.totalWindows ?: 0,
+    )
+}
+
+/* OLD METRICS */
+interface WithOldMetrics {
+    val metrics: IOldMetrics?
+}
+
+interface IOldMetrics {
+    val totalTime: Double
+    val totalWindows: Int
+}
+
+interface IWindowOldMetrics : IOldMetrics {
     val type: String
 }
 
-interface IAdditionalMetrics
 
-interface WithWindowMetrics {
-    val metrics: Map<IWindowMetrics, IAdditionalMetrics?>
-}
-
-data class WindowMetrics (
+data class WindowOldMetrics (
     override val totalTime: Double, override val totalWindows: Int, override val type: String
-) : IWindowMetrics {
-    constructor(copy: IWindowMetrics) : this(
+) : IWindowOldMetrics {
+    constructor(copy: IWindowOldMetrics) : this(
         copy.totalTime, copy.totalWindows, copy.type
     )
 
     constructor() : this(0.0, 0,"")
 }
 
-data class MachineLearningMetrics (
+data class MachineLearningOldMetrics (
     @ColumnInfo(name = "total_time") override val totalTime: Double,
     @ColumnInfo(name = "total_windows") override val totalWindows: Int
-) : IMetrics {
-    constructor(copy: IMetrics?) : this (
+) : IOldMetrics {
+    constructor(copy: IOldMetrics?) : this (
         copy?.totalTime ?: 0.0,
         copy?.totalWindows ?: 0,
     )

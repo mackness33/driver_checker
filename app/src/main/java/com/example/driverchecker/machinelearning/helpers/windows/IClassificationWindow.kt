@@ -10,11 +10,11 @@ interface IClassificationWindow<E : IClassificationOutputStats<S>, S> : IMachine
 
     override fun getFinalResults() : IClassificationFinalResultStats<S>
 
-    override fun getFullMetrics() : Pair<IWindowMetrics, IGroupMetrics<S>>
+    override fun getFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>>
 
     @OptIn(ExperimentalTime::class)
     fun initialize(
-        settings: ISettings,
+        settings: IOldSettings,
         newStart: TimeSource.Monotonic.ValueTimeMark?,
         supergroups: Set<S>
     )

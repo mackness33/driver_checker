@@ -23,7 +23,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     abstract override var model: IClassificationModel<I, O, S>?
 
     @OptIn(ExperimentalTime::class)
-    override fun jobEvaluation(input: Flow<I>, newSettings: ISettings): Job {
+    override fun jobEvaluation(input: Flow<I>, newSettings: IOldSettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             try {
@@ -66,7 +66,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     ClassificationFinalResult(
                         window.getFinalResults(),
                         settings,
-                        MachineLearningMetrics(window.getMetrics())
+                        MachineLearningOldMetrics(window.getMetrics())
                     )
                 )
             )
