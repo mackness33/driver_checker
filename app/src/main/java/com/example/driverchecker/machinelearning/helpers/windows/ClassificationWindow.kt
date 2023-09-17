@@ -17,5 +17,4 @@ open class ClassificationWindow<E : IClassificationOutputStats<S>, S> (
     override fun getFinalResults() : IClassificationFinalResultStats<S> {
         return ClassificationFullFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
     }
-
 }
