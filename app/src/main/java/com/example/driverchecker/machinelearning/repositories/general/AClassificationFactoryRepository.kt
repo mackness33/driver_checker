@@ -77,11 +77,12 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         window.clean()
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun onEachEvaluation (
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
-        window.next(postProcessedResult)
+        window.next(postProcessedResult, timer.diff())
 
         if (window.hasAcceptedLast) {
             mEvaluationFlowState.emit(

@@ -22,7 +22,8 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> {
 
     fun isSatisfied() : Boolean
 
-    fun next (element: E)
+    @OptIn(ExperimentalTime::class)
+    fun next (element: E, offset: Double?) : TimeSource.Monotonic.ValueTimeMark?
 
     fun clean ()
 

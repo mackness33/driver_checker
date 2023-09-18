@@ -51,14 +51,20 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         timer.initStart(start)
     }
 
-    final override fun next (element: E) {
+    final override fun next(element: E, offset: Double?) : TimeSource.Monotonic.ValueTimeMark? {
+        timer.markStart()
+
         hasAcceptedLast = preUpdate(element)
         if (!hasAcceptedLast)
-            return
+            return null
 
         update()
 
         postUpdate()
+
+        timer.markEnd()
+
+        return timer.end
     }
 
     protected open fun preUpdate (element: E) : Boolean {
@@ -73,7 +79,6 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     protected open fun postUpdate () {
         totEvaluationsDone++
         hasAcceptedLast = true
-        if (isSatisfied()) timer.markEnd()
     }
 
     override fun clean () {

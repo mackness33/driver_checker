@@ -107,9 +107,13 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 mEvaluationFlowState.emit(LiveEvaluationState.Start)
 
+                /* DELETABLE */
                 model?.updateThreshold(newSettings.modelThreshold)
                 oldSettings = newSettings
+
                 timer.markStart()
+
+                /* DELETABLE */
                 window.initialize(newSettings, timer.start!!)
 
                 flowEvaluation(input, ::cancel)?.collect()
@@ -157,12 +161,13 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         window.clean()
     }
 
+    @OptIn(ExperimentalTime::class)
     protected open suspend fun onEachEvaluation (
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
         Log.d("JobClassification", "finally finished")
-        window.next(postProcessedResult)
+        window.next(postProcessedResult, timer.diff())
 
         if (window.hasAcceptedLast) {
             mEvaluationFlowState.emit(

@@ -101,8 +101,12 @@ open class MachineLearningSetOfWindows<E : IMachineLearningItem, W : IMachineLea
         return areAllSatisfied
     }
 
-    override fun next(element: E) {
-        activeWindows.forEach { it.next(element) }
+    @OptIn(ExperimentalTime::class)
+    override fun next(element: E, offset: Double?) : TimeSource.Monotonic.ValueTimeMark? {
+
+        activeWindows.forEach { it.next(element, offset) }
+
+        return last().next(element, offset)
     }
 
     override fun clean() {
