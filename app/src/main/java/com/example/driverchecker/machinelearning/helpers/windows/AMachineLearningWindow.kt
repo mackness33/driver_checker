@@ -64,6 +64,8 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
         timer.markEnd()
 
+        window.last().updateTime(timer.diff())
+
         return timer.end
     }
 
