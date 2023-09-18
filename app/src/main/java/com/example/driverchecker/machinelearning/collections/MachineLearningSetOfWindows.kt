@@ -49,9 +49,6 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
         protected set
     override var settings: IMultipleWindowSettings = Settings(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
-    @OptIn(ExperimentalTime::class)
-    override val end: TimeSource.Monotonic.ValueTimeMark?
-        get() = if(mWindows.isEmpty()) null else mWindows.last().end
 
     override val size: Int
         get() = windows.size

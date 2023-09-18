@@ -16,9 +16,6 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> {
     val lastResult: E?
 
     @OptIn(ExperimentalTime::class)
-    val end: TimeSource.Monotonic.ValueTimeMark?
-
-    @OptIn(ExperimentalTime::class)
     fun initialize(
         settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?
     )

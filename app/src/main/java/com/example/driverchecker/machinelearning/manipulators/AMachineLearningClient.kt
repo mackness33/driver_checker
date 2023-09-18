@@ -126,7 +126,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
         override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {
             // add the partialResult to the resultsArray
             try {
-                if (state.partialResult != null && mHasEnded.value == false) {
+                if (state.partialResult != null && !mHasEnded.value) {
                     val partialResult: O = state.partialResult as O
                     evaluatedItemsArray.add(partialResult)
                     mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))

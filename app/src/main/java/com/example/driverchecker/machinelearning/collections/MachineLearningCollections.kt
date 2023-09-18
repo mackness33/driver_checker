@@ -12,12 +12,12 @@ interface ClassificationMetricsMap<S> : IGroupMetrics<S> {
     val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
 }
 
-interface MachineLearningWindowsCollection <E : IMachineLearningItem, W : IMachineLearningWindow<E>> : IMachineLearningWindow<E>, Collection<W> {
+interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats, W : IMachineLearningWindow<E>> : IMachineLearningWindow<E>, Collection<W> {
     val inactiveWindows: Set<W>
     val activeWindows: Set<W>
     val settings: IMultipleWindowSettings
 }
 
-interface MachineLearningWindowsMutableCollection <E : IMachineLearningItem, W : IMachineLearningWindow<E>> : MachineLearningWindowsCollection<E, W>, MutableCollection<W> {
+interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats, W : IMachineLearningWindow<E>> : MachineLearningWindowsCollection<E, W>, MutableCollection<W> {
     fun updateSettings (newSettings: IMultipleWindowSettings)
 }

@@ -132,4 +132,11 @@ open class MachineLearningItemMutableList<E : IMachineLearningItem> : ArrayList<
 
         return result
     }
+
+    override var time: Double? = null
+        protected set
+
+    override fun updateTime(newTime: Double?) {
+        time = newTime
+    }
 }
