@@ -5,8 +5,6 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IImageDetectionWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
-import com.example.driverchecker.machinelearning.helpers.windows.factories.IWindowFactory
-import com.example.driverchecker.machinelearning.helpers.windows.factories.WindowFactory
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 

@@ -8,7 +8,7 @@ abstract class WindowFactory<E : IMachineLearningOutputStats> {
     abstract fun buildMachineLearningWindow(frames: Int, threshold: Float): IMachineLearningWindow<E>
 }
 
-interface IWindowFactory<E : IMachineLearningOutputStats> {
+interface IMachineLearningWindowFactory<E : IMachineLearningOutputStats> {
 
     fun buildMachineLearningWindow(frames: Int, threshold: Float): IMachineLearningWindow<E>
 }
