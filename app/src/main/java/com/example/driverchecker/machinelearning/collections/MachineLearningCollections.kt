@@ -16,7 +16,7 @@ interface ClassificationMetricsMap<S> : IGroupMetrics<S> {
 interface MachineLearningWindowsSet <E : IMachineLearningItem, W : IMachineLearningWindow<E>> : IMachineLearningWindow<E>, Set<W> {
     val inactiveWindows: Set<W>
     val activeWindows: Set<W>
-    val settings: ISettings
+    val settings: IMultipleWindowSettings
 
 //    fun initialization ()
     fun updateSettings (newSettings: IMultipleWindowSettings)

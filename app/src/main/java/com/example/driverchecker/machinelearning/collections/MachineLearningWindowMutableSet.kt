@@ -37,7 +37,7 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
         protected set
     override var threshold: Float = 0.0f
         protected set
-    override var settings: ISettings = Settings(emptyList(), emptyList(), emptyList(), 0.0f)
+    override var settings: IMultipleWindowSettings = Settings(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
 
     /*  WINDOWS  */
@@ -91,7 +91,7 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
         mWindows.forEach { it.updateStart(newStart) }
     }
 
-    override fun updateSettings(newSettings: ISettings) {
+    override fun updateSettings(newSettings: IMultipleWindowSettings) {
         settings = newSettings
     }
 
