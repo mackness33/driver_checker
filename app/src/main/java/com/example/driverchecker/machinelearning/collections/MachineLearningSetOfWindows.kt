@@ -1,13 +1,14 @@
 package com.example.driverchecker.machinelearning.collections
 
+import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
-import com.example.driverchecker.machinelearning.helpers.windows.WindowFactory
+import com.example.driverchecker.machinelearning.helpers.windows.factories.WindowFactory
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachineLearningWindow<E>> : MutableSet<W>,
-    MachineLearningWindowsSet<E, W> {
+open class MachineLearningSetOfWindows<E : IMachineLearningItem, W : IMachineLearningWindow<E>> :
+    MachineLearningWindowsMutableCollection<E, W> {
     var factory: Map<String, WindowFactory<E>> = emptyMap()
         protected set
 
@@ -21,11 +22,17 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
     override var activeWindows: Set<W> = emptySet()
         protected set
 
+    // DELETABLE
     var totalTime: Double = 0.0
         protected set
+    // DELETABLE
     var totalWindows: Int = 0
         protected set
+    // DELETABLE
     var type: String = "Set of Machine Learning Windows"
+        protected set
+    // DELETABLE
+    override var threshold: Float = 0.0f
         protected set
 
     override val lastResult: E?
@@ -35,21 +42,46 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
     override var totEvaluationsDone: Int = 0
         get() = activeWindows.first().totEvaluationsDone
         protected set
-    override var threshold: Float = 0.0f
-        protected set
     override var settings: IMultipleWindowSettings = Settings(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
+
+
+    override val size: Int
+        get() = windows.size
 
     /*  WINDOWS  */
     @OptIn(ExperimentalTime::class)
     // Moment when I'm going to create the different types of Windows to add to the set, based on the settings
+    // NOT GONNA BE USED BY THE MUTABLE SET
     override fun initialize(settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?) {
         mWindows.forEach { it.initialize(settings, newStart) }
     }
 
+    override fun updateSettings(newSettings: IMultipleWindowSettings) {
+        settings = newSettings
+
+        try {
+            newSettings.multipleTypes.forEach { type ->
+                newSettings.multipleWindowsFrames.forEach { frames ->
+                    newSettings.multipleWindowsThresholds.forEach { threshold ->
+                        mWindows.add(factory[type]?.buildMachineLearningWindow(frames, threshold) as W)
+                    }
+                }
+            }
+        } catch (e: Throwable) {
+            Log.e("WindowMutableSet", e.message.toString(), e)
+        }
+    }
+
+
+    @OptIn(ExperimentalTime::class)
+    override fun updateStart(newStart: TimeSource.Monotonic.ValueTimeMark) {
+        mWindows.forEach { it.updateStart(newStart) }
+    }
+
     override fun isSatisfied(): Boolean {
         val satisfiedWindows = mutableSetOf<W>()
-        var currentIsSatisfied = false
+        var currentIsSatisfied: Boolean
 
         val areAllSatisfied = activeWindows.fold(true) { lastResult, currentWindow ->
             currentIsSatisfied = currentWindow.isSatisfied()
@@ -86,15 +118,6 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
         return first().getFullMetrics()
     }
 
-    @OptIn(ExperimentalTime::class)
-    override fun updateStart(newStart: TimeSource.Monotonic.ValueTimeMark) {
-        mWindows.forEach { it.updateStart(newStart) }
-    }
-
-    override fun updateSettings(newSettings: IMultipleWindowSettings) {
-        settings = newSettings
-    }
-
 
 
     /*  SET  */
@@ -110,8 +133,6 @@ open class MachineLearningWindowMutableSet<E : IMachineLearningItem, W : IMachin
         return windows.isEmpty()
     }
 
-    override val size: Int
-        get() = windows.size
 
     /*  MUTABLE SET  */
     override fun iterator(): MutableIterator<W> {

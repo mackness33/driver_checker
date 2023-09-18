@@ -18,10 +18,20 @@ open class BasicImageDetectionWindow (
         return ImageDetectionFullFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
     }
 
-    companion object Factory : ImageDetectionWindowFactory (){
+    companion object Factory : ImageDetectionWindowFactory() {
+        override fun buildClassificationWindow(
+            frames: Int,
+            threshold: Float,
+            groups: Set<String>
+        ): IClassificationWindow<IClassificationOutputStats<String>, String> {
+            return ImageDetectionWindow(frames, threshold, groups)
+        }
 
-        override fun buildWindow(): ImageDetectionWindow {
-            return ImageDetectionWindow(4, 0.80f, emptySet())
+        override fun buildMachineLearningWindow(
+            frames: Int,
+            threshold: Float
+        ): IMachineLearningWindow<IClassificationOutputStats<String>> {
+            return ImageDetectionWindow(frames, threshold, emptySet())
         }
     }
 }

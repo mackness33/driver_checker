@@ -1,7 +1,7 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
-import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
+import com.example.driverchecker.machinelearning.helpers.windows.factories.ClassificationWindowFactory
 
 //abstract class ImageDetectionWindowFactory1 :
 //    ClassificationWindowFactory<IClassificationOutputStats<String>, String>() {

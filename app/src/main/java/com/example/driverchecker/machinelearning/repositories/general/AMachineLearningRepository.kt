@@ -1,8 +1,9 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
-import com.example.driverchecker.machinelearning.collections.MachineLearningWindowMutableSet
-import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsSet
+import com.example.driverchecker.machinelearning.collections.MachineLearningSetOfWindows
+import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsCollection
+import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
@@ -48,7 +49,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     ))
     override val settings: ObservableData<ISettings>
         get() = mSettings
-    protected val windowsSet: MachineLearningWindowsSet<O, IMachineLearningWindow<O>> = MachineLearningWindowMutableSet()
+    protected val windowsSet: MachineLearningWindowsMutableCollection<O, IMachineLearningWindow<O>> = MachineLearningSetOfWindows()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()
