@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import androidx.navigation.ui.NavigationUI.navigateUp
+import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.viewmodels.CameraViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -63,6 +64,15 @@ class MainActivity : AppCompatActivity(){
                 else -> {
                     changeVisibilityOfMenu(info = false, about = false, settings = false, log = false)
                 }
+            }
+            invalidateOptionsMenu()
+        }
+
+        model.currentState.observe(this) { state ->
+            if (state == LiveEvaluationState.Ready(true)) {
+                changeVisibilityOfMenu(info = true, about = true, settings = true, log = true)
+            } else {
+                changeVisibilityOfMenu(info = true, about = true, settings = false, log = true)
             }
             invalidateOptionsMenu()
         }

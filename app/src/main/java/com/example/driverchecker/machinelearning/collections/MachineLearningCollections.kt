@@ -18,6 +18,5 @@ interface MachineLearningWindowsSet <E : IMachineLearningItem, W : IMachineLearn
     val activeWindows: Set<W>
     val settings: IMultipleWindowSettings
 
-//    fun initialization ()
     fun updateSettings (newSettings: IMultipleWindowSettings)
 }
