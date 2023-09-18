@@ -8,7 +8,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearnin
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-open class MachineLearningSetOfWindows<E : IMachineLearningItem, W : IMachineLearningWindow<E>> :
+open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMachineLearningWindow<E>> :
     MachineLearningWindowsMutableCollection<E, W> {
     var factory: Map<String, IImageDetectionWindowFactory> = emptyMap()
         protected set
@@ -49,7 +49,9 @@ open class MachineLearningSetOfWindows<E : IMachineLearningItem, W : IMachineLea
         protected set
     override var settings: IMultipleWindowSettings = Settings(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
-
+    @OptIn(ExperimentalTime::class)
+    override val end: TimeSource.Monotonic.ValueTimeMark?
+        get() = if(mWindows.isEmpty()) null else mWindows.last().end
 
     override val size: Int
         get() = windows.size
@@ -102,11 +104,8 @@ open class MachineLearningSetOfWindows<E : IMachineLearningItem, W : IMachineLea
     }
 
     @OptIn(ExperimentalTime::class)
-    override fun next(element: E, offset: Double?) : TimeSource.Monotonic.ValueTimeMark? {
-
+    override fun next(element: E, offset: Double?) {
         activeWindows.forEach { it.next(element, offset) }
-
-        return last().next(element, offset)
     }
 
     override fun clean() {

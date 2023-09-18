@@ -51,12 +51,12 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         timer.initStart(start)
     }
 
-    final override fun next(element: E, offset: Double?) : TimeSource.Monotonic.ValueTimeMark? {
+    final override fun next(element: E, offset: Double?) {
         timer.markStart()
 
         hasAcceptedLast = preUpdate(element)
         if (!hasAcceptedLast)
-            return null
+            return
 
         update()
 
@@ -64,9 +64,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
         timer.markEnd()
 
-        window.last().updateTime(timer.diff())
-
-        return timer.end
+        window.last().updateTime(timer.diff()?.plus((offset ?: 0.0)))
     }
 
     protected open fun preUpdate (element: E) : Boolean {
