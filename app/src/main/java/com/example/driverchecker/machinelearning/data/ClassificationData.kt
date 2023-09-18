@@ -36,7 +36,7 @@ interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearnin
 
 interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
 
-interface IClassificationFinalResult<S> : IMachineLearningFinalResult, IClassificationFinalResultStats<S>
+interface IOldClassificationFinalResult<S> : IOldMachineLearningFinalResult, IClassificationFinalResultStats<S>
 
 
 data class ClassificationItem<S> (
@@ -71,13 +71,13 @@ data class ClassificationOutput<E : IClassificationItem<S>, S> (
     }
 }
 
-data class ClassificationFinalResult<S> (
+data class ClassificationFinalResultOld<S> (
     override val confidence: Float,
     override val supergroup: S,
     override val settings: IOldSettings? = null,
     override val metrics: IOldMetrics? = null,
-) : IClassificationFinalResult<S> {
-    constructor(baseResult: IClassificationFinalResult<S>) : this(
+) : IOldClassificationFinalResult<S> {
+    constructor(baseResult: IOldClassificationFinalResult<S>) : this(
         baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics
     )
 
@@ -92,7 +92,7 @@ interface IClassificationFullItem<S> : IMachineLearningFullItem, IClassification
 
 interface IClassificationFullOutput<I, E : IClassificationFullItem<S>, S> : IMachineLearningFullOutput<I, E>, IClassificationOutput<E, S>
 
-interface IClassificationFullFinalResult<S> : IMachineLearningFullFinalResult, IClassificationFinalResult<S>
+interface IOldClassificationFullFinalResult<S> : IOldMachineLearningFullFinalResult, IOldClassificationFinalResult<S>
 
 
 data class ClassificationFullItem<S> (
@@ -116,13 +116,13 @@ data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
     }
 }
 
-data class ClassificationFullFinalResult<S> (
+data class ClassificationFullFinalResultOld<S> (
     override val confidence: Float,
     override val supergroup: S,
     override val settings: IOldSettings? = null,
     override val metrics: IOldMetrics? = null,
-) : IClassificationFullFinalResult<S> {
-    constructor(baseResult: IClassificationFinalResult<S>) : this(
+) : IOldClassificationFullFinalResult<S> {
+    constructor(baseResult: IOldClassificationFinalResult<S>) : this(
         baseResult.confidence, baseResult.supergroup, baseResult.settings, baseResult.metrics
     )
 }

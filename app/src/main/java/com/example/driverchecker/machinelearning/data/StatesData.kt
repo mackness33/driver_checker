@@ -13,7 +13,7 @@ sealed class LiveEvaluationState : LiveEvaluationStateInterface {
     data class Ready(val isReady: Boolean) : LiveEvaluationStateInterface
     data class Loading(val index: Int, val partialResult: IMachineLearningOutputStats?) : LiveEvaluationStateInterface
     object Start : LiveEvaluationStateInterface
-    data class End(val exception: Throwable?, val finalResult: IMachineLearningFinalResult?) : LiveEvaluationStateInterface
+    data class End(val exception: Throwable?, val finalResult: IOldMachineLearningFinalResult?) : LiveEvaluationStateInterface
 }
 
 // Represents different states for the LatestNews screen
@@ -48,5 +48,5 @@ sealed interface LiveClassificationStateInterface : LiveEvaluationStateInterface
 sealed class LiveClassificationState : LiveEvaluationState(), LiveClassificationStateInterface {
     data class Start<S>(val maxClassesPerGroup: Int, val classifier: IClassifier<S>) : LiveClassificationStateInterface
     data class Loading<S>(val index: Int, val partialResult: IClassificationOutputStats<S>?) : LiveClassificationStateInterface
-    data class End<S>(val exception: Throwable?, val finalResult: IClassificationFinalResult<S>?) : LiveClassificationStateInterface
+    data class End<S>(val exception: Throwable?, val finalResult: IOldClassificationFinalResult<S>?) : LiveClassificationStateInterface
 }

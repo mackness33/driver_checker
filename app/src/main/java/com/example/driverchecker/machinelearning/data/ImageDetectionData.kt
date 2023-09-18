@@ -25,10 +25,10 @@ data class ImageDetectionItem<S> (
 
 typealias IImageDetectionOutputStats<S> = IClassificationOutputStats<S>
 typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionItem<S>, S>
-typealias IImageDetectionFinalResult<S> = IClassificationFinalResult<S>
+typealias IImageDetectionFinalResult<S> = IOldClassificationFinalResult<S>
 
 typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionItem<S>, S>
-typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
+typealias ImageDetectionFinalResult<S> = ClassificationFinalResultOld<S>
 
 // ---------------------------------- FULL OUTPUT ----------------------------------
 
@@ -42,10 +42,10 @@ data class ImageDetectionFullItem<S> (
 ) : IImageDetectionFullItem<S>
 
 typealias IImageDetectionFullOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
-typealias IImageDetectionFullFinalResult<S> = IClassificationFullFinalResult<S>
+typealias IImageDetectionFullFinalResult<S> = IOldClassificationFullFinalResult<S>
 
 typealias ImageDetectionFullOutput<S> = ClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
-typealias ImageDetectionFullFinalResult<S> = ClassificationFullFinalResult<S>
+typealias ImageDetectionFullFinalResult<S> = ClassificationFullFinalResultOld<S>
 
 // ---------------------------------- TYPE ALIASES ----------------------------------
 

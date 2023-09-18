@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
+abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IOldMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
 
     // LIVE DATA
     protected val mHasEnded: AtomicObservableData<Boolean> = LockableData(false)

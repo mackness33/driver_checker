@@ -36,7 +36,7 @@ interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOut
 
 typealias IMachineLearningFinalResultStats = WithConfidence
 
-interface IMachineLearningFinalResult : IMachineLearningFinalResultStats, WithOldMetrics, WithOldSettings
+interface IOldMachineLearningFinalResult : IMachineLearningFinalResultStats, WithOldMetrics, WithOldSettings
 
 data class MachineLearningOutput <E : WithConfidence> (
     override val listItems: MachineLearningItemList<E>,
@@ -50,11 +50,11 @@ data class MachineLearningOutput <E : WithConfidence> (
     }
 }
 
-data class MachineLearningFinalResult (
+data class OldMachineLearningFinalResult (
     override val confidence: Float,
     override val settings: IOldSettings? = null,
     override val metrics: IOldMetrics? = null,
-) : IMachineLearningFinalResult {
+) : IOldMachineLearningFinalResult {
 
     constructor(main: IMachineLearningFinalResultStats, settings: IOldSettings?, metrics: IOldMetrics?) : this (
         main.confidence, settings, metrics
@@ -72,7 +72,7 @@ typealias IMachineLearningFullItem = IMachineLearningItem
 
 interface IMachineLearningFullOutput<I, E : IMachineLearningFullItem> : IMachineLearningOutput<E>, WithInput<I>
 
-interface IMachineLearningFullFinalResult : IMachineLearningFinalResult
+interface IOldMachineLearningFullFinalResult : IOldMachineLearningFinalResult
 
 data class MachineLearningFullOutput <I, E : WithConfidence> (
     override val listItems: MachineLearningItemList<E>,
@@ -87,11 +87,11 @@ data class MachineLearningFullOutput <I, E : WithConfidence> (
     }
 }
 
-data class MachineLearningFullFinalResult (
+data class OldMachineLearningFullFinalResult (
     override val confidence: Float,
     override val settings: IOldSettings? = null,
     override val metrics: IOldMetrics? = null
-) : IMachineLearningFullFinalResult
+) : IOldMachineLearningFullFinalResult
 
 typealias MachineLearningFullItem = IMachineLearningFullItem
 

@@ -7,7 +7,11 @@ import androidx.room.ColumnInfo
 interface IAdditionalMetrics
 
 interface WithWindowData {
-    val metrics: Map<IWindowData, IAdditionalMetrics?>
+    val data: Map<IWindowData, IAdditionalMetrics?>
+}
+
+interface WithGroupsData<S> : WithWindowData {
+    override val data: Map<IWindowData, IGroupMetrics<S>?>
 }
 
 interface IWindowData : IWindowMetrics, IWindowSettings

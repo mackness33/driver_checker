@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.*
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -15,6 +13,6 @@ open class ClassificationWindow<E : IClassificationOutputStats<S>, S> (
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) : AClassificationWindow<E, S>(size, threshold, supergroups = supergroups, newStart = newStart) {
     override fun getFinalResults() : IClassificationFinalResultStats<S> {
-        return ClassificationFullFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
+        return ClassificationFullFinalResultOld(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
     }
 }
