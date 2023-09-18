@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.collections.MachineLearningSetOfWindows
-import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsCollection
 import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
@@ -33,6 +32,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     )
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
+    protected val oldTimer = Timer()
     protected val timer = Timer()
     protected var oldSettings: IOldSettings? = null
     override val availableSettings : IMultipleWindowSettings = Settings (
@@ -106,15 +106,15 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             // check if the repo is ready to make evaluations
             if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                 mEvaluationFlowState.emit(LiveEvaluationState.Start)
-
+                timer.markStart()
                 /* DELETABLE */
                 model?.updateThreshold(newSettings.modelThreshold)
                 oldSettings = newSettings
 
-                timer.markStart()
+                oldTimer.markStart()
 
                 /* DELETABLE */
-                window.initialize(newSettings, timer.start!!)
+                window.initialize(newSettings, oldTimer.start!!)
 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
@@ -143,7 +143,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 LiveEvaluationState.End(cause, null)
             )
         } else {
-            timer.markEnd()
+            oldTimer.markEnd()
             mEvaluationFlowState.emit(
                 LiveEvaluationState.End(
                     null,
@@ -156,18 +156,20 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             )
         }
 
-        timer.reset()
+        oldTimer.reset()
         oldSettings = null
+        timer.reset()
         window.clean()
     }
 
-    @OptIn(ExperimentalTime::class)
     protected open suspend fun onEachEvaluation (
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
         Log.d("JobClassification", "finally finished")
+        timer.markEnd()
         window.next(postProcessedResult, timer.diff())
+        timer.markStart()
 
         if (window.hasAcceptedLast) {
             mEvaluationFlowState.emit(

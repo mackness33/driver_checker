@@ -32,12 +32,13 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                         (model as IClassificationModel<I, O, S>).classifier.maxClassesInGroup(),
                         (model as IClassificationModel<I, O, S>).classifier)
                     )
+                    timer.markStart()
 
                     model?.updateThreshold(newSettings.modelThreshold)
                     oldSettings = newSettings
-                    timer.markStart()
+                    oldTimer.markStart()
                     window.initialize(
-                        newSettings, timer.start!!,
+                        newSettings, oldTimer.start!!,
                         (model as IClassificationModel<I, O, S>).classifier.supergroups.keys
                     )
 
@@ -59,7 +60,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                 LiveClassificationState.End<S>(cause, null)
             )
         } else {
-            timer.markEnd()
+            oldTimer.markEnd()
             mEvaluationFlowState.emit(
                 LiveClassificationState.End(
                     null,
@@ -72,8 +73,9 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
             )
         }
 
-        timer.reset()
+        oldTimer.reset()
         oldSettings = null
+        timer.reset()
         window.clean()
     }
 
@@ -82,7 +84,9 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
+        timer.markEnd()
         window.next(postProcessedResult, timer.diff())
+        timer.markStart()
 
         if (window.hasAcceptedLast) {
             mEvaluationFlowState.emit(
