@@ -4,33 +4,17 @@ import com.example.driverchecker.machinelearning.data.*
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-interface IMachineLearningWindow<E : IMachineLearningOutputStats> {
-    val hasAcceptedLast: Boolean
-
-    val totEvaluationsDone: Int
-
-    val size: Int
-
-    val threshold: Float
-
-    val lastResult: E?
-
+interface IMachineLearningWindow<E : IMachineLearningOutputStats> : IWindow<E>, IWindowSettings {
     @OptIn(ExperimentalTime::class)
     fun initialize(
         settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?
     )
 
-    fun isSatisfied() : Boolean
+    fun getData() : Pair<IWindowBasicData, IAdditionalMetrics?>
 
-    fun next (element: E, offset: Double?)
+    fun getMetrics() : IWindowBasicData
 
-    fun clean ()
-
-    fun getFinalResults() : IMachineLearningFinalResultStats
-
-    fun getMetrics() : IWindowOldMetrics
-
-    fun getFullMetrics() : Pair<IWindowOldMetrics, IAdditionalMetrics?>
+    fun getAdditionalMetrics() : IAdditionalMetrics?
 
     @OptIn(ExperimentalTime::class)
     fun updateStart (newStart: TimeSource.Monotonic.ValueTimeMark)

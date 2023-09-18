@@ -7,23 +7,24 @@ import androidx.room.ColumnInfo
 interface IAdditionalMetrics
 
 interface WithWindowData {
-    val data: Map<IWindowData, IAdditionalMetrics?>
+    val data: Map<IWindowBasicData, IAdditionalMetrics?>
 }
 
 interface WithGroupsData<S> : WithWindowData {
-    override val data: Map<IWindowData, IGroupMetrics<S>?>
+    override val data: Map<IWindowBasicData, IGroupMetrics<S>?>
 }
 
-interface IWindowData : IWindowMetrics, IWindowSettings
 
-data class WindowData (
+interface IWindowBasicData : IWindowMetrics, IWindowSettings
+
+data class WindowBasicData (
     @ColumnInfo(name = "total_time") override val totalTime: Double,
     @ColumnInfo(name = "total_windows") override val totalWindows: Int,
     @ColumnInfo(name = "window_frames") override val windowFrames: Int,
     @ColumnInfo(name = "window_threshold") override val windowThreshold: Float,
     @ColumnInfo(name = "type") override val type: String
-) : IWindowData {
-    constructor(copy: IWindowData) : this (
+) : IWindowBasicData {
+    constructor(copy: IWindowBasicData) : this (
         copy.totalTime,
         copy.totalWindows,
         copy.windowFrames,

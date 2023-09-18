@@ -36,6 +36,20 @@ interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearnin
 
 interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
 
+interface IClassificationFinalResult<S> : IClassificationFinalResultStats<S>, WithGroupsData<S>
+
+data class ClassificationFinalResult<S> (
+    override val confidence: Float,
+    override val supergroup: S,
+    override val data: Map<IWindowBasicData, IGroupMetrics<S>?>,
+) : IClassificationFinalResult<S> {
+    constructor(main: IClassificationFinalResultStats<S>, data: Map<IWindowBasicData, IGroupMetrics<S>?>) : this (
+        main.confidence, main.supergroup, data
+    )
+}
+
+
+
 interface IOldClassificationFinalResult<S> : IOldMachineLearningFinalResult, IClassificationFinalResultStats<S>
 
 

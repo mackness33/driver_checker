@@ -27,19 +27,9 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
     override var activeWindows: Set<W> = emptySet()
         protected set
 
-    // DELETABLE
-    var totalTime: Double = 0.0
-        protected set
-    // DELETABLE
-    var totalWindows: Int = 0
-        protected set
-    // DELETABLE
-    var type: String = "Set of Machine Learning Windows"
-        protected set
-    // DELETABLE
-    override var threshold: Float = 0.0f
-        protected set
 
+    override val confidence: Float
+        get() = 0.0f
     override val lastResult: E?
         get() = if (activeWindows.isEmpty()) null else activeWindows.last().lastResult
     override var hasAcceptedLast: Boolean = false
@@ -47,20 +37,14 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
     override var totEvaluationsDone: Int = 0
         get() = activeWindows.first().totEvaluationsDone
         protected set
-    override var settings: IMultipleWindowSettings = Settings(emptyList(), emptyList(), emptyList(), 0.0f)
+    override var settings: IMultipleWindowSettings =
+        Settings(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
 
     override val size: Int
         get() = windows.size
 
     /*  WINDOWS  */
-    @OptIn(ExperimentalTime::class)
-    // Moment when I'm going to create the different types of Windows to add to the set, based on the settings
-    // NOT GONNA BE USED BY THE MUTABLE SET
-    override fun initialize(settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?) {
-        mWindows.forEach { it.initialize(settings, newStart) }
-    }
-
     override fun updateSettings(newSettings: IMultipleWindowSettings) {
         settings = newSettings
 
@@ -69,7 +53,12 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
                 newSettings.multipleWindowsFrames.forEach { frames ->
                     newSettings.multipleWindowsThresholds.forEach { threshold ->
                         if (factory.containsKey(type))
-                            mWindows.add(factory[type]?.buildMachineLearningWindow(frames, threshold) as W)
+                            mWindows.add(
+                                factory[type]?.buildMachineLearningWindow(
+                                    frames,
+                                    threshold
+                                ) as W
+                            )
                     }
                 }
             }
@@ -78,11 +67,6 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
         }
     }
 
-
-    @OptIn(ExperimentalTime::class)
-    override fun updateStart(newStart: TimeSource.Monotonic.ValueTimeMark) {
-        mWindows.forEach { it.updateStart(newStart) }
-    }
 
     override fun isSatisfied(): Boolean {
         val satisfiedWindows = mutableSetOf<W>()
@@ -95,7 +79,7 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
             lastResult && currentIsSatisfied
         }
 
-         activeWindows = activeWindows.minus(satisfiedWindows)
+        activeWindows = activeWindows.minus(satisfiedWindows)
 
         return areAllSatisfied
     }
@@ -109,21 +93,42 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
         mWindows.forEach { it.clean() }
     }
 
+
+    /* DATA */
+    override fun getMetrics(): List<IWindowBasicData> {
+        return mWindows.map { it.getMetrics() }
+    }
+
+    override fun getAdditionalMetrics(): List<IAdditionalMetrics?> {
+        return mWindows.map { it.getAdditionalMetrics() }
+    }
+
+    override fun getData(): Map<IWindowBasicData, IAdditionalMetrics?> {
+        return mWindows.associate { it.getData() }
+    }
+
+    override fun getFinalResults(): IMachineLearningFinalResult {
+        return MachineLearningFinalResult(
+            confidence,
+            getData()
+        )
+    }
+
+
     // TODO("NEED TO BE UPDATE")  finalResults need to return another type of results
-    override fun getFinalResults(): IMachineLearningFinalResultStats {
-        return first().getFinalResults()
+    override fun getOldFinalResults(): IMachineLearningFinalResultStats {
+        return first().getOldFinalResults()
     }
 
     // TODO("NEED TO BE UPDATE") metrics need to return another type of metrics
-    override fun getMetrics(): IWindowOldMetrics {
-        return first().getMetrics()
+    override fun getOldMetrics(): IWindowOldMetrics {
+        return first().getOldMetrics()
     }
 
     // TODO("NEED TO BE UPDATE") also this one will require a different type of metrics
-    override fun getFullMetrics(): Pair<IWindowOldMetrics, IAdditionalMetrics?> {
-        return first().getFullMetrics()
+    override fun getOldFullMetrics(): Pair<IWindowOldMetrics, IAdditionalMetrics?> {
+        return first().getOldFullMetrics()
     }
-
 
 
     /*  SET  */
@@ -158,9 +163,11 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
     override fun addAll(elements: Collection<W>): Boolean {
         return mWindows.addAll(elements)
     }
+
     override fun removeAll(elements: Collection<W>): Boolean {
         return mWindows.removeAll(elements.toSet())
     }
+
     override fun retainAll(elements: Collection<W>): Boolean {
         return mWindows.retainAll(elements.toSet())
     }

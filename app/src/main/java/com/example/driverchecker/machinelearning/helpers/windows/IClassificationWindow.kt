@@ -8,9 +8,13 @@ interface IClassificationWindow<E : IClassificationOutputStats<S>, S> : IMachine
     val supergroupCounter: Map<S, Int>
     val groupMetrics: IGroupMetrics<S>
 
-    override fun getFinalResults() : IClassificationFinalResultStats<S>
+    override fun getOldFinalResults() : IClassificationFinalResultStats<S>
 
-    override fun getFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>>
+    override fun getOldFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>>
+
+    override fun getData() : Pair<IWindowBasicData, IGroupMetrics<S>?>
+
+    override fun getAdditionalMetrics() : IGroupMetrics<S>?
 
     @OptIn(ExperimentalTime::class)
     fun initialize(

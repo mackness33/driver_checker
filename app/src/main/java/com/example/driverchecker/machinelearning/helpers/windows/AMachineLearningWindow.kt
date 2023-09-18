@@ -10,16 +10,16 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     initialSize: Int = 3,
     initialThreshold: Float = 0.15f,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
-) : IMachineLearningWindow<E>, WithConfidence, IWindowOldMetrics{
+) : IMachineLearningWindow<E>, WithConfidence, IWindowBasicData {
 
     protected val window : MutableList<E> = mutableListOf()
 
     protected val timer: Timer = Timer(newStart)
 
-    override var size: Int = initialSize
+    override var windowFrames: Int = initialSize
         protected set
 
-    override var threshold: Float = initialThreshold
+    override var windowThreshold: Float = initialThreshold
         protected set
 
     override var confidence: Float = 0f
@@ -34,20 +34,18 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override val lastResult: E?
         get() = if (window.isEmpty()) null else window.last()
 
-
     override var totalTime: Double = 0.0
-        get() = timer.diff() ?: 0.0
         protected set
 
     override var totalWindows: Int = 0
-        get() = if (window.size >= size) (totEvaluationsDone + 1) - window.size else 0
+        get() = if (window.size >= windowFrames) (totEvaluationsDone + 1) - window.size else 0
         protected set
 
-    override fun isSatisfied() : Boolean = (window.size == size && threshold <= confidence)
+    override fun isSatisfied() : Boolean = (window.size == windowFrames && windowThreshold <= confidence)
 
     override fun initialize(settings: IOldSettings, start: TimeSource.Monotonic.ValueTimeMark?) {
-        size = settings.windowFrames
-        threshold = settings.windowThreshold
+        windowFrames = settings.windowFrames
+        windowThreshold = settings.windowThreshold
         timer.initStart(start)
     }
 
@@ -70,7 +68,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     protected open fun preUpdate (element: E) : Boolean {
         window.add(element)
 
-        if (window.size > size)
+        if (window.size > windowFrames)
             window.removeFirst()
 
         return true
@@ -97,15 +95,33 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         }
 
         confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
+        totalTime += timer.diff() ?: 0.0
     }
 
+    /* DATA */
+    override fun getData(): Pair<IWindowBasicData, IAdditionalMetrics?> {
+        return getMetrics() to getAdditionalMetrics()
+    }
 
-    override fun getMetrics() : IWindowOldMetrics {
+    override fun getMetrics(): IWindowBasicData {
+        return this
+    }
+
+    override fun getAdditionalMetrics(): IAdditionalMetrics? {
+        return null
+    }
+
+    override fun getFinalResults(): IMachineLearningFinalResult {
+        return MachineLearningFinalResult(confidence, mapOf(getData()))
+    }
+
+    /* OLD */
+    override fun getOldMetrics() : IWindowOldMetrics {
         return WindowOldMetrics(totalTime, totalWindows, type)
     }
 
-    override fun getFullMetrics() : Pair<IWindowOldMetrics, IAdditionalMetrics?> {
-        return Pair(getMetrics(), null)
+    override fun getOldFullMetrics() : Pair<IWindowOldMetrics, IAdditionalMetrics?> {
+        return Pair(getOldMetrics(), null)
     }
 
     override fun updateStart(newStart: TimeSource.Monotonic.ValueTimeMark) {

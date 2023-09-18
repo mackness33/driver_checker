@@ -148,9 +148,9 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 LiveEvaluationState.End(
                     null,
                     OldMachineLearningFinalResult(
-                        window.getFinalResults(),
+                        window.getOldFinalResults(),
                         oldSettings,
-                        MachineLearningOldMetrics(window.getMetrics())
+                        MachineLearningOldMetrics(window.getOldMetrics())
                     )
                 )
             )

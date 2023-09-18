@@ -65,9 +65,9 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                 LiveClassificationState.End(
                     null,
                     ClassificationFinalResultOld(
-                        window.getFinalResults(),
+                        window.getOldFinalResults(),
                         oldSettings,
-                        MachineLearningOldMetrics(window.getMetrics())
+                        MachineLearningOldMetrics(window.getOldMetrics())
                     )
                 )
             )

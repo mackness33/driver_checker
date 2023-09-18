@@ -12,7 +12,7 @@ open class ClassificationWindow<E : IClassificationOutputStats<S>, S> (
     override val type: String = "ClassificationWindow",
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) : AClassificationWindow<E, S>(size, threshold, supergroups = supergroups, newStart = newStart) {
-    override fun getFinalResults() : IClassificationFinalResultStats<S> {
+    override fun getOldFinalResults() : IClassificationFinalResultStats<S> {
         return ClassificationFullFinalResultOld(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
     }
 }

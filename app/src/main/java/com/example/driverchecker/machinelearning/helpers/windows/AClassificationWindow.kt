@@ -33,7 +33,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
             return false
         }
 
-        val valueToDelete: E? = if (window.size < size) null else window.first()
+        val valueToDelete: E? = if (window.size < windowFrames) null else window.first()
         val allPossibleKeysToUpdate = (valueToDelete?.groups?.keys ?: emptySet()).union(element.groups.keys).intersect(mSupergroupCounter.keys)
 
         // for each key to update in the counter I add to the value of the element and sub the element that is going to be removed
@@ -62,7 +62,18 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         mGroupMetrics.clear()
     }
 
-    override fun getFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>> {
-        return Pair(getMetrics(), groupMetrics)
+    override fun getData(): Pair<IWindowBasicData, IGroupMetrics<S>?> {
+        return getMetrics() to getAdditionalMetrics()
+    }
+
+    override fun getAdditionalMetrics(): IGroupMetrics<S>? {
+        return null
+    }
+
+
+    /* OLD */
+
+    override fun getOldFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>> {
+        return Pair(getOldMetrics(), groupMetrics)
     }
 }

@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IMachineLearningFinalResultStats
-import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
-import com.example.driverchecker.machinelearning.data.OldMachineLearningFullFinalResult
+import com.example.driverchecker.machinelearning.data.*
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -12,7 +10,7 @@ open class MachineLearningWindow<E : IMachineLearningOutputStats> (
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) :
     AMachineLearningWindow<E> (size, threshold, newStart) {
-    override fun getFinalResults() : IMachineLearningFinalResultStats {
+    override fun getOldFinalResults() : IMachineLearningFinalResultStats {
         return OldMachineLearningFullFinalResult(confidence)
     }
 }

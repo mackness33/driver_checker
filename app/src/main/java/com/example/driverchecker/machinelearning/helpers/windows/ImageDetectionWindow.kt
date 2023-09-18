@@ -14,7 +14,7 @@ open class BasicImageDetectionWindow (
     override val type: String = "ClassificationWindow",
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) : ImageDetectionWindow (size, threshold, supergroups = supergroups, newStart = newStart) {
-    override fun getFinalResults() : IClassificationFinalResultStats<String> {
+    override fun getOldFinalResults() : IClassificationFinalResultStats<String> {
         return ImageDetectionFullFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
     }
 
