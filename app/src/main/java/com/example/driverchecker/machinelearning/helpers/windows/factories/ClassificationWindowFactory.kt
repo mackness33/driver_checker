@@ -9,3 +9,9 @@ abstract class ClassificationWindowFactory<E : IClassificationOutputStats<S>, S>
 
     abstract fun buildClassificationWindow(frames: Int, threshold: Float, groups: Set<S>): IClassificationWindow<E, S>
 }
+
+interface IClassificationWindowFactory<E : IClassificationOutputStats<S>, S> :
+    IWindowFactory<E> {
+
+    fun buildClassificationWindow(frames: Int, threshold: Float, groups: Set<S>): IClassificationWindow<E, S>
+}

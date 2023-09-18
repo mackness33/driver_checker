@@ -2,15 +2,22 @@ package com.example.driverchecker.machinelearning.collections
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindow
+import com.example.driverchecker.machinelearning.helpers.windows.IImageDetectionWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
+import com.example.driverchecker.machinelearning.helpers.windows.factories.IWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.factories.WindowFactory
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
 open class MachineLearningSetOfWindows<E : IMachineLearningItem, W : IMachineLearningWindow<E>> :
     MachineLearningWindowsMutableCollection<E, W> {
-    var factory: Map<String, WindowFactory<E>> = emptyMap()
+    var factory: Map<String, IImageDetectionWindowFactory> = emptyMap()
         protected set
+
+    init {
+        factory = mapOf("BasicImageDetectionWindow" to BasicImageDetectionWindow.Factory)
+    }
 
     private val mWindows: MutableSet<W> = mutableSetOf()
     val windows: Set<W>
@@ -64,7 +71,8 @@ open class MachineLearningSetOfWindows<E : IMachineLearningItem, W : IMachineLea
             newSettings.multipleTypes.forEach { type ->
                 newSettings.multipleWindowsFrames.forEach { frames ->
                     newSettings.multipleWindowsThresholds.forEach { threshold ->
-                        mWindows.add(factory[type]?.buildMachineLearningWindow(frames, threshold) as W)
+                        if (factory.containsKey(type))
+                            mWindows.add(factory[type]?.buildMachineLearningWindow(frames, threshold) as W)
                     }
                 }
             }

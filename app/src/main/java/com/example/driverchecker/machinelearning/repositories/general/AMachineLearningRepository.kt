@@ -38,17 +38,19 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     override val availableSettings : IMultipleWindowSettings = Settings (
         listOf(1, 3, 5, 10, 20, 30),
         listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
-        listOf("Basic Window"),
+        listOf("BasicImageDetectionWindow"),
         0.10f
     )
     protected val mSettings: MutableObservableData<ISettings> = StatefulData(Settings(
-        listOf(availableSettings.multipleWindowsFrames[2]),
-        listOf(availableSettings.multipleWindowsThresholds[0]),
-        listOf(availableSettings.multipleTypes[0]),
+        availableSettings.multipleWindowsFrames.subList(2,4),
+        availableSettings.multipleWindowsThresholds.subList(0,2),
+        availableSettings.multipleTypes.subList(0,1),
         0.10f
     ))
     override val settings: ObservableData<ISettings>
         get() = mSettings
+    private val privateSettings: ISettings
+        get() = mSettings.value
     protected val windowsSet: MachineLearningWindowsMutableCollection<O, IMachineLearningWindow<O>> = MachineLearningSetOfWindows()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
@@ -56,6 +58,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
     init {
         mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
+        windowsSet.updateSettings(privateSettings)
     }
 
 
