@@ -1,6 +1,8 @@
 package com.example.driverchecker.machinelearning.repositories
 
 import android.util.Log
+import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
+import com.example.driverchecker.machinelearning.collections.ImageDetectionSetOfWindows
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
@@ -21,6 +23,11 @@ class ImageDetectionFactoryRepository
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
+    override val collectionOfWindows: ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> = ImageDetectionSetOfWindows()
+
+    init {
+        initialize()
+    }
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
         try {
             onStopLiveEvaluation()

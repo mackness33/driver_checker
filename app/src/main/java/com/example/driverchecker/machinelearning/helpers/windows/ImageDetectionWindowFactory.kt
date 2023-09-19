@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutputStats
 import com.example.driverchecker.machinelearning.helpers.windows.factories.ClassificationWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.factories.IClassificationWindowFactory
 
@@ -10,8 +11,8 @@ import com.example.driverchecker.machinelearning.helpers.windows.factories.IClas
 //    abstract override fun buildWindow(): IClassificationWindow<IClassificationOutputStats<String>, String>
 //}
 
-typealias ImageDetectionWindowFactory = ClassificationWindowFactory<IClassificationOutputStats<String>, String>
-typealias IImageDetectionWindowFactory = IClassificationWindowFactory<IClassificationOutputStats<String>, String>
-typealias ImageDetectionWindow = ClassificationWindow<IClassificationOutputStats<String>, String>
-typealias IImageDetectionWindow = IClassificationWindow<IClassificationOutputStats<String>, String>
-typealias AImageDetectionWindow = AClassificationWindow<IClassificationOutputStats<String>, String>
+typealias ImageDetectionWindowFactory = ClassificationWindowFactory<IImageDetectionOutputStats<String>, String>
+typealias IImageDetectionWindowFactory = IClassificationWindowFactory<IImageDetectionOutputStats<String>, String>
+typealias ImageDetectionWindow = ClassificationWindow<IImageDetectionOutputStats<String>, String>
+typealias IImageDetectionWindow = IClassificationWindow<IImageDetectionOutputStats<String>, String>
+typealias AImageDetectionWindow = AClassificationWindow<IImageDetectionOutputStats<String>, String>

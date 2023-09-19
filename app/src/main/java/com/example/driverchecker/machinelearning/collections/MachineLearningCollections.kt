@@ -14,9 +14,7 @@ interface ClassificationMetricsMap<S> : IGroupMetrics<S> {
     val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
 }
 
-interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : IWindow<E>, Collection<IMachineLearningWindow<E>> {
-    val inactiveWindows: Set<IMachineLearningWindow<E>>
-    val activeWindows: Set<IMachineLearningWindow<E>>
+interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : IWindow<E> {
     val settings: IMultipleWindowSettings
 
     fun getData() : Map<IWindowBasicData, IAdditionalMetrics?>
@@ -24,9 +22,10 @@ interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : I
     fun getMetrics() : List<IWindowBasicData>
 
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
+    fun initialize(availableSettings: IMultipleWindowSettings)
 }
 
-interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats> : MachineLearningWindowsCollection<E>, MutableCollection<IMachineLearningWindow<E>> {
+interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats> : MachineLearningWindowsCollection<E> {
     fun updateSettings (newSettings: IMultipleWindowSettings)
 }
 
