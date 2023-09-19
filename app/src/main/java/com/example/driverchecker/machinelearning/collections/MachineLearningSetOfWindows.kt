@@ -8,8 +8,8 @@ import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearnin
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMachineLearningWindow<E>> :
-    MachineLearningWindowsMutableCollection<E, W> {
+open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats> :
+    MachineLearningWindowsMutableCollection<E, IMachineLearningWindow<E>> {
     var factory: Map<String, IImageDetectionWindowFactory> = emptyMap()
         protected set
 
@@ -17,14 +17,14 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
         factory = mapOf("BasicImageDetectionWindow" to BasicImageDetectionWindow.Factory)
     }
 
-    private val mWindows: MutableSet<W> = mutableSetOf()
-    val windows: Set<W>
+    protected val mWindows: MutableSet<IMachineLearningWindow<E>> = mutableSetOf()
+    val windows: Set<IMachineLearningWindow<E>>
         get() = mWindows
 
-    override var inactiveWindows: Set<W> = emptySet()
+    override var inactiveWindows: Set<IMachineLearningWindow<E>> = emptySet()
         get() = windows.minus(activeWindows)
         protected set
-    override var activeWindows: Set<W> = emptySet()
+    override var activeWindows: Set<IMachineLearningWindow<E>> = emptySet()
         protected set
 
 
@@ -57,7 +57,7 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
                                 factory[type]?.buildMachineLearningWindow(
                                     frames,
                                     threshold
-                                ) as W
+                                ) as IMachineLearningWindow<E>
                             )
                     }
                 }
@@ -71,7 +71,7 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
 
 
     override fun isSatisfied(): Boolean {
-        val satisfiedWindows = mutableSetOf<W>()
+        val satisfiedWindows = mutableSetOf<IMachineLearningWindow<E>>()
         var currentIsSatisfied: Boolean
 
         val areAllSatisfied = activeWindows.fold(true) { lastResult, currentWindow ->
@@ -134,11 +134,11 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
 
 
     /*  SET  */
-    override fun contains(element: W): Boolean {
+    override fun contains(element: IMachineLearningWindow<E>): Boolean {
         return windows.contains(element)
     }
 
-    override fun containsAll(elements: Collection<W>): Boolean {
+    override fun containsAll(elements: Collection<IMachineLearningWindow<E>>): Boolean {
         return windows.containsAll(elements)
     }
 
@@ -148,29 +148,29 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
 
 
     /*  MUTABLE SET  */
-    override fun iterator(): MutableIterator<W> {
+    override fun iterator(): MutableIterator<IMachineLearningWindow<E>> {
         return mWindows.iterator()
     }
 
-    override fun add(element: W): Boolean {
+    override fun add(element: IMachineLearningWindow<E>): Boolean {
         return mWindows.add(element)
     }
 
-    override fun remove(element: W): Boolean {
+    override fun remove(element: IMachineLearningWindow<E>): Boolean {
         return mWindows.remove(element)
     }
 
     // Bulk Modification Operations
 
-    override fun addAll(elements: Collection<W>): Boolean {
+    override fun addAll(elements: Collection<IMachineLearningWindow<E>>): Boolean {
         return mWindows.addAll(elements)
     }
 
-    override fun removeAll(elements: Collection<W>): Boolean {
+    override fun removeAll(elements: Collection<IMachineLearningWindow<E>>): Boolean {
         return mWindows.removeAll(elements.toSet())
     }
 
-    override fun retainAll(elements: Collection<W>): Boolean {
+    override fun retainAll(elements: Collection<IMachineLearningWindow<E>>): Boolean {
         return mWindows.retainAll(elements.toSet())
     }
 

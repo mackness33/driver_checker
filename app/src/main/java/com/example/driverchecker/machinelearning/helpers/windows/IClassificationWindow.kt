@@ -16,6 +16,11 @@ interface IClassificationWindow<E : IClassificationOutputStats<S>, S> : IMachine
 
     override fun getAdditionalMetrics() : IGroupMetrics<S>?
 
+    fun getFinalGroup() : S
+
+    fun updateGroups (newGroups: Set<S>)
+
+
     @OptIn(ExperimentalTime::class)
     fun initialize(
         settings: IOldSettings,

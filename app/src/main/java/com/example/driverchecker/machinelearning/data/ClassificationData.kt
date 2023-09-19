@@ -36,7 +36,7 @@ interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearnin
 
 interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
 
-interface IClassificationFinalResult<S> : IClassificationFinalResultStats<S>, WithGroupsData<S>
+interface IClassificationFinalResult<S> : IClassificationFinalResultStats<S>, IMachineLearningFinalResult, WithGroupsData<S>
 
 data class ClassificationFinalResult<S> (
     override val confidence: Float,

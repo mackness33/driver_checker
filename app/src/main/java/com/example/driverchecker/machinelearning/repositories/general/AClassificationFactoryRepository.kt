@@ -1,9 +1,14 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
+import com.example.driverchecker.machinelearning.collections.ClassificationSetOfWindows
+import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
+import com.example.driverchecker.machinelearning.collections.MachineLearningSetOfWindows
+import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
+import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
 import kotlinx.coroutines.*
@@ -21,6 +26,13 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     override var window: IClassificationWindow<O, S> = ClassificationWindow(4, 0.5f, model?.classifier?.supergroups!!.keys, "ClassificationWindow")
 
     abstract override var model: IClassificationModel<I, O, S>?
+
+    override val collectionOfWindows: ClassificationWindowsMutableCollection<O, IClassificationWindow<O, S>, S> = ClassificationSetOfWindows()
+
+    override fun initialize () {
+        collectionOfWindows.updateSettings(privateSettings)
+
+    }
 
     @OptIn(ExperimentalTime::class)
     override fun jobEvaluation(input: Flow<I>, newSettings: IOldSettings): Job {

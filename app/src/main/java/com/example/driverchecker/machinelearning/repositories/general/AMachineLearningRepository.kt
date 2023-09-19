@@ -51,16 +51,18 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         get() = mSettings
     private val privateSettings: ISettings
         get() = mSettings.value
-    protected val collectionOfWindows: MachineLearningWindowsMutableCollection<O, IMachineLearningWindow<O>> = MachineLearningSetOfWindows()
+    protected open val collectionOfWindows: MachineLearningWindowsMutableCollection<O, IMachineLearningWindow<O>> = MachineLearningSetOfWindows()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()
 
     init {
         mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
-        collectionOfWindows.updateSettings(privateSettings)
     }
 
+    open fun initialize () {
+        collectionOfWindows.updateSettings(privateSettings)
+    }
 
     private fun startListenModelState() = modelListener?.listen(repositoryScope, model?.isLoaded)
 

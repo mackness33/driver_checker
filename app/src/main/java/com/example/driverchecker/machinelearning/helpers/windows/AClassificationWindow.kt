@@ -21,6 +21,8 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
     override val groupMetrics: IGroupMetrics<S>
         get() = mGroupMetrics
 
+    override fun getFinalGroup(): S = mSupergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key
+
     override fun initialize(
         settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?, supergroups: Set<S>
     ) {
@@ -72,6 +74,12 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
 
     override fun getAdditionalMetrics(): IGroupMetrics<S>? {
         return null
+    }
+
+    override fun updateGroups(newGroups: Set<S>) {
+        mSupergroupCounter.clear()
+        mSupergroupCounter.putAll(newGroups.associateWith { 0 })
+        mGroupMetrics.initialize(newGroups)
     }
 
 
