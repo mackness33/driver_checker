@@ -52,8 +52,12 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
             mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
         }
 
-        confidence = supergroupCounter.values.max().toFloat() / window.size
-        mGroupMetrics.add(window.last())
+        if (supergroupCounter.isEmpty()) {
+            super.update()
+        } else {
+            confidence = supergroupCounter.values.max().toFloat() / window.size
+            mGroupMetrics.add(window.last())
+        }
     }
 
     override fun clean () {

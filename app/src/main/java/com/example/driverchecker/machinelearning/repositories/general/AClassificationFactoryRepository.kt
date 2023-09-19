@@ -77,6 +77,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         oldSettings = null
         timer.reset()
         window.clean()
+        collectionOfWindows.clean()
     }
 
     @OptIn(ExperimentalTime::class)
@@ -86,16 +87,17 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     ) {
         timer.markEnd()
         window.next(postProcessedResult, timer.diff())
+        collectionOfWindows.next(postProcessedResult, timer.diff())
         timer.markStart()
 
-        if (window.hasAcceptedLast) {
+        if (collectionOfWindows.hasAcceptedLast) {
             mEvaluationFlowState.emit(
-                LiveClassificationState.Loading(window.totEvaluationsDone, window.lastResult)
+                LiveClassificationState.Loading(collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult)
             )
         }
 
         // TODO: Pass the metrics and R
-        if (window.isSatisfied())
+        if (collectionOfWindows.isSatisfied())
             onConditionSatisfied(CorrectCancellationException())
     }
 }

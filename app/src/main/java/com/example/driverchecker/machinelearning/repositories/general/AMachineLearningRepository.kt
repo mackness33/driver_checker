@@ -51,14 +51,14 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         get() = mSettings
     private val privateSettings: ISettings
         get() = mSettings.value
-    protected val windowsSet: MachineLearningWindowsMutableCollection<O, IMachineLearningWindow<O>> = MachineLearningSetOfWindows()
+    protected val collectionOfWindows: MachineLearningWindowsMutableCollection<O, IMachineLearningWindow<O>> = MachineLearningSetOfWindows()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = mEvaluationFlowState.asSharedFlow()
 
     init {
         mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
-        windowsSet.updateSettings(privateSettings)
+        collectionOfWindows.updateSettings(privateSettings)
     }
 
 
@@ -160,6 +160,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         oldSettings = null
         timer.reset()
         window.clean()
+        collectionOfWindows.clean()
     }
 
     protected open suspend fun onEachEvaluation (
@@ -169,16 +170,17 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         Log.d("JobClassification", "finally finished")
         timer.markEnd()
         window.next(postProcessedResult, timer.diff())
+        collectionOfWindows.next(postProcessedResult, timer.diff())
         timer.markStart()
 
-        if (window.hasAcceptedLast) {
+        if (collectionOfWindows.hasAcceptedLast) {
             mEvaluationFlowState.emit(
                 LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
             )
         }
 
         // TODO: Pass the metrics and R
-        if (window.isSatisfied())
+        if (collectionOfWindows.isSatisfied())
             onConditionSatisfied(CorrectCancellationException())
     }
 
@@ -239,7 +241,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override fun onLiveEvaluationUpdateSettings(state: ClientState.UpdateSettings) {
             model?.updateThreshold(state.settings.modelThreshold)
-            windowsSet.updateSettings(state.settings)
+            collectionOfWindows.updateSettings(state.settings)
         }
     }
 

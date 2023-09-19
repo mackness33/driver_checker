@@ -62,6 +62,8 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats, W : IMac
                     }
                 }
             }
+
+            activeWindows = mWindows
         } catch (e: Throwable) {
             Log.e("WindowMutableSet", e.message.toString(), e)
         }
