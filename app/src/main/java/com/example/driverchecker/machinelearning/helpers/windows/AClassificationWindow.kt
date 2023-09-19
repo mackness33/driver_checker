@@ -27,6 +27,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?, supergroups: Set<S>
     ) {
         initialize(settings, newStart)
+        mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
         mGroupMetrics.initialize(supergroups)
     }
 
@@ -57,8 +58,8 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         if (supergroupCounter.isEmpty()) {
             super.update()
         } else {
-            confidence = supergroupCounter.values.max().toFloat() / window.size
             mGroupMetrics.add(window.last())
+            confidence = supergroupCounter.values.max().toFloat() / window.size
         }
     }
 
@@ -73,7 +74,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
     }
 
     override fun getAdditionalMetrics(): IGroupMetrics<S>? {
-        return null
+        return mGroupMetrics
     }
 
     override fun updateGroups(newGroups: Set<S>) {

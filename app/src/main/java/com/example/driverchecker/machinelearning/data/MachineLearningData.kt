@@ -36,6 +36,17 @@ interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOut
 
 typealias IMachineLearningFinalResultStats = WithConfidence
 
+interface IMachineLearningNewFinalResult : IMachineLearningFinalResultStats, WithWindowInfo
+
+data class MachineLearningNewFinalResult (
+    override val confidence: Float, override val data: Map<IWindowBasicData, IAdditionalMetrics?>,
+) : IMachineLearningFinalResult {
+    constructor(main: IMachineLearningFinalResultStats, data: Map<IWindowBasicData, IAdditionalMetrics?>) : this (
+        main.confidence, data
+    )
+}
+
+
 interface IMachineLearningFinalResult : IMachineLearningFinalResultStats, WithWindowData
 
 data class MachineLearningFinalResult (

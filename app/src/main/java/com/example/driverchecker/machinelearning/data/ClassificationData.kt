@@ -36,19 +36,37 @@ interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearnin
 
 interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
 
+
+interface IClassificationNewFinalResult<S> : IClassificationFinalResultStats<S>, IMachineLearningNewFinalResult, WithGroupData<S>
+
+data class ClassificationNewFinalResult<S>(
+    override val confidence: Float,
+    override val supergroup: S,
+    override val data: List<IWindowBasicData>,
+    override val additionalMetrics: List<IGroupMetrics<S>>,
+) : IClassificationNewFinalResult<S> {
+    constructor(main: IClassificationFinalResultStats<S>, info: List<IWindowBasicData>, additional: List<IGroupMetrics<S>>) : this (
+        main.confidence, main.supergroup, info, additional
+    )
+
+    constructor(copy: IClassificationNewFinalResult<S>) : this (
+        copy.confidence, copy.supergroup, copy.data, copy.additionalMetrics
+    )
+}
+
 interface IClassificationFinalResult<S> : IClassificationFinalResultStats<S>, IMachineLearningFinalResult, WithGroupsData<S>
 
-data class ClassificationFinalResult<S> (
+data class ClassificationFinalResult<S>(
     override val confidence: Float,
     override val supergroup: S,
     override val data: Map<IWindowBasicData, IGroupMetrics<S>?>,
 ) : IClassificationFinalResult<S> {
     constructor(main: IClassificationFinalResultStats<S>, data: Map<IWindowBasicData, IGroupMetrics<S>?>) : this (
-        main.confidence, main.supergroup, data
+        main.confidence, main.supergroup, data.toMutableMap()
     )
 
     constructor(copy: IClassificationFinalResult<S>) : this (
-        copy.confidence, copy.supergroup, copy.data
+        copy.confidence, copy.supergroup, copy.data.toMutableMap()
     )
 }
 

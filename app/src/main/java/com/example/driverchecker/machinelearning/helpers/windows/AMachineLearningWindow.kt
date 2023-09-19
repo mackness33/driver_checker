@@ -37,8 +37,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override var totalTime: Double = 0.0
         protected set
 
-    override var totalWindows: Int = 0
-        get() = if (window.size >= windowFrames) (totEvaluationsDone + 1) - window.size else 0
+    override var totalWindows: Int = if (window.size >= windowFrames) (totEvaluationsDone + 1) - window.size else 0
         protected set
 
     override fun isSatisfied() : Boolean {
@@ -64,7 +63,9 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
         timer.markEnd()
 
-        window.last().updateTime(timer.diff()?.plus((offset ?: 0.0)))
+        val totalOutputTime: Double = timer.diff()?.plus((offset ?: 0.0)) ?: 0.0
+        totalTime += totalOutputTime
+        window.last().updateTime(totalOutputTime)
     }
 
     protected open fun preUpdate (element: E) : Boolean {
@@ -97,7 +98,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         }
 
         confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
-        totalTime += timer.diff() ?: 0.0
+//        totalTime += timer.diff() ?: 0.0
     }
 
     /* DATA */

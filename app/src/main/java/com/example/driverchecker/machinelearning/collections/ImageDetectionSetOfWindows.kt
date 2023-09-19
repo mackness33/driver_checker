@@ -3,9 +3,6 @@ package com.example.driverchecker.machinelearning.collections
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindow
-import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
-import com.example.driverchecker.machinelearning.helpers.windows.IImageDetectionWindowFactory
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -119,7 +116,8 @@ open class ImageDetectionSetOfWindows :
     }
 
     override fun getData(): Map<IWindowBasicData, IGroupMetrics<String>?> {
-        return selectedWindows.associate { it.getData() }
+        val listOfData = selectedWindows.map { it.getData() }
+        return listOfData.toMap()
     }
 
     override fun getFinalResults(): IClassificationFinalResult<String> {
@@ -133,11 +131,13 @@ open class ImageDetectionSetOfWindows :
         }
 
         finalConfidence /= selectedWindows.size
-        return ClassificationFinalResult(
+        val fr = ClassificationFinalResult(
             finalConfidence,
             finalGroupScore.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key,
-            getData()
+            getData().toMutableMap()
         )
+
+        return fr
     }
 
 

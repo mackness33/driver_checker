@@ -60,33 +60,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         }
     }
 
-    override suspend fun onCompletionEvaluation (cause: Throwable?) {
-        Log.d("ACClassification", "finally finished")
-        if (cause != null && cause !is CorrectCancellationException) {
-            Log.e("ACClassification", "Just caught this: ${cause.message}", cause)
-            mEvaluationFlowState.emit(
-                LiveClassificationState.OldEnd<S>(cause, null)
-            )
-        } else {
-            oldTimer.markEnd()
-            mEvaluationFlowState.emit(
-                LiveClassificationState.OldEnd(
-                    null,
-                    ClassificationFinalResultOld(
-                        window.getOldFinalResults(),
-                        oldSettings,
-                        MachineLearningOldMetrics(window.getOldMetrics())
-                    )
-                )
-            )
-        }
-
-        oldTimer.reset()
-        oldSettings = null
-        timer.reset()
-        window.clean()
-        collectionOfWindows.clean()
-    }
 
     override suspend fun onEachEvaluation (
         postProcessedResult: O,

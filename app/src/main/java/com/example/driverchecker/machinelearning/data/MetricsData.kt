@@ -10,6 +10,15 @@ interface WithWindowData {
     val data: Map<IWindowBasicData, IAdditionalMetrics?>
 }
 
+interface WithWindowInfo {
+    val data: List<IWindowBasicData>
+}
+
+
+interface WithGroupData<S> {
+    val additionalMetrics: List<IGroupMetrics<S>>
+}
+
 interface WithGroupsData<S> : WithWindowData {
     override val data: Map<IWindowBasicData, IGroupMetrics<S>?>
 }
