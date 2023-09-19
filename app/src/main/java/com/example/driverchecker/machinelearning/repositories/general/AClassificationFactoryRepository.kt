@@ -27,6 +27,11 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     abstract override val collectionOfWindows: ClassificationWindowsMutableCollection<O, S>
 
+    override fun initialize() {
+        super.initialize()
+        collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
+    }
+
     @OptIn(ExperimentalTime::class)
     override fun jobEvaluation(input: Flow<I>, newSettings: IOldSettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {

@@ -49,6 +49,7 @@ open class ImageDetectionSetOfWindows :
     override val lastResult: IImageDetectionFullOutput<String>?
         get() = if (activeWindows.isEmpty()) null else (activeWindows.last().lastResult as IImageDetectionFullOutput<String>)
     override var hasAcceptedLast: Boolean = false
+        get() = if (activeWindows.isEmpty()) false else activeWindows.fold(false) { last, current -> last || current.hasAcceptedLast }
         protected set
     override var totEvaluationsDone: Int = 0
         get() = activeWindows.first().totEvaluationsDone
@@ -103,6 +104,8 @@ open class ImageDetectionSetOfWindows :
 
     override fun clean() {
         selectedWindows.forEach { it.clean() }
+
+        activeWindows = selectedWindows
     }
 
 

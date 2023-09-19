@@ -41,7 +41,9 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         get() = if (window.size >= windowFrames) (totEvaluationsDone + 1) - window.size else 0
         protected set
 
-    override fun isSatisfied() : Boolean = (window.size == windowFrames && windowThreshold <= confidence)
+    override fun isSatisfied() : Boolean {
+      return (window.size == windowFrames && windowThreshold <= confidence)
+    }
 
     override fun initialize(settings: IOldSettings, start: TimeSource.Monotonic.ValueTimeMark?) {
         windowFrames = settings.windowFrames
