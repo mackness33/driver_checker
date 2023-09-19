@@ -139,9 +139,16 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
             }
         }
 
-        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
+        override suspend fun onLiveEvaluationOldEnd(state: LiveEvaluationState.OldEnd) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video
+            mHasEnded.update(state.finalResult != null)
+            lastResultsList = evaluatedItemsArray.toMutableList()
+            Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
+        }
+
+        override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
+            // update the UI with the text of the class
             mHasEnded.update(state.finalResult != null)
             lastResultsList = evaluatedItemsArray.toMutableList()
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")

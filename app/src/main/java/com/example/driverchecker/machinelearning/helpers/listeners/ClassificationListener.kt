@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.helpers.listeners
 
-import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 
 interface ClassificationListener<S> : MachineLearningListener, IGenericListener<LiveEvaluationStateInterface> {
@@ -8,6 +7,8 @@ interface ClassificationListener<S> : MachineLearningListener, IGenericListener<
     suspend fun onLiveClassificationStart (state: LiveClassificationState.Start<S>)
 
     suspend fun onLiveClassificationLoading (state: LiveClassificationState.Loading<S>)
+
+    suspend fun onLiveClassificationOldEnd (state: LiveClassificationState.OldEnd<S>)
 
     suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<S>)
 }

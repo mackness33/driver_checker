@@ -132,6 +132,20 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IOldMachin
 
         override suspend fun onLiveEvaluationLoading(state: LiveEvaluationState.Loading) {}
 
+        override suspend fun onLiveEvaluationOldEnd(state: LiveEvaluationState.OldEnd) {
+            // update the UI with the text of the class
+            // save to the database the result with bulk of 10 and video
+            mIsEvaluating.postValue(false)
+            mIsEnabled.postValue(false)
+
+            when {
+                state.exception != null -> evaluationClient.ready()
+                state.finalResult != null -> mShowResults.complete(
+                    mActualPage.value != null && mActualPage.value != Page.Result
+                )
+            }
+        }
+
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             // save to the database the result with bulk of 10 and video

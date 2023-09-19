@@ -12,7 +12,6 @@ import com.example.driverchecker.machinelearning.manipulators.IClassificationCli
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.ObservableData
-import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -110,6 +109,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
                 when (state) {
                     is LiveClassificationState.Start<*> -> onLiveClassificationStart(state as LiveClassificationState.Start<String>)
                     is LiveClassificationState.Loading<*> -> onLiveClassificationLoading(state as LiveClassificationState.Loading<String>)
+                    is LiveClassificationState.OldEnd<*> -> onLiveClassificationOldEnd(state as LiveClassificationState.OldEnd<String>)
                     is LiveClassificationState.End<*> -> onLiveClassificationEnd(state as LiveClassificationState.End<String>)
                     else -> super.collectStates(state)
                 }
@@ -138,6 +138,19 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
                 mColoredOutputs.add(state.partialResult.groups.mapValues { entry ->
                     entry.value.map { classification -> classification.internalIndex }.toSet()
                 })
+            }
+        }
+
+        override suspend fun onLiveEvaluationOldEnd(state: LiveEvaluationState.OldEnd) {}
+
+        override suspend fun onLiveClassificationOldEnd(state: LiveClassificationState.OldEnd<String>) {
+            super.onLiveEvaluationOldEnd(LiveEvaluationState.OldEnd(state.exception, state.finalResult))
+
+            if (state.finalResult != null) {
+//                metricsPerGroup = evaluationClient.metricsPerGroup.metrics
+                mSaveImages.reset()
+                mAwaitImagesPaths.reset()
+                mAwaitEndInsert.reset()
             }
         }
 

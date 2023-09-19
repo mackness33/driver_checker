@@ -120,7 +120,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
-                mEvaluationFlowState.emit(LiveEvaluationState.End(Throwable("The stream is not ready yet"), null))
+                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(Throwable("The stream is not ready yet"), null))
                 triggerReadyState()
             }
         }
@@ -142,12 +142,12 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         if (cause != null && cause !is CorrectCancellationException) {
             mEvaluationFlowState.emit(
-                LiveEvaluationState.End(cause, null)
+                LiveEvaluationState.OldEnd(cause, null)
             )
         } else {
             oldTimer.markEnd()
             mEvaluationFlowState.emit(
-                LiveEvaluationState.End(
+                LiveEvaluationState.OldEnd(
                     null,
                     OldMachineLearningFinalResult(
                         window.getOldFinalResults(),
@@ -233,7 +233,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
                 }
             } catch (e : Throwable) {
-                mEvaluationFlowState.emit(LiveEvaluationState.End(e, null))
+                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
             }
         }
 

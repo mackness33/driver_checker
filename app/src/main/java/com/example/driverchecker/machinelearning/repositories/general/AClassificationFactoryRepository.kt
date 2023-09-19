@@ -2,11 +2,9 @@ package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
-import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
 import kotlinx.coroutines.*
@@ -56,7 +54,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                 } else
                     throw Throwable("The stream is not ready yet")
             } catch (e : Throwable) {
-                mEvaluationFlowState.emit(LiveEvaluationState.End(e, null))
+                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
                 triggerReadyState()
             }
         }
@@ -67,12 +65,12 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         if (cause != null && cause !is CorrectCancellationException) {
             Log.e("ACClassification", "Just caught this: ${cause.message}", cause)
             mEvaluationFlowState.emit(
-                LiveClassificationState.End<S>(cause, null)
+                LiveClassificationState.OldEnd<S>(cause, null)
             )
         } else {
             oldTimer.markEnd()
             mEvaluationFlowState.emit(
-                LiveClassificationState.End(
+                LiveClassificationState.OldEnd(
                     null,
                     ClassificationFinalResultOld(
                         window.getOldFinalResults(),
@@ -90,7 +88,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         collectionOfWindows.clean()
     }
 
-    @OptIn(ExperimentalTime::class)
     override suspend fun onEachEvaluation (
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
@@ -106,7 +103,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
             )
         }
 
-        // TODO: Pass the metrics and R
         if (collectionOfWindows.isSatisfied())
             onConditionSatisfied(CorrectCancellationException())
     }

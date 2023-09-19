@@ -46,6 +46,10 @@ data class ClassificationFinalResult<S> (
     constructor(main: IClassificationFinalResultStats<S>, data: Map<IWindowBasicData, IGroupMetrics<S>?>) : this (
         main.confidence, main.supergroup, data
     )
+
+    constructor(copy: IClassificationFinalResult<S>) : this (
+        copy.confidence, copy.supergroup, copy.data
+    )
 }
 
 

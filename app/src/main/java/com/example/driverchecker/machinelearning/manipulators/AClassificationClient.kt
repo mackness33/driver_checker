@@ -56,6 +56,7 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
                 when (state) {
                     is LiveClassificationState.Start<*> -> onLiveClassificationStart(state as LiveClassificationState.Start<S>)
                     is LiveClassificationState.Loading<*> -> onLiveClassificationLoading(state as LiveClassificationState.Loading<S>)
+                    is LiveClassificationState.OldEnd<*> -> onLiveClassificationOldEnd(state as LiveClassificationState.OldEnd<S>)
                     is LiveClassificationState.End<*> -> onLiveClassificationEnd(state as LiveClassificationState.End<S>)
                     else -> super.collectStates(state)
                 }
@@ -81,6 +82,13 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
             mMetricsPerGroup.initialize(state.classifier.supergroups.keys)
             mAreMetricsObservable.postValue(true)
             Log.d("ClassificationClient - EvaluationClassificationListener", "START: ${mPartialResultEvent.value} initialIndex")
+        }
+
+        override suspend fun onLiveEvaluationOldEnd(state: LiveEvaluationState.OldEnd) {}
+
+        override suspend fun onLiveClassificationOldEnd (state: LiveClassificationState.OldEnd<S>) {
+            lastMetricsPerGroup = mMetricsPerGroup.groupMetrics
+            super.onLiveEvaluationOldEnd(LiveEvaluationState.OldEnd(state.exception, state.finalResult))
         }
 
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}

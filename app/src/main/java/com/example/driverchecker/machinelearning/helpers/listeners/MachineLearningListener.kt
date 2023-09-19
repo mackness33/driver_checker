@@ -15,5 +15,6 @@ interface MachineLearningListener : IGenericListener<LiveEvaluationStateInterfac
     suspend fun onLiveEvaluationLoading (state: LiveEvaluationState.Loading)
 
     // handler of mlRepo on end
+    suspend fun onLiveEvaluationOldEnd (state: LiveEvaluationState.OldEnd)
     suspend fun onLiveEvaluationEnd (state: LiveEvaluationState.End)
 }

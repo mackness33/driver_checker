@@ -18,6 +18,7 @@ abstract class AMachineLearningListener : AGenericListener<LiveEvaluationStateIn
             is LiveEvaluationState.Ready -> onLiveEvaluationReady(state)
             is LiveEvaluationState.Start -> onLiveEvaluationStart()
             is LiveEvaluationState.Loading -> onLiveEvaluationLoading(state)
+            is LiveEvaluationState.OldEnd -> onLiveEvaluationOldEnd(state)
             is LiveEvaluationState.End -> onLiveEvaluationEnd(state)
             else -> {}
         }

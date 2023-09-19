@@ -19,6 +19,7 @@ abstract class AClassificationListener<S> : AMachineLearningListener, Classifica
             when (state) {
                 is LiveClassificationState.Start<*> -> onLiveClassificationStart(state as LiveClassificationState.Start<S>)
                 is LiveClassificationState.Loading<*> -> onLiveClassificationLoading(state as LiveClassificationState.Loading<S>)
+                is LiveClassificationState.OldEnd<*> -> onLiveClassificationOldEnd(state as LiveClassificationState.OldEnd<S>)
                 is LiveClassificationState.End<*> -> onLiveClassificationEnd(state as LiveClassificationState.End<S>)
                 else -> super.collectStates(state)
             }

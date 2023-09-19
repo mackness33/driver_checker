@@ -7,7 +7,6 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
 import com.example.driverchecker.utils.ObservableData
-import com.example.driverchecker.utils.StateLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -34,11 +33,20 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
-            super.onLiveClassificationEnd(state)
+        override suspend fun onLiveClassificationOldEnd (state: LiveClassificationState.OldEnd<String>) {
+            super.onLiveClassificationOldEnd(state)
 
             if (state.finalResult != null)
                 mFinalResult.postValue(ImageDetectionFullFinalResult(state.finalResult))
+
+            Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
+        }
+
+        override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
+            super.onLiveClassificationEnd(state)
+
+//            if (state.finalResult != null)
+//                mFinalResult.postValue(ClassificationFinalResult(state.finalResult))
 
             Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
