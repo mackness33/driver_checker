@@ -1,15 +1,40 @@
 package com.example.driverchecker.machinelearning.collections
 
+import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
+import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 
-open class ClassificationSetOfWindows<E : IClassificationOutputStats<S>, W : IClassificationWindow<E, S>, S> :
-    ClassificationWindowsMutableCollection<E, W, S>, MachineLearningSetOfWindows<E> () {
-    override var groups: Set<S> = emptySet()
+open class ClassificationSetOfWindows<E : IClassificationOutputStats<String>> :
+    ClassificationWindowsMutableCollection<E, String>, MachineLearningSetOfWindows<E> () {
+    override var groups: Set<String> = emptySet()
         protected set
 
     /*  WINDOWS  */
+    override fun updateSettings(newSettings: IMultipleWindowSettings) {
+        settings = newSettings
 
+        try {
+            newSettings.multipleTypes.forEach { type ->
+                newSettings.multipleWindowsFrames.forEach { frames ->
+                    newSettings.multipleWindowsThresholds.forEach { threshold ->
+                        if (factory.containsKey(type))
+                            mWindows.add(
+                                factory[type]?.buildClassificationWindow(
+                                    frames,
+                                    threshold,
+                                    groups
+                                ) as IClassificationWindow<E, String>
+                            )
+                    }
+                }
+            }
+
+            activeWindows = mWindows
+        } catch (e: Throwable) {
+            Log.e("WindowMutableSet", e.message.toString(), e)
+        }
+    }
 
     /* DATA */
     override fun getMetrics(): List<IWindowBasicData> {
@@ -17,18 +42,18 @@ open class ClassificationSetOfWindows<E : IClassificationOutputStats<S>, W : ICl
     }
 
     override fun getAdditionalMetrics(): List<IGroupMetrics<S>?> {
-        return mWindows.map { it.getAdditionalMetrics() }
+        return mWindows.map { (it as IClassificationWindow<E, S>).getAdditionalMetrics() }
     }
 
     override fun getData(): Map<IWindowBasicData, IGroupMetrics<S>?> {
-        return mWindows.associate { it.getData() }
+        return mWindows.associate { (it as IClassificationWindow<E, S>).getData() }
     }
 
     override fun getFinalResults(): IClassificationFinalResult<S> {
         val finalGroupScore = groups.associateWith { 0 }.toMutableMap()
         var finalGroupWindow: S
         mWindows.forEach { window ->
-            finalGroupWindow = window.getFinalGroup()
+            finalGroupWindow = (window as IClassificationWindow<E, S>).getFinalGroup()
             finalGroupScore[finalGroupWindow] = (finalGroupScore[finalGroupWindow] ?: 0) + 1
         }
 
@@ -43,7 +68,7 @@ open class ClassificationSetOfWindows<E : IClassificationOutputStats<S>, W : ICl
     override fun updateGroups(newGroups: Set<S>) {
         groups = newGroups
 
-        mWindows.forEach { it.updateGroups(newGroups) }
+        mWindows.forEach { (it as IClassificationWindow<E, S>).updateGroups(newGroups) }
     }
 
     // TODO("NEED TO BE UPDATE")  finalResults need to return another type of results

@@ -9,7 +9,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
 open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats> :
-    MachineLearningWindowsMutableCollection<E, IMachineLearningWindow<E>> {
+    MachineLearningWindowsMutableCollection<E> {
     var factory: Map<String, IImageDetectionWindowFactory> = emptyMap()
         protected set
 
@@ -17,7 +17,7 @@ open class MachineLearningSetOfWindows<E : IMachineLearningOutputStats> :
         factory = mapOf("BasicImageDetectionWindow" to BasicImageDetectionWindow.Factory)
     }
 
-    protected val mWindows: MutableSet<IMachineLearningWindow<E>> = mutableSetOf()
+    protected open val mWindows: MutableSet<IMachineLearningWindow<E>> = mutableSetOf()
     val windows: Set<IMachineLearningWindow<E>>
         get() = mWindows
 
