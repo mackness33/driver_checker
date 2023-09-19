@@ -33,6 +33,9 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
     override var lastMetricsPerGroup: Map<S, Triple<Int, Int, Int>?> = emptyMap()
         protected set
 
+    var lastClassificationData: Map<IWindowBasicData, IGroupMetrics<S>?> = emptyMap()
+        protected set
+
     override val evaluationListener: ClassificationListener<S> = EvaluationClassificationListener()
 
     protected val mGroups: MutableObservableData<Set<S>> = StatefulData(emptySet())
@@ -94,7 +97,8 @@ abstract class AClassificationClient<I, O : IClassificationOutputStats<S>, FR : 
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {}
 
         override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<S>) {
-            lastMetricsPerGroup = mMetricsPerGroup.groupMetrics
+//            lastMetricsPerGroup = state.finalResult?.data?.entries?.first()?.value?.groupMetrics ?: emptyMap()
+            lastClassificationData = state.finalResult?.data ?: emptyMap()
             super.onLiveEvaluationEnd(LiveEvaluationState.End(state.exception, state.finalResult))
         }
 

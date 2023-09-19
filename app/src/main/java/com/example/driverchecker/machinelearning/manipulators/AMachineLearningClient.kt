@@ -48,6 +48,9 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
     override var lastResultsList: List<O> = emptyList()
         protected set
 
+    var lastEvaluationData: Map<IWindowBasicData, IAdditionalMetrics?> = emptyMap()
+        protected set
+
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
     override var settings: IOldSettings = OldSettings(4, 0.80f, 0.10f)
@@ -151,6 +154,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
             // update the UI with the text of the class
             mHasEnded.update(state.finalResult != null)
             lastResultsList = evaluatedItemsArray.toMutableList()
+            lastEvaluationData = state.finalResult?.data ?: emptyMap()
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
     }

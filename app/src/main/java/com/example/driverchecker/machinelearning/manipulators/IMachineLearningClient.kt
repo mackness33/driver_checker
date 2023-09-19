@@ -44,4 +44,6 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
     suspend fun stop (cause: ExternalCancellationException = ExternalCancellationException())
 
     suspend fun updateSettings(newSettings: ISettings)
+
+//    val lastEvaluationData: Map<IWindowBasicData, IAdditionalMetrics?>
 }
