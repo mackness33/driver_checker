@@ -13,7 +13,7 @@ import com.example.driverchecker.machinelearning.repositories.general.AClassific
 import kotlinx.coroutines.CoroutineScope
 
 class ImageDetectionFactoryRepository
-    : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>, String> {
+    : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String> {
 
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
 

@@ -16,7 +16,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlin.time.ExperimentalTime
 
-abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IOldMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
+abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
     // abstracted
     protected abstract val window: IMachineLearningWindow<O>

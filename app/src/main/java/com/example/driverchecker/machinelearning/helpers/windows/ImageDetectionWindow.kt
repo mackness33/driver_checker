@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.*
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -15,7 +13,7 @@ open class BasicImageDetectionWindow (
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) : ImageDetectionWindow (size, threshold, supergroups = supergroups, newStart = newStart) {
     override fun getOldFinalResults() : IClassificationFinalResultStats<String> {
-        return ImageDetectionFullFinalResult(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
+        return ImageDetectionFullFinalResultOld(confidence, supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key)
     }
 
     companion object Factory : IImageDetectionWindowFactory {

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.collect
 import kotlin.time.ExperimentalTime
 
 
-abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IOldClassificationFinalResult<S>, S>
+abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningFactoryRepository<I, O, FR>, IClassificationRepository<I, O, FR, S> {
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
 

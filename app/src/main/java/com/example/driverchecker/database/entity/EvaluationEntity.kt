@@ -15,8 +15,8 @@ data class EvaluationEntity (
     @Embedded override val settings: OldSettings?,
     @Embedded override val metrics: MachineLearningOldMetrics?,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-) : IImageDetectionFinalResult<String> {
-    constructor(finalResult: IImageDetectionFinalResult<String>, title: String) : this (
+) : IOldImageDetectionFinalResult<String> {
+    constructor(finalResult: IOldImageDetectionFinalResult<String>, title: String) : this (
         confidence = finalResult.confidence,
         name = title,
         supergroup = finalResult.supergroup,

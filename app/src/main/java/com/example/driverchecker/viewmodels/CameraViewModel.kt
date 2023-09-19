@@ -15,8 +15,8 @@ import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 
-class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>>(imageDetectionRepository) {
-    override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>, String> = ImageDetectionClient()
+class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
+    override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
 
     val passengerInfo: ObservableData<Triple<Int, Int, Int>>?
         get() = evaluationClient.metricsPerGroup.liveMetrics["passenger"]
@@ -65,13 +65,13 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         mAwaitEndInsert.deferredAwait()
         mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
 
-        val evalId = evaluationRepository.insertEvaluation(evaluationClient.finalResult.value!!, name)
-        evaluationRepository.insertAllMetrics(metricsPerGroup, evalId)
+//        val evalId = evaluationRepository.insertEvaluation(evaluationClient.finalResult.value!!, name)
+//        evaluationRepository.insertAllMetrics(metricsPerGroup, evalId)
+//
+//        mAwaitImagesPaths.await()
+//        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
 
-        mAwaitImagesPaths.await()
-        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
-
-        mAwaitEndInsert.complete(evalId)
+//        mAwaitEndInsert.complete(evalId)
     }
 
 

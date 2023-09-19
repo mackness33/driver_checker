@@ -10,9 +10,9 @@ import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFullFinalResult<String>, String>() {
+class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
-    override val finalResult: ObservableData<IImageDetectionFullFinalResult<String>?>
+    override val finalResult: ObservableData<IImageDetectionFinalResult<String>?>
         get() = mFinalResult
     
     // FUNCTIONS
@@ -36,8 +36,8 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
         override suspend fun onLiveClassificationOldEnd (state: LiveClassificationState.OldEnd<String>) {
             super.onLiveClassificationOldEnd(state)
 
-            if (state.finalResult != null)
-                mFinalResult.postValue(ImageDetectionFullFinalResult(state.finalResult))
+//            if (state.finalResult != null)
+//                mFinalResult.postValue(ImageDetectionFullFinalResultOld(state.finalResult))
 
             Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
@@ -45,8 +45,8 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
         override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
             super.onLiveClassificationEnd(state)
 
-//            if (state.finalResult != null)
-//                mFinalResult.postValue(ClassificationFinalResult(state.finalResult))
+            if (state.finalResult != null)
+                mFinalResult.postValue(ClassificationFinalResult(state.finalResult))
 
             Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
