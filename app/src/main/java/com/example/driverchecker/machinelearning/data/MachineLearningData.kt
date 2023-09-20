@@ -25,10 +25,7 @@ data class MachineLearningInput<I>(
 // ---------------------------------- BASIC OUTPUT ----------------------------------
 typealias IMachineLearningItem = WithConfidence
 
-interface IMachineLearningOutputStats : WithConfidence {
-    val time: Double?
-    fun updateTime(newTime: Double?)
-}
+interface IMachineLearningOutputStats : WithConfidence
 
 interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOutputStats {
     val listItems: MachineLearningItemList<E>
@@ -63,12 +60,6 @@ data class MachineLearningOutput <E : WithConfidence> (
     override val listItems: MachineLearningItemList<E>,
 ) : IMachineLearningOutput<E> {
     override val confidence: Float = listItems.confidence
-    override var time: Double? = null
-        private set
-
-    override fun updateTime(newTime: Double?) {
-        time = newTime
-    }
 }
 
 data class OldMachineLearningFinalResult (
@@ -100,12 +91,6 @@ data class MachineLearningFullOutput <I, E : WithConfidence> (
     override val input: I,
 ) : IMachineLearningFullOutput<I, E> {
     override val confidence: Float = listItems.confidence
-    override var time: Double? = null
-        private set
-
-    override fun updateTime(newTime: Double?) {
-        time = newTime
-    }
 }
 
 data class OldMachineLearningFullFinalResult (

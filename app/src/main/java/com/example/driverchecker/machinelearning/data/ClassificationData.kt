@@ -86,12 +86,6 @@ data class ClassificationOutputStats<S> (
     override val confidence: Float,
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>>
 ) : IClassificationOutputStats<S> {
-    override var time: Double? = null
-        private set
-
-    override fun updateTime(newTime: Double?) {
-        time = newTime
-    }
 }
 
 data class ClassificationOutput<E : IClassificationItem<S>, S> (
@@ -99,12 +93,6 @@ data class ClassificationOutput<E : IClassificationItem<S>, S> (
 ) : IClassificationOutput<E, S> {
     override val confidence: Float = listItems.confidence
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
-    override var time: Double? = null
-        private set
-
-    override fun updateTime(newTime: Double?) {
-        time = newTime
-    }
 }
 
 data class ClassificationFinalResultOld<S> (
@@ -144,12 +132,6 @@ data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
 ) : IClassificationFullOutput<I, E, S> {
     override val confidence: Float = listItems.confidence
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
-    override var time: Double? = null
-        private set
-
-    override fun updateTime(newTime: Double?) {
-        time = newTime
-    }
 }
 
 data class ClassificationFullFinalResultOld<S> (

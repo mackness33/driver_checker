@@ -66,7 +66,6 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
         val totalOutputTime: Double = timer.diff()?.plus((offset ?: 0.0)) ?: 0.0
         totalTime += totalOutputTime
-        window.last().updateTime(totalOutputTime)
     }
 
     protected open fun preUpdate (element: E) : Boolean {

@@ -127,11 +127,11 @@
             android:id="@+id/layout_total_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            card_view:layout_constraintTop_toBottomOf="@id/layout_type"
+            card_view:layout_constraintTop_toTopOf="@id/layout_total_frames"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintEnd_toStartOf="@id/layout_type"
+            card_view:layout_constraintEnd_toStartOf="@id/layout_total_frames"
+            card_view:layout_constraintBottom_toBottomOf="@id/layout_total_frames"
             android:orientation="vertical"
-            android:layout_marginVertical="20dp"
             >
             <TextView
                 android:id="@+id/label_total_time"
@@ -159,7 +159,8 @@
             card_view:layout_constraintStart_toEndOf="@id/layout_confidence"
             card_view:layout_constraintEnd_toEndOf="parent"
             android:orientation="vertical"
-            android:layout_marginVertical="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
             >
             <TextView
                 android:id="@+id/label_total_frames"
@@ -185,6 +186,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
             android:gravity="center"
+            android:layout_marginTop="20dp"
             android:orientation="vertical"
             card_view:layout_constraintTop_toBottomOf="@id/layout_total_time"
             card_view:layout_constraintEnd_toEndOf="parent"
