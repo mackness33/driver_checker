@@ -4,14 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.driverchecker.database.dao.EvaluationDao
-import com.example.driverchecker.database.dao.ItemDao
-import com.example.driverchecker.database.dao.MetricsPerEvaluationDao
-import com.example.driverchecker.database.dao.PartialDao
-import com.example.driverchecker.database.entity.EvaluationEntity
-import com.example.driverchecker.database.entity.ItemEntity
-import com.example.driverchecker.database.entity.MetricsPerEvaluationEntity
-import com.example.driverchecker.database.entity.PartialEntity
+import com.example.driverchecker.database.dao.*
+import com.example.driverchecker.database.entity.*
 import kotlinx.coroutines.CoroutineScope
 
 // Annotates class to be a Room Database with a table (entity) of the Word class
@@ -20,9 +14,11 @@ import kotlinx.coroutines.CoroutineScope
         EvaluationEntity::class,
         PartialEntity::class,
         ItemEntity::class,
-        MetricsPerEvaluationEntity::class
+        MetricsPerEvaluationEntity::class,
+        WindowInformationEntity::class,
+        GroupMetricsEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 abstract class DriverCheckerRoomDatabase : RoomDatabase() {
@@ -31,6 +27,8 @@ abstract class DriverCheckerRoomDatabase : RoomDatabase() {
     abstract fun partialDao(): PartialDao
     abstract fun itemDao(): ItemDao
     abstract fun metricsDao (): MetricsPerEvaluationDao
+    abstract fun windowInformationDao (): WindowInformationDao
+    abstract fun groupMetricsDao (): GroupMetricsDao
 
     companion object {
         // Singleton prevents multiple instances of database opening at the

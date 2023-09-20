@@ -65,13 +65,13 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         mAwaitEndInsert.deferredAwait()
         mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
 
-//        val evalId = evaluationRepository.insertEvaluation(evaluationClient.finalResult.value!!, name)
-//        evaluationRepository.insertAllMetrics(metricsPerGroup, evalId)
-//
-//        mAwaitImagesPaths.await()
-//        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
+        val evalId = evaluationRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
+//        evaluationRepository.insertAllOldMetrics(metricsPerGroup, evalId)
 
-//        mAwaitEndInsert.complete(evalId)
+        mAwaitImagesPaths.await()
+        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
+
+        mAwaitEndInsert.complete(evalId)
     }
 
 

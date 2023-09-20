@@ -21,7 +21,7 @@ class DriverChecker : Application() {
     // rather than when the application starts
     val database by lazy { DriverCheckerRoomDatabase.getDatabase(this, applicationScope) }
 //    val testRepository by lazy { TestRepo(database.testDao()) }
-    val evaluationRepository by lazy { EvaluationRepository(database.evaluationDao(), database.partialDao(), database.itemDao(), database.metricsDao())}
+    val evaluationRepository by lazy { EvaluationRepository(database.evaluationDao(), database.partialDao(), database.itemDao(), database.metricsDao(), database.windowInformationDao(), database.groupMetricsDao())}
 
     val repository by lazy { ImageDetectionFactoryRepository.getInstance(
         "YoloV5",

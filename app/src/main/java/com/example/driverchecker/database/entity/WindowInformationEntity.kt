@@ -23,4 +23,8 @@ class WindowInformationEntity (
     constructor(copyMetrics: IWindowMetrics, copySettings: IWindowSettings, evaluationId: Long) : this (
         WindowMetrics(copyMetrics), WindowSettings(copySettings), evaluationId
     )
+
+    constructor(copyData: IWindowBasicData, evaluationId: Long) : this (
+        WindowMetrics(copyData), WindowSettings(copyData), evaluationId
+    )
 }

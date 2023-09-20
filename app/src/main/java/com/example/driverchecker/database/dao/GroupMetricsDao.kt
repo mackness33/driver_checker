@@ -7,15 +7,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface GroupMetricsDao {
 
-    @Query("SELECT * FROM groupMetrics")
+    @Query("SELECT * FROM group_metrics")
     fun getAllGroupMetrics(): Flow<List<GroupMetricsEntity>>
 
 
     @Query("SELECT * FROM group_metrics WHERE id = :groupMetricsId")
     fun getGroupMetrics(groupMetricsId: Long): GroupMetricsEntity
 
-    @Query("SELECT * FROM group_metrics WHERE windowMetricsId = :windowMetricsId")
-    fun getGroupMetricsByWindowMetrics(windowMetricsId: Long): List<GroupMetricsEntity>
+    @Query("SELECT * FROM group_metrics WHERE window_information_id = :windowInformationId")
+    fun getGroupMetricsByWindowMetrics(windowInformationId: Long): List<GroupMetricsEntity>
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
