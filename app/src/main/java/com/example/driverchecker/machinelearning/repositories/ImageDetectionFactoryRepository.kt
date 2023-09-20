@@ -40,16 +40,7 @@ class ImageDetectionFactoryRepository
         } else {
             oldTimer.markEnd()
             mEvaluationFlowState.emit(
-                LiveClassificationState.End(null,
-//                    ClassificationFinalResult(
-//                        ClassificationFinalResult(
-//                            6.0f,
-//                            "Soll",
-//                            collectionOfWindows.getData().toMutableMap()
-//                        )
-//                    )
-                    collectionOfWindows.getFinalResults()
-                )
+                LiveClassificationState.End(null, collectionOfWindows.getFinalResults())
             )
         }
 
