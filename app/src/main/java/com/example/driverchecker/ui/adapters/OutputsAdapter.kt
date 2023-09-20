@@ -30,8 +30,8 @@ class OutputsAdapter(
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val textIndex: TextView = view.findViewById(R.id.txtIndex)
-        val textGroup: TextView = view.findViewById(R.id.txtGroup)
+        private val textIndex: TextView = view.findViewById(R.id.text_index)
+        val textGroup: TextView = view.findViewById(R.id.text_group)
         private val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
         fun bind (detectionItem: PartialEntity, position: Int, onPartialClickListener: (Long) -> Unit) {

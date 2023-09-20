@@ -29,8 +29,8 @@ class PredictionsAdapter(
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textIndex: TextView = view.findViewById(R.id.txtIndex)
-        val textGroup: TextView = view.findViewById(R.id.txtGroup)
+        val textIndex: TextView = view.findViewById(R.id.text_index)
+        val textGroup: TextView = view.findViewById(R.id.text_group)
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
         fun bind (detectionItem: IImageDetectionFullOutput<String>, position: Int) {

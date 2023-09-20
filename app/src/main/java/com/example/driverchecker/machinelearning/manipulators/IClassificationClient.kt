@@ -16,5 +16,5 @@ interface IClassificationClient<I, O : IClassificationOutputStats<S>, FR : IClas
     val areMetricsObservable: LiveData<Boolean>
     val lastMetricsPerGroup: Map<S, Triple<Int, Int, Int>?>
 
-//    val lastEvaluationData: Map<IWindowBasicData, IGroupMetrics<S>?>
+//    override val lastEvaluationData: Map<IWindowBasicData, IGroupMetrics<S>?>
 }

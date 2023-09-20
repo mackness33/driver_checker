@@ -44,31 +44,31 @@ class DisplayResultFragment : Fragment() {
 
         displayResultViewModel.initEvaluationId(arguments?.getLong("evaluationId"))
 
-        binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
-        binding.finalResultsView.itemAnimator = null
-        binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
-        binding.groupTableBody.itemAnimator = null
+        binding.finalWindowView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+        binding.finalWindowView.itemAnimator = null
+//        binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+//        binding.groupTableBody.itemAnimator = null
 
         displayResultViewModel.partials.observe(viewLifecycleOwner) { listPartials ->
             if (listPartials != null)
-                binding.finalResultsView.adapter = OutputsAdapter(listPartials) { partialId ->
+                binding.finalWindowView.adapter = OutputsAdapter(listPartials) { partialId ->
                     val bundle = bundleOf("partialId" to partialId)
                     findNavController().navigate(R.id.staticPhotoFragment, bundle)
                     Log.d("DisplayResultItemClick", "Item with id: $partialId has been pressed")
                 }
         }
 
-        displayResultViewModel.metricsPerGroup.observe(viewLifecycleOwner) {
-            if (it != null)
-                binding.groupTableBody.adapter = MetricsTableAdapter(it)
-        }
+//        displayResultViewModel.metricsPerGroup.observe(viewLifecycleOwner) {
+//            if (it != null)
+//                binding.groupTableBody.adapter = MetricsTableAdapter(it)
+//        }
 
         displayResultViewModel.evaluation.observe(viewLifecycleOwner) { output ->
             if (output != null) {
-                binding.textResults.text = String.format("%s",
+                binding.textMostGroup.text = String.format("%s",
                     output.supergroup.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                 )
-                binding.textConfidence.text = String.format("%.2f%%", output.confidence.times(100))
+                binding.textAvgConfidence.text = String.format("%.2f%%", output.confidence.times(100))
 //                binding.textTime.text = String.format("%.2fs", output.metrics?.totalTime)
 
                 binding.editTitle.setText(output.name)

@@ -13,6 +13,7 @@ import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
 import com.example.driverchecker.ui.adapters.PredictionsAdapter
+import com.example.driverchecker.ui.adapters.WindowsAdapter
 import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.utils.Page
 import kotlinx.coroutines.runBlocking
@@ -34,12 +35,19 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.finalWindowView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+        binding.finalWindowView.itemAnimator = null
         activityModel.finalResult.observe(viewLifecycleOwner) { output ->
-            binding.textResults.text = String.format("%s",
+            binding.textMostGroup.text = String.format("%s",
                 output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )
-            binding.textConfidence.text = String.format("%.2f%%", output?.confidence?.times(100))
+            binding.textAvgConfidence.text = String.format("%.2f%%", output?.confidence?.times(100))
 //            binding.textTime.text = String.format("%.2fs", output?.data.metrics?.totalTime)
+
+            if (output?.data != null) {
+                binding.finalWindowView.adapter = WindowsAdapter(output.data, activityModel.classificationGroups.value)
+            }
+
         }
 
         activityModel.saveImages.observe(viewLifecycleOwner) { images ->
@@ -61,13 +69,11 @@ class ResultFragment : Fragment() {
                 Toast.makeText(requireContext(), "The evaluation has been correctly saved!", Toast.LENGTH_SHORT).show()
         }
 
-        binding.finalResultsView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
-        binding.finalResultsView.itemAnimator = null
-        binding.finalResultsView.adapter = PredictionsAdapter(activityModel.lastItemsList, activityModel.classificationGroups.value)
+//        binding.finalWindowView.adapter = PredictionsAdapter(activityModel.lastItemsList, activityModel.classificationGroups.value)
 
-        binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
-        binding.groupTableBody.itemAnimator = null
-        binding.groupTableBody.adapter = MetricsTableAdapter(activityModel.metricsPerGroup)
+//        binding. .layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+//        binding.groupTableBody.itemAnimator = null
+//        binding.groupTableBody.adapter = MetricsTableAdapter(activityModel.metricsPerGroup)
 
         binding.buttonSave.text = "Save"
 
