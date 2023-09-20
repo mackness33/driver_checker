@@ -120,13 +120,20 @@ interface IMutableGroupMetrics<S> : IGroupMetrics<S> {
     fun subtract (element: IClassificationOutputStats<S>)
     fun remove (keys: Set<S>)
     fun clear ()
+
+    fun copy() : Map<S, Triple<Int, Int, Int>>
+    fun copyMetrics() : IGroupMetrics<S>
 }
 
 data class GroupMetrics<S> (
     override val groupMetrics: Map<S, Triple<Int, Int, Int>>
 ) : IGroupMetrics<S> {
     constructor (listCopyEntity: List<Pair<S, Triple<Int, Int, Int>>>) : this (
-        listCopyEntity.toMap()
+        listCopyEntity.toMap().toMutableMap()
+    )
+
+    constructor (copy: IMutableGroupMetrics<S>) : this (
+        copy.copy()
     )
 
     constructor () : this (emptyMap())

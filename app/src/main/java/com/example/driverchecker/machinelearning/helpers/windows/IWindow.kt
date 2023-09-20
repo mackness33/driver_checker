@@ -13,7 +13,7 @@ interface IWindow <E : IMachineLearningOutputStats> : IMachineLearningFinalResul
 
     fun next (element: E, offset: Double?)
 
-    fun clean ()
+    suspend fun clean ()
 
     fun getFinalResults() : IMachineLearningFinalResult
 

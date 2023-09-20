@@ -3,6 +3,7 @@ package com.example.driverchecker.machinelearning.collections
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindow
+import kotlinx.coroutines.CompletableDeferred
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -13,6 +14,8 @@ open class ImageDetectionSetOfWindows :
     protected var availableWindows: MutableMap<IWindowSettings, BasicImageDetectionWindow> = mutableMapOf()
     protected var selectedWindows: MutableSet<BasicImageDetectionWindow> = mutableSetOf()
         protected set
+
+    protected var hasFinalResultBeingCopied: CompletableDeferred<Boolean>? = null
 
     override fun initialize(availableSettings: IMultipleWindowSettings) {
         settings = availableSettings
@@ -89,17 +92,21 @@ open class ImageDetectionSetOfWindows :
             lastResult && currentIsSatisfied
         }
 
+        if (areAllSatisfied) {
+            hasFinalResultBeingCopied = CompletableDeferred(false)
+        }
+
         activeWindows = activeWindows.minus(satisfiedWindows)
 
         return areAllSatisfied
     }
 
-    @OptIn(ExperimentalTime::class)
     override fun next(element: IImageDetectionFullOutput<String>, offset: Double?) {
         activeWindows.forEach { it.next(element, offset) }
     }
 
-    override fun clean() {
+    override suspend fun clean() {
+        hasFinalResultBeingCopied?.await()
         selectedWindows.forEach { it.clean() }
 
         activeWindows = selectedWindows
@@ -136,6 +143,8 @@ open class ImageDetectionSetOfWindows :
             finalGroupScore.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key,
             getData().toMutableMap()
         )
+
+        hasFinalResultBeingCopied?.complete(true)
 
         return fr
     }

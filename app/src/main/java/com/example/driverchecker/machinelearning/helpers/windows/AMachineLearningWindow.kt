@@ -82,7 +82,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         hasAcceptedLast = true
     }
 
-    override fun clean () {
+    override suspend fun clean () {
         window.clear()
         confidence = 0f
         totEvaluationsDone = 0

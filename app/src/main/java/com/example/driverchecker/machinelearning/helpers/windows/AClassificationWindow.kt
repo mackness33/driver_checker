@@ -63,7 +63,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         }
     }
 
-    override fun clean () {
+    override suspend fun clean () {
         super.clean()
         mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
         mGroupMetrics.clear()
@@ -74,7 +74,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
     }
 
     override fun getAdditionalMetrics(): IGroupMetrics<S>? {
-        return mGroupMetrics
+        return mGroupMetrics.copyMetrics()
     }
 
     override fun updateGroups(newGroups: Set<S>) {

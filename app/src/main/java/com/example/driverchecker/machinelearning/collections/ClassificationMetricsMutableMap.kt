@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.collections
 
-import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
-import com.example.driverchecker.machinelearning.data.IClassificationWithMetrics
-import com.example.driverchecker.machinelearning.data.IMutableGroupMetrics
+import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.*
 
 open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S>,
@@ -43,6 +41,14 @@ open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S>,
 
     override fun clear () {
         mMetrics.clear()
+    }
+
+    override fun copy() : Map<S, Triple<Int, Int, Int>> {
+        return groupMetrics.toMutableMap()
+    }
+
+    override fun copyMetrics() : IGroupMetrics<S> {
+        return GroupMetrics(this)
     }
 
     private fun sumAllObjectsFound (setOfClassifications: Set<IClassificationWithMetrics<S>>) : Int {
