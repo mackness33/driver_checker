@@ -10,7 +10,7 @@
     android:weightSum="5">
 
     <TextView
-        android:id="@+id/txtIndex"
+        android:id="@+id/text_index"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -18,20 +18,20 @@
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/txtGroup"
+        android:id="@+id/text_group"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:textAlignment="center"
         android:textSize="30sp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/color_class_view"
+    <TextView
+        android:id="@+id/text_time"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        tools:listitem="@layout/color_item" />
-
+        android:textAlignment="center"
+        android:textSize="30sp" />
 
     <ImageView
         android:id="@+id/imgInput"
