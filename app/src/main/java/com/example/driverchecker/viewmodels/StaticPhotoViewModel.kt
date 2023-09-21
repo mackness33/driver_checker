@@ -19,8 +19,8 @@ class StaticPhotoViewModel(private val repository: EvaluationRepository) : ViewM
     val partial: LiveData<String>
         get() = mPartial
 
-    private val mItems: MutableLiveData<Triple<List<ItemEntity>, Set<String>, String>> = MutableLiveData(null)
-    val items: LiveData<Triple<List<ItemEntity>, Set<String>, String>>
+    private val mItems: MutableLiveData<Pair<List<ItemEntity>, String>> = MutableLiveData(null)
+    val items: LiveData<Pair<List<ItemEntity>, String>>
         get() = mItems
 
     fun initPartialId (id: Long?) = viewModelScope.launch {
@@ -35,7 +35,7 @@ class StaticPhotoViewModel(private val repository: EvaluationRepository) : ViewM
             mPartial.postValue(partial.path ?: "")
             val metrics = repository.getAllMetricsOfEvaluationAsMap(partial.evaluationId)
             val items = repository.getAllItemsOfPartial(id)
-            mItems.postValue(Triple(items, metrics.keys, partial.group))
+            mItems.postValue(Pair(items, partial.group))
         }
     }
 

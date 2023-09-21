@@ -48,8 +48,8 @@ class StaticPhotoFragment : Fragment() {
 
         staticPhotoViewModel.items.observe(viewLifecycleOwner) { triple ->
             if (triple != null) {
-                binding.resultView.setColorSchemes(triple.second)
-                binding.resultView.setResults(triple.first, triple.third)
+//                binding.resultView.setColorSchemes(triple.second)
+                binding.resultView.setResults(triple.first, triple.second)
                 binding.resultView.invalidate()
             }
         }

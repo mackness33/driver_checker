@@ -23,7 +23,7 @@ class ResultView : View {
     private var resizedRect: RectF = RectF()
     private var actualColorScale: IColorScale = ColorManager.listColors.first()
     private var itemResults: List<DrawableItemResult>? = null
-    private var colorList: Set<String>? = null
+    private var colorList: Set<String>? = setOf("driver", "passenger")
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)

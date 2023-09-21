@@ -42,14 +42,14 @@ class DisplayResultViewModel(private val repository: EvaluationRepository) : Vie
         evaluationId = id
 
         launch(Dispatchers.IO) {
-            mMetricsPerGroup.postValue(repository.getAllMetricsOfEvaluationAsMap(id))
+//            mMetricsPerGroup.postValue(repository.getAllMetricsOfEvaluationAsMap(id))
             mEvaluation.postValue(repository.getEvaluation(id))
             mWindowInformation.postValue(repository.getAllInformationOfEvaluationAsMap(id))
         }
 
-        launch(Dispatchers.IO) {
-            repository.getAllPartialsOfEvaluation(id).collect { mPartials.postValue(it) }
-        }
+//        launch(Dispatchers.IO) {
+//            repository.getAllPartialsOfEvaluation(id).collect { mPartials.postValue(it) }
+//        }
     }
 
     fun initPartials (id: Long?) = viewModelScope.launch {
