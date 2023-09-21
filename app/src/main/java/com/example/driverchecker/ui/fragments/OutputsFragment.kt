@@ -60,11 +60,12 @@ class OutputsFragment : Fragment() {
             }
             evaluationId == null -> {}
             evaluationId > 0L -> {
+                displayResultViewModel.initPartials(evaluationId)
+
                 displayResultViewModel.partials.observe(viewLifecycleOwner) { listPartials ->
                     if (listPartials != null)
                         binding.finalWindowView.adapter = OutputsAdapter(
                             listPartials,
-                            activityModel.classificationGroups.value,
                             ::navigateToStaticPhoto
                         )
                 }

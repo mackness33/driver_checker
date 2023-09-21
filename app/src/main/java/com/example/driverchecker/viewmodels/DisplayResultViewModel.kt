@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.example.driverchecker.database.entity.EvaluationEntity
 import com.example.driverchecker.database.EvaluationRepository
 import com.example.driverchecker.database.entity.PartialEntity
+import com.example.driverchecker.machinelearning.data.IGroupMetrics
+import com.example.driverchecker.machinelearning.data.IWindowBasicData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -28,8 +30,12 @@ class DisplayResultViewModel(private val repository: EvaluationRepository) : Vie
     val metricsPerGroup: LiveData<Map<String, Triple<Int, Int, Int>?>>
         get() = mMetricsPerGroup
 
+    private val mWindowInformation: MutableLiveData<Map<IWindowBasicData, IGroupMetrics<String>>> = MutableLiveData(null)
+    val windowInformation: LiveData<Map<IWindowBasicData, IGroupMetrics<String>>>
+        get() = mWindowInformation
+
     fun initEvaluationId (id: Long?) = viewModelScope.launch {
-        if (id == null) {
+        if (id == null || id <= 0) {
             return@launch
         }
 
@@ -38,7 +44,20 @@ class DisplayResultViewModel(private val repository: EvaluationRepository) : Vie
         launch(Dispatchers.IO) {
             mMetricsPerGroup.postValue(repository.getAllMetricsOfEvaluationAsMap(id))
             mEvaluation.postValue(repository.getEvaluation(id))
+            mWindowInformation.postValue(repository.getAllInformationOfEvaluationAsMap(id))
         }
+
+        launch(Dispatchers.IO) {
+            repository.getAllPartialsOfEvaluation(id).collect { mPartials.postValue(it) }
+        }
+    }
+
+    fun initPartials (id: Long?) = viewModelScope.launch {
+        if (id == null) {
+            return@launch
+        }
+
+        evaluationId = id
 
         launch(Dispatchers.IO) {
             repository.getAllPartialsOfEvaluation(id).collect { mPartials.postValue(it) }

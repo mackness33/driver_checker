@@ -38,6 +38,22 @@ class EvaluationRepository(
         return metricMap
     }
 
+    fun getAllInformationOfEvaluationAsMap (evaluationId: Long) : Map<IWindowBasicData, IGroupMetrics<String>> {
+        val infoMap: MutableMap<IWindowBasicData, IGroupMetrics<String>> = mutableMapOf()
+        windowInformationDao.getWindowInformationByEvaluation(evaluationId).forEach { window ->
+            val groupMetricPerWindowMap: MutableMap<String, Triple<Int, Int, Int>> = mutableMapOf()
+            val groupMetric = groupMetricsDao.getGroupMetricsByWindowMetrics(window.id)
+            infoMap.putIfAbsent(
+                WindowBasicData(window.metrics, window.settings),
+                GroupMetrics(groupMetric.associate {
+                    it.group to Triple(it.totalImages, it.totalClasses, it.totalObjects)
+                }.toList())
+            )
+        }
+
+        return infoMap
+    }
+
     fun getAllPartialsOfEvaluation (evaluationId: Long) : Flow<List<PartialEntity>> {
         return partialDao.getPartialsPerEvaluation(evaluationId)
     }

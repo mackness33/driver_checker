@@ -21,8 +21,8 @@ import java.util.*
 //   made of all the classView
 class OutputsAdapter(
     private val items: List<PartialEntity>,
+    private val onPartialClickListener: (Long?, Int?) -> Unit,
     private var colorList: Set<String>? = setOf("driver", "passenger"),
-    private val onPartialClickListener: (Long?, Int?) -> Unit
 ) : RecyclerView.Adapter<OutputsAdapter.ViewHolder>() {
 
     /**

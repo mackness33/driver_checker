@@ -64,6 +64,14 @@ class DisplayResultFragment : Fragment() {
 //                binding.groupTableBody.adapter = MetricsTableAdapter(it)
 //        }
 
+        displayResultViewModel.windowInformation.observe(viewLifecycleOwner) {
+            if (it != null)
+                binding.finalWindowView.adapter = WindowsAdapter(it) { _ ->
+                    val bundle = bundleOf("evaluationId" to (displayResultViewModel.evaluationId ?: -1L))
+                    findNavController().navigate(R.id.outputFragment, bundle)
+                }
+        }
+
         displayResultViewModel.evaluation.observe(viewLifecycleOwner) { output ->
             if (output != null) {
                 binding.textMostGroup.text = String.format("%s",
@@ -78,6 +86,11 @@ class DisplayResultFragment : Fragment() {
 //                    val bundle = bundleOf("indexLastImage" to indexLastImage)
 //                    findNavController().navigate(R.id.outputFragment, bundle)
 //                }
+//                if (it != null)
+//                    binding.finalWindowView.adapter = WindowsAdapter(it) { _ ->
+//                        val bundle = bundleOf("evaluationId" to evaluationId)
+//                        findNavController().navigate(R.id.outputFragment, bundle)
+//                    }
             }
         }
 

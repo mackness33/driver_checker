@@ -1,6 +1,8 @@
 package com.example.driverchecker.machinelearning.data
 
 import androidx.room.ColumnInfo
+import com.example.driverchecker.database.entity.GroupMetricsEntity
+import com.example.driverchecker.database.entity.WindowInformationEntity
 
 
 /* NEW METRICS */
@@ -155,6 +157,10 @@ data class GroupMetrics<S> (
     constructor (listCopyEntity: List<Pair<S, Triple<Int, Int, Int>>>) : this (
         listCopyEntity.toMap().toMutableMap()
     )
+
+//    constructor (listEntity: List<GroupMetricsEntity>) : this (
+//        listCopyEntity.toMap().toMutableMap()
+//    )
 
     constructor (copy: IMutableGroupMetrics<S>) : this (
         copy.copy()
