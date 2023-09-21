@@ -35,15 +35,16 @@ class PredictionsAdapter(
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
         fun bind (detectionItem: IImageDetectionFullOutput<String>, position: Int, onPredictionClickListener: (Long?, Int?) -> Unit) {
-            val bitmap: Bitmap = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
-            imageInput.setImageBitmap(bitmap)
+//            val bitmap: Bitmap = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
+            imageInput.setImageBitmap(detectionItem.input.input)
             textIndex.text = position.toString()
             textGroup.text = detectionItem.groups.keys.first().replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
 
             itemView.setOnClickListener { _ ->
-                onPredictionClickListener(null, position)
+                onPredictionClickListener(null
+                    , position)
             }
         }
     }

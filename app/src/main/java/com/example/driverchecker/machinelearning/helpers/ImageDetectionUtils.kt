@@ -29,7 +29,7 @@ object ImageDetectionUtils {
 
         // Do an argument sort on the confidence scores, from high to low.
 //        val res = boxes.listItems.sort { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
-        val sortedBoxes = boxes.sortedWith { o1, o2 -> o1.confidence.compareTo(o2.confidence) }
+        val sortedBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
         val selected: ClassificationItemMutableList<IImageDetectionFullItem<S>, S> = ClassificationItemMutableList(10)
         val active = BooleanArray(sortedBoxes.size)
         Arrays.fill(active, true)

@@ -6,6 +6,7 @@ import com.example.driverchecker.machinelearning.collections.ClassificationItemM
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
+import com.example.driverchecker.utils.BitmapUtils
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.pytorch.*
@@ -30,7 +31,8 @@ class YOLOModel :
 
     override fun preProcess(data: IImageDetectionInput): IImageDetectionInput {
         val resizedBitmap = Bitmap.createScaledBitmap(data.input, inputWidth, inputHeight, true)
-        return ImageDetectionInput(resizedBitmap)
+        val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(resizedBitmap, -90f)
+        return ImageDetectionInput(rotatedBitmap)
     }
 
     override fun evaluateData(input: IImageDetectionInput): IImageDetectionFullOutput<String> {
