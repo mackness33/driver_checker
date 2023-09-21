@@ -32,7 +32,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
     }
 
     override fun preUpdate (element: E) : Boolean{
-        if (element.groups.isEmpty()) {
+        if (element.groups.isEmpty() || element.groups.size > 1) {
             return false
         }
 
@@ -85,7 +85,6 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
 
 
     /* OLD */
-
     override fun getOldFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>> {
         return Pair(getOldMetrics(), groupMetrics)
     }
