@@ -23,6 +23,11 @@ open class BasicImageDetectionWindow (
         return WindowBasicData(this)
     }
 
+    override fun update () {
+        print("")
+        super.update()
+    }
+
     companion object Factory : IImageDetectionWindowFactory {
         override fun buildClassificationWindow(
             frames: Int,

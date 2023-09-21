@@ -67,6 +67,7 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         super.clean()
         mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
         mGroupMetrics.clear()
+        mGroupMetrics.initialize(mSupergroupCounter.keys)
     }
 
     override fun getData(): Pair<IWindowBasicData, IGroupMetrics<S>?> {

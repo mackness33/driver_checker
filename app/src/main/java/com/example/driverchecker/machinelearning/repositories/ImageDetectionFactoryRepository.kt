@@ -23,7 +23,7 @@ class ImageDetectionFactoryRepository
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindows: ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> = ImageDetectionSetOfWindows()
+    override val collectionOfWindows: ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> = ImageDetectionSetOfWindows(repositoryScope)
 
     init {
         initialize()

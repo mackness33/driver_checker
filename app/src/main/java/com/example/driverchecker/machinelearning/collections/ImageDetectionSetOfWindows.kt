@@ -3,11 +3,17 @@ package com.example.driverchecker.machinelearning.collections
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindow
+import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
+import com.example.driverchecker.utils.CompletableData
+import com.example.driverchecker.utils.DeferrableData
+import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancelAndJoin
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-open class ImageDetectionSetOfWindows :
+open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
     ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> {
     override var groups: Set<String> = emptySet()
         protected set
@@ -15,7 +21,9 @@ open class ImageDetectionSetOfWindows :
     protected var selectedWindows: MutableSet<BasicImageDetectionWindow> = mutableSetOf()
         protected set
 
-    protected var hasFinalResultBeingCopied: CompletableDeferred<Boolean>? = null
+    protected var hasFinalResultBeingCopied: MutableCompletableData<Boolean> = DeferrableData(false, scope.coroutineContext)
+
+    protected var madeAWholeEvaluation: Boolean = false
 
     override fun initialize(availableSettings: ISettings) {
         settings = availableSettings
@@ -93,7 +101,8 @@ open class ImageDetectionSetOfWindows :
         }
 
         if (areAllSatisfied) {
-            hasFinalResultBeingCopied = CompletableDeferred(false)
+            madeAWholeEvaluation = true
+            print("")
         }
 
         activeWindows = activeWindows.minus(satisfiedWindows)
@@ -106,9 +115,13 @@ open class ImageDetectionSetOfWindows :
     }
 
     override suspend fun clean() {
-        hasFinalResultBeingCopied?.await()
+        if (madeAWholeEvaluation)
+            hasFinalResultBeingCopied.await()
+
         selectedWindows.forEach { it.clean() }
 
+        hasFinalResultBeingCopied.reset()
+        madeAWholeEvaluation = false
         activeWindows = selectedWindows
     }
 
@@ -145,7 +158,7 @@ open class ImageDetectionSetOfWindows :
             settings.modelThreshold
         )
 
-        hasFinalResultBeingCopied?.complete(true)
+        hasFinalResultBeingCopied.complete(true)
 
         return fr
     }

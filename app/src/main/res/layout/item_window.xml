@@ -168,7 +168,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"
-                android:text="Total Frames:"
+                android:text="Total Windows:"
                 android:textSize="15sp" />
             <TextView
                 android:id="@+id/text_total_frames"
