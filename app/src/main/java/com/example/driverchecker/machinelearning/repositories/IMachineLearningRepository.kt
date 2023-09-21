@@ -21,4 +21,6 @@ interface IMachineLearningRepository<in I, out O : IMachineLearningOutputStats, 
     val repositoryScope: CoroutineScope
     val availableSettings: IMultipleWindowSettings
     val settings: ObservableData<ISettings>
+
+    fun updateModelThreshold (threshold: Float)
 }

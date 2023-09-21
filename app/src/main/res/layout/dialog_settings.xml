@@ -20,16 +20,16 @@
 
 
     <!--  WINDOW FRAME  -->
-    <TextView android:id="@+id/text_window_frame"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:text="Window Frame:"
-        app:layout_constraintStart_toStartOf="@id/text_window_threshold"
-        app:layout_constraintEnd_toEndOf="@id/text_window_threshold"
-        app:layout_constraintBottom_toBottomOf="@id/edit_window_frame"
-        app:layout_constraintTop_toTopOf="@id/edit_window_frame"
-        />
+<!--    <TextView android:id="@+id/text_window_frame"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="end"-->
+<!--        android:text="Window Frame:"-->
+<!--        app:layout_constraintStart_toStartOf="@id/text_window_threshold"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/text_window_threshold"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/edit_window_frame"-->
+<!--        app:layout_constraintTop_toTopOf="@id/edit_window_frame"-->
+<!--        />-->
 
 <!--    <RadioGroup android:id="@+id/layout_window_frame"-->
 <!--        android:layout_width="wrap_content"-->
@@ -89,47 +89,47 @@
 <!--        </RadioGroup>-->
 
 <!--    </RadioGroup>-->
-    <EditText
-        android:id="@+id/edit_window_frame"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="5dp"
-        android:inputType="number"
-        android:gravity="center"
-        android:maxLength="2"
-        app:layout_constraintTop_toBottomOf="@id/text_title"
-        app:layout_constraintStart_toEndOf="@id/text_window_threshold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/edit_window_threshold" />
+<!--    <EditText-->
+<!--        android:id="@+id/edit_window_frame"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginHorizontal="10dp"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:layout_marginBottom="5dp"-->
+<!--        android:inputType="number"-->
+<!--        android:gravity="center"-->
+<!--        android:maxLength="2"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/text_title"-->
+<!--        app:layout_constraintStart_toEndOf="@id/text_window_threshold"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/edit_window_threshold" />-->
 
 
 
     <!--  WINDOW THRESHOLD  -->
-    <TextView android:id="@+id/text_window_threshold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Window Threshold:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/edit_window_threshold"
-        app:layout_constraintTop_toTopOf="@id/edit_window_threshold"
-        app:layout_constraintBottom_toBottomOf="@id/edit_window_threshold"
-        app:layout_constraintBaseline_toBaselineOf="@id/edit_window_threshold"
-        />
+<!--    <TextView android:id="@+id/text_window_threshold"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Window Threshold:"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/edit_window_threshold"-->
+<!--        app:layout_constraintTop_toTopOf="@id/edit_window_threshold"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/edit_window_threshold"-->
+<!--        app:layout_constraintBaseline_toBaselineOf="@id/edit_window_threshold"-->
+<!--        />-->
 
-    <EditText
-        android:id="@+id/edit_window_threshold"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="5dp"
-        android:inputType="numberDecimal"
-        android:gravity="center"
-        android:maxLength="4"
-        app:layout_constraintBottom_toTopOf="@id/edit_model_threshold"
-        app:layout_constraintEnd_toEndOf="@id/edit_window_frame"
-        app:layout_constraintStart_toStartOf="@id/edit_window_frame"
-        app:layout_constraintTop_toBottomOf="@id/edit_window_frame" />
+<!--    <EditText-->
+<!--        android:id="@+id/edit_window_threshold"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginVertical="5dp"-->
+<!--        android:inputType="numberDecimal"-->
+<!--        android:gravity="center"-->
+<!--        android:maxLength="4"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/edit_model_threshold"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/edit_window_frame"-->
+<!--        app:layout_constraintStart_toStartOf="@id/edit_window_frame"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/edit_window_frame" />-->
 
 
     <!--  MODEL THRESHOLD  -->
@@ -139,12 +139,18 @@
         android:layout_height="wrap_content"
         android:text="Model Threshold:"
         android:gravity="end"
-        app:layout_constraintStart_toStartOf="@id/text_window_threshold"
-        app:layout_constraintEnd_toEndOf="@id/text_window_threshold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/edit_model_threshold"
         app:layout_constraintBottom_toBottomOf="@id/edit_model_threshold"
         app:layout_constraintTop_toTopOf="@id/edit_model_threshold"
         app:layout_constraintBaseline_toBaselineOf="@id/edit_model_threshold"
         />
+<!--        app:layout_constraintStart_toStartOf="@id/text_window_threshold"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/text_window_threshold"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/edit_model_threshold"-->
+<!--        app:layout_constraintTop_toTopOf="@id/edit_model_threshold"-->
+<!--        app:layout_constraintBaseline_toBaselineOf="@id/edit_model_threshold"-->
+<!--        />-->
 
     <EditText
         android:id="@+id/edit_model_threshold"
@@ -154,11 +160,17 @@
         android:inputType="numberDecimal"
         android:gravity="center"
         android:maxLength="4"
-        app:layout_constraintStart_toStartOf="@id/edit_window_frame"
-        app:layout_constraintEnd_toEndOf="@id/edit_window_frame"
-        app:layout_constraintBottom_toBottomOf="@id/layout_footer_button"
-        app:layout_constraintTop_toBottomOf="@id/edit_window_threshold"
+        app:layout_constraintTop_toBottomOf="@id/text_title"
+        app:layout_constraintStart_toEndOf="@id/text_model_threshold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/layout_footer_button"
         />
+<!--        app:layout_constraintStart_toStartOf="@id/edit_window_frame"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/edit_window_frame"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/layout_footer_button"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/edit_window_threshold"-->
+
+
 
 
     <!--  BUTTON FOOTER  -->

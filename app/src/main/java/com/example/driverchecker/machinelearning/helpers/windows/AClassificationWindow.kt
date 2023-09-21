@@ -22,8 +22,8 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         get() = mGroupMetrics
 
     override fun getFinalGroup(): S = mSupergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key
-
     override fun initialize(
+
         settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?, supergroups: Set<S>
     ) {
         initialize(settings, newStart)

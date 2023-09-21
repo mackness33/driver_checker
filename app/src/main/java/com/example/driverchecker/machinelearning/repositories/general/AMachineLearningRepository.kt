@@ -42,7 +42,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     )
     protected val mSettings: MutableObservableData<ISettings> = StatefulData(Settings(
         availableSettings.multipleWindowsFrames.subList(2,4),
-        availableSettings.multipleWindowsThresholds.subList(0,2),
+        availableSettings.multipleWindowsThresholds.subList(1,4),
         availableSettings.multipleTypes.subList(0,1),
         0.10f
     ))
@@ -63,6 +63,17 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         collectionOfWindows.initialize(availableSettings)
         collectionOfWindows.updateSettings(privateSettings)
     }
+
+    override fun updateModelThreshold (threshold: Float) {
+        model?.updateThreshold(threshold)
+        collectionOfWindows.updateSettings(Settings(
+            availableSettings.multipleWindowsFrames.subList(2,4),
+            availableSettings.multipleWindowsThresholds.subList(1,4),
+            availableSettings.multipleTypes.subList(0,1),
+            threshold
+        ))
+    }
+
 
     private fun startListenModelState() = modelListener?.listen(repositoryScope, model?.isLoaded)
 

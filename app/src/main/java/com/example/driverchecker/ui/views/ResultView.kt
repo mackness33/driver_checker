@@ -44,6 +44,7 @@ class ResultView : View {
         if (itemResults == null) return
 
         itemResults?.forEach { item ->
+
             resizedRect.set(
                 item.rect.left * (width / 640) + paintRectangle.strokeWidth,
                 item.rect.top * (height / 640) + paintRectangle.strokeWidth,

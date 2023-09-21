@@ -42,7 +42,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     )
                     timer.markStart()
 
-                    model?.updateThreshold(newSettings.modelThreshold)
+//                    model?.updateThreshold(newSettings.modelThreshold)
                     oldSettings = newSettings
                     oldTimer.markStart()
                     window.initialize(

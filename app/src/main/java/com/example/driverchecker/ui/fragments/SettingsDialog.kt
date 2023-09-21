@@ -67,31 +67,31 @@ class SettingsDialog : DialogFragment() {
 
          */
 
-        binding.editWindowFrame.setText(
-            String.format("%d", activityModel.oldSettings.windowFrames)
-        )
-        binding.editWindowThreshold.setText(
-            String.format("%.2f", activityModel.oldSettings.windowThreshold)
-        )
+//        binding.editWindowFrame.setText(
+//            String.format("%d", activityModel.oldSettings.windowFrames)
+//        )
+//        binding.editWindowThreshold.setText(
+//            String.format("%.2f", activityModel.oldSettings.windowThreshold)
+//        )
         binding.editModelThreshold.setText(
             String.format("%.2f", activityModel.oldSettings.modelThreshold)
         )
 
         binding.buttonSave.setOnClickListener {
             try {
-                val possibleWindowFrame = binding.editWindowFrame.text.toString().toIntOrNull()
-                val windowFrame: Int = when {
-                    possibleWindowFrame == null -> throw SettingsException("The number of frames for the window is not valid", null)
-                    possibleWindowFrame > 11 || possibleWindowFrame < 1 -> throw SettingsException("The number of frames must be between then 1 and 11 included", null)
-                    else -> possibleWindowFrame
-                }
-
-                val possibleWindowThreshold = binding.editWindowThreshold.text.toString().toFloatOrNull()
-                val windowThreshold: Float = when {
-                    possibleWindowThreshold == null -> throw SettingsException("The threshold for the window is not valid", null)
-                    possibleWindowThreshold > 1.00f || possibleWindowThreshold < 0.00f -> throw SettingsException("The threshold for the window must be between 0.00 and 1.00", null)
-                    else -> possibleWindowThreshold
-                }
+//                val possibleWindowFrame = binding.editWindowFrame.text.toString().toIntOrNull()
+//                val windowFrame: Int = when {
+//                    possibleWindowFrame == null -> throw SettingsException("The number of frames for the window is not valid", null)
+//                    possibleWindowFrame > 11 || possibleWindowFrame < 1 -> throw SettingsException("The number of frames must be between then 1 and 11 included", null)
+//                    else -> possibleWindowFrame
+//                }
+//
+//                val possibleWindowThreshold = binding.editWindowThreshold.text.toString().toFloatOrNull()
+//                val windowThreshold: Float = when {
+//                    possibleWindowThreshold == null -> throw SettingsException("The threshold for the window is not valid", null)
+//                    possibleWindowThreshold > 1.00f || possibleWindowThreshold < 0.00f -> throw SettingsException("The threshold for the window must be between 0.00 and 1.00", null)
+//                    else -> possibleWindowThreshold
+//                }
 
                 val possibleModelThreshold = binding.editModelThreshold.text.toString().toFloatOrNull()
                 val modelThreshold: Float = when {
@@ -100,7 +100,8 @@ class SettingsDialog : DialogFragment() {
                     else -> possibleModelThreshold
                 }
 
-                activityModel.saveSettings(OldSettings(windowFrame, windowThreshold, modelThreshold))
+//                activityModel.saveSettings(OldSettings(1, 0.10f, modelThreshold))
+                activityModel.updateModelThreshold(modelThreshold)
                 Toast.makeText(requireContext(), "The new settings have been saved", Toast.LENGTH_LONG).show()
             } catch (se: SettingsException) {
                 Toast.makeText(requireContext(), se.message, Toast.LENGTH_LONG).show()

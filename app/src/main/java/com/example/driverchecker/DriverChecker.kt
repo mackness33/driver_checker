@@ -26,7 +26,7 @@ class DriverChecker : Application() {
     val repository by lazy { ImageDetectionFactoryRepository.getInstance(
         "YoloV5",
         mapOf(
-            "path" to FileUtils.assetFilePath(this, "weak_four_classes.ptl"),
+            "path" to FileUtils.assetFilePath(this, "four_classes.ptl"),
             "classification" to FileUtils.assetLoadJson(this, "classification.json"),
         ),
         applicationScope,

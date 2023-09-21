@@ -74,6 +74,10 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         mAwaitEndInsert.complete(evalId)
     }
 
+    fun updateModelThreshold (modelThreshold: Float) {
+        imageDetectionRepository.updateModelThreshold(modelThreshold)
+    }
+
 
     fun update(name: String) = viewModelScope.launch {
         if (mAwaitEndInsert.value != null && mAwaitEndInsert.value!! > 0)
