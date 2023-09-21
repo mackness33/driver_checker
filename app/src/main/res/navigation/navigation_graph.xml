@@ -21,7 +21,22 @@
         android:id="@+id/resultFragment"
         android:name="com.example.driverchecker.ui.fragments.ResultFragment"
         android:label="@string/label_result"
-        tools:layout="@layout/fragment_result" />
+        tools:layout="@layout/fragment_result" >
+    </fragment>
+    <fragment
+        android:id="@+id/outputFragment"
+        android:label="Output"
+        android:name="com.example.driverchecker.ui.fragments.OutputsFragment"
+        tools:layout="@layout/fragment_outputs">
+        <argument
+            android:name="evaluationId"
+            app:argType="long"
+            android:defaultValue="-1L"/>
+        <argument
+            android:name="indexLastPhoto"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+    </fragment>
     <fragment
         android:id="@+id/logFragment"
         android:name="com.example.driverchecker.ui.fragments.LogFragment"
@@ -50,6 +65,10 @@
             android:name="partialId"
             app:argType="long"
             android:defaultValue="-1L" />
+        <argument
+            android:name="indexPartial"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
 
     <!--  INFORMATION  -->

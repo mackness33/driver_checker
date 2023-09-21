@@ -22,7 +22,7 @@ import java.util.*
 class OutputsAdapter(
     private val items: List<PartialEntity>,
     private var colorList: Set<String>? = setOf("driver", "passenger"),
-    private val onPartialClickListener: (Long) -> Unit
+    private val onPartialClickListener: (Long?, Int?) -> Unit
 ) : RecyclerView.Adapter<OutputsAdapter.ViewHolder>() {
 
     /**
@@ -34,7 +34,7 @@ class OutputsAdapter(
         val textGroup: TextView = view.findViewById(R.id.text_group)
         private val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
-        fun bind (detectionItem: PartialEntity, position: Int, onPartialClickListener: (Long) -> Unit) {
+        fun bind (detectionItem: PartialEntity, position: Int, onPartialClickListener: (Long?, Int?) -> Unit) {
             val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(detectionItem.path)
             imageInput.setImageBitmap(bitmap)
             textIndex.text = position.toString()
@@ -43,7 +43,7 @@ class OutputsAdapter(
             }
 
             itemView.setOnClickListener { _ ->
-                    onPartialClickListener(detectionItem.id)
+                onPartialClickListener(detectionItem.id, null)
             }
         }
     }
@@ -62,7 +62,7 @@ class OutputsAdapter(
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bind(items[position], position, onPartialClickListener)
+        viewHolder.bind(items[position], (position + 1), onPartialClickListener)
 
         var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(items[position].group) }
         indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 7 else indexOfGroup

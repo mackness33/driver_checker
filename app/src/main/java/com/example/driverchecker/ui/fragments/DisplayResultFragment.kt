@@ -18,6 +18,7 @@ import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
 import com.example.driverchecker.ui.adapters.OutputsAdapter
+import com.example.driverchecker.ui.adapters.WindowsAdapter
 import com.example.driverchecker.viewmodels.DisplayResultViewModel
 import com.example.driverchecker.viewmodels.DisplayResultViewModelFactory
 import com.example.driverchecker.viewmodels.LogViewModelFactory
@@ -49,14 +50,14 @@ class DisplayResultFragment : Fragment() {
 //        binding.groupTableBody.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
 //        binding.groupTableBody.itemAnimator = null
 
-        displayResultViewModel.partials.observe(viewLifecycleOwner) { listPartials ->
-            if (listPartials != null)
-                binding.finalWindowView.adapter = OutputsAdapter(listPartials) { partialId ->
-                    val bundle = bundleOf("partialId" to partialId)
-                    findNavController().navigate(R.id.staticPhotoFragment, bundle)
-                    Log.d("DisplayResultItemClick", "Item with id: $partialId has been pressed")
-                }
-        }
+//        displayResultViewModel.partials.observe(viewLifecycleOwner) { listPartials ->
+//            if (listPartials != null)
+//                binding.finalWindowView.adapter = OutputsAdapter(listPartials) { partialId ->
+//                    val bundle = bundleOf("partialId" to partialId)
+//                    findNavController().navigate(R.id.staticPhotoFragment, bundle)
+//                    Log.d("DisplayResultItemClick", "Item with id: $partialId has been pressed")
+//                }
+//        }
 
 //        displayResultViewModel.metricsPerGroup.observe(viewLifecycleOwner) {
 //            if (it != null)
@@ -72,6 +73,11 @@ class DisplayResultFragment : Fragment() {
 //                binding.textTime.text = String.format("%.2fs", output.metrics?.totalTime)
 
                 binding.editTitle.setText(output.name)
+                binding.textModelThreshold.text = String.format("%.2f%%", output.modelThreshold.times(100))
+//                binding.finalWindowView.adapter = WindowsAdapter(output, activityModel.classificationGroups.value) { indexLastImage ->
+//                    val bundle = bundleOf("indexLastImage" to indexLastImage)
+//                    findNavController().navigate(R.id.outputFragment, bundle)
+//                }
             }
         }
 

@@ -24,7 +24,7 @@ class StaticPhotoViewModel(private val repository: EvaluationRepository) : ViewM
         get() = mItems
 
     fun initPartialId (id: Long?) = viewModelScope.launch {
-        if (id == null) {
+        if (id == null || id <= 0) {
             return@launch
         }
 

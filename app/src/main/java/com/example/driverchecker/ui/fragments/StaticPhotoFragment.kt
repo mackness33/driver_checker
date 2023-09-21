@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.driverchecker.DriverChecker
 import com.example.driverchecker.databinding.FragmentStaticPhotoBinding
+import com.example.driverchecker.machinelearning.data.IImageDetectionItem
 import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.viewmodels.*
 
@@ -52,8 +53,19 @@ class StaticPhotoFragment : Fragment() {
                 binding.resultView.invalidate()
             }
         }
-    }
 
+        val indexPartial = arguments?.getInt("indexPartial")
+
+        if (indexPartial != null && indexPartial >= 1 && indexPartial <= activityModel.lastItemsList.size){
+            val output = activityModel.lastItemsList.elementAt(indexPartial-1)
+            val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(output.input.input, -90.0f)
+            binding.imageView.setImageBitmap(rotatedBitmap)
+
+            binding.resultView.setColorSchemes(activityModel.classificationGroups.value)
+            binding.resultView.setResults(output)
+            binding.resultView.invalidate()
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

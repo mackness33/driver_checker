@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +25,8 @@ import java.util.*
 //   made of all the classView
 class WindowsAdapter(
     private val items: Map<IWindowBasicData, IGroupMetrics<String>?>,
-    private var colorList: Set<String>? = setOf("driver", "passenger")
+    private val colorList: Set<String>? = setOf("driver", "passenger"),
+    private val onPartialClickListener: (Int) -> Unit
 ) : RecyclerView.Adapter<WindowsAdapter.ViewHolder>() {
 
     /**
@@ -45,8 +47,9 @@ class WindowsAdapter(
         val textPassengerTotalImages: TextView = view.findViewById(R.id.text_images_passenger)
         val textPassengerTotalClasses: TextView = view.findViewById(R.id.text_classes_passenger)
         val textPassengerTotalObjects: TextView = view.findViewById(R.id.text_objects_passenger)
+        val buttonCheckImages: Button = view.findViewById((R.id.button_check_images))
 
-        fun bind (detectionItem: Pair<IWindowBasicData, IGroupMetrics<String>?>) {
+        fun bind (detectionItem: Pair<IWindowBasicData, IGroupMetrics<String>?>, onOutputButtonClickListener: (Int) -> Unit) {
             textResult.text = String.format("%s",
                 detectionItem.first.supergroup.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )
@@ -71,6 +74,10 @@ class WindowsAdapter(
                     }
                 }
             }
+
+            buttonCheckImages.setOnClickListener { _ ->
+                onOutputButtonClickListener(detectionItem.first.totalWindows + detectionItem.first.windowFrames - 1)
+            }
         }
     }
 
@@ -88,7 +95,7 @@ class WindowsAdapter(
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bind(items.toList()[position])
+        viewHolder.bind(items.toList()[position], onPartialClickListener)
 //        var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(items[position].groups.keys.first()) }
 //        indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
 //

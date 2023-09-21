@@ -21,7 +21,8 @@ import java.util.*
 //   made of all the classView
 class PredictionsAdapter(
     private val items: List<IImageDetectionFullOutput<String>>,
-    private var colorList: Set<String>? = setOf("driver", "passenger")
+    private var colorList: Set<String>? = setOf("driver", "passenger"),
+    private val onPredictionClickListener: (Long?, Int?) -> Unit
 ) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {
 
     /**
@@ -33,12 +34,16 @@ class PredictionsAdapter(
         val textGroup: TextView = view.findViewById(R.id.text_group)
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
-        fun bind (detectionItem: IImageDetectionFullOutput<String>, position: Int) {
+        fun bind (detectionItem: IImageDetectionFullOutput<String>, position: Int, onPredictionClickListener: (Long?, Int?) -> Unit) {
             val bitmap: Bitmap = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
             imageInput.setImageBitmap(bitmap)
             textIndex.text = position.toString()
             textGroup.text = detectionItem.groups.keys.first().replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            }
+
+            itemView.setOnClickListener { _ ->
+                onPredictionClickListener(null, position)
             }
         }
     }
@@ -57,7 +62,7 @@ class PredictionsAdapter(
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bind(items[position], position)
+        viewHolder.bind(items[position], (position + 1), onPredictionClickListener)
         var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(items[position].groups.keys.first()) }
         indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
 

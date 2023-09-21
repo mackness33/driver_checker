@@ -1,17 +1,22 @@
 package com.example.driverchecker.ui.fragments;
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.driverchecker.R
 import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.databinding.FragmentResultBinding
 import com.example.driverchecker.ui.adapters.MetricsTableAdapter
+import com.example.driverchecker.ui.adapters.OutputsAdapter
 import com.example.driverchecker.ui.adapters.PredictionsAdapter
 import com.example.driverchecker.ui.adapters.WindowsAdapter
 import com.example.driverchecker.utils.BitmapUtils
@@ -46,9 +51,11 @@ class ResultFragment : Fragment() {
 //            binding.textTime.text = String.format("%.2fs", output?.data.metrics?.totalTime)
 
             if (output?.data != null) {
-                binding.finalWindowView.adapter = WindowsAdapter(output.data, activityModel.classificationGroups.value)
+                binding.finalWindowView.adapter = WindowsAdapter(output.data, activityModel.classificationGroups.value) { indexLastImage ->
+                    val bundle = bundleOf("indexLastPhoto" to indexLastImage)
+                    findNavController().navigate(R.id.outputFragment, bundle)
+                }
             }
-
         }
 
         activityModel.saveImages.observe(viewLifecycleOwner) { images ->
@@ -85,6 +92,8 @@ class ResultFragment : Fragment() {
         activityModel.setActualPage (Page.Result)
         activityModel.resetShown()
     }
+
+
 
 
     override fun onDestroyView() {
