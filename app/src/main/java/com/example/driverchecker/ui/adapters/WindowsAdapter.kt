@@ -47,12 +47,14 @@ class WindowsAdapter(
         val textPassengerTotalObjects: TextView = view.findViewById(R.id.text_objects_passenger)
 
         fun bind (detectionItem: Pair<IWindowBasicData, IGroupMetrics<String>?>) {
-            textResult.text = "Something"
+            textResult.text = String.format("%s",
+                detectionItem.first.supergroup.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+            )
             textFrame.text = detectionItem.first.windowFrames.toString()
             textThreshold.text = String.format("%.2f%%", detectionItem.first.windowThreshold.times(100))
-            textConfidence.text = String.format("%.2f%%", 0.80f.times(100))
+            textConfidence.text = String.format("%.2f%%", detectionItem.first.confidence.times(100))
             textType.text = detectionItem.first.type
-            textTotalTime.text = detectionItem.first.totalTime.toString()
+            textTotalTime.text = String.format("%.2fs", detectionItem.first.totalTime)
             textTotalWindows.text = detectionItem.first.totalWindows.toString()
 
             detectionItem.second?.groupMetrics?.forEach { entry ->

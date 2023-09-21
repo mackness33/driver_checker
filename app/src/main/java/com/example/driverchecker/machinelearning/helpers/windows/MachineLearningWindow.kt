@@ -10,7 +10,15 @@ open class MachineLearningWindow<E : IMachineLearningOutputStats> (
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) :
     AMachineLearningWindow<E> (size, threshold, newStart) {
+
+    override val supergroup: String
+        get() = ""
+
     override fun getOldFinalResults() : IMachineLearningFinalResultStats {
         return OldMachineLearningFullFinalResult(confidence)
+    }
+
+    override fun getMetrics(): IWindowBasicData {
+        return WindowBasicData(this)
     }
 }

@@ -18,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
         WindowInformationEntity::class,
         GroupMetricsEntity::class
     ],
-    version = 9,
+    version = 11,
     exportSchema = false
 )
 abstract class DriverCheckerRoomDatabase : RoomDatabase() {

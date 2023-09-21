@@ -37,9 +37,15 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override var totalTime: Double = 0.0
         protected set
 
-    override var totalWindows: Int = 0
+    override val totalWindows: Int
         get() = if (window.size >= windowFrames) (totEvaluationsDone + 1) - window.size else 0
-        protected set
+
+    override val averageTime: Double
+        get() = totalTime/totalWindows
+
+    protected var sumOfConfidencePerWindowDone: Float = 0.0f
+    override val averageConfidence: Float
+        get() = sumOfConfidencePerWindowDone/totalWindows
 
     override fun isSatisfied() : Boolean {
       return (window.size == windowFrames && windowThreshold <= confidence)
@@ -80,6 +86,8 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     protected open fun postUpdate () {
         totEvaluationsDone++
         hasAcceptedLast = true
+        if (window.size == windowFrames) sumOfConfidencePerWindowDone += confidence
+
     }
 
     override suspend fun clean () {
@@ -87,8 +95,9 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         confidence = 0f
         totEvaluationsDone = 0
         hasAcceptedLast = false
-        totalWindows = 0
+//        totalWindows = 0
         totalTime = 0.0
+        sumOfConfidencePerWindowDone = 0.0f
         timer.reset()
     }
 
@@ -103,10 +112,6 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     /* DATA */
     override fun getData(): Pair<IWindowBasicData, IAdditionalMetrics?> {
         return getMetrics() to getAdditionalMetrics()
-    }
-
-    override fun getMetrics(): IWindowBasicData {
-        return WindowBasicData(this)
     }
 
     override fun getAdditionalMetrics(): IAdditionalMetrics? {

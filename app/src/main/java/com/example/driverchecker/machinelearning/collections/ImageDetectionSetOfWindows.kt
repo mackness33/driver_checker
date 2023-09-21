@@ -17,7 +17,7 @@ open class ImageDetectionSetOfWindows :
 
     protected var hasFinalResultBeingCopied: CompletableDeferred<Boolean>? = null
 
-    override fun initialize(availableSettings: IMultipleWindowSettings) {
+    override fun initialize(availableSettings: ISettings) {
         settings = availableSettings
 
         try {
@@ -54,13 +54,13 @@ open class ImageDetectionSetOfWindows :
     override var totEvaluationsDone: Int = 0
         get() = activeWindows.first().totEvaluationsDone
         protected set
-    override var settings: IMultipleWindowSettings =
+    override var settings: ISettings =
         Settings(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
 
 
     /*  WINDOWS  */
-    override fun updateSettings(newSettings: IMultipleWindowSettings) {
+    override fun updateSettings(newSettings: ISettings) {
         settings = newSettings
 
         try {
@@ -141,7 +141,8 @@ open class ImageDetectionSetOfWindows :
         val fr = ClassificationFinalResult(
             finalConfidence,
             finalGroupScore.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key,
-            getData().toMutableMap()
+            getData().toMutableMap(),
+            settings.modelThreshold
         )
 
         hasFinalResultBeingCopied?.complete(true)

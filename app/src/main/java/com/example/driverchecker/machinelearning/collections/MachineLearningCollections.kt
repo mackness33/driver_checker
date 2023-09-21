@@ -22,11 +22,11 @@ interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : I
     fun getMetrics() : List<IWindowBasicData>
 
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
-    fun initialize(availableSettings: IMultipleWindowSettings)
+    fun initialize(availableSettings: ISettings)
 }
 
 interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats> : MachineLearningWindowsCollection<E> {
-    fun updateSettings (newSettings: IMultipleWindowSettings)
+    fun updateSettings (newSettings: ISettings)
 }
 
 interface ClassificationWindowsCollection <E : IClassificationOutputStats<S>, S> : MachineLearningWindowsCollection<E> {

@@ -34,7 +34,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected val oldTimer = Timer()
     protected val timer = Timer()
     protected var oldSettings: IOldSettings? = null
-    override val availableSettings : IMultipleWindowSettings = Settings (
+    override val availableSettings : ISettings = Settings (
         listOf(1, 3, 5, 10, 20, 30),
         listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
         listOf("BasicImageDetectionWindow"),

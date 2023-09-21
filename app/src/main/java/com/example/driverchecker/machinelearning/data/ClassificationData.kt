@@ -54,19 +54,20 @@ data class ClassificationNewFinalResult<S>(
     )
 }
 
-interface IClassificationFinalResult<S> : IClassificationFinalResultStats<S>, IMachineLearningFinalResult, WithGroupsData<S>
+interface IClassificationFinalResult<S> : IClassificationFinalResultStats<S>, IMachineLearningFinalResult, WithGroupsData<S>, IModelSettings
 
 data class ClassificationFinalResult<S>(
     override val confidence: Float,
     override val supergroup: S,
     override val data: Map<IWindowBasicData, IGroupMetrics<S>?>,
+    override val modelThreshold: Float,
 ) : IClassificationFinalResult<S> {
-    constructor(main: IClassificationFinalResultStats<S>, data: Map<IWindowBasicData, IGroupMetrics<S>?>) : this (
-        main.confidence, main.supergroup, data.toMutableMap()
+    constructor(main: IClassificationFinalResultStats<S>, data: Map<IWindowBasicData, IGroupMetrics<S>?>, modelThreshold: Float) : this (
+        main.confidence, main.supergroup, data.toMutableMap(), modelThreshold
     )
 
     constructor(copy: IClassificationFinalResult<S>) : this (
-        copy.confidence, copy.supergroup, copy.data.toMutableMap()
+        copy.confidence, copy.supergroup, copy.data.toMutableMap(), copy.modelThreshold
     )
 }
 
