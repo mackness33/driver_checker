@@ -205,6 +205,8 @@ class CameraFragment : Fragment() {
             }
         )
 
+        binding.resultView.maintainRatio(false)
+
         model.ready()
         model.setActualPage(Page.Camera)
     }

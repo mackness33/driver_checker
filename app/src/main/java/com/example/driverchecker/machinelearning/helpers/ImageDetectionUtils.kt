@@ -28,7 +28,6 @@ object ImageDetectionUtils {
     ): ClassificationItemMutableList<IImageDetectionFullItem<S>, S> {
 
         // Do an argument sort on the confidence scores, from high to low.
-//        val res = boxes.listItems.sort { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
         val sortedBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
         val selected: ClassificationItemMutableList<IImageDetectionFullItem<S>, S> = ClassificationItemMutableList(10)
         val active = BooleanArray(sortedBoxes.size)
@@ -84,6 +83,22 @@ object ImageDetectionUtils {
         val intersectionArea = max(intersectionMaxY - intersectionMinY, 0f) *
                 max(intersectionMaxX - intersectionMinX, 0f)
         return intersectionArea / (areaA + areaB - intersectionArea)
+    }
+
+    /**
+     * Computes intersection-over-union overlap between two bounding boxes.
+     */
+    fun intersectionOverUnion2(a: RectF, b: RectF): Float {
+        if (a.width() * a.height() <= 0.0 || b.width() * b.height() <= 0.0f) return 0.0f
+
+        val intersection = RectF(a)
+        if (!intersection.intersect(b)) return 0.0f
+
+        val union = RectF(a)
+        union.union(b)
+
+        // intersectionArea / unionArea
+        return  intersection.width() * intersection.height() / union.width() * union.height()
     }
 
     fun imageProxyToBitmap(image: ImageProxy): Bitmap {

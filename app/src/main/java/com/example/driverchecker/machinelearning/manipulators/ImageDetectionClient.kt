@@ -18,11 +18,11 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
     // FUNCTIONS
 
     suspend fun produceImage (imgProxy: ImageProxy) {
-        produceInput(ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy)))
+        produceInput(ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy), null))
     }
 
     suspend fun produceImage (bitmap: Bitmap) {
-        produceInput(ImageDetectionInput(bitmap))
+        produceInput(ImageDetectionInput(bitmap, null))
     }
 
     // INNER CLASSES

@@ -36,6 +36,9 @@ class StaticPhotoFragment : Fragment() {
 
         staticPhotoViewModel.initPartialId(arguments?.getLong("partialId"))
 
+        binding.resultView.maintainRatio(true)
+
+
         staticPhotoViewModel.partial.observe(viewLifecycleOwner) { path ->
             if (path != null) {
                 val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(path)

@@ -30,14 +30,19 @@ class YOLOModel :
     private val maxPredictionsLimit = 5
 
     override fun preProcess(data: IImageDetectionInput): IImageDetectionInput {
-        val resizedBitmap = Bitmap.createScaledBitmap(data.input, inputWidth, inputHeight, true)
-        val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(resizedBitmap, -90f)
-        return ImageDetectionInput(rotatedBitmap)
+        val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(data.input, -90f)
+        val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, inputWidth, inputHeight, true)
+        return ImageDetectionInput(
+            rotatedBitmap,
+            resizedBitmap,
+            inputWidth to inputHeight,
+            (rotatedBitmap.width.toFloat()/inputWidth) to (rotatedBitmap.height.toFloat()/inputHeight)
+        )
     }
 
     override fun evaluateData(input: IImageDetectionInput): IImageDetectionFullOutput<String> {
         // preparing input tensor
-        val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.input,
+        val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.preProcessedImage,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
 
         // running the model
@@ -56,13 +61,15 @@ class YOLOModel :
         )
     }
 
-    fun outputsToNMSPredictions(
+    private fun outputsToNMSPredictions(
         outputs: FloatArray,
         image: IImageDetectionInput
     ): IImageDetectionFullOutput<String> {
         val results: ClassificationItemMutableList<IImageDetectionFullItem<String>, String> = ClassificationItemMutableList()
         val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
+        val imageScaleX = image.imageRatio?.first ?: 1.0f
+        val imageScaleY = image.imageRatio?.second ?: 1.0f
 
         for (i in 0 until outputRow) {
             val offset = i * outputColumn
@@ -71,11 +78,18 @@ class YOLOModel :
                 var max = outputs[offset + 5]
                 var clsIndex = 0
                 val rect = RectF(
-                    x - width / 2,
-                    y - height / 2,
-                    x + width / 2,
-                    y + height / 2
+                     imageScaleX * x,
+                    imageScaleY * y,
+                    imageScaleX * (x + width),
+                    imageScaleY * (y + height)
                 )
+
+//                val rect = RectF(
+//                    imageScaleX * (x - width / 2),
+//                    imageScaleY * (y - height / 2),
+//                    imageScaleX * (x + width / 2),
+//                    imageScaleY * (y + height / 2)
+//                )
 //                val rect = RectF(
 //                    x,
 //                    y,

@@ -6,8 +6,18 @@ import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchM
 
 
 // ---------------------------------- INPUT ----------------------------------
-typealias ImageDetectionInput = MachineLearningInput<Bitmap>
-typealias IImageDetectionInput = IMachineLearningInput<Bitmap>
+data class ImageDetectionInput(
+    override val input: Bitmap,
+    override val preProcessedImage: Bitmap?,
+    override val modelRatio: Pair<Int, Int>? = null,
+    override val imageRatio: Pair<Float, Float>? = null,
+) : IImageDetectionInput
+
+interface IImageDetectionInput : IMachineLearningInput<Bitmap> {
+    val preProcessedImage: Bitmap?
+    val modelRatio: Pair<Int, Int>?
+    val imageRatio: Pair<Float, Float>?
+}
 
 // ---------------------------------- BASIC OUTPUT ----------------------------------
 
