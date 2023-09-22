@@ -71,11 +71,17 @@ class YOLOModel :
                 var max = outputs[offset + 5]
                 var clsIndex = 0
                 val rect = RectF(
-                    scaleX * (x - width / 2),
-                    scaleY * (y - height / 2),
-                    scaleX * (x + width / 2),
-                    scaleY * (y + height / 2)
+                    x - width / 2,
+                    y - height / 2,
+                    x + width / 2,
+                    y + height / 2
                 )
+//                val rect = RectF(
+//                    x,
+//                    y,
+//                     width,
+//                    height
+//                )
 
                 for (j in 0 until mClassifier.size()) {
                     if (outputs[offset + 5 + j] > max) {

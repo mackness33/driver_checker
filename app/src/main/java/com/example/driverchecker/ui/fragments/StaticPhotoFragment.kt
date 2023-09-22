@@ -40,8 +40,8 @@ class StaticPhotoFragment : Fragment() {
             if (path != null) {
                 val bitmap: Bitmap? = BitmapUtils.loadImageFromStorage(path)
                 if (bitmap != null) {
-                    val resizedBitmap: Bitmap? = Bitmap.createScaledBitmap(bitmap, binding.imageView.width, binding.imageView.height, false)
-                    binding.imageView.setImageBitmap(resizedBitmap)
+//                    val resizedBitmap: Bitmap? = Bitmap.createScaledBitmap(bitmap, 640, 64, false)
+                    binding.imageView.setImageBitmap(bitmap)
                 }
             }
         }
@@ -58,8 +58,8 @@ class StaticPhotoFragment : Fragment() {
 
         if (indexPartial != null && indexPartial >= 1 && indexPartial <= activityModel.lastItemsList.size){
             val output = activityModel.lastItemsList.elementAt(indexPartial-1)
-            val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(output.input.input, -90.0f)
-            binding.imageView.setImageBitmap(rotatedBitmap)
+//            val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(output.input.input, -90.0f)
+            binding.imageView.setImageBitmap(output.input.input)
 
             binding.resultView.setColorSchemes(activityModel.classificationGroups.value)
             binding.resultView.setResults(output)

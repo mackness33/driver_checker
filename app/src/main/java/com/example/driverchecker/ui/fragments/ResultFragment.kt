@@ -62,7 +62,7 @@ class ResultFragment : Fragment() {
             if (images != null) {
                 runBlocking {
                     val paths = BitmapUtils.saveMultipleBitmapInStorage(
-                        images.map { BitmapUtils.rotateBitmap(it, -90.0f) },
+                        images,
                         requireContext()
                     )
 

@@ -5,10 +5,10 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.example.driverchecker.database.entity.ItemEntity
-import com.example.driverchecker.utils.ColorManager
-import com.example.driverchecker.utils.IColorScale
 import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem
 import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
+import com.example.driverchecker.utils.ColorManager
+import com.example.driverchecker.utils.IColorScale
 
 // Copyright (c) 2020 Facebook, Inc. and its affiliates.
 // All rights reserved.
@@ -44,6 +44,15 @@ class ResultView : View {
         if (itemResults == null) return
 
         itemResults?.forEach { item ->
+
+            // final rect must take as information the scale, the vectorScale and the offset
+//            mIvScaleX =
+//                if (mBitmap.getWidth() > mBitmap.getHeight())
+//                    mImageView.getWidth() as Float / mBitmap.getWidth()
+//                else
+//                    mImageView.getHeight() as Float / mBitmap.getHeight()
+//
+//            mStartX = (mImageView.getWidth() - mIvScaleX * mBitmap.getWidth())/2;
 
             resizedRect.set(
                 item.rect.left * (width / 640) + paintRectangle.strokeWidth,
@@ -134,9 +143,9 @@ class ResultView : View {
     }
 
     companion object {
-        private const val TEXT_X = 70
+        private const val TEXT_X = 10
         private const val TEXT_Y = 35
-        private const val TEXT_WIDTH = 260
+        private const val TEXT_WIDTH = 300
         private const val TEXT_HEIGHT = 50
     }
 }
