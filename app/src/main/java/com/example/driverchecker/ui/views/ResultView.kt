@@ -95,10 +95,13 @@ class ResultView : View {
     private fun calculate (item : DrawableItemResult) : RectF {
         if (withOffset) {
             val vector = min(width.toFloat()/bitmapDim.first, height.toFloat()/bitmapDim.second)
+            val offset =
+                ((width - paintRectangle.strokeWidth) - vector * bitmapDim.first)/2 to
+                        ((height - paintRectangle.strokeWidth) - vector * bitmapDim.second)/2
 //            val offset =
 //                ((width - paintRectangle.strokeWidth) - vector * item.rect.width())/2 to
 //                        ((height - paintRectangle.strokeWidth) - vector * item.rect.height())/2
-            val offset = 0.0f to 0.0f
+//            val offset = 0.0f to 0.0f
 
             val result = RectF(
                 offset.first + vector * item.rect.left + paintRectangle.strokeWidth,
@@ -128,7 +131,7 @@ class ResultView : View {
             String.format(
                 "%s %.2f%%",
                 item.classification,
-                item.confidence
+                item.confidence.times(100)
             ),
             resizedRect.left + TEXT_X,
             resizedRect.top + TEXT_Y,
@@ -167,6 +170,7 @@ class ResultView : View {
 
     fun setResults (items: List<ItemEntity>, group: String) {
         itemResults = items.map { DrawableItemResult(it, group) }
+        bitmapDim = 640 to 640
     }
 
     fun setColorSchemes (groupList: Set<String>?) {

@@ -70,26 +70,37 @@ class YOLOModel :
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
         val imageScaleX = image.imageRatio?.first ?: 1.0f
         val imageScaleY = image.imageRatio?.second ?: 1.0f
+        val imageRect = RectF(
+            0.0f,
+            0.0f,
+            inputWidth.toFloat(),
+            inputHeight.toFloat()
+        )
 
         for (i in 0 until outputRow) {
             val offset = i * outputColumn
             if (outputs[offset + 4] > threshold) {
                 val (x, y, width, height) = outputs.slice(offset..offset + 3)
+
+//                if (x + width > inputWidth || y + height > inputHeight) continue
+
                 var max = outputs[offset + 5]
                 var clsIndex = 0
+//                val rect = RectF(
+//                     imageScaleX * x,
+//                    imageScaleY * y,
+//                    imageScaleX * (x + width),
+//                    imageScaleY * (y + height)
+//                )
+
                 val rect = RectF(
-                     imageScaleX * x,
-                    imageScaleY * y,
-                    imageScaleX * (x + width),
-                    imageScaleY * (y + height)
+                    imageScaleX * (x - width / 2),
+                    imageScaleY * (y - height / 2),
+                    imageScaleX * (x + width / 2),
+                    imageScaleY * (y + height / 2)
                 )
 
-//                val rect = RectF(
-//                    imageScaleX * (x - width / 2),
-//                    imageScaleY * (y - height / 2),
-//                    imageScaleX * (x + width / 2),
-//                    imageScaleY * (y + height / 2)
-//                )
+                if (!imageRect.contains(rect)) continue
 //                val rect = RectF(
 //                    x,
 //                    y,
