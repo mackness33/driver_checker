@@ -1,8 +1,5 @@
 package com.example.driverchecker.ui.views
 
-import android.R.attr
-import android.R.attr.startX
-import android.R.attr.startY
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -28,7 +25,7 @@ class ResultView : View {
     private var rectPath: RectF = RectF()
     private var resizedRect: RectF = RectF()
     private var bitmapDim: Pair<Int, Int> = 0 to 0
-    private var withOffset: Boolean = false
+    private var isMirrored: Boolean = false
     private var actualColorScale: IColorScale = ColorManager.listColors.first()
     private var itemResults: List<DrawableItemResult>? = null
     private var colorList: Set<String>? = setOf("driver", "passenger")
@@ -57,29 +54,7 @@ class ResultView : View {
         itemResults?.forEach { item ->
 
             // final rect must take as information the scale, the vectorScale and the offset
-//            mIvScaleX =
-//                if (mBitmap.getWidth() > mBitmap.getHeight())
-//                    mImageView.getWidth() as Float / mBitmap.getWidth()
-//                else
-//                    mImageView.getHeight() as Float / mBitmap.getHeight()
-//
-//            mStartX = (mImageView.getWidth() - mIvScaleX * mBitmap.getWidth())/2;
-
-//            resizedRect.set(
-//                item.rect.left * (width / 640) + paintRectangle.strokeWidth,
-//                item.rect.top * (height / 640) + paintRectangle.strokeWidth,
-//                item.rect.right * (width / 640) - paintRectangle.strokeWidth,
-//                item.rect.bottom * (height / 640) - paintRectangle.strokeWidth,
-//            )
-
             resizedRect.set(calculate(item))
-
-//            val rect = Rect(
-//                (startX + ivScaleX * imgScaleX * item.rect.left) as Int,
-//                (startY + ivScaleY * imgScaleY * item.rect.top) as Int,
-//                (startX + ivScaleX * imgScaleX * item.rect.right) as Int,
-//                (startY + ivScaleY * imgScaleY * item.rect.bottom) as Int
-//            )
 
             var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(item.group) }
             indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
@@ -93,15 +68,11 @@ class ResultView : View {
     }
 
     private fun calculate (item : DrawableItemResult) : RectF {
-        if (withOffset) {
+        if (isMirrored) {
             val vector = min(width.toFloat()/bitmapDim.first, height.toFloat()/bitmapDim.second)
             val offset =
                 ((width - paintRectangle.strokeWidth) - vector * bitmapDim.first)/2 to
                         ((height - paintRectangle.strokeWidth) - vector * bitmapDim.second)/2
-//            val offset =
-//                ((width - paintRectangle.strokeWidth) - vector * item.rect.width())/2 to
-//                        ((height - paintRectangle.strokeWidth) - vector * item.rect.height())/2
-//            val offset = 0.0f to 0.0f
 
             val result = RectF(
                 offset.first + vector * item.rect.left + paintRectangle.strokeWidth,
@@ -113,11 +84,12 @@ class ResultView : View {
             return result
         } else {
             val vector = width.toFloat()/bitmapDim.first to height.toFloat()/bitmapDim.second
+            val distance = (bitmapDim.first/2) - item.rect.centerX()
 
             val result = RectF(
-                vector.first * item.rect.left,
+                vector.first * (item.rect.left + distance * 2),
                 vector.second * item.rect.top,
-                vector.first * item.rect.right,
+                vector.first * (item.rect.right + distance * 2),
                 vector.second * item.rect.bottom
             )
 
@@ -170,7 +142,7 @@ class ResultView : View {
 
     fun setResults (items: List<ItemEntity>, group: String) {
         itemResults = items.map { DrawableItemResult(it, group) }
-        bitmapDim = 640 to 640
+        bitmapDim = 480 to 640
     }
 
     fun setColorSchemes (groupList: Set<String>?) {
@@ -178,7 +150,7 @@ class ResultView : View {
     }
 
     fun maintainRatio(change: Boolean) {
-        withOffset = change
+        isMirrored = change
     }
 
     data class DrawableItemResult (
