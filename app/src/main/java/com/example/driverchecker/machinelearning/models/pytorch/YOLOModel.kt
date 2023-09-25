@@ -11,6 +11,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
+import java.util.Collections.max
 
 class YOLOModel :
     ImageDetectionTorchModel<String>
@@ -82,16 +83,8 @@ class YOLOModel :
             if (outputs[offset + 4] > threshold) {
                 val (x, y, width, height) = outputs.slice(offset..offset + 3)
 
-//                if (x + width > inputWidth || y + height > inputHeight) continue
-
                 var max = outputs[offset + 5]
                 var clsIndex = 0
-//                val rect = RectF(
-//                     imageScaleX * x,
-//                    imageScaleY * y,
-//                    imageScaleX * (x + width),
-//                    imageScaleY * (y + height)
-//                )
 
                 val rect = RectF(
                     imageScaleX * (x - width / 2),
@@ -101,12 +94,8 @@ class YOLOModel :
                 )
 
                 if (!imageRect.contains(rect)) continue
-//                val rect = RectF(
-//                    x,
-//                    y,
-//                     width,
-//                    height
-//                )
+
+//                val s = max(outputs.slice(offset + 5 until offset + 5 + mClassifier.size()))
 
                 for (j in 0 until mClassifier.size()) {
                     if (outputs[offset + 5 + j] > max) {
@@ -118,6 +107,7 @@ class YOLOModel :
                 results.add(
                     ImageDetectionFullItem(
                         clsIndex,
+
                         rect,
                         outputs[i * outputColumn + 4],
                         mClassifier.get(clsIndex) ?: throw Throwable("Classifier didn't find any suitable class"),

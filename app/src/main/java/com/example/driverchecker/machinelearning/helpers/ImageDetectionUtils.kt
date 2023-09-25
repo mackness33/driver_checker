@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.helpers
 
 import android.graphics.*
+import android.util.Log
 import androidx.camera.core.ImageProxy
 import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
 import com.example.driverchecker.machinelearning.data.*
@@ -29,7 +30,10 @@ object ImageDetectionUtils {
 
         // Do an argument sort on the confidence scores, from high to low.
         val sortedBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
+//        val secondBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }.toMutableSet()
+//        val checkedBoxes = mutableSetOf<IImageDetectionFullItem<S>>()
         val selected: ClassificationItemMutableList<IImageDetectionFullItem<S>, S> = ClassificationItemMutableList(10)
+//        val secondSelected: ClassificationItemMutableList<IImageDetectionFullItem<S>, S> = ClassificationItemMutableList(10)
         val active = BooleanArray(sortedBoxes.size)
         Arrays.fill(active, true)
         var numActive = active.size
@@ -41,6 +45,8 @@ object ImageDetectionUtils {
         // or the limit has been reached.
         var done = false
         var i = 0
+
+        // can use labels to optimise code
         while (i < sortedBoxes.size && !done) {
             if (active[i]) {
                 val boxA = sortedBoxes[i]
@@ -49,7 +55,7 @@ object ImageDetectionUtils {
                 for (j in i + 1 until sortedBoxes.size) {
                     if (active[j]) {
                         val boxB = sortedBoxes[j]
-                        val iou = intersectionOverUnion(boxA.rect, boxB.rect)
+                        val iou = intersectionOverUnion2(boxA.rect, boxB.rect)
                         if (iou > threshold) {
                             active[j] = false
                             numActive -= 1
@@ -63,6 +69,28 @@ object ImageDetectionUtils {
             }
             i++
         }
+
+//        mainLoop@ for (item in secondBoxes) {
+//            secondSelected.add(item)
+//            if (secondSelected.size >= limit || i+1 >= secondBoxes.size) break
+//
+//            for (nextItem in sortedBoxes.subList(i+1, secondBoxes.size)) {
+//                val iou = intersectionOverUnion2(item.rect, nextItem.rect)
+//                if (iou > threshold) {
+//                    secondBoxes.remove(nextItem)
+//
+//                    if (secondBoxes.size <= i+1) break@mainLoop
+//                }
+//            }
+//
+//            i++
+//        }
+//
+//        if (secondSelected.size != selected.size) {
+//            Log.d("nonMaxSuppression", "secondSelected = $secondSelected")
+//            Log.d("nonMaxSuppression", "selected = $selected")
+//        }
+
         return selected
     }
 
