@@ -29,29 +29,6 @@ class ImageDetectionFactoryRepository
         initialize()
     }
 
-
-    override suspend fun onCompletionEvaluation (cause: Throwable?) {
-        Log.d("ACClassification", "finally finished")
-        if (cause != null && cause !is CorrectCancellationException) {
-            Log.e("ACClassification", "Just caught this: ${cause.message}", cause)
-            mEvaluationFlowState.emit(
-                LiveClassificationState.End<String>(cause, null)
-            )
-        } else {
-            oldTimer.markEnd()
-            mEvaluationFlowState.emit(
-                LiveClassificationState.End(null, collectionOfWindows.getFinalResults())
-            )
-        }
-
-        oldTimer.reset()
-        oldSettings = null
-        timer.reset()
-        window.clean()
-        collectionOfWindows.clean()
-    }
-
-
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
         try {
             onStopLiveEvaluation()

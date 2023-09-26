@@ -6,6 +6,7 @@ import com.example.driverchecker.utils.StatefulData
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 abstract class AProducer<S> (
     replay: Int,
@@ -14,7 +15,7 @@ abstract class AProducer<S> (
 ) : IProducer<S> {
     protected val mSharedFlow: MutableSharedFlow<S>
     override val sharedFlow: SharedFlow<S>
-        get() = mSharedFlow
+        get() = mSharedFlow.asSharedFlow()
 
     init {
         mSharedFlow = MutableSharedFlow(replay, extraBufferCapacity, onBufferOverflow)
@@ -29,8 +30,11 @@ abstract class AProducer<S> (
         mCurrentState.postValue(state)
     }
 
-    protected fun tryEmit(state: S) {
-        mSharedFlow.tryEmit(state)
-        mCurrentState.postValue(state)
+    protected fun tryEmit(state: S) : Boolean {
+        val res = mSharedFlow.tryEmit(state)
+        if (res)
+            mCurrentState.postValue(state)
+
+        return res
     }
 }

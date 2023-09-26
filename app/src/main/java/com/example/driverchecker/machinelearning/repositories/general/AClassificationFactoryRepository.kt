@@ -3,6 +3,8 @@ package com.example.driverchecker.machinelearning.repositories.general
 import android.util.Log
 import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.producers.AProducer
+import com.example.driverchecker.machinelearning.helpers.producers.IClassificationProducer
 import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -24,6 +26,8 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     abstract override var model: IClassificationModel<I, O, S>?
 
     abstract override val collectionOfWindows: ClassificationWindowsMutableCollection<O, S>
+
+    val evaluationStateProducer: IClassificationProducer<LiveEvaluationStateInterface> = LiveClassificationProducer()
 
     override fun initialize() {
         super.initialize()
@@ -61,6 +65,29 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     }
 
 
+
+    override suspend fun onCompletionEvaluation (cause: Throwable?) {
+        Log.d("ACClassification", "finally finished")
+        if (cause != null && cause !is CorrectCancellationException) {
+            Log.e("ACClassification", "Just caught this: ${cause.message}", cause)
+            mEvaluationFlowState.emit(
+                LiveClassificationState.End<String>(cause, null)
+            )
+        } else {
+            oldTimer.markEnd()
+            mEvaluationFlowState.emit(
+                LiveClassificationState.End(null, collectionOfWindows.getFinalResults())
+            )
+        }
+
+        oldTimer.reset()
+        oldSettings = null
+        timer.reset()
+        window.clean()
+        collectionOfWindows.clean()
+    }
+
+
     override suspend fun onEachEvaluation (
         postProcessedResult: O,
         onConditionSatisfied: (CancellationException) -> Unit
@@ -78,5 +105,42 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
         if (collectionOfWindows.isSatisfied())
             onConditionSatisfied(CorrectCancellationException())
+    }
+
+    protected open inner class LiveClassificationProducer :
+        AProducer<LiveEvaluationStateInterface> (1, 5),
+        IClassificationProducer<LiveEvaluationStateInterface> {
+        override suspend fun emitReady(isReady: Boolean) {
+            emit(LiveEvaluationState.Ready(isReady))
+        }
+
+        override suspend fun emitStart() {
+            emit(
+                LiveClassificationState.Start(
+                    (model as IClassificationModel<I, O, S>).classifier.maxClassesInGroup(),
+                    (model as IClassificationModel<I, O, S>).classifier
+                )
+            )
+        }
+
+        override suspend fun emitLoading() {
+            emit(
+                LiveClassificationState.Loading (
+                    collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult
+                )
+            )
+        }
+
+        override suspend fun emitErrorEnd(cause: Throwable) {
+            emit(LiveClassificationState.End<S>(cause, null))
+        }
+
+        override suspend fun emitSuccessEnd() {
+            emit(LiveClassificationState.End<S>(null, collectionOfWindows.getFinalResults()))
+        }
+
+        override fun tryEmitReady(isReady: Boolean): Boolean {
+            return tryEmit(LiveEvaluationState.Ready(isReady))
+        }
     }
 }
