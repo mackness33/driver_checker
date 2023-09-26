@@ -9,4 +9,6 @@ interface IProducer<S> {
     val sharedFlow: SharedFlow<S>
 
     val currentState: ObservableData<S?>
+
+    fun isLast(state: S) : Boolean
 }

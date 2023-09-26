@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.producers
 
+import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.utils.MutableObservableData
 import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.utils.StatefulData
@@ -36,5 +37,9 @@ abstract class AProducer<S> (
             mCurrentState.postValue(state)
 
         return res
+    }
+
+    override fun isLast(state: S) : Boolean {
+        return mSharedFlow.replayCache.last() == state
     }
 }

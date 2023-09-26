@@ -11,6 +11,8 @@ import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlin.time.ExperimentalTime
 
@@ -29,6 +31,13 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     val evaluationStateProducer: IClassificationProducer<LiveEvaluationStateInterface> = LiveClassificationProducer()
 
+    override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
+        get() = evaluationStateProducer.sharedFlow
+
+    init {
+        evaluationStateProducer.tryEmitReady(false)
+    }
+
     override fun initialize() {
         super.initialize()
         collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
@@ -39,11 +48,13 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             try {
-                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && model != null && model?.classifier != null) {
+//                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && model != null && model?.classifier != null) {
+                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true)) && model != null && model?.classifier != null) {
                     mEvaluationFlowState.emit(LiveClassificationState.Start(
                         (model as IClassificationModel<I, O, S>).classifier.maxClassesInGroup(),
                         (model as IClassificationModel<I, O, S>).classifier)
                     )
+                    evaluationStateProducer.emitStart()
                     timer.markStart()
 
 //                    model?.updateThreshold(newSettings.modelThreshold)
@@ -59,6 +70,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                     throw Throwable("The stream is not ready yet")
             } catch (e : Throwable) {
                 mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
+                evaluationStateProducer.emitErrorEnd(e)
                 triggerReadyState()
             }
         }
@@ -73,11 +85,13 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
             mEvaluationFlowState.emit(
                 LiveClassificationState.End<String>(cause, null)
             )
+            evaluationStateProducer.emitErrorEnd(cause)
         } else {
             oldTimer.markEnd()
             mEvaluationFlowState.emit(
                 LiveClassificationState.End(null, collectionOfWindows.getFinalResults())
             )
+            evaluationStateProducer.emitSuccessEnd()
         }
 
         oldTimer.reset()
@@ -101,6 +115,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
             mEvaluationFlowState.emit(
                 LiveClassificationState.Loading(collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult)
             )
+            evaluationStateProducer.emitLoading()
         }
 
         if (collectionOfWindows.isSatisfied())
