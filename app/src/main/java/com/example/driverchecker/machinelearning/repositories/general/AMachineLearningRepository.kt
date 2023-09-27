@@ -31,11 +31,11 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected abstract var clientListener: ClientStateListener?
     protected abstract var modelListener: IGenericListener<Boolean>?
 
-    protected val mEvaluationFlowState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(
-        replay = 1,
-        extraBufferCapacity = 5,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+//    protected val mEvaluationFlowState: MutableSharedFlow<LiveEvaluationStateInterface> = MutableSharedFlow(
+//        replay = 1,
+//        extraBufferCapacity = 5,
+//        onBufferOverflow = BufferOverflow.DROP_OLDEST
+//    )
 
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
@@ -61,10 +61,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected abstract val collectionOfWindows: MachineLearningWindowsMutableCollection<O>
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
-        get() = mEvaluationFlowState.asSharedFlow()
+        get() = evaluationStateProducer.sharedFlow
 
     init {
-        mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
+//        mEvaluationFlowState.tryEmit(LiveEvaluationState.Ready(false))
     }
 
     open fun initialize () {
@@ -90,8 +90,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected open fun listenModelState () {
         loadingModelJob = repositoryScope.launch {
             model?.isLoaded?.collect { state ->
-                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(!state))
-                    mEvaluationFlowState.emit(LiveEvaluationState.Ready(state))
+//                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(!state))
+//                    mEvaluationFlowState.emit(LiveEvaluationState.Ready(state))
+                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(!state)))
+                    evaluationStateProducer.emitReady(state)
             }
         }
     }
@@ -107,7 +109,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         producerIsInitialized.await()
         if (!evaluationStateProducer.isLast(LiveEvaluationState.Ready(isReady() == true))){
             liveEvaluationJob?.cancel(InternalCancellationException())
-            mEvaluationFlowState.emit(LiveEvaluationState.Ready(isReady() == true))
+//            mEvaluationFlowState.emit(LiveEvaluationState.Ready(isReady() == true))
             evaluationStateProducer.emitReady(isReady() == true)
         }
     }
@@ -133,7 +135,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 //            if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
             if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
                 evaluationStateProducer.emitStart()
-                mEvaluationFlowState.emit(LiveEvaluationState.Start)
+//                mEvaluationFlowState.emit(LiveEvaluationState.Start)
                 timer.markStart()
                 /* DELETABLE */
                 model?.updateThreshold(newSettings.modelThreshold)
@@ -146,7 +148,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
-                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(Throwable("The stream is not ready yet"), null))
+//                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(Throwable("The stream is not ready yet"), null))
                 evaluationStateProducer.emitErrorEnd(Throwable("The stream is not ready yet"))
                 triggerReadyState()
             }
@@ -168,22 +170,22 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         Log.d("AMLClassification", "finally finished")
 
         if (cause != null && cause !is CorrectCancellationException) {
-            mEvaluationFlowState.emit(
-                LiveEvaluationState.OldEnd(cause, null)
-            )
+//            mEvaluationFlowState.emit(
+//                LiveEvaluationState.OldEnd(cause, null)
+//            )
             evaluationStateProducer.emitErrorEnd(cause)
         } else {
             oldTimer.markEnd()
-            mEvaluationFlowState.emit(
-                LiveEvaluationState.OldEnd(
-                    null,
-                    OldMachineLearningFinalResult(
-                        window.getOldFinalResults(),
-                        oldSettings,
-                        MachineLearningOldMetrics(window.getOldMetrics())
-                    )
-                )
-            )
+//            mEvaluationFlowState.emit(
+//                LiveEvaluationState.OldEnd(
+//                    null,
+//                    OldMachineLearningFinalResult(
+//                        window.getOldFinalResults(),
+//                        oldSettings,
+//                        MachineLearningOldMetrics(window.getOldMetrics())
+//                    )
+//                )
+//            )
             evaluationStateProducer.emitSuccessEnd()
         }
 
@@ -205,9 +207,9 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         timer.markStart()
 
         if (collectionOfWindows.hasAcceptedLast) {
-            mEvaluationFlowState.emit(
-                LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
-            )
+//            mEvaluationFlowState.emit(
+//                LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
+//            )
             evaluationStateProducer.emitLoading()
         }
 
@@ -223,9 +225,9 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     override fun onStartLiveEvaluation(
         input: SharedFlow<I>
     ) {
-        if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && liveEvaluationJob?.isCompleted != false) {
-            liveEvaluationJob = jobEvaluation(input.buffer(2), OldSettings(1,1f,1f))
-        }
+//        if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true) && liveEvaluationJob?.isCompleted != false) {
+//            liveEvaluationJob = jobEvaluation(input.buffer(2), OldSettings(1,1f,1f))
+//        }
     }
 
     override fun onStopLiveEvaluation(externalCause: CancellationException?) {
@@ -259,15 +261,15 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         override suspend fun onLiveEvaluationStart(state: ClientState.Start<*>) {
             try {
                 val typedState = state as ClientState.Start<I>
-                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-                    liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
-                }
+//                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+//                    liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
+//                }
 
                 if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
                 }
             } catch (e : Throwable) {
-                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
+//                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
                 evaluationStateProducer.emitErrorEnd(e)
             }
         }

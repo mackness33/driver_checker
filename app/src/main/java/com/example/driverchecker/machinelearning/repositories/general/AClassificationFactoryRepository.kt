@@ -68,7 +68,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                 } else
                     throw Throwable("The stream is not ready yet")
             } catch (e : Throwable) {
-                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
+//                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
                 evaluationStateProducer.emitErrorEnd(e)
                 triggerReadyState()
             }
@@ -81,15 +81,15 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         Log.d("ACClassification", "finally finished")
         if (cause != null && cause !is CorrectCancellationException) {
             Log.e("ACClassification", "Just caught this: ${cause.message}", cause)
-            mEvaluationFlowState.emit(
-                LiveClassificationState.End<String>(cause, null)
-            )
+//            mEvaluationFlowState.emit(
+//                LiveClassificationState.End<String>(cause, null)
+//            )
             evaluationStateProducer.emitErrorEnd(cause)
         } else {
             oldTimer.markEnd()
-            mEvaluationFlowState.emit(
-                LiveClassificationState.End(null, collectionOfWindows.getFinalResults())
-            )
+//            mEvaluationFlowState.emit(
+//                LiveClassificationState.End(null, collectionOfWindows.getFinalResults())
+//            )
             evaluationStateProducer.emitSuccessEnd()
         }
 
@@ -111,9 +111,9 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         timer.markStart()
 
         if (collectionOfWindows.hasAcceptedLast) {
-            mEvaluationFlowState.emit(
-                LiveClassificationState.Loading(collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult)
-            )
+//            mEvaluationFlowState.emit(
+//                LiveClassificationState.Loading(collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult)
+//            )
             evaluationStateProducer.emitLoading()
         }
 
