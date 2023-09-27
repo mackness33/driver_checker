@@ -39,7 +39,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     override fun initialize() {
         super.initialize()
         collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
-        evaluationStateProducer.tryEmitReady(false)
+//        evaluationStateProducer.tryEmitReady(false)
     }
 
     @OptIn(ExperimentalTime::class)

@@ -21,6 +21,8 @@ import kotlin.time.ExperimentalTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
+    protected val producerIsInitialized = CompletableDeferred<Nothing?>()
+
     open val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveEvaluationProducer()
 
     // abstracted
@@ -66,6 +68,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     }
 
     open fun initialize () {
+        evaluationStateProducer.initialize()
         collectionOfWindows.initialize(availableSettings)
         collectionOfWindows.updateSettings(privateSettings)
         evaluationStateProducer.tryEmitReady(false)
@@ -101,6 +104,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         // if the last state of the evaluation is different from the ready state that has been triggered
         // then send the new ready state and stop all the job that were running
 //        if (mEvaluationFlowState.replayCache.last() != LiveEvaluationState.Ready(isReady() == true)){
+        producerIsInitialized.await()
         if (!evaluationStateProducer.isLast(LiveEvaluationState.Ready(isReady() == true))){
             liveEvaluationJob?.cancel(InternalCancellationException())
             mEvaluationFlowState.emit(LiveEvaluationState.Ready(isReady() == true))
@@ -294,6 +298,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         AProducer<LiveEvaluationStateInterface>(1, 5),
         ILiveEvaluationProducer<LiveEvaluationStateInterface>
     {
+
         override suspend fun emitReady(isReady: Boolean) {
             emit(LiveEvaluationState.Ready(isReady))
         }
@@ -320,6 +325,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override fun tryEmitReady(isReady: Boolean): Boolean {
             return tryEmit(LiveEvaluationState.Ready(isReady))
+        }
+
+        override fun initialize () {
+            producerIsInitialized.complete(null)
         }
     }
 }

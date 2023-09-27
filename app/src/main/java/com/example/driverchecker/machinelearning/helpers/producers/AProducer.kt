@@ -40,6 +40,6 @@ abstract class AProducer<S> (
     }
 
     override fun isLast(state: S) : Boolean {
-        return mSharedFlow.replayCache.last() == state
+        return if (mSharedFlow.replayCache.isEmpty()) false else mSharedFlow.replayCache.last() == state
     }
 }

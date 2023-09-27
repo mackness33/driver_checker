@@ -11,4 +11,6 @@ interface IProducer<S> {
     val currentState: ObservableData<S?>
 
     fun isLast(state: S) : Boolean
+
+    fun initialize ()
 }
