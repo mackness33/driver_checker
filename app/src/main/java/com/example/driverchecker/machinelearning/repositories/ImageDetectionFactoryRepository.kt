@@ -39,7 +39,6 @@ class ImageDetectionFactoryRepository
                     else ModelListener(repositoryScope, model!!.isLoaded, GenericMode.First)
             else
                 modelListener?.listen(repositoryScope, model?.isLoaded, GenericMode.First)
-//            listenModelState()
             return model?.isLoaded?.value ?: false
         } catch (e : Throwable) {
             Log.e("ImageDetectionFactoryRepository", e.message ?: "Error on the exposition of the model $modelName")

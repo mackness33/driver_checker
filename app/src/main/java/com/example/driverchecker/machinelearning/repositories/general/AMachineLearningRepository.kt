@@ -26,7 +26,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     open val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveEvaluationProducer()
 
     // abstracted
-    protected abstract val window: IMachineLearningWindow<O>
     protected abstract val model: IMachineLearningModel<I, O>?
     protected abstract var clientListener: ClientStateListener?
     protected abstract var modelListener: IGenericListener<Boolean>?
@@ -111,7 +110,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     override suspend fun continuousEvaluation(input: Flow<I>, settings: IOldSettings): O? {
         jobEvaluation(input, settings).join()
 
-        return window.lastResult
+        return collectionOfWindows.lastResult
     }
 
     @OptIn(ExperimentalTime::class)
@@ -126,9 +125,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 oldSettings = newSettings
 
                 oldTimer.markStart()
-
-                /* DELETABLE */
-                window.initialize(newSettings, oldTimer.start!!)
 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
@@ -153,9 +149,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         Log.d("AMLClassification", "finally finished")
 
         if (cause != null && cause !is CorrectCancellationException) {
-//            mEvaluationFlowState.emit(
-//                LiveEvaluationState.OldEnd(cause, null)
-//            )
             evaluationStateProducer.emitErrorEnd(cause)
         } else {
             oldTimer.markEnd()
@@ -165,7 +158,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         oldTimer.reset()
         oldSettings = null
         timer.reset()
-        window.clean()
         collectionOfWindows.clean()
     }
 
@@ -175,7 +167,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     ) {
         Log.d("JobClassification", "finally finished")
         timer.markEnd()
-        window.next(postProcessedResult, timer.diff())
         collectionOfWindows.next(postProcessedResult, timer.diff())
         timer.markStart()
 

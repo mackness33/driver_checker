@@ -22,8 +22,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
-    override var window: IClassificationWindow<O, S> = ClassificationWindow(4, 0.5f, model?.classifier?.supergroups!!.keys, "ClassificationWindow")
-
     abstract override var model: IClassificationModel<I, O, S>?
 
     abstract override val collectionOfWindows: ClassificationWindowsMutableCollection<O, S>
@@ -52,10 +50,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
                     oldSettings = newSettings
                     oldTimer.markStart()
-                    window.initialize(
-                        newSettings, oldTimer.start!!,
-                        (model as IClassificationModel<I, O, S>).classifier.supergroups.keys
-                    )
 
                     flowEvaluation(input, ::cancel)?.collect()
                 } else
@@ -82,7 +76,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         oldTimer.reset()
         oldSettings = null
         timer.reset()
-        window.clean()
         collectionOfWindows.clean()
     }
 
@@ -92,7 +85,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         onConditionSatisfied: (CancellationException) -> Unit
     ) {
         timer.markEnd()
-        window.next(postProcessedResult, timer.diff())
         collectionOfWindows.next(postProcessedResult, timer.diff())
         timer.markStart()
 
