@@ -1,6 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.producers
 
-interface IClassificationProducer<S> : IProducer<S> {
+interface ILiveEvaluationProducer<S> : IProducer<S> {
     suspend fun emitReady(isReady: Boolean)
     suspend fun emitStart()
     suspend fun emitLoading()

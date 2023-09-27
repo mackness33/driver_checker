@@ -4,8 +4,11 @@ import android.util.Log
 import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
+import com.example.driverchecker.machinelearning.helpers.producers.AProducer
+import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
+import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import com.example.driverchecker.utils.MutableObservableData
 import com.example.driverchecker.utils.ObservableData
@@ -18,6 +21,8 @@ import kotlin.time.ExperimentalTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
+    open val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveEvaluationProducer()
+
     // abstracted
     protected abstract val window: IMachineLearningWindow<O>
     protected abstract val model: IMachineLearningModel<I, O>?
@@ -29,6 +34,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         extraBufferCapacity = 5,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
     protected val oldTimer = Timer()
@@ -62,6 +68,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     open fun initialize () {
         collectionOfWindows.initialize(availableSettings)
         collectionOfWindows.updateSettings(privateSettings)
+        evaluationStateProducer.tryEmitReady(false)
     }
 
     override fun updateModelThreshold (threshold: Float) {
@@ -93,9 +100,11 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected open suspend fun triggerReadyState() {
         // if the last state of the evaluation is different from the ready state that has been triggered
         // then send the new ready state and stop all the job that were running
-        if (mEvaluationFlowState.replayCache.last() != LiveEvaluationState.Ready(isReady() == true)){
+//        if (mEvaluationFlowState.replayCache.last() != LiveEvaluationState.Ready(isReady() == true)){
+        if (!evaluationStateProducer.isLast(LiveEvaluationState.Ready(isReady() == true))){
             liveEvaluationJob?.cancel(InternalCancellationException())
             mEvaluationFlowState.emit(LiveEvaluationState.Ready(isReady() == true))
+            evaluationStateProducer.emitReady(isReady() == true)
         }
     }
 
@@ -117,7 +126,9 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected open fun jobEvaluation (input: Flow<I>, newSettings: IOldSettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
-            if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+//            if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
+            if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
+                evaluationStateProducer.emitStart()
                 mEvaluationFlowState.emit(LiveEvaluationState.Start)
                 timer.markStart()
                 /* DELETABLE */
@@ -132,6 +143,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
                 mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(Throwable("The stream is not ready yet"), null))
+                evaluationStateProducer.emitErrorEnd(Throwable("The stream is not ready yet"))
                 triggerReadyState()
             }
         }
@@ -155,6 +167,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             mEvaluationFlowState.emit(
                 LiveEvaluationState.OldEnd(cause, null)
             )
+            evaluationStateProducer.emitErrorEnd(cause)
         } else {
             oldTimer.markEnd()
             mEvaluationFlowState.emit(
@@ -167,6 +180,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                     )
                 )
             )
+            evaluationStateProducer.emitSuccessEnd()
         }
 
         oldTimer.reset()
@@ -190,6 +204,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             mEvaluationFlowState.emit(
                 LiveEvaluationState.Loading(window.totEvaluationsDone, window.lastResult)
             )
+            evaluationStateProducer.emitLoading()
         }
 
         // TODO: Pass the metrics and R
@@ -243,8 +258,13 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
                 }
+
+                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
+                    liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
+                }
             } catch (e : Throwable) {
                 mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
+                evaluationStateProducer.emitErrorEnd(e)
             }
         }
 
@@ -261,11 +281,45 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected open inner class ModelListener : GenericListener<Boolean> {
         constructor () : super()
 
-        constructor (scope: CoroutineScope, modelFlow: SharedFlow<Boolean>, mode: IGenericMode) : super(scope, modelFlow, mode)
+        constructor (scope: CoroutineScope, modelFlow: SharedFlow<Boolean>, mode: IGenericMode) :
+                super(scope, modelFlow, mode)
 
         override suspend fun collectStates (state: Boolean) {
             super.collectStates(state)
             triggerReadyState()
+        }
+    }
+
+    protected open inner class LiveEvaluationProducer :
+        AProducer<LiveEvaluationStateInterface>(1, 5),
+        ILiveEvaluationProducer<LiveEvaluationStateInterface>
+    {
+        override suspend fun emitReady(isReady: Boolean) {
+            emit(LiveEvaluationState.Ready(isReady))
+        }
+
+        override suspend fun emitStart() {
+            emit(LiveEvaluationState.Start)
+        }
+
+        override suspend fun emitLoading() {
+            emit(
+                LiveEvaluationState.Loading (
+                    collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult
+                )
+            )
+        }
+
+        override suspend fun emitErrorEnd(cause: Throwable) {
+            emit(LiveEvaluationState.End(cause, null))
+        }
+
+        override suspend fun emitSuccessEnd() {
+            emit(LiveEvaluationState.End(null, collectionOfWindows.getFinalResults()))
+        }
+
+        override fun tryEmitReady(isReady: Boolean): Boolean {
+            return tryEmit(LiveEvaluationState.Ready(isReady))
         }
     }
 }

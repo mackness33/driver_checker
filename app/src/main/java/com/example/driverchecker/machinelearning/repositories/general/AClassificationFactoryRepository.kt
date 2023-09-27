@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.producers.AProducer
-import com.example.driverchecker.machinelearning.helpers.producers.IClassificationProducer
+import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
 import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -12,7 +12,6 @@ import com.example.driverchecker.machinelearning.repositories.IClassificationRep
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlin.time.ExperimentalTime
 
@@ -29,18 +28,18 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     abstract override val collectionOfWindows: ClassificationWindowsMutableCollection<O, S>
 
-    val evaluationStateProducer: IClassificationProducer<LiveEvaluationStateInterface> = LiveClassificationProducer()
+    override val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveClassificationProducer()
 
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = evaluationStateProducer.sharedFlow
 
     init {
-        evaluationStateProducer.tryEmitReady(false)
     }
 
     override fun initialize() {
         super.initialize()
         collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
+        evaluationStateProducer.tryEmitReady(false)
     }
 
     @OptIn(ExperimentalTime::class)
@@ -123,12 +122,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     }
 
     protected open inner class LiveClassificationProducer :
-        AProducer<LiveEvaluationStateInterface> (1, 5),
-        IClassificationProducer<LiveEvaluationStateInterface> {
-        override suspend fun emitReady(isReady: Boolean) {
-            emit(LiveEvaluationState.Ready(isReady))
-        }
-
+        LiveEvaluationProducer () {
         override suspend fun emitStart() {
             emit(
                 LiveClassificationState.Start(
@@ -151,11 +145,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         }
 
         override suspend fun emitSuccessEnd() {
-            emit(LiveClassificationState.End<S>(null, collectionOfWindows.getFinalResults()))
-        }
-
-        override fun tryEmitReady(isReady: Boolean): Boolean {
-            return tryEmit(LiveEvaluationState.Ready(isReady))
+            emit(LiveClassificationState.End(null, collectionOfWindows.getFinalResults()))
         }
     }
 }
