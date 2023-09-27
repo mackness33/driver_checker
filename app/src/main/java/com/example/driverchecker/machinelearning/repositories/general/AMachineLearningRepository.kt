@@ -113,7 +113,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         return collectionOfWindows.lastResult
     }
 
-    @OptIn(ExperimentalTime::class)
     protected open fun jobEvaluation (input: Flow<I>, newSettings: IOldSettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
@@ -149,6 +148,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         Log.d("AMLClassification", "finally finished")
 
         if (cause != null && cause !is CorrectCancellationException) {
+            Log.e("AMLClassification", "Just caught this: ${cause.message}", cause)
             evaluationStateProducer.emitErrorEnd(cause)
         } else {
             oldTimer.markEnd()
@@ -174,7 +174,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             evaluationStateProducer.emitLoading()
         }
 
-        // TODO: Pass the metrics and R
         if (collectionOfWindows.isSatisfied())
             onConditionSatisfied(CorrectCancellationException())
     }

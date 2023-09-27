@@ -39,7 +39,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
     }
 
-    @OptIn(ExperimentalTime::class)
     override fun jobEvaluation(input: Flow<I>, newSettings: IOldSettings): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
@@ -59,41 +58,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
                 triggerReadyState()
             }
         }
-    }
-
-
-
-    override suspend fun onCompletionEvaluation (cause: Throwable?) {
-        Log.d("ACClassification", "finally finished")
-        if (cause != null && cause !is CorrectCancellationException) {
-            Log.e("ACClassification", "Just caught this: ${cause.message}", cause)
-            evaluationStateProducer.emitErrorEnd(cause)
-        } else {
-            oldTimer.markEnd()
-            evaluationStateProducer.emitSuccessEnd()
-        }
-
-        oldTimer.reset()
-        oldSettings = null
-        timer.reset()
-        collectionOfWindows.clean()
-    }
-
-
-    override suspend fun onEachEvaluation (
-        postProcessedResult: O,
-        onConditionSatisfied: (CancellationException) -> Unit
-    ) {
-        timer.markEnd()
-        collectionOfWindows.next(postProcessedResult, timer.diff())
-        timer.markStart()
-
-        if (collectionOfWindows.hasAcceptedLast) {
-            evaluationStateProducer.emitLoading()
-        }
-
-        if (collectionOfWindows.isSatisfied())
-            onConditionSatisfied(CorrectCancellationException())
     }
 
     protected open inner class LiveClassificationProducer :
