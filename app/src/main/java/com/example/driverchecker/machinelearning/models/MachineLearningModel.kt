@@ -3,16 +3,19 @@ package com.example.driverchecker.machinelearning.models
 import com.example.driverchecker.machinelearning.helpers.producers.AProducer
 import com.example.driverchecker.machinelearning.helpers.producers.IModelStateProducer
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLearningModel<I, R> {
     protected val mIsLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     protected val loadingMap: Map<String, Boolean> = mutableMapOf()
-    override val modelScope: CoroutineScope = scope
+    final override val modelScope: CoroutineScope = scope
     protected open val modelStateProducer: IModelStateProducer<Boolean> = ModelStateProducer()
     override val isLoaded: SharedFlow<Boolean>
-//        get() = modelStateProducer.sharedFlow
-        get() = mIsLoaded
+        get() = modelStateProducer.sharedFlow
+//        get() = mIsLoaded
     override var threshold = 0.05f // score above which a detection is generated
         protected set
 
@@ -40,7 +43,7 @@ abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLea
     }
 
     protected open inner class ModelStateProducer :
-        AProducer<Boolean>(1, 1),
+        AProducer<Boolean>(1, 1, BufferOverflow.DROP_OLDEST, modelScope),
         IModelStateProducer<Boolean>
     {
         protected val readyMap : MutableMap<String, Boolean> = mutableMapOf()
@@ -52,7 +55,7 @@ abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLea
             }
         }
 
-        override suspend fun modelReady(isReady: Boolean) {
+        override fun modelReady(isReady: Boolean) = runBlocking {
             readyMap["model"] = isReady
             updateState()
         }

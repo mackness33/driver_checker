@@ -19,10 +19,10 @@ abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
 {
     constructor(scope: CoroutineScope) : super(scope)
     constructor(modelPath: String? = null, classificationsJson: String? = null, scope: CoroutineScope) : super(modelPath, scope) {
-        if (classificationsJson != null) initClassifier(classificationsJson)
+//        if (classificationsJson != null) initClassifier(classificationsJson)
     }
     constructor(modelPath: String? = null, newClassifications: Map<S, Set<IClassification<S>>>? = null, scope: CoroutineScope) : super(modelPath, scope) {
-        if (newClassifications != null) initClassifier(newClassifications)
+//        if (newClassifications != null) initClassifier(newClassifications)
     }
 
 
@@ -31,8 +31,10 @@ abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
     override val classifier: IClassifier<S>
         get() = mClassifier
 
-    private fun initClassifier(json: String?) : Boolean = runBlocking { loadClassifications(json) }
-    private fun initClassifier(newClassifications: Map<S, Set<IClassification<S>>>?) : Boolean
+    protected fun initClassifier(json: String?) : Boolean {
+        return loadClassifications(json)
+    }
+    protected fun initClassifier(newClassifications: Map<S, Set<IClassification<S>>>?) : Boolean
         = runBlocking {
             loadClassifications(newClassifications)
         }
@@ -44,14 +46,13 @@ abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
         return result
     }
 
-    override suspend fun loadClassifications(json: String?): Boolean {
+    override fun loadClassifications(json: String?): Boolean {
         if (json.isNullOrBlank()) {
             modelStateProducer.classificationReady(false)
             return false
         }
 
         try {
-            // TODO: For now ImportClassifier can "understand" only String for simplicity
             val importedJson = Json.decodeFromString<ImportClassifier<S>>(json)
             val result = mClassifier.load(importedJson)
             modelStateProducer.classificationReady(result)
@@ -67,7 +68,7 @@ abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
         ModelStateProducer(),
         IClassificationProducer<Boolean>
     {
-        override suspend fun classificationReady(isReady: Boolean) {
+        override fun classificationReady(isReady: Boolean) = runBlocking {
             readyMap["classification"] = isReady
             updateState()
         }

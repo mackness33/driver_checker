@@ -4,16 +4,15 @@ import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.utils.MutableObservableData
 import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.utils.StatefulData
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 
 abstract class AProducer<S> (
     replay: Int,
     extraBufferCapacity: Int,
-    onBufferOverflow: BufferOverflow = BufferOverflow.DROP_OLDEST
+    onBufferOverflow: BufferOverflow = BufferOverflow.DROP_OLDEST,
+    val scope: CoroutineScope? = null
 ) : IProducer<S> {
     protected val mSharedFlow: MutableSharedFlow<S>
     override val sharedFlow: SharedFlow<S>

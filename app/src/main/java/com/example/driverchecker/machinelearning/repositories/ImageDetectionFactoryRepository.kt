@@ -48,7 +48,7 @@ class ImageDetectionFactoryRepository
             * */
             return false
         } catch (e : Throwable) {
-            Log.e("ImageDetectionFactoryRepository", e.message ?: "Error on the exposition of the model $modelName")
+            Log.e("ImageDetectionFactoryRepository", e.message ?: "Error on the exposition of the model $modelName", e)
         }
         return false
     }

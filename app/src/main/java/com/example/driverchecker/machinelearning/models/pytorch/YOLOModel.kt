@@ -2,6 +2,7 @@ package com.example.driverchecker.machinelearning.models.pytorch
 
 import android.graphics.Bitmap
 import android.graphics.RectF
+import android.util.Log
 import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
@@ -19,7 +20,11 @@ class YOLOModel :
 {
     constructor(scope: CoroutineScope) : super(scope)
 
-    constructor(modelPath: String? = null, classificationsJson: String? = null, scope: CoroutineScope) : super(modelPath, classificationsJson, scope)
+    constructor(modelPath: String? = null, classificationsJson: String? = null, scope: CoroutineScope) : super(modelPath, classificationsJson, scope) {
+        modelStateProducer.initialize()
+        initModel(modelPath)
+        initClassifier(classificationsJson)
+    }
 
     constructor(modelPath: String? = null, newClassifications: Map<String, Set<IClassification<String>>>? = null, scope: CoroutineScope) : super(modelPath, newClassifications, scope)
 
@@ -123,14 +128,23 @@ class YOLOModel :
         )
     }
 
-    override suspend fun loadClassifications(json: String?): Boolean {
-        if (json.isNullOrBlank())
+    override fun loadClassifications(json: String?): Boolean {
+        if (json.isNullOrBlank()) {
+            modelStateProducer.classificationReady(false)
             return false
+        }
 
-        // TODO: For now ImportClassifier can "understand" only String for simplicity
-        val importedJson = Json.decodeFromString<ImportClassifier<String>>(json)
+        try {
+            // TODO: For now ImportClassifier can "understand" only String for simplicity
+            val importedJson = Json.decodeFromString<ImportClassifier<String>>(json)
+            val result = mClassifier.load(importedJson)
+            modelStateProducer.classificationReady(result)
+        } catch (e : Throwable) {
+            Log.e("ClassifierTorchModel", e.message.toString(), e)
+            modelStateProducer.classificationReady(false)
+        }
 
-        return mClassifier.load(importedJson)
+        return true
     }
 
 }

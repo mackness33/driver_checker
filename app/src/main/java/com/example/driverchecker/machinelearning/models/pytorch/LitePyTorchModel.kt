@@ -10,8 +10,13 @@ abstract class LitePyTorchModel <I, O> (scope: CoroutineScope) : MachineLearning
     protected var module: Module? = null
 
     constructor(modelPath: String? = null, scope: CoroutineScope) : this(scope) {
-        if (modelPath != null) initModel(modelPath)
+//        modelStateProducer.initialize()
+//        if (modelPath != null) initModel(modelPath)
     }
+
+//    init {
+//        modelStateProducer.initialize()
+//    }
 
     protected fun initModel(json: String?) = if (!json.isNullOrEmpty()) loadModel(json) else null
 
@@ -21,11 +26,12 @@ abstract class LitePyTorchModel <I, O> (scope: CoroutineScope) : MachineLearning
             // app/src/model/assets/model.ptl
             val newModule = LiteModuleLoader.load(init.toString())
             mIsLoaded.value = true
-//            modelStateProducer.modelReady(true)
+            modelStateProducer.modelReady(true)
             module = newModule
         } catch (e: Throwable) {
-            Log.e("LitePyTorch", e.message ?: "The model couldn't be loaded")
+            Log.e("LitePyTorch", e.message ?: "The model couldn't be loaded", e)
             mIsLoaded.value = false
+            modelStateProducer.modelReady(false)
         }
     }
 }
