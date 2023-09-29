@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.models
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface IMachineLearningModel <in I, out O> {
@@ -12,7 +13,7 @@ interface IMachineLearningModel <in I, out O> {
 
     fun updateThreshold (newThreshold: Float)
 
-    val isLoaded: StateFlow<Boolean>
+    val isLoaded: SharedFlow<Boolean>
 
     val threshold: Float
 }

@@ -1,14 +1,19 @@
 package com.example.driverchecker.machinelearning.models
 
+import com.example.driverchecker.machinelearning.helpers.producers.AProducer
+import com.example.driverchecker.machinelearning.helpers.producers.IModelStateProducer
 import kotlinx.coroutines.flow.*
 
 abstract class MachineLearningModel<I, R>  () : IMachineLearningModel<I, R> {
     protected val mIsLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     protected val loadingMap: Map<String, Boolean> = mutableMapOf()
-    override val isLoaded: StateFlow<Boolean>
+    protected open val modelStateProducer: IModelStateProducer<Boolean> = ModelStateProducer()
+    override val isLoaded: SharedFlow<Boolean>
+//        get() = modelStateProducer.sharedFlow
         get() = mIsLoaded
     override var threshold = 0.05f // score above which a detection is generated
         protected set
+
 
     override fun processAndEvaluate (input: I): R? {
         val data: I = preProcess(input)
@@ -30,5 +35,29 @@ abstract class MachineLearningModel<I, R>  () : IMachineLearningModel<I, R> {
 
     override fun updateThreshold (newThreshold: Float) {
         threshold = newThreshold
+    }
+
+    protected open inner class ModelStateProducer :
+        AProducer<Boolean>(1, 1),
+        IModelStateProducer<Boolean>
+    {
+        protected val readyMap : MutableMap<String, Boolean> = mutableMapOf()
+
+        protected suspend fun updateState () {
+            val result = readyMap.values.fold(true) { last, current -> last && current }
+            if (!isLast(result)) {
+                emit(result)
+            }
+        }
+
+        override suspend fun modelReady(isReady: Boolean) {
+            readyMap["model"] = isReady
+            updateState()
+        }
+
+        override fun initialize () {
+            readyMap["model"] = false
+            tryEmit(false)
+        }
     }
 }

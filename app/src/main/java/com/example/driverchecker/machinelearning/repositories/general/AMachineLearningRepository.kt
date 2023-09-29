@@ -73,18 +73,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         ))
     }
 
-
-    private fun startListenModelState() = modelListener?.listen(repositoryScope, model?.isLoaded)
-
-    protected open fun listenModelState () {
-        loadingModelJob = repositoryScope.launch {
-            model?.isLoaded?.collect { state ->
-                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(!state)))
-                    evaluationStateProducer.emitReady(state)
-            }
-        }
-    }
-
     protected open fun isReady() : Boolean? {
         return (modelListener?.currentState?.value ?: false) && clientListener?.currentState?.value == ClientState.Ready
     }
@@ -284,6 +272,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override fun initialize () {
             producerIsInitialized.complete(null)
+            tryEmit(LiveEvaluationState.Ready(false))
         }
     }
 }

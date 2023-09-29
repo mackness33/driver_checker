@@ -122,7 +122,7 @@ class YOLOModel :
         )
     }
 
-    override fun loadClassifications(json: String?): Boolean {
+    override suspend fun loadClassifications(json: String?): Boolean {
         if (json.isNullOrBlank())
             return false
 
