@@ -58,7 +58,7 @@ class ImageDetectionFactoryRepository
             "YoloV5" -> {
                 val path = modelInit["path"] as String?
                 val classifications = modelInit["classification"] as String?
-                YOLOModel(path, classifications)
+                YOLOModel(path, classifications, repositoryScope)
             }
             else -> null
         }

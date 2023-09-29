@@ -8,6 +8,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.producers.AProducer
 import com.example.driverchecker.machinelearning.helpers.producers.IClassificationProducer
 import com.example.driverchecker.machinelearning.helpers.producers.IModelStateProducer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -16,11 +17,11 @@ abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
     LitePyTorchModel<I, O>,
     IClassificationModel<I, O, S>
 {
-    constructor() : super()
-    constructor(modelPath: String? = null, classificationsJson: String? = null) : super(modelPath) {
+    constructor(scope: CoroutineScope) : super(scope)
+    constructor(modelPath: String? = null, classificationsJson: String? = null, scope: CoroutineScope) : super(modelPath, scope) {
         if (classificationsJson != null) initClassifier(classificationsJson)
     }
-    constructor(modelPath: String? = null, newClassifications: Map<S, Set<IClassification<S>>>? = null) : super(modelPath) {
+    constructor(modelPath: String? = null, newClassifications: Map<S, Set<IClassification<S>>>? = null, scope: CoroutineScope) : super(modelPath, scope) {
         if (newClassifications != null) initClassifier(newClassifications)
     }
 

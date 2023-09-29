@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.models
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,4 +17,6 @@ interface IMachineLearningModel <in I, out O> {
     val isLoaded: SharedFlow<Boolean>
 
     val threshold: Float
+
+    val modelScope: CoroutineScope
 }

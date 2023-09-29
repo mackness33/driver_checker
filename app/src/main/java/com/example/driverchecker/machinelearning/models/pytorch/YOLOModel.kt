@@ -7,6 +7,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
 import com.example.driverchecker.utils.BitmapUtils
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.pytorch.*
@@ -16,11 +17,11 @@ import java.util.Collections.max
 class YOLOModel :
     ImageDetectionTorchModel<String>
 {
-    constructor() : super()
+    constructor(scope: CoroutineScope) : super(scope)
 
-    constructor(modelPath: String? = null, classificationsJson: String? = null) : super(modelPath, classificationsJson)
+    constructor(modelPath: String? = null, classificationsJson: String? = null, scope: CoroutineScope) : super(modelPath, classificationsJson, scope)
 
-    constructor(modelPath: String? = null, newClassifications: Map<String, Set<IClassification<String>>>? = null) : super(modelPath, newClassifications)
+    constructor(modelPath: String? = null, newClassifications: Map<String, Set<IClassification<String>>>? = null, scope: CoroutineScope) : super(modelPath, newClassifications, scope)
 
     // model input image size
     private val inputWidth = 640

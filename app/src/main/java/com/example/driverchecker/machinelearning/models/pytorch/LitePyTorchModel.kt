@@ -2,13 +2,14 @@ package com.example.driverchecker.machinelearning.models.pytorch
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.models.MachineLearningModel
+import kotlinx.coroutines.CoroutineScope
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
 
-abstract class LitePyTorchModel <I, O> () : MachineLearningModel<I, O>() {
+abstract class LitePyTorchModel <I, O> (scope: CoroutineScope) : MachineLearningModel<I, O>(scope) {
     protected var module: Module? = null
 
-    constructor(modelPath: String? = null) : this() {
+    constructor(modelPath: String? = null, scope: CoroutineScope) : this(scope) {
         if (modelPath != null) initModel(modelPath)
     }
 

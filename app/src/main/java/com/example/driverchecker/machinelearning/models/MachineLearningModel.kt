@@ -2,11 +2,13 @@ package com.example.driverchecker.machinelearning.models
 
 import com.example.driverchecker.machinelearning.helpers.producers.AProducer
 import com.example.driverchecker.machinelearning.helpers.producers.IModelStateProducer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
-abstract class MachineLearningModel<I, R>  () : IMachineLearningModel<I, R> {
+abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLearningModel<I, R> {
     protected val mIsLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     protected val loadingMap: Map<String, Boolean> = mutableMapOf()
+    override val modelScope: CoroutineScope = scope
     protected open val modelStateProducer: IModelStateProducer<Boolean> = ModelStateProducer()
     override val isLoaded: SharedFlow<Boolean>
 //        get() = modelStateProducer.sharedFlow
