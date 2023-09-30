@@ -4,10 +4,7 @@ import android.util.Log
 import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
-import com.example.driverchecker.machinelearning.helpers.producers.AProducer
-import com.example.driverchecker.machinelearning.helpers.producers.AReactiveSemaphore
-import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
-import com.example.driverchecker.machinelearning.helpers.producers.IReactiveSemaphore
+import com.example.driverchecker.machinelearning.helpers.producers.*
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -237,9 +234,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             super.collectStates(state)
 
             producerIsInitialized.await()
-//            triggerReadyState()
             readySemaphore.update("model", state, triggerAction = true)
-//            evaluationStateProducer.modelReady(state)
         }
     }
 
@@ -263,7 +258,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     }
 
     protected open inner class LiveEvaluationProducer :
-        AProducer<LiveEvaluationStateInterface>(1, 5),
+        AAtomicProducer<LiveEvaluationStateInterface>(1, 5),
         ILiveEvaluationProducer<LiveEvaluationStateInterface>
     {
         override suspend fun emitReady(isReady: Boolean) {

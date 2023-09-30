@@ -26,12 +26,12 @@ abstract class AProducer<S> (
     override val currentState: ObservableData<S?>
         get() = mCurrentState
 
-    protected suspend fun emit(state: S) {
+    protected open suspend fun emit(state: S) {
         mSharedFlow.emit(state)
         mCurrentState.postValue(state)
     }
 
-    protected fun tryEmit(state: S) : Boolean {
+    protected open fun tryEmit(state: S) : Boolean {
         val res = mSharedFlow.tryEmit(state)
         if (res)
             mCurrentState.postValue(state)

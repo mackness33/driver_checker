@@ -34,19 +34,11 @@ class ImageDetectionFactoryRepository
         try {
             onStopLiveEvaluation()
             model = factory(modelName, modelInit)
-            if (modelListener == null)
-                modelListener =
-                    if (model == null) ModelListener()
-                    else ModelListener(repositoryScope, model!!.isLoaded, GenericMode.First)
-            else
-                modelListener?.listen(repositoryScope, model?.isLoaded, GenericMode.First)
-            /*
             when {
                 modelListener != null -> modelListener?.listen(repositoryScope, model?.isLoaded, GenericMode.First)
                 model == null -> modelListener = ModelListener()
                 else -> modelListener = ModelListener(repositoryScope, model!!.isLoaded, GenericMode.First)
             }
-            * */
             return false
         } catch (e : Throwable) {
             Log.e("ImageDetectionFactoryRepository", e.message ?: "Error on the exposition of the model $modelName", e)
