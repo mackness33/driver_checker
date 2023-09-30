@@ -40,27 +40,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
     }
 
-    override fun jobEvaluation(input: Flow<I>, newSettings: IOldSettings): Job {
-        return repositoryScope.launch(Dispatchers.Default) {
-            // check if the repo is ready to make evaluations
-            try {
-                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true)) && model != null && model?.classifier != null) {
-                    evaluationStateProducer.emitStart()
-                    timer.markStart()
-
-                    oldSettings = newSettings
-                    oldTimer.markStart()
-
-                    flowEvaluation(input, ::cancel)?.collect()
-                } else
-                    throw Throwable("The stream is not ready yet")
-            } catch (e : Throwable) {
-                evaluationStateProducer.emitErrorEnd(e)
-                triggerReadyState()
-            }
-        }
-    }
-
     protected open inner class LiveClassificationProducer :
         LiveEvaluationProducer () {
         override suspend fun emitStart() {

@@ -33,9 +33,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
     protected var liveEvaluationJob: Job? = null
     protected var loadingModelJob: Job? = null
-    protected val oldTimer = Timer()
     protected val timer = Timer()
-    protected var oldSettings: IOldSettings? = null
     override val availableSettings : ISettings = Settings (
         listOf(1, 3, 5, 10, 20, 30),
         listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
@@ -94,11 +92,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
                 evaluationStateProducer.emitStart()
                 timer.markStart()
-                /* DELETABLE */
-                model?.updateThreshold(newSettings.modelThreshold)
-                oldSettings = newSettings
-
-                oldTimer.markStart()
 
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
@@ -125,12 +118,9 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             Log.e("AMLClassification", "Just caught this: ${cause.message}", cause)
             evaluationStateProducer.emitErrorEnd(cause)
         } else {
-            oldTimer.markEnd()
             evaluationStateProducer.emitSuccessEnd()
         }
 
-        oldTimer.reset()
-        oldSettings = null
         timer.reset()
         collectionOfWindows.clean()
     }
