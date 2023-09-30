@@ -14,9 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 
 class ImageDetectionFactoryRepository
     : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String> {
-
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
-
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
     override var model: IClassificationModel<IImageDetectionInput, IImageDetectionFullOutput<String>, String>? = null
@@ -39,7 +37,6 @@ class ImageDetectionFactoryRepository
                 model == null -> modelListener = ModelListener()
                 else -> modelListener = ModelListener(repositoryScope, model!!.isLoaded, GenericMode.First)
             }
-            return false
         } catch (e : Throwable) {
             Log.e("ImageDetectionFactoryRepository", e.message ?: "Error on the exposition of the model $modelName", e)
         }

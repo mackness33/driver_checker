@@ -21,10 +21,14 @@ import kotlin.time.ExperimentalTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
+
     protected val producerIsInitialized = CompletableDeferred<Nothing?>()
 
     open val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveEvaluationProducer()
     protected val readySemaphore: IReactiveSemaphore<String> = ReadySemaphore()
+
+    override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
+        get() = evaluationStateProducer.sharedFlow
 
     // abstracted
     protected abstract val model: IMachineLearningModel<I, O>?
@@ -32,8 +36,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected abstract var modelListener: IGenericListener<Boolean>?
 
     protected var liveEvaluationJob: Job? = null
-    protected var loadingModelJob: Job? = null
+
     protected val timer = Timer()
+
+    // SETTINGS
     override val availableSettings : ISettings = Settings (
         listOf(1, 3, 5, 10, 20, 30),
         listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
@@ -51,9 +57,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     private val privateSettings: ISettings
         get() = mSettings.value
     protected abstract val collectionOfWindows: MachineLearningWindowsMutableCollection<O>
-
-    override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
-        get() = evaluationStateProducer.sharedFlow
 
     open fun initialize (semaphores: Set<String>) {
         readySemaphore.initialize(semaphores)
@@ -180,9 +183,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             try {
                 val typedState = state as ClientState.Start<I>
                 readySemaphore.update("client",false, triggerAction = false)
-                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
+//                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
+                if (liveEvaluationJob == null)
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
-                }
+//                }
             } catch (e : Throwable) {
                 evaluationStateProducer.emitErrorEnd(e)
             }
