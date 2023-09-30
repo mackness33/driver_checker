@@ -60,7 +60,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         evaluationStateProducer.initialize()
         collectionOfWindows.initialize(availableSettings)
         collectionOfWindows.updateSettings(privateSettings)
-        evaluationStateProducer.tryEmitReady(false)
     }
 
     override fun updateModelThreshold (threshold: Float) {
@@ -80,7 +79,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected open suspend fun triggerReadyState() {
         // if the last state of the evaluation is different from the ready state that has been triggered
         // then send the new ready state and stop all the job that were running
-        producerIsInitialized.await()
+//        producerIsInitialized.await()
         if (!evaluationStateProducer.isLast(LiveEvaluationState.Ready(isReady() == true))){
             liveEvaluationJob?.cancel(InternalCancellationException())
             evaluationStateProducer.emitReady(isReady() == true)
@@ -196,7 +195,9 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         constructor (scope: CoroutineScope, clientFlow: SharedFlow<ClientStateInterface>) : super(scope, clientFlow)
 
         override suspend fun onLiveEvaluationReady() {
-            triggerReadyState()
+            producerIsInitialized.await()
+//            triggerReadyState()
+            evaluationStateProducer.clientReady(true)
         }
 
         override suspend fun onLiveEvaluationStart(state: ClientState.Start<*>) {
@@ -228,7 +229,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override suspend fun collectStates (state: Boolean) {
             super.collectStates(state)
-            triggerReadyState()
+
+            producerIsInitialized.await()
+//            triggerReadyState()
+            evaluationStateProducer.modelReady(state)
         }
     }
 
@@ -236,9 +240,31 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         AProducer<LiveEvaluationStateInterface>(1, 5),
         ILiveEvaluationProducer<LiveEvaluationStateInterface>
     {
+        protected val readyMap : MutableMap<String, Boolean> = mutableMapOf()
 
         override suspend fun emitReady(isReady: Boolean) {
             emit(LiveEvaluationState.Ready(isReady))
+        }
+
+        protected suspend fun updateReadyState () {
+            val result = LiveEvaluationState.Ready(
+                readyMap.values.fold(true) { last, current -> last && current }
+            )
+            if (!isLast(result)) {
+                liveEvaluationJob?.cancel(InternalCancellationException())
+                emit(result)
+            }
+        }
+
+        override fun modelReady(isReady: Boolean) = runBlocking {
+            readyMap["model"] = isReady
+            updateReadyState()
+        }
+
+
+        override fun clientReady(isReady: Boolean) = runBlocking {
+            readyMap["client"] = isReady
+            updateReadyState()
         }
 
         override suspend fun emitStart() {
@@ -266,8 +292,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         }
 
         override fun initialize () {
-            producerIsInitialized.complete(null)
+            readyMap["model"] = false
+            readyMap["client"] = false
             tryEmit(LiveEvaluationState.Ready(false))
+            producerIsInitialized.complete(null)
         }
     }
 }

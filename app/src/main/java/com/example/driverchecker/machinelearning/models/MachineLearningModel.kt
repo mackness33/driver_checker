@@ -55,6 +55,13 @@ abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLea
             }
         }
 
+        protected fun tryUpdateState () {
+            val result = readyMap.values.fold(true) { last, current -> last && current }
+            if (!isLast(result)) {
+                tryEmit(result)
+            }
+        }
+
         override fun modelReady(isReady: Boolean) = runBlocking {
             readyMap["model"] = isReady
             updateState()
@@ -63,6 +70,7 @@ abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLea
         override fun initialize () {
             readyMap["model"] = false
             tryEmit(false)
+//            tryUpdateState()
         }
     }
 }

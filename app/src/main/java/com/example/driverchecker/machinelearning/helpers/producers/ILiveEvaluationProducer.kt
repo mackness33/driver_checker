@@ -8,4 +8,6 @@ interface ILiveEvaluationProducer<S> : IProducer<S> {
     suspend fun emitSuccessEnd()
 
     fun tryEmitReady(isReady: Boolean) : Boolean
+    fun clientReady(isReady: Boolean)
+    fun modelReady(isReady: Boolean)
 }
