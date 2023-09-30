@@ -5,6 +5,7 @@ import com.example.driverchecker.machinelearning.collections.ClassificationWindo
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.producers.AProducer
 import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
+import com.example.driverchecker.machinelearning.helpers.producers.IReactiveSemaphore
 import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
 import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -34,8 +35,8 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     init {
     }
 
-    override fun initialize() {
-        super.initialize()
+    override fun initialize(semaphores: Set<String>) {
+        super.initialize(semaphores)
         collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
     }
 

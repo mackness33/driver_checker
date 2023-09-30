@@ -1,5 +1,7 @@
 package com.example.driverchecker.machinelearning.helpers.producers
 
-interface IReactiveSemaphore<S> : IProducer<S> {
-    fun modelReady(isReady: Boolean)
+interface IReactiveSemaphore<S> {
+    val readyMap : Map<S, Boolean>
+    fun initialize (semaphores: Set<S>)
+    suspend fun update (key: S, value: Boolean, triggerAction: Boolean)
 }

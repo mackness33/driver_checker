@@ -182,7 +182,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     }
 
     init {
-        imageDetectionRepository.initialize()
+        imageDetectionRepository
         evaluationListener.listen(viewModelScope, evaluationState)
         evaluationClient.listen(viewModelScope, evaluationState)
         imageDetectionRepository.addClient(evaluationClient.clientState)

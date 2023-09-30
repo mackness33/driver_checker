@@ -5,7 +5,9 @@ import com.example.driverchecker.machinelearning.collections.MachineLearningWind
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.helpers.producers.AProducer
+import com.example.driverchecker.machinelearning.helpers.producers.AReactiveSemaphore
 import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
+import com.example.driverchecker.machinelearning.helpers.producers.IReactiveSemaphore
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -17,6 +19,7 @@ import com.example.driverchecker.utils.Timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Semaphore
 import kotlin.time.ExperimentalTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
@@ -24,6 +27,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected val producerIsInitialized = CompletableDeferred<Nothing?>()
 
     open val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveEvaluationProducer()
+    protected val readySemaphore: IReactiveSemaphore<String> = ReadySemaphore()
 
     // abstracted
     protected abstract val model: IMachineLearningModel<I, O>?
@@ -56,7 +60,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = evaluationStateProducer.sharedFlow
 
-    open fun initialize () {
+    open fun initialize (semaphores: Set<String>) {
+        readySemaphore.initialize(semaphores)
         evaluationStateProducer.initialize()
         collectionOfWindows.initialize(availableSettings)
         collectionOfWindows.updateSettings(privateSettings)
@@ -197,12 +202,13 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         override suspend fun onLiveEvaluationReady() {
             producerIsInitialized.await()
 //            triggerReadyState()
-            evaluationStateProducer.clientReady(true)
+            readySemaphore.update("client",true, triggerAction = true)
         }
 
         override suspend fun onLiveEvaluationStart(state: ClientState.Start<*>) {
             try {
                 val typedState = state as ClientState.Start<I>
+//                readySemaphore.update("client",false, triggerAction = false)
                 if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
                 }
@@ -232,7 +238,27 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
             producerIsInitialized.await()
 //            triggerReadyState()
-            evaluationStateProducer.modelReady(state)
+            readySemaphore.update("model", state, triggerAction = true)
+//            evaluationStateProducer.modelReady(state)
+        }
+    }
+
+    protected open inner class ReadySemaphore() : AReactiveSemaphore<String>() {
+        protected var lastAction : Boolean? = null
+
+        override fun initialize (semaphores: Set<String>) {
+            super.initialize(semaphores)
+            lastAction = false
+        }
+
+        override suspend fun action() {
+            val result = readyMap.values.fold(true) { last, current -> last && current }
+            if (lastAction != result) {
+                liveEvaluationJob?.cancel(InternalCancellationException())
+                runBlocking {
+                    evaluationStateProducer.emitReady(result)
+                }
+            }
         }
     }
 
@@ -240,31 +266,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         AProducer<LiveEvaluationStateInterface>(1, 5),
         ILiveEvaluationProducer<LiveEvaluationStateInterface>
     {
-        protected val readyMap : MutableMap<String, Boolean> = mutableMapOf()
-
         override suspend fun emitReady(isReady: Boolean) {
             emit(LiveEvaluationState.Ready(isReady))
-        }
-
-        protected suspend fun updateReadyState () {
-            val result = LiveEvaluationState.Ready(
-                readyMap.values.fold(true) { last, current -> last && current }
-            )
-            if (!isLast(result)) {
-                liveEvaluationJob?.cancel(InternalCancellationException())
-                emit(result)
-            }
-        }
-
-        override fun modelReady(isReady: Boolean) = runBlocking {
-            readyMap["model"] = isReady
-            updateReadyState()
-        }
-
-
-        override fun clientReady(isReady: Boolean) = runBlocking {
-            readyMap["client"] = isReady
-            updateReadyState()
         }
 
         override suspend fun emitStart() {
@@ -292,8 +295,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         }
 
         override fun initialize () {
-            readyMap["model"] = false
-            readyMap["client"] = false
             tryEmit(LiveEvaluationState.Ready(false))
             producerIsInitialized.complete(null)
         }

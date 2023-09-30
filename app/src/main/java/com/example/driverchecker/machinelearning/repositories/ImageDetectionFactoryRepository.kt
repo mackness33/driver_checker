@@ -26,7 +26,8 @@ class ImageDetectionFactoryRepository
     override val collectionOfWindows: ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> = ImageDetectionSetOfWindows(repositoryScope)
 
     init {
-        initialize()
+        val semaphores = setOf("model", "client")
+        initialize(semaphores)
     }
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {
