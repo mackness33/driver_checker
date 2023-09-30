@@ -74,20 +74,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         ))
     }
 
-    protected open fun isReady() : Boolean? {
-        return (modelListener?.currentState?.value ?: false) && clientListener?.currentState?.value == ClientState.Ready
-    }
-
-    protected open suspend fun triggerReadyState() {
-        // if the last state of the evaluation is different from the ready state that has been triggered
-        // then send the new ready state and stop all the job that were running
-//        producerIsInitialized.await()
-        if (!evaluationStateProducer.isLast(LiveEvaluationState.Ready(isReady() == true))){
-            liveEvaluationJob?.cancel(InternalCancellationException())
-            evaluationStateProducer.emitReady(isReady() == true)
-        }
-    }
-
     override suspend fun instantEvaluation(input: I): O? {
         var result: O? = null
         val job = repositoryScope.launch(Dispatchers.Default) { result = model?.processAndEvaluate(input) }
@@ -117,7 +103,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
                 flowEvaluation(input, ::cancel)?.collect()
             } else {
                 evaluationStateProducer.emitErrorEnd(Throwable("The stream is not ready yet"))
-                triggerReadyState()
             }
         }
     }
@@ -198,14 +183,13 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override suspend fun onLiveEvaluationReady() {
             producerIsInitialized.await()
-//            triggerReadyState()
             readySemaphore.update("client",true, triggerAction = true)
         }
 
         override suspend fun onLiveEvaluationStart(state: ClientState.Start<*>) {
             try {
                 val typedState = state as ClientState.Start<I>
-//                readySemaphore.update("client",false, triggerAction = false)
+                readySemaphore.update("client",false, triggerAction = false)
                 if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
                 }
@@ -243,6 +227,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override fun initialize (semaphores: Set<String>) {
             super.initialize(semaphores)
+//            triggerReadyState()
             lastAction = false
         }
 
@@ -250,9 +235,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             val result = readyMap.values.fold(true) { last, current -> last && current }
             if (lastAction != result) {
                 liveEvaluationJob?.cancel(InternalCancellationException())
-                runBlocking {
-                    evaluationStateProducer.emitReady(result)
-                }
+                evaluationStateProducer.emitReady(result)
             }
         }
     }
