@@ -18,12 +18,8 @@ abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
     IClassificationModel<I, O, S>
 {
     constructor(scope: CoroutineScope) : super(scope)
-    constructor(modelPath: String? = null, classificationsJson: String? = null, scope: CoroutineScope) : super(modelPath, scope) {
-//        if (classificationsJson != null) initClassifier(classificationsJson)
-    }
-    constructor(modelPath: String? = null, newClassifications: Map<S, Set<IClassification<S>>>? = null, scope: CoroutineScope) : super(modelPath, scope) {
-//        if (newClassifications != null) initClassifier(newClassifications)
-    }
+    constructor(modelPath: String? = null, classificationsJson: String? = null, scope: CoroutineScope) : super(modelPath, scope)
+    constructor(modelPath: String? = null, newClassifications: Map<S, Set<IClassification<S>>>? = null, scope: CoroutineScope) : super(modelPath, scope)
 
 
     override val modelStateProducer: IClassificationProducer<Boolean> = ClassificationStateProducer()
@@ -34,18 +30,7 @@ abstract class ClassifierTorchModel<I, O, S : Comparable<S>> :
     protected fun initClassifier(json: String?) : Boolean {
         return loadClassifications(json)
     }
-    protected fun initClassifier(newClassifications: Map<S, Set<IClassification<S>>>?) : Boolean
-        = runBlocking {
-            loadClassifications(newClassifications)
-        }
-
-    override suspend fun <ModelInit : Map<S, Set<IClassification<S>>>> loadClassifications(init: ModelInit?): Boolean {
-        val result = mClassifier.load(init)
-        modelStateProducer.classificationReady(result)
-
-        return result
-    }
-
+    
     override fun loadClassifications(json: String?): Boolean {
         if (json.isNullOrBlank()) {
             modelStateProducer.classificationReady(false)

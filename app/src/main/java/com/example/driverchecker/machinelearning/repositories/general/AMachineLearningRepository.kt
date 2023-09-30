@@ -202,15 +202,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         override suspend fun onLiveEvaluationStart(state: ClientState.Start<*>) {
             try {
                 val typedState = state as ClientState.Start<I>
-//                if (mEvaluationFlowState.replayCache.last() == LiveEvaluationState.Ready(true)) {
-//                    liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
-//                }
-
                 if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
                 }
             } catch (e : Throwable) {
-//                mEvaluationFlowState.emit(LiveEvaluationState.OldEnd(e, null))
                 evaluationStateProducer.emitErrorEnd(e)
             }
         }
