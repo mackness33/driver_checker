@@ -13,10 +13,10 @@ abstract class AClientStateListener : ClientStateListener, AGenericListener<Clie
     override suspend fun collectStates (state: ClientStateInterface) {
         super.collectStates(state)
         when (state) {
-            is ClientState.Ready -> onLiveEvaluationReady()
-            is ClientState.Start<*> -> onLiveEvaluationStart(state)
-            is ClientState.Stop -> onLiveEvaluationStop(state)
-            is ClientState.UpdateSettings -> onLiveEvaluationUpdateSettings(state)
+            is ClientState.Ready -> onClientReady()
+            is ClientState.Start<*> -> onClientStart(state)
+            is ClientState.Stop -> onClientStop(state)
+            is ClientState.UpdateSettings -> onClientUpdateSettings(state)
         }
     }
 }

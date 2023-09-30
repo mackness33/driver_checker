@@ -174,12 +174,12 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         constructor (scope: CoroutineScope, clientFlow: SharedFlow<ClientStateInterface>) : super(scope, clientFlow)
 
-        override suspend fun onLiveEvaluationReady() {
+        override suspend fun onClientReady() {
             producerIsInitialized.await()
             readySemaphore.update("client",true, triggerAction = true)
         }
 
-        override suspend fun onLiveEvaluationStart(state: ClientState.Start<*>) {
+        override suspend fun onClientStart(state: ClientState.Start<*>) {
             try {
                 val typedState = state as ClientState.Start<I>
                 readySemaphore.update("client",false, triggerAction = false)
@@ -192,11 +192,11 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             }
         }
 
-        override fun onLiveEvaluationStop(state: ClientState.Stop) {
+        override fun onClientStop(state: ClientState.Stop) {
             onStopLiveEvaluation(state.cause)
         }
 
-        override fun onLiveEvaluationUpdateSettings(state: ClientState.UpdateSettings) {
+        override fun onClientUpdateSettings(state: ClientState.UpdateSettings) {
             model?.updateThreshold(state.settings.modelThreshold)
             collectionOfWindows.updateSettings(state.settings)
         }

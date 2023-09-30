@@ -4,13 +4,13 @@ import com.example.driverchecker.machinelearning.data.*
 
 interface ClientStateListener : IGenericListener<ClientStateInterface> {
     // handler of mlRepo in ready
-    suspend fun onLiveEvaluationReady ()
+    suspend fun onClientReady ()
 
     // handler of mlRepo in start
-    suspend fun onLiveEvaluationStart(state: ClientState.Start<*>)
+    suspend fun onClientStart(state: ClientState.Start<*>)
 
     // handler of mlRepo on end
-    fun onLiveEvaluationStop (state: ClientState.Stop)
+    fun onClientStop (state: ClientState.Stop)
 
-    fun onLiveEvaluationUpdateSettings (state: ClientState.UpdateSettings)
+    fun onClientUpdateSettings (state: ClientState.UpdateSettings)
 }
