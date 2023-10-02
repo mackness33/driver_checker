@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.SharedFlow
 interface IMachineLearningRepository<in I, out O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> {
     suspend fun instantEvaluation (input: I): O?
 
-    suspend fun continuousEvaluation (input: Flow<I>, settings: IOldSettings): O?
+    suspend fun continuousEvaluation (input: Flow<I>): O?
 
     fun onStartLiveEvaluation (input: SharedFlow<I>)
     fun onStopLiveEvaluation (externalCause: CancellationException? = null)

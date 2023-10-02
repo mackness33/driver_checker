@@ -83,13 +83,13 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         return result
     }
 
-    override suspend fun continuousEvaluation(input: Flow<I>, settings: IOldSettings): O? {
-        jobEvaluation(input, settings).join()
+    override suspend fun continuousEvaluation(input: Flow<I>): O? {
+        jobEvaluation(input).join()
 
         return collectionOfWindows.lastResult
     }
 
-    protected open fun jobEvaluation (input: Flow<I>, newSettings: IOldSettings): Job {
+    protected open fun jobEvaluation (input: Flow<I>): Job {
         return repositoryScope.launch(Dispatchers.Default) {
             // check if the repo is ready to make evaluations
             if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
@@ -183,10 +183,10 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             try {
                 val typedState = state as ClientState.Start<I>
                 readySemaphore.update("client",false, triggerAction = false)
-//                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
-                if (liveEvaluationJob == null)
-                    liveEvaluationJob = jobEvaluation(typedState.input.buffer(1), typedState.settings)
-//                }
+                if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
+//                if (liveEvaluationJob == null)
+                    liveEvaluationJob = jobEvaluation(typedState.input.buffer(1))
+                }
             } catch (e : Throwable) {
                 evaluationStateProducer.emitErrorEnd(e)
             }
