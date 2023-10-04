@@ -20,17 +20,20 @@ abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStats> con
 
 
     /* FUNCTIONS */
+    protected fun windowIsFull() : Boolean = window.size == size
+
     override fun isSatisfied() : Boolean {
-      return (window.size == size && threshold <= confidence)
+      return (windowIsFull() && threshold <= confidence)
     }
 
     override fun update () {
-        confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
+        if (windowIsFull())
+            confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
     }
 
     override fun postUpdate () {
-        if (window.size == size) sumOfConfidencePerWindowDone += confidence
-        postUpdate()
+        if (windowIsFull()) sumOfConfidencePerWindowDone += confidence
+        super.postUpdate()
     }
 
     override suspend fun clean () {

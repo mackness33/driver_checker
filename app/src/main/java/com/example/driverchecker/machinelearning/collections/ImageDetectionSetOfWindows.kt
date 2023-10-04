@@ -163,6 +163,9 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
         availableWindows.forEach { it.value.updateGroups(newGroups) }
     }
 
+    override val type: String
+        get() = "SetOfWindows"
+
     /*  SET  */
 //    override fun contains(element: IMachineLearningWindow<I>): Boolean {
 //        return availableWindows.contains(element)
