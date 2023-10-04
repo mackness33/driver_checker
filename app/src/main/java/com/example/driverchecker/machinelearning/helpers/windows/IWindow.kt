@@ -4,7 +4,7 @@ import com.example.driverchecker.machinelearning.data.*
 
 interface IWindow <E> : IMachineLearningFinalResultStats {
     val hasAcceptedLast: Boolean
-    val totalElement: Int
+    val totalElements: Int
     val lastResult: E?
 
     fun isSatisfied() : Boolean

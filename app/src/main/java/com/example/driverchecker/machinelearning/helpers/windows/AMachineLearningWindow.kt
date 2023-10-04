@@ -28,7 +28,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override var hasAcceptedLast: Boolean = false
         protected set
 
-    override var totalElement: Int = 0
+    override var totalElements: Int = 0
         protected set
 
     override val lastResult: E?
@@ -38,7 +38,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         protected set
 
     override val totalWindows: Int
-        get() = if (window.size >= windowFrames) (totalElement + 1) - window.size else 0
+        get() = if (window.size >= windowFrames) (totalElements + 1) - window.size else 0
 
     override val averageTime: Double
         get() = totalTime/totalWindows
@@ -84,7 +84,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     }
 
     protected open fun postUpdate () {
-        totalElement++
+        totalElements++
         hasAcceptedLast = true
         if (window.size == windowFrames) sumOfConfidencePerWindowDone += confidence
 
@@ -93,7 +93,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override suspend fun clean () {
         window.clear()
         confidence = 0f
-        totalElement = 0
+        totalElements = 0
         hasAcceptedLast = false
 //        totalWindows = 0
         totalTime = 0.0

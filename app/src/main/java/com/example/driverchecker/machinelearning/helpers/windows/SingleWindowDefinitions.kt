@@ -4,7 +4,9 @@ import com.example.driverchecker.machinelearning.data.*
 
 interface ISingleWindow <E> : IWindow<E> {
     val settings: ISettings
-    val totalWindow: Int
+    val totalWindows: Int
+    val totalTime: Double
+    val lastTime: Double
 
     fun initialize(availableSettings: ISettings)
     fun updateSettings(newSettings: ISettings)

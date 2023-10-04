@@ -40,7 +40,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         override suspend fun emitLoading() {
             emit(
                 LiveClassificationState.Loading (
-                    collectionOfWindows.totalElement, collectionOfWindows.lastResult
+                    collectionOfWindows.totalElements, collectionOfWindows.lastResult
                 )
             )
         }

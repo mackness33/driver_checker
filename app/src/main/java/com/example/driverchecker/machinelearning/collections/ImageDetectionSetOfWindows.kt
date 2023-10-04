@@ -53,8 +53,8 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
     override var hasAcceptedLast: Boolean = false
         get() = if (activeWindows.isEmpty()) false else activeWindows.fold(false) { last, current -> last || current.hasAcceptedLast }
         protected set
-    override var totalElement: Int = 0
-        get() = activeWindows.first().totalElement
+    override var totalElements: Int = 0
+        get() = activeWindows.first().totalElements
         protected set
     override var settings: ISettings =
         Settings(emptyList(), emptyList(), emptyList(), 0.0f)
