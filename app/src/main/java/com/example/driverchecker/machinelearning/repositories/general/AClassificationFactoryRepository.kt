@@ -1,20 +1,12 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
-import android.util.Log
 import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.producers.AProducer
 import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
-import com.example.driverchecker.machinelearning.helpers.producers.IReactiveSemaphore
-import com.example.driverchecker.machinelearning.helpers.windows.ClassificationWindow
-import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlin.time.ExperimentalTime
 
 
 abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
@@ -48,7 +40,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
         override suspend fun emitLoading() {
             emit(
                 LiveClassificationState.Loading (
-                    collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult
+                    collectionOfWindows.totalElement, collectionOfWindows.lastResult
                 )
             )
         }

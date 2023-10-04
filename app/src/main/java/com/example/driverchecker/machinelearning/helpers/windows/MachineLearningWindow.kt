@@ -14,10 +14,6 @@ open class MachineLearningWindow<E : IMachineLearningOutputStats> (
     override val supergroup: String
         get() = ""
 
-    override fun getOldFinalResults() : IMachineLearningFinalResultStats {
-        return OldMachineLearningFullFinalResult(confidence)
-    }
-
     override fun getMetrics(): IWindowBasicData {
         return WindowBasicData(this)
     }

@@ -15,10 +15,6 @@ open class BasicImageDetectionWindow (
     override val supergroup: String
         get() = supergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key
 
-    override fun getOldFinalResults() : IClassificationFinalResultStats<String> {
-        return ImageDetectionFullFinalResultOld(confidence, supergroup)
-    }
-
     override fun getMetrics(): IWindowBasicData {
         return WindowBasicData(this)
     }

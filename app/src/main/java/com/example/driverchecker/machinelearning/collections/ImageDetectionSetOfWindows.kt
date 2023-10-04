@@ -3,15 +3,9 @@ package com.example.driverchecker.machinelearning.collections
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindow
-import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
-import com.example.driverchecker.utils.CompletableData
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancelAndJoin
-import kotlin.time.ExperimentalTime
-import kotlin.time.TimeSource
 
 open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
     ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> {
@@ -59,8 +53,8 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
     override var hasAcceptedLast: Boolean = false
         get() = if (activeWindows.isEmpty()) false else activeWindows.fold(false) { last, current -> last || current.hasAcceptedLast }
         protected set
-    override var totEvaluationsDone: Int = 0
-        get() = activeWindows.first().totEvaluationsDone
+    override var totalElement: Int = 0
+        get() = activeWindows.first().totalElement
         protected set
     override var settings: ISettings =
         Settings(emptyList(), emptyList(), emptyList(), 0.0f)
@@ -88,7 +82,6 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
         }
     }
 
-
     override fun isSatisfied(): Boolean {
         val satisfiedWindows = mutableSetOf<BasicImageDetectionWindow>()
         var currentIsSatisfied: Boolean
@@ -110,8 +103,8 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
         return areAllSatisfied
     }
 
-    override fun next(element: IImageDetectionFullOutput<String>, offset: Double?) {
-        activeWindows.forEach { it.next(element, offset) }
+    override fun next(element: IImageDetectionFullOutput<String>, timeOffset: Double?) {
+        activeWindows.forEach { it.next(element, timeOffset) }
     }
 
     override suspend fun clean() {
@@ -169,23 +162,6 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
 
         availableWindows.forEach { it.value.updateGroups(newGroups) }
     }
-
-
-    // TODO("NEED TO BE UPDATE")  finalResults need to return another type of results
-    override fun getOldFinalResults(): IMachineLearningFinalResultStats {
-        return selectedWindows.first().getOldFinalResults()
-    }
-
-    // TODO("NEED TO BE UPDATE") metrics need to return another type of metrics
-    override fun getOldMetrics(): IWindowOldMetrics {
-        return selectedWindows.first().getOldMetrics()
-    }
-
-    // TODO("NEED TO BE UPDATE") also this one will require a different type of metrics
-    override fun getOldFullMetrics(): Pair<IWindowOldMetrics, IAdditionalMetrics?> {
-        return selectedWindows.first().getOldFullMetrics()
-    }
-
 
     /*  SET  */
 //    override fun contains(element: IMachineLearningWindow<I>): Boolean {

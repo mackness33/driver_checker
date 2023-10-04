@@ -83,10 +83,4 @@ abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> const
         mSupergroupCounter.putAll(newGroups.associateWith { 0 })
         mGroupMetrics.initialize(newGroups)
     }
-
-
-    /* OLD */
-    override fun getOldFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>> {
-        return Pair(getOldMetrics(), groupMetrics)
-    }
 }

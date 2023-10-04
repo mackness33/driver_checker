@@ -15,7 +15,4 @@ interface IMachineLearningWindow<E : IMachineLearningOutputStats> : IWindow<E>, 
     fun getMetrics() : IWindowBasicData
 
     fun getAdditionalMetrics() : IAdditionalMetrics?
-
-    @OptIn(ExperimentalTime::class)
-    fun updateStart (newStart: TimeSource.Monotonic.ValueTimeMark)
 }

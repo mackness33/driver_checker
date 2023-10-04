@@ -6,18 +6,13 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.helpers.producers.*
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
-import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import com.example.driverchecker.utils.MutableObservableData
 import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.utils.StatefulData
 import com.example.driverchecker.utils.Timer
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.sync.Semaphore
-import kotlin.time.ExperimentalTime
 
 abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
@@ -249,7 +244,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         override suspend fun emitLoading() {
             emit(
                 LiveEvaluationState.Loading (
-                    collectionOfWindows.totEvaluationsDone, collectionOfWindows.lastResult
+                    collectionOfWindows.totalElement, collectionOfWindows.lastResult
                 )
             )
         }

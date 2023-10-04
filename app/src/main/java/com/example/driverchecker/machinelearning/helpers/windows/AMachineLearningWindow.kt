@@ -28,7 +28,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override var hasAcceptedLast: Boolean = false
         protected set
 
-    override var totEvaluationsDone: Int = 0
+    override var totalElement: Int = 0
         protected set
 
     override val lastResult: E?
@@ -38,7 +38,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         protected set
 
     override val totalWindows: Int
-        get() = if (window.size >= windowFrames) (totEvaluationsDone + 1) - window.size else 0
+        get() = if (window.size >= windowFrames) (totalElement + 1) - window.size else 0
 
     override val averageTime: Double
         get() = totalTime/totalWindows
@@ -57,7 +57,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
         timer.initStart(start)
     }
 
-    final override fun next(element: E, offset: Double?) {
+    final override fun next(element: E, timeOffset: Double?) {
         timer.markStart()
 
         hasAcceptedLast = preUpdate(element)
@@ -70,7 +70,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
         timer.markEnd()
 
-        val totalOutputTime: Double = timer.diff()?.plus((offset ?: 0.0)) ?: 0.0
+        val totalOutputTime: Double = timer.diff()?.plus((timeOffset ?: 0.0)) ?: 0.0
         totalTime += totalOutputTime
     }
 
@@ -84,7 +84,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     }
 
     protected open fun postUpdate () {
-        totEvaluationsDone++
+        totalElement++
         hasAcceptedLast = true
         if (window.size == windowFrames) sumOfConfidencePerWindowDone += confidence
 
@@ -93,7 +93,7 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
     override suspend fun clean () {
         window.clear()
         confidence = 0f
-        totEvaluationsDone = 0
+        totalElement = 0
         hasAcceptedLast = false
 //        totalWindows = 0
         totalTime = 0.0
@@ -116,22 +116,5 @@ abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> construct
 
     override fun getAdditionalMetrics(): IAdditionalMetrics? {
         return null
-    }
-
-    override fun getFinalResults(): IMachineLearningFinalResult {
-        return MachineLearningFinalResult(confidence, mapOf(getData()))
-    }
-
-    /* OLD */
-    override fun getOldMetrics() : IWindowOldMetrics {
-        return WindowOldMetrics(totalTime, totalWindows, type)
-    }
-
-    override fun getOldFullMetrics() : Pair<IWindowOldMetrics, IAdditionalMetrics?> {
-        return Pair(getOldMetrics(), null)
-    }
-
-    override fun updateStart(newStart: TimeSource.Monotonic.ValueTimeMark) {
-        timer.initStart(newStart)
     }
 }

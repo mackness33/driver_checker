@@ -22,14 +22,17 @@ interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : I
     fun getMetrics() : List<IWindowBasicData>
 
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
+    fun getFinalResults(): IMachineLearningFinalResult
     fun initialize(availableSettings: ISettings)
 }
 
-interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats> : MachineLearningWindowsCollection<E> {
+interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats> :
+    MachineLearningWindowsCollection<E> {
     fun updateSettings (newSettings: ISettings)
 }
 
-interface ClassificationWindowsCollection <E : IClassificationOutputStats<S>, S> : MachineLearningWindowsCollection<E> {
+interface ClassificationWindowsCollection <E : IClassificationOutputStats<S>, S> :
+    MachineLearningWindowsCollection<E> {
     val groups: Set<S>
 
     override fun getData() : Map<IWindowBasicData, IGroupMetrics<S>?>
@@ -39,6 +42,7 @@ interface ClassificationWindowsCollection <E : IClassificationOutputStats<S>, S>
     override fun getFinalResults(): IClassificationFinalResult<S>
 }
 
-interface ClassificationWindowsMutableCollection <E : IClassificationOutputStats<S>, S> : ClassificationWindowsCollection<E, S>, MachineLearningWindowsMutableCollection<E> {
+interface ClassificationWindowsMutableCollection <E : IClassificationOutputStats<S>, S> :
+    ClassificationWindowsCollection<E, S>, MachineLearningWindowsMutableCollection<E> {
     fun updateGroups (newGroups: Set<S>)
 }

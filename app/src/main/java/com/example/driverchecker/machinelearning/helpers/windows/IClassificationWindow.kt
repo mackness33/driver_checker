@@ -8,10 +8,6 @@ interface IClassificationWindow<E : IClassificationOutputStats<S>, S> : IMachine
     val supergroupCounter: Map<S, Int>
     val groupMetrics: IGroupMetrics<S>
 
-    override fun getOldFinalResults() : IClassificationFinalResultStats<S>
-
-    override fun getOldFullMetrics() : Pair<IWindowOldMetrics, IGroupMetrics<S>>
-
     override fun getData() : Pair<IWindowBasicData, IGroupMetrics<S>?>
 
     override fun getAdditionalMetrics() : IGroupMetrics<S>?
