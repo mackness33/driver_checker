@@ -6,6 +6,7 @@ interface IWindow <E> : IMachineLearningFinalResultStats {
     val hasAcceptedLast: Boolean
     val totalElements: Int
     val lastResult: E?
+    val type: String
 
     fun isSatisfied() : Boolean
     fun next (element: E, timeOffset: Double?)

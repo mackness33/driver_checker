@@ -6,12 +6,12 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
 @OptIn(ExperimentalTime::class)
-abstract class AClassificationWindow<E : IClassificationOutputStats<S>, S> constructor(
+abstract class AClassificationWindowOld<E : IClassificationOutputStats<S>, S> constructor(
     initialSize: Int = 3,
     initialThreshold: Float = 0.15f,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null,
     supergroups: Set<S>
-) : AMachineLearningWindow<E>(initialSize, initialThreshold, newStart), IClassificationWindow<E, S> {
+) : AMachineLearningWindowOld<E>(initialSize, initialThreshold, newStart), IClassificationWindow<E, S> {
 
     protected val mSupergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
     override val supergroupCounter: Map<S, Int>

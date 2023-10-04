@@ -5,7 +5,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
 @OptIn(ExperimentalTime::class)
-open class BasicImageDetectionWindow (
+open class BasicImageDetectionWindowOld (
     size: Int = 3,
     threshold: Float = 0.15f,
     supergroups: Set<String>,

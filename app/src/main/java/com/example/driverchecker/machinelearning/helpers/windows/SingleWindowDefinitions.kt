@@ -3,16 +3,17 @@ package com.example.driverchecker.machinelearning.helpers.windows
 import com.example.driverchecker.machinelearning.data.*
 
 interface ISingleWindow <E> : IWindow<E> {
-    val settings: ISettings
+    val settings: IWindowSettings
     val totalWindows: Int
     val totalTime: Double
     val lastTime: Double
 
-    fun initialize(availableSettings: ISettings)
-    fun updateSettings(newSettings: ISettings)
+    fun updateSettings(newSettings: IWindowSettings)
 }
 
 interface IMachineLearningSingleWindow <E : IMachineLearningOutputStats> : ISingleWindow<E> {
+    val threshold: Float
+
     fun getData() : Pair<IWindowBasicData, IAdditionalMetrics?>
     fun getMetrics() : IWindowBasicData
     fun getAdditionalMetrics() : IAdditionalMetrics?

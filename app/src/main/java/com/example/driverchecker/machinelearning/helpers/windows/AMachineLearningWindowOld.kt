@@ -6,7 +6,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
 @OptIn(ExperimentalTime::class)
-abstract class AMachineLearningWindow<E : IMachineLearningOutputStats> constructor(
+abstract class AMachineLearningWindowOld<E : IMachineLearningOutputStats> constructor(
     initialSize: Int = 3,
     initialThreshold: Float = 0.15f,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null

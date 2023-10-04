@@ -6,11 +6,12 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
 @OptIn(ExperimentalTime::class)
-abstract class ASingleWindow<E> (initialSize: Int = 3) : ISingleWindow<E> {
+abstract class ASingleWindow<E> (initialSize: Int = 0) : ISingleWindow<E> {
     protected val window : MutableList<E> = mutableListOf()
     protected val timer: Timer = Timer()
 
-    val size: Int = initialSize
+    var size: Int = initialSize
+        protected set
     override var hasAcceptedLast: Boolean = false
         protected set
 

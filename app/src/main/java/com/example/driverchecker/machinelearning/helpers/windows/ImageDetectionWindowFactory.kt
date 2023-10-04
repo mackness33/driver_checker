@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
-import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutputStats
 import com.example.driverchecker.machinelearning.helpers.windows.factories.ClassificationWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.factories.IClassificationWindowFactory
@@ -13,6 +12,6 @@ import com.example.driverchecker.machinelearning.helpers.windows.factories.IClas
 
 typealias ImageDetectionWindowFactory = ClassificationWindowFactory<IImageDetectionOutputStats<String>, String>
 typealias IImageDetectionWindowFactory = IClassificationWindowFactory<IImageDetectionOutputStats<String>, String>
-typealias ImageDetectionWindow = ClassificationWindow<IImageDetectionOutputStats<String>, String>
+typealias ImageDetectionWindow = ClassificationWindowOld<IImageDetectionOutputStats<String>, String>
 typealias IImageDetectionWindow = IClassificationWindow<IImageDetectionOutputStats<String>, String>
-typealias AImageDetectionWindow = AClassificationWindow<IImageDetectionOutputStats<String>, String>
+typealias AImageDetectionWindow = AClassificationWindowOld<IImageDetectionOutputStats<String>, String>

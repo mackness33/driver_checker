@@ -5,13 +5,13 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
 @OptIn(ExperimentalTime::class)
-open class ClassificationWindow<E : IClassificationOutputStats<S>, S> (
+open class ClassificationWindowOld<E : IClassificationOutputStats<S>, S> (
     size: Int = 3,
     threshold: Float = 0.15f,
     supergroups: Set<S>,
     override val type: String = "ClassificationWindow",
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
-) : AClassificationWindow<E, S>(size, threshold, supergroups = supergroups, newStart = newStart) {
+) : AClassificationWindowOld<E, S>(size, threshold, supergroups = supergroups, newStart = newStart) {
     override val supergroup: String
         get() = ""
 

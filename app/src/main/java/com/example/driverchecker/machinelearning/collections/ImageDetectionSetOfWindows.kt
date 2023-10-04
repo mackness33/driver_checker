@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.collections
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindow
+import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindowOld
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CoroutineScope
@@ -11,8 +11,8 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
     ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> {
     override var groups: Set<String> = emptySet()
         protected set
-    protected var availableWindows: MutableMap<IWindowSettings, BasicImageDetectionWindow> = mutableMapOf()
-    protected var selectedWindows: MutableSet<BasicImageDetectionWindow> = mutableSetOf()
+    protected var availableWindows: MutableMap<IWindowSettings, BasicImageDetectionWindowOld> = mutableMapOf()
+    protected var selectedWindows: MutableSet<BasicImageDetectionWindowOld> = mutableSetOf()
         protected set
 
     protected var hasFinalResultBeingCopied: MutableCompletableData<Boolean> = DeferrableData(false, scope.coroutineContext)
@@ -23,13 +23,13 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
         settings = availableSettings
 
         try {
-            val mAvailableWindows: MutableMap<IWindowSettings, BasicImageDetectionWindow> = mutableMapOf()
+            val mAvailableWindows: MutableMap<IWindowSettings, BasicImageDetectionWindowOld> = mutableMapOf()
             settings.multipleTypes.forEach { type ->
                 settings.multipleWindowsFrames.forEach { frames ->
                     settings.multipleWindowsThresholds.forEach { threshold ->
                         availableWindows.putIfAbsent(
                             WindowSettings(frames, threshold, type),
-                            BasicImageDetectionWindow(frames, threshold, groups)
+                            BasicImageDetectionWindowOld(frames, threshold, groups)
                         )
                     }
                 }
@@ -39,10 +39,10 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
         }
     }
 
-    var inactiveWindows: Set<BasicImageDetectionWindow> = emptySet()
+    var inactiveWindows: Set<BasicImageDetectionWindowOld> = emptySet()
         get() = selectedWindows.minus(activeWindows)
         protected set
-    var activeWindows: Set<BasicImageDetectionWindow> = emptySet()
+    var activeWindows: Set<BasicImageDetectionWindowOld> = emptySet()
         protected set
 
 
@@ -83,7 +83,7 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
     }
 
     override fun isSatisfied(): Boolean {
-        val satisfiedWindows = mutableSetOf<BasicImageDetectionWindow>()
+        val satisfiedWindows = mutableSetOf<BasicImageDetectionWindowOld>()
         var currentIsSatisfied: Boolean
 
         val areAllSatisfied = activeWindows.fold(true) { lastResult, currentWindow ->
