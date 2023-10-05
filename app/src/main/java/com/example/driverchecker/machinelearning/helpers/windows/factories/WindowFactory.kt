@@ -1,14 +1,52 @@
 package com.example.driverchecker.machinelearning.helpers.windows.factories
 
+import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
+import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
 import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
-import com.example.driverchecker.machinelearning.helpers.windows.singles.IMachineLearningWindow
+import com.example.driverchecker.machinelearning.data.IWindowSettings
+import com.example.driverchecker.machinelearning.helpers.windows.IWindow
+import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 
 abstract class WindowFactory<E : IMachineLearningOutputStats> {
 
     abstract fun buildMachineLearningWindow(frames: Int, threshold: Float): IMachineLearningWindow<E>
 }
 
-interface IMachineLearningWindowFactory<E : IMachineLearningOutputStats> {
 
-    fun buildMachineLearningWindow(frames: Int, threshold: Float): IMachineLearningWindow<E>
+/* DEFINITIONS */
+interface IWindowFactory<E> {
+
+    fun buildWindow(initialSettings: IWindowSettings): ISingleWindow<E>
 }
+
+interface IMachineLearningWindowFactory<E : IMachineLearningOutputStats> : IWindowFactory<E> {
+
+    override fun buildWindow(initialSettings: IWindowSettings): IMachineLearningSingleWindow<E>
+}
+
+interface IClassificationWindowFactory2<E : IClassificationOutputStats<S>, S> : IMachineLearningWindowFactory<E> {
+
+    override fun buildWindow(initialSettings: IWindowSettings): IClassificationSingleWindow<E, S>
+    fun buildWindow(initialSettings: IWindowSettings, supergroup: Set<String>): IClassificationSingleWindow<E, S>
+}
+
+typealias IImageDetectionWindowFactory2 = IClassificationWindowFactory2<IImageDetectionFullOutput<String>, String>
+
+
+/* ABSTRACT */
+abstract class AWindowFactory<E> : IWindowFactory<E> {
+
+    abstract override fun buildWindow(initialSettings: IWindowSettings): ISingleWindow<E>
+}
+
+abstract class AMachineLearningWindowFactory<E : IMachineLearningOutputStats> : AWindowFactory<E>(), IMachineLearningWindowFactory<E> {
+
+    abstract override fun buildWindow(initialSettings: IWindowSettings): IMachineLearningSingleWindow<E>
+}
+
+abstract class AClassificationWindowFactory2<E : IClassificationOutputStats<S>, S> : AMachineLearningWindowFactory<E>(), IClassificationWindowFactory<E, S> {
+
+    abstract override fun buildWindow(initialSettings: IWindowSettings): IClassificationSingleWindow<E, S>
+}
+
+typealias AImageDetectionWindowFactory2 = AClassificationWindowFactory2<IImageDetectionFullOutput<String>, String>

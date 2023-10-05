@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 
 open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
     AClassificationMultipleWindows<IImageDetectionFullOutput<String>, String, ImageDetectionSingleWindow> (scope) {
+//    override val builderList: List<>
     /* MULTIPLE */
     // TODO: improve windows management
     override var availableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
@@ -25,7 +26,7 @@ open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
                         val tempSettings: IWindowSettings = WindowSettings(frames, threshold, type)
                         availableWindows.putIfAbsent(
                             tempSettings,
-                            ImageDetectionSingleWindow(tempSettings, groups)
+                            ImageDetectionSingleWindow.buildWindow(tempSettings, groups)
                         )
                     }
                 }
