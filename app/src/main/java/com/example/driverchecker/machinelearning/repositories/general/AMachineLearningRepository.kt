@@ -5,6 +5,7 @@ import com.example.driverchecker.machinelearning.collections.MachineLearningWind
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.helpers.producers.*
+import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningMultipleWindows
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import com.example.driverchecker.utils.MutableObservableData
@@ -51,7 +52,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         get() = mSettings
     private val privateSettings: ISettings
         get() = mSettings.value
-    protected abstract val collectionOfWindows: MachineLearningWindowsMutableCollection<O>
+    protected abstract val collectionOfWindowsOld: MachineLearningWindowsMutableCollection<O>
+    protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<O>
 
     open fun initialize (semaphores: Set<String>) {
         readySemaphore.initialize(semaphores)
@@ -132,6 +134,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         collectionOfWindows.next(postProcessedResult, timer.diff())
         timer.markStart()
 
+        // TODO: delete this check. Make the client value and decide what to do about it
         if (collectionOfWindows.hasAcceptedLast) {
             evaluationStateProducer.emitLoading()
         }
@@ -178,6 +181,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
             try {
                 val typedState = state as ClientState.Start<I>
                 readySemaphore.update("client",false, triggerAction = false)
+
+                // TODO: change the check here
                 if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
 //                if (liveEvaluationJob == null)
                     liveEvaluationJob = jobEvaluation(typedState.input.buffer(1))

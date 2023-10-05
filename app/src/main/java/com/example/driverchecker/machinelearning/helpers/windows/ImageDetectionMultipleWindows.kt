@@ -8,7 +8,7 @@ import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CoroutineScope
 
 open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
-    IClassificationMultipleWindows<IImageDetectionOutputStats<String>, String> {
+    IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> {
     override var groups: Set<String> = emptySet()
         protected set
     protected var availableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
@@ -49,7 +49,7 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
 
     override val confidence: Float
         get() = 0.0f
-    override val lastResult: IImageDetectionOutputStats<String>?
+    override val lastResult: IImageDetectionFullOutput<String>?
         get() = if (activeWindows.isEmpty()) null else (activeWindows.last().lastResult)
     override var hasAcceptedLast: Boolean = false
         get() = if (activeWindows.isEmpty()) false else activeWindows.fold(false) { last, current -> last || current.hasAcceptedLast }
@@ -104,7 +104,7 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
         return areAllSatisfied
     }
 
-    override fun next(element: IImageDetectionOutputStats<String>, timeOffset: Double?) {
+    override fun next(element: IImageDetectionFullOutput<String>, timeOffset: Double?) {
         activeWindows.forEach { it.next(element, timeOffset) }
     }
 

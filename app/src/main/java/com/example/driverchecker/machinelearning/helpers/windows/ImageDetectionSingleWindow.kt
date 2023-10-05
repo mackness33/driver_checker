@@ -8,7 +8,7 @@ import kotlin.time.TimeSource
 open class ImageDetectionSingleWindow (
     initialSettings: IWindowSettings? = null,
     supergroups: Set<String>,
-) : AClassificationSingleWindow<IImageDetectionOutputStats<String>, String> (initialSettings, supergroups) {
+) : AClassificationSingleWindow<IImageDetectionFullOutput<String>, String> (initialSettings, supergroups) {
     override fun getMetrics(): IWindowBasicData {
         return WindowBasicData(
             totalTime,

@@ -7,6 +7,9 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
 import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
+import com.example.driverchecker.machinelearning.helpers.windows.IClassificationMultipleWindows
+import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningMultipleWindows
+import com.example.driverchecker.machinelearning.helpers.windows.ImageDetectionMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
@@ -21,7 +24,9 @@ class ImageDetectionFactoryRepository
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindows: ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> = ImageDetectionSetOfWindows(repositoryScope)
+    override val collectionOfWindowsOld: ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> = ImageDetectionSetOfWindows(repositoryScope)
+    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
+
 
     init {
         val semaphores = setOf("model", "client")

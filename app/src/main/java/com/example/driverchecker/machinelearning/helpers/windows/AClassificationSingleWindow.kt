@@ -18,7 +18,7 @@ abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S>
 
     protected val group : S?
         get() =
-            if (windowIsFull() && supergroupCounter.isEmpty())
+            if (windowIsFull() && supergroupCounter.isNotEmpty())
                 mSupergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key
             else
                 null
@@ -44,16 +44,13 @@ abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S>
                 increase -> mSupergroupCounter[key] = mSupergroupCounter[key]!! + 1
                 decrease -> mSupergroupCounter[key] = mSupergroupCounter[key]!! - 1
             }
-//            val isInsertedElGroupPresent = if (!groupsToIncrease.contains(key)) 0 else 1
-//            val isRemovedElGroupPresent = if (!groupsToDecrease.contains(key)) 0 else 1
-//            mSupergroupCounter[key] = (mSupergroupCounter[key] ?: 0) + isInsertedElGroupPresent - isRemovedElGroupPresent
         }
 
         return super.preUpdate(element)
     }
 
     override fun update () {
-        if (windowIsFull() && supergroupCounter.isEmpty()) {
+        if (supergroupCounter.isNotEmpty()) {
             mGroupMetrics.add(window.last())
             confidence = supergroupCounter.values.max().toFloat() / window.size
         }
