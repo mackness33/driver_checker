@@ -9,13 +9,40 @@ import kotlinx.coroutines.CoroutineScope
 
 open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
     IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> {
-    override var groups: Set<String> = emptySet()
-        protected set
+    /* MULTIPLE */
+    // TODO: improve windows management
     protected var availableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
     protected var selectedWindows: MutableSet<ImageDetectionSingleWindow> = mutableSetOf()
-        protected set
     protected var isFinalResultBuilt: MutableCompletableData<Nothing?> = DeferrableData(null, scope.coroutineContext)
+    override var inactiveWindows: Set<ImageDetectionSingleWindow> = emptySet()
+        get() = selectedWindows.minus(activeWindows)
+        protected set
+    override var activeWindows: Set<ImageDetectionSingleWindow> = emptySet()
+        protected set
 
+    /* WINDOW */
+    override val lastResult: IImageDetectionFullOutput<String>?
+        get() = if (activeWindows.isEmpty()) null else (activeWindows.last().lastResult)
+    override var hasAcceptedLast: Boolean = false
+        get() = if (activeWindows.isEmpty()) false else activeWindows.fold(false) { last, current -> last || current.hasAcceptedLast }
+        protected set
+    override var totalElements: Int = 0
+        get() = activeWindows.first().totalElements
+        protected set
+    override var settings: ISettings =
+        Settings(emptyList(), emptyList(), emptyList(), 0.0f)
+        protected set
+
+    /* MACHINE LEARNING */
+    override val confidence: Float
+        get() = 0.0f
+
+    /* CLASSIFICATION */
+    override var groups: Set<String> = emptySet()
+        protected set
+
+
+    /*  WINDOWS  */
     override fun initialize(availableSettings: ISettings) {
         settings = availableSettings
         isFinalResultBuilt.complete(null)
@@ -38,29 +65,6 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
         }
     }
 
-    override var inactiveWindows: Set<ImageDetectionSingleWindow> = emptySet()
-        get() = selectedWindows.minus(activeWindows)
-        protected set
-    override var activeWindows: Set<ImageDetectionSingleWindow> = emptySet()
-        protected set
-
-
-    override val confidence: Float
-        get() = 0.0f
-    override val lastResult: IImageDetectionFullOutput<String>?
-        get() = if (activeWindows.isEmpty()) null else (activeWindows.last().lastResult)
-    override var hasAcceptedLast: Boolean = false
-        get() = if (activeWindows.isEmpty()) false else activeWindows.fold(false) { last, current -> last || current.hasAcceptedLast }
-        protected set
-    override var totalElements: Int = 0
-        get() = activeWindows.first().totalElements
-        protected set
-    override var settings: ISettings =
-        Settings(emptyList(), emptyList(), emptyList(), 0.0f)
-        protected set
-
-
-    /*  WINDOWS  */
     override fun updateSettings(newSettings: ISettings) {
         settings = newSettings
 
@@ -81,12 +85,13 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
         }
     }
 
+    // TODO: complete the single window with a completable deferred that and the mutable with a
+    // multiple semaphore
     override fun isSatisfied(): Boolean {
         val satisfiedWindows = mutableSetOf<ImageDetectionSingleWindow>()
-        var currentIsSatisfied: Boolean
 
         val areAllSatisfied = activeWindows.fold(true) { lastResult, currentWindow ->
-            currentIsSatisfied = currentWindow.isSatisfied()
+            val currentIsSatisfied = currentWindow.isSatisfied()
             if (currentIsSatisfied) satisfiedWindows.add(currentWindow)
 
             lastResult && currentIsSatisfied
@@ -158,21 +163,4 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
 
     override val type: String
         get() = "MultipleWindows"
-
-    /*  SET  */
-//    override fun contains(element: IMachineLearningWindow<I>): Boolean {
-//        return availableWindows.contains(element)
-//    }
-//
-//    override fun containsAll(elements: Collection<IMachineLearningWindow<E>>): Boolean {
-//        return windows.containsAll(elements)
-//    }
-//
-//    override fun isEmpty(): Boolean {
-//        return windows.isEmpty()
-//    }
-//
-//    override fun iterator(): MutableIterator<IMachineLearningWindow<E>> {
-//        return mWindows.iterator()
-//    }
 }

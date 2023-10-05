@@ -3,7 +3,6 @@ package com.example.driverchecker.machinelearning.helpers.windows.singles
 import com.example.driverchecker.machinelearning.data.*
 import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 open class ImageDetectionSingleWindow (
     initialSettings: IWindowSettings? = null,
     supergroups: Set<String>,

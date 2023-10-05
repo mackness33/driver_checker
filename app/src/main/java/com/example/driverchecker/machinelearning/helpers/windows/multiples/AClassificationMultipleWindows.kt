@@ -1,15 +1,10 @@
 package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
-import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.singles.IClassificationSingleWindow
-import com.example.driverchecker.machinelearning.helpers.windows.singles.IMachineLearningSingleWindow
-import com.example.driverchecker.machinelearning.helpers.windows.singles.ImageDetectionSingleWindow
-import com.example.driverchecker.utils.DeferrableData
-import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CoroutineScope
 
-abstract class ClassificationMultipleWindows<E : IClassificationOutputStats<S>, S, W : IClassificationSingleWindow<E, S>> (scope: CoroutineScope) :
+abstract class AClassificationMultipleWindows<E : IClassificationOutputStats<S>, S, W : IClassificationSingleWindow<E, S>> (scope: CoroutineScope) :
     AMachineLearningMultipleWindows<E, W> (scope),
     IClassificationMultipleWindows<E, S> {
     /* CLASSIFICATION */
