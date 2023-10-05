@@ -14,13 +14,11 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
     protected var availableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
     protected var selectedWindows: MutableSet<ImageDetectionSingleWindow> = mutableSetOf()
         protected set
-
-    protected var hasFinalResultBeingCopied: MutableCompletableData<Boolean> = DeferrableData(false, scope.coroutineContext)
-
-    protected var madeAWholeEvaluation: Boolean = false
+    protected var isFinalResultBuilt: MutableCompletableData<Nothing?> = DeferrableData(null, scope.coroutineContext)
 
     override fun initialize(availableSettings: ISettings) {
         settings = availableSettings
+        isFinalResultBuilt.complete(null)
 
         try {
             val mAvailableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
@@ -94,10 +92,8 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
             lastResult && currentIsSatisfied
         }
 
-        if (areAllSatisfied) {
-            madeAWholeEvaluation = true
-            print("")
-        }
+        if (areAllSatisfied)
+            isFinalResultBuilt.reset()
 
         activeWindows = activeWindows.minus(satisfiedWindows)
 
@@ -109,13 +105,8 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
     }
 
     override suspend fun clean() {
-        if (madeAWholeEvaluation)
-            hasFinalResultBeingCopied.await()
-
+        isFinalResultBuilt.await()
         selectedWindows.forEach { it.clean() }
-
-        hasFinalResultBeingCopied.reset()
-        madeAWholeEvaluation = false
         activeWindows = selectedWindows
     }
 
@@ -153,7 +144,7 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
             settings.modelThreshold
         )
 
-        hasFinalResultBeingCopied.complete(true)
+        isFinalResultBuilt.complete(null)
 
         return fr
     }
