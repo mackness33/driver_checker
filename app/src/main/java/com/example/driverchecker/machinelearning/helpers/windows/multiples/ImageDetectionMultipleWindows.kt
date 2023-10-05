@@ -1,8 +1,8 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import android.util.Log
-import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.singles.ImageDetectionSingleWindow
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CoroutineScope

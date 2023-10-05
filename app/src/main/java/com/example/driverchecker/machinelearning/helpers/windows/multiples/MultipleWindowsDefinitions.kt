@@ -1,6 +1,7 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 
 interface IMultipleWindows <E> : IWindow<E> {
     val settings: ISettings
@@ -18,7 +19,8 @@ interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStats> : IM
     fun getFinalResults(): IMachineLearningFinalResult
 }
 
-interface IClassificationMultipleWindows <E : IClassificationOutputStats<S>, S> : IMachineLearningMultipleWindows<E> {
+interface IClassificationMultipleWindows <E : IClassificationOutputStats<S>, S> :
+    IMachineLearningMultipleWindows<E> {
     val groups: Set<S>
 
     fun updateGroups (newGroups: Set<S>)

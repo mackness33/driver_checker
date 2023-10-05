@@ -5,7 +5,7 @@ import com.example.driverchecker.machinelearning.collections.MachineLearningWind
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.helpers.producers.*
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningMultipleWindows
+import com.example.driverchecker.machinelearning.helpers.windows.multiples.IMachineLearningMultipleWindows
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import com.example.driverchecker.utils.MutableObservableData

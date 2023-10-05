@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.collections.ClassificationMetricsMutableMap
 import com.example.driverchecker.machinelearning.data.*
@@ -11,7 +11,8 @@ abstract class AClassificationWindowOld<E : IClassificationOutputStats<S>, S> co
     initialThreshold: Float = 0.15f,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null,
     supergroups: Set<S>
-) : AMachineLearningWindowOld<E>(initialSize, initialThreshold, newStart), IClassificationWindow<E, S> {
+) : AMachineLearningWindowOld<E>(initialSize, initialThreshold, newStart),
+    IClassificationWindow<E, S> {
 
     protected val mSupergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
     override val supergroupCounter: Map<S, Int>

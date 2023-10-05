@@ -1,10 +1,10 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
 
 abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStats> constructor(
     initialSettings: IWindowSettings? = null
-) : ASingleWindow<E> (initialSettings?.windowFrames ?: 0), IMachineLearningSingleWindow<E> {
+) : ASingleWindow<E>(initialSettings?.windowFrames ?: 0), IMachineLearningSingleWindow<E> {
     override var threshold: Float = initialSettings?.windowThreshold ?: 0.0f
         protected set
     override var confidence: Float = 0.0f

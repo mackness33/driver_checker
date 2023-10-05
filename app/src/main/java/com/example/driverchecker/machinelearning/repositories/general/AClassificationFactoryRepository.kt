@@ -3,8 +3,7 @@ package com.example.driverchecker.machinelearning.repositories.general
 import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
-import com.example.driverchecker.machinelearning.helpers.windows.IClassificationMultipleWindows
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningMultipleWindows
+import com.example.driverchecker.machinelearning.helpers.windows.multiples.IClassificationMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.repositories.IClassificationRepository
 import kotlinx.coroutines.*

@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
 import kotlin.time.ExperimentalTime
@@ -9,7 +9,7 @@ open class MachineLearningWindowOld<E : IMachineLearningOutputStats> (
     size: Int = 3, threshold: Float = 0.15f, override val type: String,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
 ) :
-    AMachineLearningWindowOld<E> (size, threshold, newStart) {
+    AMachineLearningWindowOld<E>(size, threshold, newStart) {
 
     override val supergroup: String
         get() = ""

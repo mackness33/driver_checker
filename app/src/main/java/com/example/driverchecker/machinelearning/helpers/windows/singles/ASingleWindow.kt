@@ -1,9 +1,7 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.Timer
-import kotlin.time.ExperimentalTime
-import kotlin.time.TimeSource
 
 abstract class ASingleWindow<E> (initialSize: Int = 0) : ISingleWindow<E> {
     protected val window : MutableList<E> = mutableListOf()

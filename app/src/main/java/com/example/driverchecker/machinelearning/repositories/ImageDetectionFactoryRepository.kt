@@ -7,9 +7,8 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
 import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
-import com.example.driverchecker.machinelearning.helpers.windows.IClassificationMultipleWindows
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningMultipleWindows
-import com.example.driverchecker.machinelearning.helpers.windows.ImageDetectionMultipleWindows
+import com.example.driverchecker.machinelearning.helpers.windows.multiples.IClassificationMultipleWindows
+import com.example.driverchecker.machinelearning.helpers.windows.multiples.ImageDetectionMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository

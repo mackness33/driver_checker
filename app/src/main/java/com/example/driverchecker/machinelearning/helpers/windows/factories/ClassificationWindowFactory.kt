@@ -1,7 +1,7 @@
 package com.example.driverchecker.machinelearning.helpers.windows.factories
 
 import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
-import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
+import com.example.driverchecker.machinelearning.helpers.windows.singles.IClassificationWindow
 
 abstract class ClassificationWindowFactory<E : IClassificationOutputStats<S>, S> :
     WindowFactory<E>() {

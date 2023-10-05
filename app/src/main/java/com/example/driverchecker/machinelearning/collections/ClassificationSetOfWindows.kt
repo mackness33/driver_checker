@@ -1,10 +1,5 @@
 package com.example.driverchecker.machinelearning.collections
 
-import android.util.Log
-import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.IClassificationWindow
-import com.example.driverchecker.machinelearning.helpers.windows.IMachineLearningWindow
-
 //open class ClassificationSetOfWindows<E : IClassificationOutputStats<String>, S> :
 //    ClassificationWindowsMutableCollection<E, String>, MachineLearningSetOfWindows<E> () {
 //    override var groups: Set<String> = emptySet()

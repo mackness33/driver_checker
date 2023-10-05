@@ -1,8 +1,7 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.collections.ClassificationMetricsMutableMap
 import com.example.driverchecker.machinelearning.data.*
-import kotlin.time.ExperimentalTime
 
 abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S> (
     initialSettings: IWindowSettings? = null,

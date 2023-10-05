@@ -1,6 +1,7 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 
 interface ISingleWindow <E> : IWindow<E> {
     val settings: IWindowSettings
@@ -20,7 +21,8 @@ interface IMachineLearningSingleWindow <E : IMachineLearningOutputStats> : ISing
     fun getFinalResults(): IMachineLearningFinalResult
 }
 
-interface IClassificationSingleWindow <E : IClassificationOutputStats<S>, S> : IMachineLearningSingleWindow<E> {
+interface IClassificationSingleWindow <E : IClassificationOutputStats<S>, S> :
+    IMachineLearningSingleWindow<E> {
     val supergroupCounter: Map<S, Int>
     val groupMetrics: IGroupMetrics<S>
 

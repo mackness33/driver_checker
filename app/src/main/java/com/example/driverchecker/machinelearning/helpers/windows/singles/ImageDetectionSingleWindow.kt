@@ -1,14 +1,13 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
 import kotlin.time.ExperimentalTime
-import kotlin.time.TimeSource
 
 @OptIn(ExperimentalTime::class)
 open class ImageDetectionSingleWindow (
     initialSettings: IWindowSettings? = null,
     supergroups: Set<String>,
-) : AClassificationSingleWindow<IImageDetectionFullOutput<String>, String> (initialSettings, supergroups) {
+) : AClassificationSingleWindow<IImageDetectionFullOutput<String>, String>(initialSettings, supergroups) {
     override fun getMetrics(): IWindowBasicData {
         return WindowBasicData(
             totalTime,
