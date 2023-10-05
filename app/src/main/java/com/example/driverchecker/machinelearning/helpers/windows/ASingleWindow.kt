@@ -5,7 +5,6 @@ import com.example.driverchecker.utils.Timer
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-@OptIn(ExperimentalTime::class)
 abstract class ASingleWindow<E> (initialSize: Int = 0) : ISingleWindow<E> {
     protected val window : MutableList<E> = mutableListOf()
     protected val timer: Timer = Timer()
@@ -14,6 +13,9 @@ abstract class ASingleWindow<E> (initialSize: Int = 0) : ISingleWindow<E> {
         protected set
     override var hasAcceptedLast: Boolean = false
         protected set
+
+    protected var windowMetrics: IWindowMetrics? = null
+    protected var windowSettings: IWindowSettings? = null
 
     override var totalElements: Int = 0
         protected set
