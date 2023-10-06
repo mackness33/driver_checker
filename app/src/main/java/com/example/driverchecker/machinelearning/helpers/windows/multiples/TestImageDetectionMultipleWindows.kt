@@ -2,12 +2,15 @@ package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.factories.ImageDetectionWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.singles.ImageDetectionSingleWindow
 import kotlinx.coroutines.CoroutineScope
 
 open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
     AClassificationMultipleWindows<IImageDetectionFullOutput<String>, String, ImageDetectionSingleWindow> (scope) {
 //    override val builderList: List<>
+    val factory = ImageDetectionWindowFactory()
+
     /* MULTIPLE */
     // TODO: improve windows management
     override var availableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
@@ -26,7 +29,7 @@ open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
                         val tempSettings: IWindowSettings = WindowSettings(frames, threshold, type)
                         availableWindows.putIfAbsent(
                             tempSettings,
-                            ImageDetectionSingleWindow.buildWindow(tempSettings, groups)
+                            factory.createWindow(tempSettings, groups)!!
                         )
                     }
                 }
