@@ -45,7 +45,7 @@ class ImageDetectionFactoryRepository
         return false
     }
 
-    protected fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInput, IImageDetectionFullOutput<String>, String>? {
+    private fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInput, IImageDetectionFullOutput<String>, String>? {
         return when (modelName){
             "YoloV5" -> {
                 val path = modelInit["path"] as String?

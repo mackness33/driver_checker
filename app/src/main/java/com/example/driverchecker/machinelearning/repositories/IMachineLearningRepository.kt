@@ -19,8 +19,8 @@ interface IMachineLearningRepository<in I, out O : IMachineLearningOutputStats, 
 
     val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
     val repositoryScope: CoroutineScope
-    val availableSettings: IMultipleWindowSettings
-    val settings: ObservableData<ISettings>
+    val availableSettings: IMultipleWindowSettingsOld
+    val settings: ObservableData<ISettingsOld>
 
     fun updateModelThreshold (threshold: Float)
 }

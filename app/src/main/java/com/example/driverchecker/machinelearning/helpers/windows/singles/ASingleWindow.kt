@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
-import com.example.driverchecker.machinelearning.helpers.windows.helpers.ImageDetectionTag
 import com.example.driverchecker.utils.Timer
 
 abstract class ASingleWindow<E> (initialSize: Int, internalTag: IWindowTag) : ISingleWindow<E> {
@@ -16,7 +15,7 @@ abstract class ASingleWindow<E> (initialSize: Int, internalTag: IWindowTag) : IS
     override val tag = internalTag
 
     protected var windowMetrics: IWindowMetrics? = null
-    protected var windowSettings: IWindowSettings? = null
+    protected var windowSettings: IWindowSettingsOld? = null
 
     override var totalElements: Int = 0
         protected set

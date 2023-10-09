@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
 import androidx.room.ColumnInfo
-import com.example.driverchecker.database.entity.GroupMetricsEntity
-import com.example.driverchecker.database.entity.WindowInformationEntity
 
 
 /* NEW METRICS */
@@ -26,7 +24,7 @@ interface WithGroupsData<S> : WithWindowData {
 }
 
 
-interface IWindowBasicData : IWindowMetrics, IWindowSettings
+interface IWindowBasicData : IWindowMetrics, IWindowSettingsOld
 
 data class WindowBasicData (
     @ColumnInfo(name = "total_time") override val totalTime: Double,
@@ -51,7 +49,7 @@ data class WindowBasicData (
         copy.type
     )
 
-    constructor(copyMetrics: IWindowMetrics, copySettings: IWindowSettings) : this (
+    constructor(copyMetrics: IWindowMetrics, copySettings: IWindowSettingsOld) : this (
         copyMetrics.totalTime,
         copyMetrics.totalWindows,
         copyMetrics.averageTime,

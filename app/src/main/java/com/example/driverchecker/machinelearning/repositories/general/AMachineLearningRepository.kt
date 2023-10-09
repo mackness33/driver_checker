@@ -1,7 +1,6 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
-import com.example.driverchecker.machinelearning.collections.MachineLearningWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.helpers.producers.*
@@ -36,21 +35,21 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     protected val timer = Timer()
 
     // SETTINGS
-    override val availableSettings : ISettings = Settings (
+    override val availableSettings : ISettingsOld = SettingsOld (
         listOf(1, 3, 5, 10, 20, 30),
         listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
         listOf("BasicImageDetectionWindow"),
         0.10f
     )
-    protected val mSettings: MutableObservableData<ISettings> = StatefulData(Settings(
+    protected val mSettings: MutableObservableData<ISettingsOld> = StatefulData(SettingsOld(
         availableSettings.multipleWindowsFrames.subList(2,4),
         availableSettings.multipleWindowsThresholds.subList(1,4),
         availableSettings.multipleTypes.subList(0,1),
         0.10f
     ))
-    override val settings: ObservableData<ISettings>
+    override val settings: ObservableData<ISettingsOld>
         get() = mSettings
-    private val privateSettings: ISettings
+    private val privateSettings: ISettingsOld
         get() = mSettings.value
     protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<O>
 
@@ -63,7 +62,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
     override fun updateModelThreshold (threshold: Float) {
         model?.updateThreshold(threshold)
-        collectionOfWindows.updateSettings(Settings(
+        collectionOfWindows.updateSettings(SettingsOld(
             availableSettings.multipleWindowsFrames.subList(2,4),
             availableSettings.multipleWindowsThresholds.subList(1,4),
             availableSettings.multipleTypes.subList(0,1),

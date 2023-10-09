@@ -11,7 +11,7 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
     IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> {
     /* MULTIPLE */
     // TODO: improve windows management
-    protected var availableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
+    protected var availableWindows: MutableMap<IWindowSettingsOld, ImageDetectionSingleWindow> = mutableMapOf()
     protected var selectedWindows: MutableSet<ImageDetectionSingleWindow> = mutableSetOf()
     protected var isFinalResultBuilt: MutableCompletableData<Nothing?> = DeferrableData(null, scope.coroutineContext)
     override var inactiveWindows: Set<ImageDetectionSingleWindow> = emptySet()
@@ -29,8 +29,8 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
     override var totalElements: Int = 0
         get() = activeWindows.first().totalElements
         protected set
-    override var settings: ISettings =
-        Settings(emptyList(), emptyList(), emptyList(), 0.0f)
+    override var settings: ISettingsOld =
+        SettingsOld(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
 
     /* MACHINE LEARNING */
@@ -43,16 +43,16 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
 
 
     /*  WINDOWS  */
-    override fun initialize(availableSettings: ISettings) {
+    override fun initialize(availableSettings: ISettingsOld) {
         settings = availableSettings
         isFinalResultBuilt.complete(null)
 
         try {
-            val mAvailableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
+            val mAvailableWindows: MutableMap<IWindowSettingsOld, ImageDetectionSingleWindow> = mutableMapOf()
             settings.multipleTypes.forEach { type ->
                 settings.multipleWindowsFrames.forEach { frames ->
                     settings.multipleWindowsThresholds.forEach { threshold ->
-                        val tempSettings: IWindowSettings = WindowSettings(frames, threshold, type)
+                        val tempSettings: IWindowSettingsOld = WindowSettingsOld(frames, threshold, type)
                         availableWindows.putIfAbsent(
                             tempSettings,
                             ImageDetectionSingleWindow.buildWindow(tempSettings, groups)
@@ -65,15 +65,15 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
         }
     }
 
-    override fun updateSettings(newSettings: ISettings) {
+    override fun updateSettings(newSettings: ISettingsOld) {
         settings = newSettings
 
         try {
-            var tempSetting: IWindowSettings
+            var tempSetting: IWindowSettingsOld
             newSettings.multipleTypes.forEach { type ->
                 newSettings.multipleWindowsFrames.forEach { frames ->
                     newSettings.multipleWindowsThresholds.forEach { threshold ->
-                        tempSetting = WindowSettings(frames, threshold, type)
+                        tempSetting = WindowSettingsOld(frames, threshold, type)
                         if (availableWindows.containsKey(tempSetting)) selectedWindows.add(availableWindows[tempSetting]!!)
                     }
                 }

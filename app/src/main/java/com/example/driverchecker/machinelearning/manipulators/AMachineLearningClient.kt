@@ -85,7 +85,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
         mClientState.emit(ClientState.Stop(cause))
     }
 
-    override suspend fun updateSettings (newSettings: ISettings) {
+    override suspend fun updateSettings (newSettings: ISettingsOld) {
         mClientState.emit(ClientState.UpdateSettings(newSettings))
     }
 

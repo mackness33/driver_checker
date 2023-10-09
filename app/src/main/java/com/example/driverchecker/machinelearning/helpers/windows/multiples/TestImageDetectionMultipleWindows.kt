@@ -13,20 +13,20 @@ open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
 
     /* MULTIPLE */
     // TODO: improve windows management
-    override var availableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
+    override var availableWindows: MutableMap<IWindowSettingsOld, ImageDetectionSingleWindow> = mutableMapOf()
     override var selectedWindows: MutableSet<ImageDetectionSingleWindow> = mutableSetOf()
 
     /*  WINDOWS  */
-    override fun initialize(availableSettings: ISettings) {
+    override fun initialize(availableSettings: ISettingsOld) {
         settings = availableSettings
         isFinalResultBuilt.complete(null)
 
         try {
-            val mAvailableWindows: MutableMap<IWindowSettings, ImageDetectionSingleWindow> = mutableMapOf()
+            val mAvailableWindows: MutableMap<IWindowSettingsOld, ImageDetectionSingleWindow> = mutableMapOf()
             settings.multipleTypes.forEach { type ->
                 settings.multipleWindowsFrames.forEach { frames ->
                     settings.multipleWindowsThresholds.forEach { threshold ->
-                        val tempSettings: IWindowSettings = WindowSettings(frames, threshold, type)
+                        val tempSettings: IWindowSettingsOld = WindowSettingsOld(frames, threshold, type)
                         availableWindows.putIfAbsent(
                             tempSettings,
                             factory.createWindow(tempSettings, groups)!!

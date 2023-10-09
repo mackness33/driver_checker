@@ -5,13 +5,13 @@ import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
 interface ISingleWindow <E> : IWindow<E> {
-    val settings: IWindowSettings
+    val settings: IWindowSettingsOld
     val totalWindows: Int
     val totalTime: Double
     val lastTime: Double
     val tag: IWindowTag
 
-    fun updateSettings(newSettings: IWindowSettings)
+    fun updateSettings(newSettings: IWindowSettingsOld)
 }
 
 interface IMachineLearningSingleWindow <E : IMachineLearningOutputStats> : ISingleWindow<E> {

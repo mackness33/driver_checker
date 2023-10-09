@@ -4,17 +4,17 @@ import androidx.room.ColumnInfo
 
 
 /* NEW */
-interface WithSettings {
-    val settings: ISettings
+interface WithSettingsOld {
+    val settings: ISettingsOld
 }
 
-interface IWindowSettings {
+interface IWindowSettingsOld {
     val windowFrames: Int
     val windowThreshold: Float
     val type: String
 }
 
-interface IMultipleWindowSettings {
+interface IMultipleWindowSettingsOld {
     val multipleWindowsFrames: List<Int>
     val multipleWindowsThresholds: List<Float>
     val multipleTypes: List<String>
@@ -24,14 +24,14 @@ interface IModelSettings {
     val modelThreshold: Float
 }
 
-interface ISettings : IMultipleWindowSettings, IModelSettings
+interface ISettingsOld : IMultipleWindowSettingsOld, IModelSettings
 
-data class WindowSettings (
+data class WindowSettingsOld (
     @ColumnInfo(name = "window_frames") override val windowFrames: Int,
     @ColumnInfo(name = "window_threshold") override val windowThreshold: Float,
     @ColumnInfo(name = "type") override val type: String
-) : IWindowSettings {
-    constructor(copy: IWindowSettings?) : this (
+) : IWindowSettingsOld {
+    constructor(copy: IWindowSettingsOld?) : this (
         copy?.windowFrames ?: 0,
         copy?.windowThreshold ?: 0.0f,
         copy?.type ?: ""
@@ -41,13 +41,13 @@ data class WindowSettings (
 }
 
 
-data class Settings (
+data class SettingsOld (
     override val multipleWindowsFrames: List<Int>,
     override val multipleWindowsThresholds: List<Float>,
     override val multipleTypes: List<String>,
     override val modelThreshold: Float
-) : ISettings {
-    constructor(copyMultipleWindowSettings: IMultipleWindowSettings, copyModelSettings: IModelSettings) : this (
+) : ISettingsOld {
+    constructor(copyMultipleWindowSettings: IMultipleWindowSettingsOld, copyModelSettings: IModelSettings) : this (
         copyMultipleWindowSettings.multipleWindowsFrames,
         copyMultipleWindowSettings.multipleWindowsThresholds,
         copyMultipleWindowSettings.multipleTypes,

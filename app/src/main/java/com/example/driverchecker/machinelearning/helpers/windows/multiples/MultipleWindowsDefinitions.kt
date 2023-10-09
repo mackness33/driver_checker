@@ -4,12 +4,12 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 
 interface IMultipleWindows <E> : IWindow<E> {
-    val settings: ISettings
+    val settings: ISettingsOld
     val activeWindows: Set<IWindow<E>>
     val inactiveWindows: Set<IWindow<E>>
 
-    fun initialize(availableSettings: ISettings)
-    fun updateSettings(newSettings: ISettings)
+    fun initialize(availableSettings: ISettingsOld)
+    fun updateSettings(newSettings: ISettingsOld)
 }
 
 interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStats> : IMultipleWindows<E> {

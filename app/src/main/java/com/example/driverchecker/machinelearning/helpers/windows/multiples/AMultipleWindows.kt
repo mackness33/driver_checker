@@ -2,9 +2,7 @@ package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 import com.example.driverchecker.machinelearning.helpers.windows.singles.ISingleWindow
-import com.example.driverchecker.machinelearning.helpers.windows.singles.ImageDetectionSingleWindow
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +11,7 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>>(scope: CoroutineScope) 
     IMultipleWindows<E> {
     /* MULTIPLE */
     // TODO: improve windows management
-    protected abstract val availableWindows: MutableMap<IWindowSettings, W>
+    protected abstract val availableWindows: MutableMap<IWindowSettingsOld, W>
     protected abstract val selectedWindows: MutableSet<W>
     protected var isFinalResultBuilt: MutableCompletableData<Nothing?> = DeferrableData(null, scope.coroutineContext)
     override var inactiveWindows: Set<W> = emptySet()
@@ -31,21 +29,21 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>>(scope: CoroutineScope) 
     override var totalElements: Int = 0
         get() = activeWindows.first().totalElements
         protected set
-    override var settings: ISettings =
-        Settings(emptyList(), emptyList(), emptyList(), 0.0f)
+    override var settings: ISettingsOld =
+        SettingsOld(emptyList(), emptyList(), emptyList(), 0.0f)
         protected set
 
 
     /*  WINDOWS  */
-    override fun updateSettings(newSettings: ISettings) {
+    override fun updateSettings(newSettings: ISettingsOld) {
         settings = newSettings
 
         try {
-            var tempSetting: IWindowSettings
+            var tempSetting: IWindowSettingsOld
             newSettings.multipleTypes.forEach { type ->
                 newSettings.multipleWindowsFrames.forEach { frames ->
                     newSettings.multipleWindowsThresholds.forEach { threshold ->
-                        tempSetting = WindowSettings(frames, threshold, type)
+                        tempSetting = WindowSettingsOld(frames, threshold, type)
                         if (availableWindows.containsKey(tempSetting)) selectedWindows.add(availableWindows[tempSetting]!!)
                     }
                 }

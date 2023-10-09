@@ -5,7 +5,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
 abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S> (
-    initialSettings: IWindowSettings? = null,
+    initialSettings: IWindowSettingsOld? = null,
     supergroups: Set<S> = emptySet(),
     internalTag: IWindowTag,
     ) : AMachineLearningSingleWindow<E>(initialSettings, internalTag), IClassificationSingleWindow<E, S> {

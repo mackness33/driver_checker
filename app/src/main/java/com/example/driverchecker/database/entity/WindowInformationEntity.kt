@@ -16,15 +16,15 @@ import com.example.driverchecker.machinelearning.data.*
 )
 class WindowInformationEntity (
     @Embedded val metrics: WindowMetrics,
-    @Embedded val settings: WindowSettings,
+    @Embedded val settings: WindowSettingsOld,
     @ColumnInfo(name = "evaluation_id") val evaluationId: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) {
-    constructor(copyMetrics: IWindowMetrics, copySettings: IWindowSettings, evaluationId: Long) : this (
-        WindowMetrics(copyMetrics), WindowSettings(copySettings), evaluationId
+    constructor(copyMetrics: IWindowMetrics, copySettings: IWindowSettingsOld, evaluationId: Long) : this (
+        WindowMetrics(copyMetrics), WindowSettingsOld(copySettings), evaluationId
     )
 
     constructor(copyData: IWindowBasicData, evaluationId: Long) : this (
-        WindowMetrics(copyData), WindowSettings(copyData), evaluationId
+        WindowMetrics(copyData), WindowSettingsOld(copyData), evaluationId
     )
 }

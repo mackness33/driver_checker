@@ -13,7 +13,7 @@ interface ClassificationMetricsMap<S> : IGroupMetrics<S> {
 }
 
 interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : IWindow<E> {
-    val settings: IMultipleWindowSettings
+    val settings: IMultipleWindowSettingsOld
 
     fun getData() : Map<IWindowBasicData, IAdditionalMetrics?>
 
@@ -21,12 +21,12 @@ interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : I
 
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
     fun getFinalResults(): IMachineLearningFinalResult
-    fun initialize(availableSettings: ISettings)
+    fun initialize(availableSettings: ISettingsOld)
 }
 
 interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats> :
     MachineLearningWindowsCollection<E> {
-    fun updateSettings (newSettings: ISettings)
+    fun updateSettings (newSettings: ISettingsOld)
 }
 
 interface ClassificationWindowsCollection <E : IClassificationOutputStats<S>, S> :

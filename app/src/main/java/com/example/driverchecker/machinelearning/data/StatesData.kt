@@ -35,7 +35,7 @@ sealed interface ClientStateInterface
 // Represents different states for the LatestNews screen
 sealed class ClientState : ClientStateInterface {
     object Ready : ClientState()
-    data class UpdateSettings(val settings: ISettings) : ClientState()
+    data class UpdateSettings(val settings: ISettingsOld) : ClientState()
     data class Start<E>(val input: SharedFlow<E>, val settings: IOldSettings) : ClientState()
     data class Stop(val cause: ExternalCancellationException) : ClientState()
 }

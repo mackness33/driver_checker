@@ -4,15 +4,15 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
 abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStats> constructor(
-    initialSettings: IWindowSettings? = null,
+    initialSettings: IWindowSettingsOld? = null,
     internalTag: IWindowTag,
 ) : ASingleWindow<E>(initialSettings?.windowFrames ?: 0, internalTag), IMachineLearningSingleWindow<E> {
     override var threshold: Float = initialSettings?.windowThreshold ?: 0.0f
         protected set
     override var confidence: Float = 0.0f
         protected set
-    override val settings: IWindowSettings
-        get() = WindowSettings(size, threshold, "NoTag")
+    override val settings: IWindowSettingsOld
+        get() = WindowSettingsOld(size, threshold, "NoTag")
 
     protected var sumOfConfidencePerWindowDone: Float = 0.0f
     protected val averageTime: Double
@@ -53,7 +53,7 @@ abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStats> con
         return null
     }
 
-    override fun updateSettings(newSettings: IWindowSettings) {
+    override fun updateSettings(newSettings: IWindowSettingsOld) {
         size = newSettings.windowFrames
         threshold = newSettings.windowThreshold
     }

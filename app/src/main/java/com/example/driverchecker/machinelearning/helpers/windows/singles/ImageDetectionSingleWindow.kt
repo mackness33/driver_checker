@@ -2,11 +2,10 @@ package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.factories.IImageDetectionWindowFactory2
-import com.example.driverchecker.machinelearning.helpers.windows.helpers.ImageDetectionTag
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
 
 open class ImageDetectionSingleWindow private constructor (
-    initialSettings: IWindowSettings? = null,
+    initialSettings: IWindowSettingsOld? = null,
     supergroups: Set<String>,
 ) : AClassificationSingleWindow<IImageDetectionFullOutput<String>, String>(initialSettings, supergroups, SingleGroupImageDetectionTag) {
     override fun getMetrics(): IWindowBasicData {
@@ -31,12 +30,12 @@ open class ImageDetectionSingleWindow private constructor (
     // The point is to have to different Interface for each window to create the Immutable and Mutable version
     // A window is consider Immutable the moment that it can't change it's settings. Otherwise is considered Mutable
     companion object Builder : IImageDetectionWindowFactory2 {
-        override fun buildWindow(initialSettings: IWindowSettings): ImageDetectionSingleWindow = ImageDetectionSingleWindow(
+        override fun buildWindow(initialSettings: IWindowSettingsOld): ImageDetectionSingleWindow = ImageDetectionSingleWindow(
             initialSettings, emptySet()
         )
 
         override fun buildWindow(
-            initialSettings: IWindowSettings,
+            initialSettings: IWindowSettingsOld,
             supergroup: Set<String>
         ) = ImageDetectionSingleWindow(
             initialSettings, emptySet()

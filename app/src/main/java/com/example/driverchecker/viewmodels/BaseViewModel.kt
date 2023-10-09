@@ -25,10 +25,10 @@ abstract class BaseViewModel<I, O : IMachineLearningOutputStats, FR : IMachineLe
     open val oldSettings: IOldSettings
         get() = evaluationClient.settings
 
-    val availableSettings: IMultipleWindowSettings
+    val availableSettings: IMultipleWindowSettingsOld
         get() = machineLearningRepository.availableSettings
 
-    val actualSettings: LiveData<ISettings>
+    val actualSettings: LiveData<ISettingsOld>
         get() = machineLearningRepository.settings.liveData
 
     // LIVE DATA
