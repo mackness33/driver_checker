@@ -4,11 +4,11 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 import com.example.driverchecker.utils.Timer
 
-abstract class ASingleWindow<E> (initialSize: Int, internalTag: IWindowTag) : ISingleWindow<E> {
+abstract class ASingleWindow<E> (initialSettings: ISingleWindowSettings, internalTag: IWindowTag) : ISingleWindow<E> {
     protected val window : MutableList<E> = mutableListOf()
     protected val timer: Timer = Timer()
 
-    var size: Int = initialSize
+    var size: Int = initialSettings.size
         protected set
     override var hasAcceptedLast: Boolean = false
         protected set

@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.helpers.windows.factories
 
 import com.example.driverchecker.machinelearning.data.IWindowSettingsOld
+import com.example.driverchecker.machinelearning.data.SingleWindowSettings
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 
 class ImageDetectionWindowFactory {
@@ -8,7 +9,13 @@ class ImageDetectionWindowFactory {
                       supergroup: Set<String>
     ): ImageDetectionSingleWindow? {
         return when (initialSettings.type) {
-            "BasicImageDetectionWindow" -> ImageDetectionSingleWindow.buildWindow(initialSettings, supergroup)
+            "BasicImageDetectionWindow" -> ImageDetectionSingleWindow(
+                SingleWindowSettings(
+                    initialSettings.windowFrames,
+                    initialSettings.windowThreshold,
+                    supergroup
+                )
+            )
             // TODO: throw NonExistentWindowFactoryException
             else -> null
         }

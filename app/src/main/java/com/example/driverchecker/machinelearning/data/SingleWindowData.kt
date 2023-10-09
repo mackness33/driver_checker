@@ -6,7 +6,6 @@ import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindow
 
 interface ISingleWindowSettings {
     val size: Int
-    val tag: IWindowTag?
 }
 
 interface IMachineLearningSingleWindowSettings : ISingleWindowSettings {
@@ -19,7 +18,6 @@ interface IClassificationSingleWindowSettings<S> : IMachineLearningSingleWindowS
 
 data class SingleWindowSettings<S> (
     override val size: Int,
-    override val tag: IWindowTag?,
     override val threshold: Float,
     override val groups: Set<S>
 ) : IClassificationSingleWindowSettings<S>

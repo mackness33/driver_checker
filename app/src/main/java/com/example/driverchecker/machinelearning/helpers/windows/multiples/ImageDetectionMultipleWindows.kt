@@ -55,7 +55,13 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
                         val tempSettings: IWindowSettingsOld = WindowSettingsOld(frames, threshold, type)
                         availableWindows.putIfAbsent(
                             tempSettings,
-                            ImageDetectionSingleWindow.buildWindow(tempSettings, groups)
+                            ImageDetectionSingleWindow(
+                                SingleWindowSettings(
+                                    tempSettings.windowFrames,
+                                    tempSettings.windowThreshold,
+                                    groups
+                                )
+                            )
                         )
                     }
                 }

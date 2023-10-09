@@ -5,11 +5,10 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
 abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S> (
-    initialSettings: IWindowSettingsOld? = null,
-    supergroups: Set<S> = emptySet(),
+    initialSettings: IClassificationSingleWindowSettings<S>,
     internalTag: IWindowTag,
     ) : AMachineLearningSingleWindow<E>(initialSettings, internalTag), IClassificationSingleWindow<E, S> {
-    protected val mSupergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
+    protected val mSupergroupCounter: MutableMap<S, Int> = initialSettings.groups.associateWith { 0 }.toMutableMap()
     override val supergroupCounter: Map<S, Int>
         get() = mSupergroupCounter
 

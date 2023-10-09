@@ -8,7 +8,6 @@ import kotlinx.coroutines.CoroutineScope
 
 open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
     AClassificationMultipleWindows<IImageDetectionFullOutput<String>, String, ImageDetectionSingleWindow> (scope) {
-//    override val builderList: List<>
     val factory = ImageDetectionWindowFactory()
 
     /* MULTIPLE */
