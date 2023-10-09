@@ -4,12 +4,11 @@ import com.example.driverchecker.machinelearning.data.IClassificationOutputStats
 import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
 import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStats
 import com.example.driverchecker.machinelearning.data.IWindowSettings
-import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 
 abstract class WindowFactory<E : IMachineLearningOutputStats> {
 
-    abstract fun buildMachineLearningWindow(frames: Int, threshold: Float): IMachineLearningWindow<E>
+    abstract fun buildMachineLearningWindow(frames: Int, threshold: Float): IMachineLearningWindowOld<E>
 }
 
 

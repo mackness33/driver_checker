@@ -4,7 +4,7 @@ import com.example.driverchecker.machinelearning.data.*
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-interface IClassificationWindow<E : IClassificationOutputStats<S>, S> : IMachineLearningWindow<E> {
+interface IClassificationWindowOld<E : IClassificationOutputStats<S>, S> : IMachineLearningWindowOld<E> {
     val supergroupCounter: Map<S, Int>
     val groupMetrics: IGroupMetrics<S>
 

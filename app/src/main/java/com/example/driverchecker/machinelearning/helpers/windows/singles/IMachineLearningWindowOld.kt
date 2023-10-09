@@ -5,7 +5,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-interface IMachineLearningWindow<E : IMachineLearningOutputStats> : IWindow<E>, IWindowSettings {
+interface IMachineLearningWindowOld<E : IMachineLearningOutputStats> : IWindow<E>, IWindowSettings {
     @OptIn(ExperimentalTime::class)
     fun initialize(
         settings: IOldSettings, newStart: TimeSource.Monotonic.ValueTimeMark?

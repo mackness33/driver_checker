@@ -10,7 +10,7 @@ abstract class AMachineLearningWindowOld<E : IMachineLearningOutputStats> constr
     initialSize: Int = 3,
     initialThreshold: Float = 0.15f,
     newStart: TimeSource.Monotonic.ValueTimeMark? = null
-) : IMachineLearningWindow<E>, WithConfidence, IWindowBasicData {
+) : IMachineLearningWindowOld<E>, WithConfidence, IWindowBasicData {
 
     protected val window : MutableList<E> = mutableListOf()
 

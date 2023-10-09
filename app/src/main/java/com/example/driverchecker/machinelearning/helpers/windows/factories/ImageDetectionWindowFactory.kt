@@ -28,32 +28,3 @@ class ImageDetectionWindowFactory {
         TODO("Create a map of windows based on the multipleSettings in input")
     }
 }
-
-class NonExistentWindowFactoryException(override val message: String?, override val cause: Throwable?) : Throwable(message, cause)
-class FailedParameterCastFactoryException(override val message: String?, override val cause: Throwable?) : Throwable(message, cause)
-
-sealed interface IWindowTag {
-    val name : String
-}
-
-sealed interface IOffsetWindowTag : IWindowTag
-
-sealed class ImageDetectionTag : IWindowTag {
-    override val name: String
-        get() = "Basic Image Detection"
-}
-
-object HomogenousImageDetectionTag : ImageDetectionTag() {
-    override val name: String
-        get() = "Homogenous Image Detection"
-}
-
-sealed class OffsetWindowTag : IOffsetWindowTag {
-    override val name: String
-        get() = "Basic Image Detection"
-}
-
-object HomogenousOffsetImageDetectionTag : ImageDetectionTag() {
-    override val name: String
-        get() = "Homogenous Image Detection"
-}

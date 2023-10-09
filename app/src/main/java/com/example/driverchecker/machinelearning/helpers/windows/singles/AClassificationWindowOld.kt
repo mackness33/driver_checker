@@ -12,7 +12,7 @@ abstract class AClassificationWindowOld<E : IClassificationOutputStats<S>, S> co
     newStart: TimeSource.Monotonic.ValueTimeMark? = null,
     supergroups: Set<S>
 ) : AMachineLearningWindowOld<E>(initialSize, initialThreshold, newStart),
-    IClassificationWindow<E, S> {
+    IClassificationWindowOld<E, S> {
 
     protected val mSupergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
     override val supergroupCounter: Map<S, Int>

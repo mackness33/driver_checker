@@ -1,8 +1,6 @@
 package com.example.driverchecker.machinelearning.helpers.windows
 
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.singles.IClassificationWindow
-import com.example.driverchecker.machinelearning.helpers.windows.singles.IMachineLearningWindow
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
