@@ -23,7 +23,4 @@ abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStats, 
         val listOfData = selectedWindows.map { it.getData() }
         return listOfData.toMap()
     }
-
-    override val type: String
-        get() = "MultipleWindows"
 }

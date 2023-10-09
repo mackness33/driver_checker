@@ -2,12 +2,14 @@ package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.IWindow
+import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
 interface ISingleWindow <E> : IWindow<E> {
     val settings: IWindowSettings
     val totalWindows: Int
     val totalTime: Double
     val lastTime: Double
+    val tag: IWindowTag
 
     fun updateSettings(newSettings: IWindowSettings)
 }

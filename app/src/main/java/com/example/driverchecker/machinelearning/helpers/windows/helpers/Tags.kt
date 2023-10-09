@@ -11,9 +11,14 @@ sealed class ImageDetectionTag : IWindowTag {
         get() = "Basic Image Detection"
 }
 
-object HomogenousImageDetectionTag : ImageDetectionTag() {
+object MultipleGroupImageDetectionTag : ImageDetectionTag() {
     override val name: String
-        get() = "Homogenous Image Detection"
+        get() = "Multiple Group Per Image"
+}
+
+object SingleGroupImageDetectionTag : ImageDetectionTag() {
+    override val name: String
+        get() = "Single Group Per Image"
 }
 
 sealed class OffsetImageDetectionWindowTag : ImageDetectionTag(), IOffsetWindowTag {

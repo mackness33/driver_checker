@@ -2,11 +2,13 @@ package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.collections.ClassificationMetricsMutableMap
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
 abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S> (
     initialSettings: IWindowSettings? = null,
-    supergroups: Set<S> = emptySet()
-) : AMachineLearningSingleWindow<E>(initialSettings), IClassificationSingleWindow<E, S> {
+    supergroups: Set<S> = emptySet(),
+    internalTag: IWindowTag,
+    ) : AMachineLearningSingleWindow<E>(initialSettings, internalTag), IClassificationSingleWindow<E, S> {
     protected val mSupergroupCounter: MutableMap<S, Int> = supergroups.associateWith { 0 }.toMutableMap()
     override val supergroupCounter: Map<S, Int>
         get() = mSupergroupCounter

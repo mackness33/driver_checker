@@ -160,7 +160,4 @@ open class ImageDetectionMultipleWindows(scope: CoroutineScope) :
 
         availableWindows.forEach { it.value.updateGroups(newGroups) }
     }
-
-    override val type: String
-        get() = "MultipleWindows"
 }

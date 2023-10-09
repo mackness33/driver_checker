@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.collections
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.BasicImageDetectionWindowOld
+import com.example.driverchecker.machinelearning.helpers.windows.singles.BasicImageDetectionWindowOld
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CoroutineScope
@@ -162,9 +162,6 @@ open class ImageDetectionSetOfWindows(scope: CoroutineScope) :
 
         availableWindows.forEach { it.value.updateGroups(newGroups) }
     }
-
-    override val type: String
-        get() = "SetOfWindows"
 
     /*  SET  */
 //    override fun contains(element: IMachineLearningWindow<I>): Boolean {

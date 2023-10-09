@@ -1,9 +1,11 @@
 package com.example.driverchecker.machinelearning.helpers.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
+import com.example.driverchecker.machinelearning.helpers.windows.helpers.ImageDetectionTag
 import com.example.driverchecker.utils.Timer
 
-abstract class ASingleWindow<E> (initialSize: Int = 0) : ISingleWindow<E> {
+abstract class ASingleWindow<E> (initialSize: Int, internalTag: IWindowTag) : ISingleWindow<E> {
     protected val window : MutableList<E> = mutableListOf()
     protected val timer: Timer = Timer()
 
@@ -11,6 +13,7 @@ abstract class ASingleWindow<E> (initialSize: Int = 0) : ISingleWindow<E> {
         protected set
     override var hasAcceptedLast: Boolean = false
         protected set
+    override val tag = internalTag
 
     protected var windowMetrics: IWindowMetrics? = null
     protected var windowSettings: IWindowSettings? = null

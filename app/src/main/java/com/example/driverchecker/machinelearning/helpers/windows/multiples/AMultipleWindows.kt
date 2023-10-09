@@ -86,7 +86,4 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>>(scope: CoroutineScope) 
         selectedWindows.forEach { it.clean() }
         activeWindows = selectedWindows
     }
-
-    override val type: String
-        get() = "MultipleWindows"
 }

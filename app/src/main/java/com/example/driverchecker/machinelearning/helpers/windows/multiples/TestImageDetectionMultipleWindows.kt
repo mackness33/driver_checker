@@ -62,7 +62,4 @@ open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
 
         return fr
     }
-
-    override val type: String
-        get() = "MultipleWindows"
 }
