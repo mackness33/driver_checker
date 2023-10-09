@@ -6,12 +6,6 @@ import com.example.driverchecker.machinelearning.data.IMachineLearningOutputStat
 import com.example.driverchecker.machinelearning.data.IWindowSettings
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 
-abstract class WindowFactory<E : IMachineLearningOutputStats> {
-
-    abstract fun buildMachineLearningWindow(frames: Int, threshold: Float): IMachineLearningWindowOld<E>
-}
-
-
 /* DEFINITIONS */
 interface IWindowFactory<E> {
 
@@ -23,13 +17,13 @@ interface IMachineLearningWindowFactory<E : IMachineLearningOutputStats> : IWind
     override fun buildWindow(initialSettings: IWindowSettings): IMachineLearningSingleWindow<E>
 }
 
-interface IClassificationWindowFactory2<E : IClassificationOutputStats<S>, S> : IMachineLearningWindowFactory<E> {
+interface IClassificationWindowFactory<E : IClassificationOutputStats<S>, S> : IMachineLearningWindowFactory<E> {
 
     override fun buildWindow(initialSettings: IWindowSettings): IClassificationSingleWindow<E, S>
     fun buildWindow(initialSettings: IWindowSettings, supergroup: Set<String>): IClassificationSingleWindow<E, S>
 }
 
-typealias IImageDetectionWindowFactory2 = IClassificationWindowFactory2<IImageDetectionFullOutput<String>, String>
+typealias IImageDetectionWindowFactory2 = IClassificationWindowFactory<IImageDetectionFullOutput<String>, String>
 
 
 /* ABSTRACT */

@@ -52,7 +52,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
         get() = mSettings
     private val privateSettings: ISettings
         get() = mSettings.value
-    protected abstract val collectionOfWindowsOld: MachineLearningWindowsMutableCollection<O>
     protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<O>
 
     open fun initialize (semaphores: Set<String>) {

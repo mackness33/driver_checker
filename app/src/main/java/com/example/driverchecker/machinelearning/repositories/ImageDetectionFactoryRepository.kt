@@ -2,13 +2,11 @@ package com.example.driverchecker.machinelearning.repositories
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
-import com.example.driverchecker.machinelearning.collections.ImageDetectionSetOfWindows
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
 import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
 import com.example.driverchecker.machinelearning.helpers.windows.multiples.IClassificationMultipleWindows
-import com.example.driverchecker.machinelearning.helpers.windows.multiples.ImageDetectionMultipleWindows
 import com.example.driverchecker.machinelearning.helpers.windows.multiples.TestImageDetectionMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
@@ -24,7 +22,6 @@ class ImageDetectionFactoryRepository
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindowsOld: ClassificationWindowsMutableCollection<IImageDetectionFullOutput<String>, String> = ImageDetectionSetOfWindows(repositoryScope)
     override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> = TestImageDetectionMultipleWindows(repositoryScope)
 
 

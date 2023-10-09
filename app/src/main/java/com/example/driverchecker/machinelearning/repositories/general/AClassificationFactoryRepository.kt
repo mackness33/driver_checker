@@ -16,7 +16,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
     abstract override var model: IClassificationModel<I, O, S>?
-    abstract override val collectionOfWindowsOld: ClassificationWindowsMutableCollection<O, S>
     abstract override val collectionOfWindows: IClassificationMultipleWindows<O, S>
 
 
