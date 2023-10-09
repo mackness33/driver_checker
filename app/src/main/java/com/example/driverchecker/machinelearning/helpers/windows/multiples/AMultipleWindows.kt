@@ -7,12 +7,13 @@ import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData
 import kotlinx.coroutines.CoroutineScope
 
-abstract class AMultipleWindows<E, W : ISingleWindow<E>>(scope: CoroutineScope) :
+abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettings>(scope: CoroutineScope) :
     IMultipleWindows<E> {
     /* MULTIPLE */
     // TODO: improve windows management
     protected abstract val availableWindows: MutableMap<IWindowSettingsOld, W>
     protected abstract val selectedWindows: MutableSet<W>
+    protected abstract val currentWindows: MutableMap<S, W>
     protected var isFinalResultBuilt: MutableCompletableData<Nothing?> = DeferrableData(null, scope.coroutineContext)
     override var inactiveWindows: Set<W> = emptySet()
         get() = selectedWindows.minus(activeWindows)

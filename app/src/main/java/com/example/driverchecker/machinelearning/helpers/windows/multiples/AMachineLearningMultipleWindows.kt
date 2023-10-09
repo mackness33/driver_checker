@@ -4,8 +4,8 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.singles.IMachineLearningSingleWindow
 import kotlinx.coroutines.CoroutineScope
 
-abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStats, W : IMachineLearningSingleWindow<E>>(scope: CoroutineScope) :
-    AMultipleWindows<E, W> (scope), IMachineLearningMultipleWindows<E> {
+abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStats, W : IMachineLearningSingleWindow<E>, S : IMachineLearningSingleWindowSettings>(scope: CoroutineScope) :
+    AMultipleWindows<E, W, S> (scope), IMachineLearningMultipleWindows<E> {
     /* MACHINE LEARNING */
     override val confidence: Float
         get() = 0.0f
