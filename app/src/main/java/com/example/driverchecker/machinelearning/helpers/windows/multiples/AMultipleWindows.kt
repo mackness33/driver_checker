@@ -11,12 +11,12 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
     IMultipleWindows<E> {
     /* MULTIPLE */
     // TODO: improve windows management
-    protected abstract val availableWindows: MutableMap<IWindowSettingsOld, W>
-    protected abstract val selectedWindows: MutableSet<W>
+//    protected abstract val availableWindows: MutableMap<IWindowSettingsOld, W>
+//    protected abstract val selectedWindows: MutableSet<W>
     protected abstract val currentWindows: MutableMap<S, W>
     protected var isFinalResultBuilt: MutableCompletableData<Nothing?> = DeferrableData(null, scope.coroutineContext)
     override var inactiveWindows: Set<W> = emptySet()
-        get() = selectedWindows.minus(activeWindows)
+        get() = currentWindows.values.toSet().minus(activeWindows)
         protected set
     override var activeWindows: Set<W> = emptySet()
         protected set
@@ -37,23 +37,23 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
 
     /*  WINDOWS  */
     override fun updateSettings(newSettings: ISettingsOld) {
-        settings = newSettings
-
-        try {
-            var tempSetting: IWindowSettingsOld
-            newSettings.multipleTypes.forEach { type ->
-                newSettings.multipleWindowsFrames.forEach { frames ->
-                    newSettings.multipleWindowsThresholds.forEach { threshold ->
-                        tempSetting = WindowSettingsOld(frames, threshold, type)
-                        if (availableWindows.containsKey(tempSetting)) selectedWindows.add(availableWindows[tempSetting]!!)
-                    }
-                }
-            }
-
-            activeWindows = selectedWindows
-        } catch (e: Throwable) {
-            Log.e("WindowMutableSet", e.message.toString(), e)
-        }
+//        settings = newSettings
+//
+//        try {
+//            var tempSetting: IWindowSettingsOld
+//            newSettings.multipleTypes.forEach { type ->
+//                newSettings.multipleWindowsFrames.forEach { frames ->
+//                    newSettings.multipleWindowsThresholds.forEach { threshold ->
+//                        tempSetting = WindowSettingsOld(frames, threshold, type)
+//                        if (availableWindows.containsKey(tempSetting)) selectedWindows.add(availableWindows[tempSetting]!!)
+//                    }
+//                }
+//            }
+//
+//            activeWindows = selectedWindows
+//        } catch (e: Throwable) {
+//            Log.e("WindowMutableSet", e.message.toString(), e)
+//        }
     }
 
     // TODO: complete the single window with a completable deferred that and the mutable with a
@@ -71,6 +71,7 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
         if (areAllSatisfied)
             isFinalResultBuilt.reset()
 
+        // minus assign
         activeWindows = activeWindows.minus(satisfiedWindows)
 
         return areAllSatisfied
@@ -82,7 +83,8 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
 
     override suspend fun clean() {
         isFinalResultBuilt.await()
-        selectedWindows.forEach { it.clean() }
-        activeWindows = selectedWindows
+//        selectedWindows.forEach { it.clean() }
+        currentWindows.forEach { (_, window) -> window.clean() }
+        activeWindows = currentWindows.values.toSet()
     }
 }

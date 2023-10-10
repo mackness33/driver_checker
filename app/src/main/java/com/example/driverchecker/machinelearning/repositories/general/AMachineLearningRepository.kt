@@ -56,8 +56,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
     open fun initialize (semaphores: Set<String>) {
         readySemaphore.initialize(semaphores)
         evaluationStateProducer.initialize()
-        collectionOfWindows.initialize(availableSettings)
-        collectionOfWindows.updateSettings(privateSettings)
+//        collectionOfWindows.initialize(availableSettings)
+//        collectionOfWindows.updateSettings(privateSettings)
     }
 
     override fun updateModelThreshold (threshold: Float) {

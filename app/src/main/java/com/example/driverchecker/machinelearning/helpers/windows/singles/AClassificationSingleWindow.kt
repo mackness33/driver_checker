@@ -16,6 +16,10 @@ abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S>
     override val groupMetrics: IGroupMetrics<S>
         get() = mGroupMetrics
 
+    init {
+        mGroupMetrics.initialize(initialSettings.groups)
+    }
+
     protected val group : S?
         get() =
             if (windowIsFull() && supergroupCounter.isNotEmpty())

@@ -26,7 +26,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStat
 
     override fun initialize(semaphores: Set<String>) {
         super.initialize(semaphores)
-        collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
+//        collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
     }
 
     protected open inner class LiveClassificationProducer : LiveEvaluationProducer () {

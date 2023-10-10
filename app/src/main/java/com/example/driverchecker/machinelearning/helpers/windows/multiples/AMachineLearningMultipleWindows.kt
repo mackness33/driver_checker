@@ -12,15 +12,16 @@ abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStats, 
 
     /* DATA */
     override fun getMetrics(): List<IWindowBasicData> {
-        return selectedWindows.map { it.getMetrics() }
+//        return selectedWindows.map { it.getMetrics() }
+        return currentWindows.values.map { it.getMetrics() }
     }
 
     override fun getAdditionalMetrics(): List<IAdditionalMetrics?> {
-        return selectedWindows.map { it.getAdditionalMetrics() }
+        return currentWindows.values.map { it.getAdditionalMetrics() }
     }
 
     override fun getData(): Map<IWindowBasicData, IAdditionalMetrics?> {
-        val listOfData = selectedWindows.map { it.getData() }
+        val listOfData = currentWindows.values.map { it.getData() }
         return listOfData.toMap()
     }
 }

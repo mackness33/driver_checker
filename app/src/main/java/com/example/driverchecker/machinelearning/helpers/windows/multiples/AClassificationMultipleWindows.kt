@@ -13,11 +13,11 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutputStats<G>,
 
     /* DATA */
     override fun getAdditionalMetrics(): List<IGroupMetrics<G>?> {
-        return selectedWindows.map { it.getAdditionalMetrics() }
+        return currentWindows.values.map { it.getAdditionalMetrics() }
     }
 
     override fun getData(): Map<IWindowBasicData, IGroupMetrics<G>?> {
-        val listOfData = selectedWindows.map { it.getData() }
+        val listOfData = currentWindows.values.map { it.getData() }
         return listOfData.toMap()
     }
 
@@ -25,6 +25,7 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutputStats<G>,
     override fun updateGroups(newGroups: Set<G>) {
         groups = newGroups
 
-        availableWindows.forEach { it.value.updateGroups(newGroups) }
+//        availableWindows.forEach { it.value.updateGroups(newGroups) }
+        currentWindows.forEach { (_, window) -> window.updateGroups(newGroups) }
     }
 }
