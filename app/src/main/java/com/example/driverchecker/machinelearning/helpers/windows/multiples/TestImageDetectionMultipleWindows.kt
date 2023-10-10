@@ -2,6 +2,8 @@ package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.factories.IClassificationWindowFactory
+import com.example.driverchecker.machinelearning.helpers.windows.factories.IImageDetectionWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.factories.ImageDetectionWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
 import com.example.driverchecker.machinelearning.helpers.windows.singles.ImageDetectionSingleWindow
@@ -9,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 
 open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
     AClassificationMultipleWindows<IImageDetectionFullOutput<String>, String, ImageDetectionSingleWindow, IClassificationSingleWindowSettings<String>> (scope) {
-    val factory = ImageDetectionWindowFactory()
+    override val factory = ImageDetectionWindowFactory()
 
     /* MULTIPLE */
     override val currentWindows: MutableMap<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> = mutableMapOf()
@@ -18,17 +20,17 @@ open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
         isFinalResultBuilt.complete(null)
     }
 
-    fun update (newSettings: IClassificationMultipleWindowSettings<String>) {
-        // get the list of settings as a set and get all the windows that are not part of the current ones
-        val listOfNewSettings = newSettings.asListOfSettings().toSet()
-        val newWindows = factory.createMapOfWindow(listOfNewSettings.minus(currentWindows.keys))
-
-        // remove the windows not part of the new settings and add the one that are not there
-        currentWindows.minusAssign(currentWindows.keys.minus(listOfNewSettings))
-        currentWindows.plusAssign(newWindows)
-
-        activeWindows = currentWindows.values.toSet()
-    }
+//    fun update (newSettings: IClassificationMultipleWindowSettings<String>) {
+//        // get the list of settings as a set and get all the windows that are not part of the current ones
+//        val listOfNewSettings = newSettings.asListOfSettings().toSet()
+//        val newWindows = factory.createMapOfWindow(listOfNewSettings.minus(currentWindows.keys))
+//
+//        // remove the windows not part of the new settings and add the one that are not there
+//        currentWindows.minusAssign(currentWindows.keys.minus(listOfNewSettings))
+//        currentWindows.plusAssign(newWindows)
+//
+//        activeWindows = currentWindows.values.toSet()
+//    }
 
     /*  WINDOWS  */
     override fun initialize(availableSettings: ISettingsOld) {

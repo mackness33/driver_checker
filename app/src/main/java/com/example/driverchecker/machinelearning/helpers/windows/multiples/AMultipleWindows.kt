@@ -2,6 +2,8 @@ package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.factories.IWindowFactory
+import com.example.driverchecker.machinelearning.helpers.windows.factories.ImageDetectionWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.singles.ISingleWindow
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData
@@ -13,6 +15,8 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
     // TODO: improve windows management
 //    protected abstract val availableWindows: MutableMap<IWindowSettingsOld, W>
 //    protected abstract val selectedWindows: MutableSet<W>
+    protected abstract val factory: IWindowFactory<E, S, W>
+
     protected abstract val currentWindows: MutableMap<S, W>
     protected var isFinalResultBuilt: MutableCompletableData<Nothing?> = DeferrableData(null, scope.coroutineContext)
     override var inactiveWindows: Set<W> = emptySet()
@@ -36,24 +40,16 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
 
 
     /*  WINDOWS  */
-    override fun updateSettings(newSettings: ISettingsOld) {
-//        settings = newSettings
-//
-//        try {
-//            var tempSetting: IWindowSettingsOld
-//            newSettings.multipleTypes.forEach { type ->
-//                newSettings.multipleWindowsFrames.forEach { frames ->
-//                    newSettings.multipleWindowsThresholds.forEach { threshold ->
-//                        tempSetting = WindowSettingsOld(frames, threshold, type)
-//                        if (availableWindows.containsKey(tempSetting)) selectedWindows.add(availableWindows[tempSetting]!!)
-//                    }
-//                }
-//            }
-//
-//            activeWindows = selectedWindows
-//        } catch (e: Throwable) {
-//            Log.e("WindowMutableSet", e.message.toString(), e)
-//        }
+    open fun <M : IMultipleWindowSettings> update (newSettings: M) {
+        // get the list of settings as a set and get all the windows that are not part of the current ones
+        val listOfNewSettings = newSettings.asListOfSettings().toSet() as Set<S>
+        val newWindows = factory.createMapOfWindow(listOfNewSettings.minus(currentWindows.keys))
+
+        // remove the windows not part of the new settings and add the one that are not there
+        currentWindows.minusAssign(currentWindows.keys.minus(listOfNewSettings))
+        currentWindows.plusAssign(newWindows)
+
+        activeWindows = currentWindows.values.toSet()
     }
 
     // TODO: complete the single window with a completable deferred that and the mutable with a

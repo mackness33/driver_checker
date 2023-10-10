@@ -1,16 +1,22 @@
 package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.windows.factories.IMachineLearningWindowFactory
+import com.example.driverchecker.machinelearning.helpers.windows.factories.IWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.singles.IMachineLearningSingleWindow
 import kotlinx.coroutines.CoroutineScope
 
 abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStats, W : IMachineLearningSingleWindow<E>, S : IMachineLearningSingleWindowSettings>(scope: CoroutineScope) :
     AMultipleWindows<E, W, S> (scope), IMachineLearningMultipleWindows<E> {
+    abstract override val factory: IMachineLearningWindowFactory<E, S, W>
+
     /* MACHINE LEARNING */
     override val confidence: Float
         get() = 0.0f
 
     /* DATA */
+    override fun <M : IMultipleWindowSettings> update (newSettings: M) { super.update(newSettings) }
+
     override fun getMetrics(): List<IWindowBasicData> {
 //        return selectedWindows.map { it.getMetrics() }
         return currentWindows.values.map { it.getMetrics() }
