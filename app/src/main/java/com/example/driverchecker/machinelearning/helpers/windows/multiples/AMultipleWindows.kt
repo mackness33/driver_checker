@@ -33,7 +33,6 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
         get() = activeWindows.first().totalElements
         protected set
 
-
     init {
         isFinalResultBuilt.complete(null)
     }

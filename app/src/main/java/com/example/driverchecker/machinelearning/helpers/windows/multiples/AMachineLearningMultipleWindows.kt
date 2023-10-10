@@ -15,10 +15,7 @@ abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStats, 
         get() = 0.0f
 
     /* DATA */
-    override fun <M : IMultipleWindowSettings> update (newSettings: M) { super.update(newSettings) }
-
     override fun getMetrics(): List<IWindowBasicData> {
-//        return selectedWindows.map { it.getMetrics() }
         return currentWindows.values.map { it.getMetrics() }
     }
 

@@ -23,11 +23,6 @@ interface WithGroups<S> {
 
 
 // ---------------------------------- BASIC OUTPUT ----------------------------------
-// with classification
-interface IClassificationItem<S> : IMachineLearningItem, WithClassification<S> {
-    override val classification: IClassification<S>
-}
-
 interface IClassificationOutputStats<S> : IMachineLearningOutputStats, WithGroups<S>
 
 interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearningOutput<E>, IClassificationOutputStats<S> {
@@ -75,14 +70,6 @@ data class ClassificationFinalResult<S>(
 
 interface IOldClassificationFinalResult<S> : IOldMachineLearningFinalResult, IClassificationFinalResultStats<S>
 
-
-data class ClassificationItem<S> (
-    override val confidence: Float,
-    override val classification: IClassification<S>,
-) : IClassificationFullItem<S> {
-    constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
-}
-
 data class ClassificationOutputStats<S> (
     override val confidence: Float,
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>>
@@ -112,20 +99,9 @@ data class ClassificationFinalResultOld<S> (
 }
 
 // ---------------------------------- FULL OUTPUT ----------------------------------
-
-interface IClassificationFullItem<S> : IMachineLearningFullItem, IClassificationItem<S>
-
 interface IClassificationFullOutput<I, E : IClassificationFullItem<S>, S> : IMachineLearningFullOutput<I, E>, IClassificationOutput<E, S>
 
 interface IOldClassificationFullFinalResult<S> : IOldMachineLearningFullFinalResult, IOldClassificationFinalResult<S>
-
-
-data class ClassificationFullItem<S> (
-    override val confidence: Float,
-    override val classification: IClassification<S>,
-) : IClassificationFullItem<S> {
-    constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
-}
 
 data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
     override val input: I,

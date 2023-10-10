@@ -4,34 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchModel
 
-
-// ---------------------------------- INPUT ----------------------------------
-data class ImageDetectionInput(
-    override val input: Bitmap,
-    override val preProcessedImage: Bitmap?,
-    override val modelRatio: Pair<Int, Int>? = null,
-    override val imageRatio: Pair<Float, Float>? = null,
-) : IImageDetectionInput
-
-interface IImageDetectionInput : IMachineLearningInput<Bitmap> {
-    val preProcessedImage: Bitmap?
-    val modelRatio: Pair<Int, Int>?
-    val imageRatio: Pair<Float, Float>?
-}
-
 // ---------------------------------- BASIC OUTPUT ----------------------------------
 
-interface IImageDetectionItem<S> : IClassificationItem<S> {
-    var classIndex: Int
-    var rect: RectF
-}
-
-data class ImageDetectionItem<S> (
-    override var classIndex: Int,
-    override var rect: RectF,
-    override val confidence: Float,
-    override val classification: IClassification<S>
-) : IImageDetectionItem<S>
 
 typealias IImageDetectionOutputStats<S> = IClassificationOutputStats<S>
 typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionItem<S>, S>
@@ -44,14 +18,6 @@ typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
 
 // ---------------------------------- FULL OUTPUT ----------------------------------
 
-interface IImageDetectionFullItem<S> : IClassificationFullItem<S>, IImageDetectionItem<S>
-
-data class ImageDetectionFullItem<S> (
-    override var classIndex: Int,
-    override var rect: RectF,
-    override val confidence: Float,
-    override val classification: IClassification<S>
-) : IImageDetectionFullItem<S>
 
 typealias IImageDetectionFullOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
 typealias IOldImageDetectionFullFinalResult<S> = IOldClassificationFullFinalResult<S>

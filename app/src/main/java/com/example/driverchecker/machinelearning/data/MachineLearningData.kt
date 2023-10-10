@@ -3,28 +3,7 @@ package com.example.driverchecker.machinelearning.data
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemList
 import kotlin.coroutines.cancellation.CancellationException
 
-// ---------------------------------- CLASSES ----------------------------------
-
-interface WithConfidence {
-    val confidence: Float
-}
-
-
-// ---------------------------------- INPUT ----------------------------------
-
-interface WithInput<I> {
-    val input: I
-}
-
-typealias IMachineLearningInput<I> = WithInput<I>
-
-data class MachineLearningInput<I>(
-    override val input: I,
-) : IMachineLearningInput<I>
-
 // ---------------------------------- BASIC OUTPUT ----------------------------------
-typealias IMachineLearningItem = WithConfidence
-
 interface IMachineLearningOutputStats : WithConfidence
 
 interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOutputStats {
@@ -73,14 +52,7 @@ data class OldMachineLearningFinalResult (
     )
 }
 
-data class MachineLearningItem (
-    override val confidence: Float
-) : IMachineLearningItem
-
-
 // ---------------------------------- FULL OUTPUT ----------------------------------
-
-typealias IMachineLearningFullItem = IMachineLearningItem
 
 interface IMachineLearningFullOutput<I, E : IMachineLearningFullItem> : IMachineLearningOutput<E>, WithInput<I>
 
@@ -98,9 +70,6 @@ data class OldMachineLearningFullFinalResult (
     override val settings: IOldSettings? = null,
     override val metrics: IOldMetrics? = null
 ) : IOldMachineLearningFullFinalResult
-
-typealias MachineLearningFullItem = IMachineLearningFullItem
-
 
 
 
