@@ -6,20 +6,6 @@ import com.example.driverchecker.machinelearning.models.pytorch.ClassifierTorchM
 
 // ---------------------------------- BASIC OUTPUT ----------------------------------
 
-
-typealias IOldImageDetectionFinalResult<S> = IOldClassificationFinalResult<S>
-typealias IImageDetectionFinalResult<S> = IClassificationFinalResult<S>
-
-typealias ImageDetectionFinalResultOld<S> = ClassificationFinalResultOld<S>
-typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
-
-// ---------------------------------- FULL OUTPUT ----------------------------------
-
-
-typealias IOldImageDetectionFullFinalResult<S> = IOldClassificationFullFinalResult<S>
-
-typealias ImageDetectionFullFinalResultOld<S> = ClassificationFullFinalResultOld<S>
-
 // ---------------------------------- TYPE ALIASES ----------------------------------
 
 typealias ImageDetectionTorchModel<S> = ClassifierTorchModel<IImageDetectionInput, IImageDetectionFullOutput<S>, S>
