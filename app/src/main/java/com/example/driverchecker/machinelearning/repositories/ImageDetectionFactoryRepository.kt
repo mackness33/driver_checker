@@ -6,6 +6,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
 import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
+import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
 import com.example.driverchecker.machinelearning.helpers.windows.multiples.IClassificationMultipleWindows
 import com.example.driverchecker.machinelearning.helpers.windows.multiples.TestImageDetectionMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -24,10 +25,19 @@ class ImageDetectionFactoryRepository
 
     override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> = TestImageDetectionMultipleWindows(repositoryScope)
 
+//    private val settings: IClassificationMultipleWindowSettings<String> =
 
     init {
         val semaphores = setOf("model", "client")
         initialize(semaphores)
+        (collectionOfWindows as TestImageDetectionMultipleWindows).update(
+            MultipleWindowSettings (
+                setOf(1, 3, 5, 10, 20, 30),
+                setOf(SingleGroupImageDetectionTag),
+                setOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
+                model?.classifier?.supergroups?.keys ?: emptySet()
+            )
+        )
     }
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {

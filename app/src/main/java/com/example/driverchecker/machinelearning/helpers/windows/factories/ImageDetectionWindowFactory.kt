@@ -12,7 +12,7 @@ class ImageDetectionWindowFactory {
         return makeWindow(initialSettings).second
     }
 
-    fun createMapWindow (settings: IClassificationMultipleWindowSettings<String>):
+    fun createMapOfWindow (settings: IClassificationMultipleWindowSettings<String>):
             Map<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> {
         val windows: MutableMap<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> = mutableMapOf()
         // TODO: The tag is hardcoded
@@ -25,9 +25,8 @@ class ImageDetectionWindowFactory {
                         settings.groups,
                         SingleGroupImageDetectionTag
                     )
-                    val result = makeWindow(windowSettings)
-                    if (result.second != null)
-                        windows.putIfAbsent(result.first, result.second!!)
+                    val (singleWindow, window) = makeWindow(windowSettings)
+                    windows.putIfAbsent(singleWindow, window)
                 }
             }
         }
@@ -35,12 +34,24 @@ class ImageDetectionWindowFactory {
         return emptyMap()
     }
 
-    fun createMapWindow (collectionOfSettings: Set<IClassificationSingleWindowSettings<String>>):
-            Map<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow?> {
+    fun createMapOfWindow (collectionOfSettings: Set<IClassificationSingleWindowSettings<String>>):
+            Map<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> {
         return collectionOfSettings.map { settings -> makeWindow(settings) }.toMap()
     }
 
     private fun makeWindow (settings: IClassificationSingleWindowSettings<String>) :
+            Pair<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> {
+        // TODO: make the single window return it's own settings
+        return when (settings.tag) {
+            HomogenousOffsetImageDetectionTag -> TODO("Throw an exception")
+            MultipleGroupImageDetectionTag -> TODO("Throw an exception")
+            SingleGroupImageDetectionTag -> settings to ImageDetectionSingleWindow(settings)
+            null -> TODO("Throw an exception")
+        }
+    }
+
+
+    private fun makeWindowOrNull (settings: IClassificationSingleWindowSettings<String>) :
             Pair<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow?> {
         // TODO: make the single window return it's own settings
         return when (settings.tag) {

@@ -8,14 +8,20 @@ import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleG
 interface IMultipleWindowSettings {
     val sizes: Set<Int>
     val tags: Set<IWindowTag>?
+
+    fun asListOfSettings () : List<ISingleWindowSettings>
 }
 
 interface IMachineLearningMultipleWindowSettings : IMultipleWindowSettings {
     val thresholds: Set<Float>
+
+    override fun asListOfSettings () : List<IMachineLearningSingleWindowSettings>
 }
 
 interface IClassificationMultipleWindowSettings<S> : IMachineLearningMultipleWindowSettings {
     val groups: Set<S>
+
+    override fun asListOfSettings () : List<IClassificationSingleWindowSettings<S>>
 }
 
 data class MultipleWindowSettings<S> (
@@ -24,7 +30,7 @@ data class MultipleWindowSettings<S> (
     override val thresholds: Set<Float>,
     override val groups: Set<S>,
 ) : IClassificationMultipleWindowSettings<S> {
-    fun asListOfSettings () : List<IClassificationSingleWindowSettings<S>> {
+    override fun asListOfSettings () : List<IClassificationSingleWindowSettings<S>> {
         val outputSettingsList: MutableList<IClassificationSingleWindowSettings<S>> = mutableListOf()
         this.tags?.forEach { type ->
             this.sizes.forEach { frames ->

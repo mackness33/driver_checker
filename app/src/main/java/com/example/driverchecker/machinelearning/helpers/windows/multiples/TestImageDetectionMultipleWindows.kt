@@ -17,6 +17,13 @@ open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
     override var selectedWindows: MutableSet<ImageDetectionSingleWindow> = mutableSetOf()
     override val currentWindows: MutableMap<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> = mutableMapOf()
 
+    fun update (newSettings: IClassificationMultipleWindowSettings<String>) {
+        val listOfNewSettings = newSettings.asListOfSettings().toSet()
+        val newWindows = factory.createMapOfWindow(listOfNewSettings.minus(currentWindows.keys))
+        currentWindows.minusAssign(currentWindows.keys.minus(listOfNewSettings))
+        currentWindows.plusAssign(newWindows)
+    }
+
     /*  WINDOWS  */
     override fun initialize(availableSettings: ISettingsOld) {
         settings = availableSettings
