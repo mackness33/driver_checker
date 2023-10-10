@@ -7,12 +7,12 @@ import com.example.driverchecker.machinelearning.helpers.windows.helpers.Multipl
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 
-class ImageDetectionWindowFactory {
-    fun createWindow (initialSettings: IClassificationSingleWindowSettings<String>): ImageDetectionSingleWindow? {
+class ImageDetectionWindowFactory : IImageDetectionWindowFactory<String> {
+    override fun createWindow (initialSettings: IClassificationSingleWindowSettings<String>): ImageDetectionSingleWindow {
         return makeWindow(initialSettings).second
     }
 
-    fun createMapOfWindow (settings: IClassificationMultipleWindowSettings<String>):
+    override fun createMapOfWindow (settings: IClassificationMultipleWindowSettings<String>):
             Map<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> {
         val windows: MutableMap<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> = mutableMapOf()
         // TODO: The tag is hardcoded
@@ -34,7 +34,7 @@ class ImageDetectionWindowFactory {
         return emptyMap()
     }
 
-    fun createMapOfWindow (collectionOfSettings: Set<IClassificationSingleWindowSettings<String>>):
+    override fun createMapOfWindow (collectionOfSettings: Set<IClassificationSingleWindowSettings<String>>):
             Map<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> {
         return collectionOfSettings.map { settings -> makeWindow(settings) }.toMap()
     }

@@ -12,9 +12,6 @@ open class TestImageDetectionMultipleWindows (scope: CoroutineScope) :
     val factory = ImageDetectionWindowFactory()
 
     /* MULTIPLE */
-    // TODO: improve windows management
-//    override var availableWindows: MutableMap<IWindowSettingsOld, ImageDetectionSingleWindow> = mutableMapOf()
-//    override var selectedWindows: MutableSet<ImageDetectionSingleWindow> = mutableSetOf()
     override val currentWindows: MutableMap<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> = mutableMapOf()
 
     init {

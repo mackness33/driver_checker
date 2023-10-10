@@ -30,3 +30,4 @@ interface IClassificationMultipleWindows <E : IClassificationOutputStats<S>, S> 
     override fun getAdditionalMetrics() : List<IGroupMetrics<S>?>
     override fun getFinalResults(): IClassificationFinalResult<S>
 }
+
