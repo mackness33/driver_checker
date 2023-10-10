@@ -1,14 +1,13 @@
 package com.example.driverchecker.machinelearning.repositories
 
 import android.util.Log
-import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
 import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
 import com.example.driverchecker.machinelearning.helpers.windows.multiples.IClassificationMultipleWindows
-import com.example.driverchecker.machinelearning.helpers.windows.multiples.TestImageDetectionMultipleWindows
+import com.example.driverchecker.machinelearning.helpers.windows.multiples.ImageDetectionMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
@@ -23,12 +22,12 @@ class ImageDetectionFactoryRepository
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> = TestImageDetectionMultipleWindows(repositoryScope)
+    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
 
     init {
         val semaphores = setOf("model", "client")
         initialize(semaphores)
-        (collectionOfWindows as TestImageDetectionMultipleWindows).update(
+        (collectionOfWindows as ImageDetectionMultipleWindows).update(
             MultipleWindowSettings (
                 setOf(1, 3, 5),
                 setOf(SingleGroupImageDetectionTag),

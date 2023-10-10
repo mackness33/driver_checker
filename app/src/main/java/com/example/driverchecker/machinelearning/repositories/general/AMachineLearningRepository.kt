@@ -62,12 +62,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
     override fun updateModelThreshold (threshold: Float) {
         model?.updateThreshold(threshold)
-        collectionOfWindows.updateSettings(SettingsOld(
-            availableSettings.multipleWindowsFrames.subList(2,4),
-            availableSettings.multipleWindowsThresholds.subList(1,4),
-            availableSettings.multipleTypes.subList(0,1),
-            threshold
-        ))
     }
 
     override suspend fun instantEvaluation(input: I): O? {
@@ -196,7 +190,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStats, FR
 
         override fun onClientUpdateSettings(state: ClientState.UpdateSettings) {
             model?.updateThreshold(state.settings.modelThreshold)
-            collectionOfWindows.updateSettings(state.settings)
         }
     }
 
