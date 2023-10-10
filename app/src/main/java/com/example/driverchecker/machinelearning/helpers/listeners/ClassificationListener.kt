@@ -8,7 +8,5 @@ interface ClassificationListener<S> : MachineLearningListener, IGenericListener<
 
     suspend fun onLiveClassificationLoading (state: LiveClassificationState.Loading<S>)
 
-    suspend fun onLiveClassificationOldEnd (state: LiveClassificationState.OldEnd<S>)
-
     suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<S>)
 }

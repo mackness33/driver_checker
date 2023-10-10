@@ -33,15 +33,6 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
 
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
-        override suspend fun onLiveClassificationOldEnd (state: LiveClassificationState.OldEnd<String>) {
-            super.onLiveClassificationOldEnd(state)
-
-//            if (state.finalResult != null)
-//                mFinalResult.postValue(ImageDetectionFullFinalResultOld(state.finalResult))
-
-            Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
-        }
-
         override suspend fun onLiveClassificationEnd (state: LiveClassificationState.End<String>) {
             super.onLiveClassificationEnd(state)
 
