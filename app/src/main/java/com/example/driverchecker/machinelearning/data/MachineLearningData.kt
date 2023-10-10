@@ -3,13 +3,7 @@ package com.example.driverchecker.machinelearning.data
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemList
 import kotlin.coroutines.cancellation.CancellationException
 
-// ---------------------------------- BASIC OUTPUT ----------------------------------
-interface IMachineLearningOutputStats : WithConfidence
-
-interface IMachineLearningOutput<E : IMachineLearningItem> : IMachineLearningOutputStats {
-    val listItems: MachineLearningItemList<E>
-}
-
+// ---------------------------------- MACHINE LEARNING ----------------------------------
 typealias IMachineLearningFinalResultStats = WithConfidence
 
 interface IMachineLearningNewFinalResult : IMachineLearningFinalResultStats, WithWindowInfo
@@ -35,12 +29,6 @@ data class MachineLearningFinalResult (
 
 interface IOldMachineLearningFinalResult : IMachineLearningFinalResultStats, WithOldMetrics, WithOldSettings
 
-data class MachineLearningOutput <E : WithConfidence> (
-    override val listItems: MachineLearningItemList<E>,
-) : IMachineLearningOutput<E> {
-    override val confidence: Float = listItems.confidence
-}
-
 data class OldMachineLearningFinalResult (
     override val confidence: Float,
     override val settings: IOldSettings? = null,
@@ -53,17 +41,7 @@ data class OldMachineLearningFinalResult (
 }
 
 // ---------------------------------- FULL OUTPUT ----------------------------------
-
-interface IMachineLearningFullOutput<I, E : IMachineLearningFullItem> : IMachineLearningOutput<E>, WithInput<I>
-
 interface IOldMachineLearningFullFinalResult : IOldMachineLearningFinalResult
-
-data class MachineLearningFullOutput <I, E : WithConfidence> (
-    override val listItems: MachineLearningItemList<E>,
-    override val input: I,
-) : IMachineLearningFullOutput<I, E> {
-    override val confidence: Float = listItems.confidence
-}
 
 data class OldMachineLearningFullFinalResult (
     override val confidence: Float,

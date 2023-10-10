@@ -23,11 +23,6 @@ interface WithGroups<S> {
 
 
 // ---------------------------------- BASIC OUTPUT ----------------------------------
-interface IClassificationOutputStats<S> : IMachineLearningOutputStats, WithGroups<S>
-
-interface IClassificationOutput<E : IClassificationItem<S>, S> : IMachineLearningOutput<E>, IClassificationOutputStats<S> {
-    override val listItems: ClassificationItemMutableList<E, S>
-}
 
 interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
 
@@ -70,18 +65,6 @@ data class ClassificationFinalResult<S>(
 
 interface IOldClassificationFinalResult<S> : IOldMachineLearningFinalResult, IClassificationFinalResultStats<S>
 
-data class ClassificationOutputStats<S> (
-    override val confidence: Float,
-    override val groups: Map<S, Set<IClassificationWithMetrics<S>>>
-) : IClassificationOutputStats<S> {
-}
-
-data class ClassificationOutput<E : IClassificationItem<S>, S> (
-    override val listItems: ClassificationItemMutableList<E, S>
-) : IClassificationOutput<E, S> {
-    override val confidence: Float = listItems.confidence
-    override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
-}
 
 data class ClassificationFinalResultOld<S> (
     override val confidence: Float,
@@ -99,17 +82,8 @@ data class ClassificationFinalResultOld<S> (
 }
 
 // ---------------------------------- FULL OUTPUT ----------------------------------
-interface IClassificationFullOutput<I, E : IClassificationFullItem<S>, S> : IMachineLearningFullOutput<I, E>, IClassificationOutput<E, S>
 
 interface IOldClassificationFullFinalResult<S> : IOldMachineLearningFullFinalResult, IOldClassificationFinalResult<S>
-
-data class ClassificationFullOutput<I, E : IClassificationFullItem<S>, S> (
-    override val input: I,
-    override val listItems: ClassificationItemMutableList<E, S>,
-) : IClassificationFullOutput<I, E, S> {
-    override val confidence: Float = listItems.confidence
-    override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
-}
 
 data class ClassificationFullFinalResultOld<S> (
     override val confidence: Float,
