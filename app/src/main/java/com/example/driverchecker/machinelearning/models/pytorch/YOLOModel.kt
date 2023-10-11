@@ -13,10 +13,9 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
-import java.util.Collections.max
 
 class YOLOModel :
-    ImageDetectionTorchModel<String>
+    ClassifierTorchModel<IImageDetectionInputOld, IImageDetectionFullOutput<String>, String>
 {
     constructor(scope: CoroutineScope) : super(scope)
 
@@ -36,10 +35,10 @@ class YOLOModel :
     private val outputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
     private val maxPredictionsLimit = 5
 
-    override fun preProcess(data: IImageDetectionInput): IImageDetectionInput {
+    override fun preProcess(data: IImageDetectionInputOld): IImageDetectionInputOld {
         val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(data.input, -90f)
         val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, inputWidth, inputHeight, true)
-        return ImageDetectionInput(
+        return ImageDetectionInputOld(
             rotatedBitmap,
             resizedBitmap,
             inputWidth to inputHeight,
@@ -47,7 +46,7 @@ class YOLOModel :
         )
     }
 
-    override fun evaluateData(input: IImageDetectionInput): IImageDetectionFullOutput<String> {
+    override fun evaluateData(input: IImageDetectionInputOld): IImageDetectionFullOutput<String> {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.preProcessedImage,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
@@ -70,10 +69,9 @@ class YOLOModel :
 
     private fun outputsToNMSPredictions(
         outputs: FloatArray,
-        image: IImageDetectionInput
+        image: IImageDetectionInputOld
     ): IImageDetectionFullOutput<String> {
         val results: ClassificationItemMutableList<IImageDetectionFullItem<String>, String> = ClassificationItemMutableList()
-        val (scaleX, scaleY) = image.input.width/inputWidth to image.input.height/inputHeight
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
         val imageScaleX = image.imageRatio?.first ?: 1.0f
         val imageScaleY = image.imageRatio?.second ?: 1.0f

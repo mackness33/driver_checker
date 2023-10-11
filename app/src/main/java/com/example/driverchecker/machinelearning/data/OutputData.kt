@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemList
-import kotlin.coroutines.cancellation.CancellationException
 
 // ---------------------------------- MACHINE LEARNING ----------------------------------
 interface IMachineLearningOutputStats : WithConfidence
@@ -66,5 +65,5 @@ typealias IImageDetectionOutputStats<S> = IClassificationOutputStats<S>
 typealias IImageDetectionOutput<S> = IClassificationOutput<IImageDetectionItem<S>, S>
 typealias ImageDetectionOutput<S> = ClassificationOutput<IImageDetectionItem<S>, S>
 
-typealias IImageDetectionFullOutput<S> = IClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
-typealias ImageDetectionFullOutput<S> = ClassificationFullOutput<IImageDetectionInput, IImageDetectionFullItem<S>, S>
+typealias IImageDetectionFullOutput<S> = IClassificationFullOutput<IImageDetectionInputOld, IImageDetectionFullItem<S>, S>
+typealias ImageDetectionFullOutput<S> = ClassificationFullOutput<IImageDetectionInputOld, IImageDetectionFullItem<S>, S>

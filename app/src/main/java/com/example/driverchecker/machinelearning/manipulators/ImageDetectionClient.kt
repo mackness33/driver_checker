@@ -10,7 +10,7 @@ import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String>() {
+class ImageDetectionClient : AClassificationClient<IImageDetectionInputOld, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
     override val finalResult: ObservableData<IImageDetectionFinalResult<String>?>
         get() = mFinalResult
@@ -18,11 +18,11 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
     // FUNCTIONS
 
     suspend fun produceImage (imgProxy: ImageProxy) {
-        produceInput(ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy), null))
+        produceInput(ImageDetectionInputOld(ImageDetectionUtils.imageProxyToBitmap(imgProxy), null))
     }
 
     suspend fun produceImage (bitmap: Bitmap) {
-        produceInput(ImageDetectionInput(bitmap, null))
+        produceInput(ImageDetectionInputOld(bitmap, null))
     }
 
     // INNER CLASSES
