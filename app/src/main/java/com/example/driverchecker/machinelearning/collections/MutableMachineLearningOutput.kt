@@ -4,17 +4,15 @@ import com.example.driverchecker.machinelearning.data.*
 import java.util.*
 
 open class MutableMachineLearningOutput<E : IMachineLearningItem> (collection: Collection<E>? = null)
-    : MutableList<E>, IMachineLearningOutput<E>, Stack<E>() {
+    : List<E>, IMachineLearningOutput<E>, IMutableOutput<E> {
 
     protected val mItems: MutableList<E> = collection?.toMutableList() ?: mutableListOf()
     override val items: List<E> = mItems
 
-    protected val confidence: Float = 0.0f
-
     override val stats: IMachineLearningOutputStats
         get() = MachineLearningStats(calculateConfidence())
 
-    override val metrics: IMachineLearningOutputMetrics? = null
+    override val metrics: IMetrics? = null
 
     protected open fun calculateConfidence () : Float {
         if (this.size == 0) {
@@ -23,19 +21,11 @@ open class MutableMachineLearningOutput<E : IMachineLearningItem> (collection: C
         return fold(0.0f) { acc, next -> acc + next.confidence } / this.size
     }
 
-    override fun pop(): E {
-        val removedEl = super.pop()
-        calculateConfidence()
-        return removedEl
-    }
+    override fun push(item: E) : Boolean = mItems.add(item)
 
-    override fun push(item: E): E {
-        val pushedElement = super.push(item)
-        calculateConfidence()
-        return pushedElement
-    }
+    override fun getImmutable() : IMachineLearningOutput<E> = MachineLearningOutput(this)
 
-    /*  MUTABLE LIST  */
+    /*  LIST  */
     override val size: Int
         get() = mItems.size
 

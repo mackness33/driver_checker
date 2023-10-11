@@ -24,7 +24,9 @@ data class ClassificationItem<S> (
     override val confidence: Float,
     override val classification: IClassification<S>,
 ) : IClassificationFullItem<S> {
-    constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
+    constructor(baseResult: IClassificationItem<S>) : this(
+        baseResult.confidence, baseResult.classification
+    )
 }
 
 interface IClassificationFullItem<S> : IMachineLearningFullItem, IClassificationItem<S>
@@ -34,7 +36,9 @@ data class ClassificationFullItem<S> (
     override val confidence: Float,
     override val classification: IClassification<S>,
 ) : IClassificationFullItem<S> {
-    constructor(baseResult: IClassificationItem<S>) : this(baseResult.confidence, baseResult.classification)
+    constructor(baseResult: IClassificationItem<S>) : this(
+        baseResult.confidence, baseResult.classification
+    )
 }
 
 
