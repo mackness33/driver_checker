@@ -1,10 +1,11 @@
 package com.example.driverchecker.machinelearning.collections
 
 import com.example.driverchecker.machinelearning.data.*
-import java.util.*
 
-open class MutableMachineLearningOutput<E : IMachineLearningItem> (collection: Collection<E>? = null)
-    : List<E>, IMutableOutput<E> {
+open class MutableMachineLearningOutput<E : IMachineLearningItem> (
+    collection: Collection<E>? = null,
+    override val index: Int
+) : List<E>, IMachineLearningMutableOutput<E> {
 
     protected val mItems: MutableList<E> = collection?.toMutableList() ?: mutableListOf()
 
@@ -24,9 +25,9 @@ open class MutableMachineLearningOutput<E : IMachineLearningItem> (collection: C
 
 
     /* MUTABLE OUTPUT */
-    override fun push(item: E) : Boolean = mItems.add(item)
+    override fun push(item: E): Boolean = mItems.add(item)
 
-    override fun getImmutable() : IMachineLearningOutput<E> = MachineLearningOutput(this)
+    override fun getImmutable() : IMachineLearningOutput = MachineLearningOutput(this)
 
 
     /*  LIST  */

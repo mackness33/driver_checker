@@ -1,14 +1,12 @@
 package com.example.driverchecker.machinelearning.data
 
-import com.example.driverchecker.machinelearning.collections.MachineLearningItemListOld
-
 interface IStats
 
 interface IMetrics
 
-interface IMutableOutput<E : IMachineLearningItem> : IMachineLearningOutput<E> {
+interface IMachineLearningMutableOutput<E : IMachineLearningItem> : IMachineLearningOutput {
     fun push(item: E): Boolean
-    fun getImmutable() : IMachineLearningOutput<E>
+    fun getImmutable() : IMachineLearningOutput
 }
 
 
@@ -16,26 +14,26 @@ interface IMachineLearningOutputStats : WithConfidence, IStats
 data class MachineLearningStats(override val confidence: Float) : IMachineLearningOutputStats
 
 
-interface IMachineLearningOutput<E : IMachineLearningItem> : WithIndex {
-    val items: List<E>
+interface IMachineLearningOutput : WithIndex {
+    val items: List<IMachineLearningItem>
     val stats: IMachineLearningOutputStats
     val metrics: IMetrics?
 }
 
-data class MachineLearningOutput<E : IMachineLearningItem> (
-    override val items: List<E>,
+data class MachineLearningOutput (
+    override val items: List<IMachineLearningItem>,
     override val stats: IMachineLearningOutputStats,
     override val metrics: IMetrics?,
     override val index: Int,
-) : IMachineLearningOutput<E> {
-    constructor(copy: IMachineLearningOutput<E>) : this (
+) : IMachineLearningOutput {
+    constructor(copy: IMachineLearningOutput) : this (
         copy.items, copy.stats, copy.metrics, copy.index
     )
 }
 
 
-interface IMutableClassificationOutput<E : IClassificationItem<G>, G> : IMutableOutput<E>, IClassificationOutput<E, G> {
-    override fun getImmutable() : IClassificationOutput<E, G>
+interface IMutableClassificationOutput<E : IClassificationItem<G>, G> : IMachineLearningMutableOutput<E>, IClassificationOutput<G> {
+    override fun getImmutable() : IClassificationOutput<G>
 }
 
 interface IClassificationOutputStats<G> : IMachineLearningOutputStats, WithGroups<G>
@@ -44,17 +42,18 @@ data class ClassificationStats<G>(
     override val groups: Map<G, Set<IClassificationWithMetrics<G>>>
 ) : IClassificationOutputStats<G>
 
-interface IClassificationOutput<E : IClassificationItem<G>, G> : IMachineLearningOutput<E> {
+interface IClassificationOutput<G> : IMachineLearningOutput {
     override val stats: IClassificationOutputStats<G>
+    override val items: List<IClassificationItem<G>>
 }
 
-data class ClassificationOutput<E : IClassificationItem<G>, G> (
-    override val items: List<E>,
+data class ClassificationOutput<G> (
+    override val items: List<IClassificationItem<G>>,
     override val stats: IClassificationOutputStats<G>,
     override val metrics: IMetrics?,
     override val index: Int,
-) : IClassificationOutput<E, G> {
-    constructor(copy: IClassificationOutput<E, G>) : this (
+) : IClassificationOutput<G> {
+    constructor(copy: IClassificationOutput<G>) : this (
         copy.items, copy.stats, copy.metrics, copy.index
     )
 }
