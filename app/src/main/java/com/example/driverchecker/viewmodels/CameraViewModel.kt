@@ -15,8 +15,8 @@ import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 
-class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResult<String>>(imageDetectionRepository) {
-    override val evaluationClient: IClassificationClient<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResult<String>, String> = ImageDetectionClient()
+class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResultOld<String>>(imageDetectionRepository) {
+    override val evaluationClient: IClassificationClient<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResultOld<String>, String> = ImageDetectionClient()
 
     val passengerInfo: ObservableData<Triple<Int, Int, Int>>?
         get() = evaluationClient.metricsPerGroup.liveMetrics["passenger"]

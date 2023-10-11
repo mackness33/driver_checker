@@ -14,7 +14,7 @@ interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStatsOld> :
     fun getData() : Map<IWindowBasicData, IAdditionalMetrics?>
     fun getMetrics() : List<IWindowBasicData>
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
-    fun getFinalResults(): IMachineLearningFinalResult
+    fun getFinalResults(): IMachineLearningFinalResultOld
 }
 
 interface IClassificationMultipleWindows <E : IClassificationOutputStatsOld<S>, S> :
@@ -26,6 +26,6 @@ interface IClassificationMultipleWindows <E : IClassificationOutputStatsOld<S>, 
     /* MACHINE LEARNING */
     override fun getData() : Map<IWindowBasicData, IGroupMetrics<S>?>
     override fun getAdditionalMetrics() : List<IGroupMetrics<S>?>
-    override fun getFinalResults(): IClassificationFinalResult<S>
+    override fun getFinalResults(): IClassificationFinalResultOld<S>
 }
 

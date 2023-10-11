@@ -10,7 +10,7 @@ import com.example.driverchecker.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-abstract class BaseViewModel<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResult> (private var machineLearningRepository: IMachineLearningFactory<I, O, FR>): ViewModel(){
+abstract class BaseViewModel<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResultOld> (private var machineLearningRepository: IMachineLearningFactory<I, O, FR>): ViewModel(){
     // SHARED FLOWS
     // progress flow of the evaluation by the mlRepository
     val evaluationState: SharedFlow<LiveEvaluationStateInterface>?

@@ -20,7 +20,7 @@ interface IMachineLearningSingleWindow <E : IMachineLearningOutputStatsOld> : IS
     fun getData() : Pair<IWindowBasicData, IAdditionalMetrics?>
     fun getMetrics() : IWindowBasicData
     fun getAdditionalMetrics() : IAdditionalMetrics?
-    fun getFinalResults(): IMachineLearningFinalResult
+    fun getFinalResults(): IMachineLearningFinalResultOld
 }
 
 interface IClassificationSingleWindow <E : IClassificationOutputStatsOld<S>, S> :
@@ -33,5 +33,5 @@ interface IClassificationSingleWindow <E : IClassificationOutputStatsOld<S>, S> 
     /* MACHINE LEARNING */
     override fun getData() : Pair<IWindowBasicData, IGroupMetrics<S>?>
     override fun getAdditionalMetrics() : IGroupMetrics<S>?
-    override fun getFinalResults(): IClassificationFinalResult<S>
+    override fun getFinalResults(): IClassificationFinalResultOld<S>
 }

@@ -1,44 +1,51 @@
 package com.example.driverchecker.machinelearning.data
 
-// ---------------------------------- MACHINE LEARNING ----------------------------------
-typealias IMachineLearningFinalResultStats = WithConfidence
+interface IMachineLearningFinalResultStats : WithConfidence, IStats
+data class MachineLearningFinalResultStats(
+    override val confidence: Float
+) : IMachineLearningFinalResultStats
 
-interface IMachineLearningFinalResult : IMachineLearningFinalResultStats, WithWindowData
+interface IMachineLearningFinalResultsMetrics : IMetrics, WithWindowData
+data class MachineLearningFinalResultsMetrics(
+    override val data: Map<IWindowBasicData, IAdditionalMetrics?>
+) : IMachineLearningFinalResultsMetrics
+
+interface IMachineLearningFinalResult {
+    val stats: IMachineLearningFinalResultStats
+    val metrics: IMachineLearningFinalResultsMetrics?
+}
 
 data class MachineLearningFinalResult (
-    override val confidence: Float, override val data: Map<IWindowBasicData, IAdditionalMetrics?>,
+    override val stats: IMachineLearningFinalResultStats,
+    override val metrics: IMachineLearningFinalResultsMetrics?,
 ) : IMachineLearningFinalResult {
-    constructor(main: IMachineLearningFinalResultStats, data: Map<IWindowBasicData, IAdditionalMetrics?>) : this (
-        main.confidence, data
+    constructor(copy: IMachineLearningFinalResult) : this (
+        copy.stats, copy.metrics
     )
 }
 
 
+interface IClassificationFinalResultStats<G> : IMachineLearningFinalResultStats, WithSupergroup<G>
+data class ClassificationFinalResultStats<G>(
+    override val confidence: Float
+) : IMachineLearningFinalResultStats
+
+interface IClassificationFinalResultMetrics<G> : WithGroupsData<G>, IMachineLearningFinalResultsMetrics
+data class ClassificationFinalResultMetrics<G>(
+    override val data: Map<IWindowBasicData, IGroupMetrics<G>?>
+) : IClassificationFinalResultMetrics<G>
 
 
-
-interface IClassificationFinalResultStats<S> : IMachineLearningFinalResultStats, WithSupergroup<S>
-
-interface IClassificationFinalResult<S> : IClassificationFinalResultStats<S>, IMachineLearningFinalResult, WithGroupsData<S>, IModelSettings
-
-data class ClassificationFinalResult<S>(
-    override val confidence: Float,
-    override val supergroup: S,
-    override val data: Map<IWindowBasicData, IGroupMetrics<S>?>,
-    override val modelThreshold: Float,
-) : IClassificationFinalResult<S> {
-    constructor(main: IClassificationFinalResultStats<S>, data: Map<IWindowBasicData, IGroupMetrics<S>?>, modelThreshold: Float) : this (
-        main.confidence, main.supergroup, data.toMutableMap(), modelThreshold
-    )
-
-    constructor(copy: IClassificationFinalResult<S>) : this (
-        copy.confidence, copy.supergroup, copy.data.toMutableMap(), copy.modelThreshold
-    )
+interface IClassificationFinalResult<G> : IMachineLearningFinalResult {
+    override val stats: IClassificationFinalResultStats<G>
+    override val metrics: IClassificationFinalResultMetrics<G>?
 }
 
-
-
-
-
-typealias IImageDetectionFinalResult<S> = IClassificationFinalResult<S>
-typealias ImageDetectionFinalResult<S> = ClassificationFinalResult<S>
+data class ClassificationFinalResult<G> (
+    override val stats: IClassificationFinalResultStats<G>,
+    override val metrics: IClassificationFinalResultMetrics<G>?,
+) : IClassificationFinalResult<G> {
+    constructor(copy: IClassificationFinalResult<G>) : this (
+        copy.stats, copy.metrics
+    )
+}

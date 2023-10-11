@@ -12,7 +12,7 @@ open class ImageDetectionMultipleWindows (scope: CoroutineScope) :
     /* MULTIPLE */
     override var currentWindows: Map<IClassificationSingleWindowSettings<String>, ImageDetectionSingleWindow> = mutableMapOf()
 
-    override fun getFinalResults(): IClassificationFinalResult<String> {
+    override fun getFinalResults(): IClassificationFinalResultOld<String> {
         val finalGroupScore = groups.associateWith { 0 }.toMutableMap()
         var finalGroupWindow: String
         var finalConfidence = 0.0f
@@ -26,7 +26,7 @@ open class ImageDetectionMultipleWindows (scope: CoroutineScope) :
 
 
         finalConfidence /= currentWindows.size
-        val fr = ClassificationFinalResult(
+        val fr = ClassificationFinalResultOld(
             finalConfidence,
             finalGroupScore.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key,
             getData().toMutableMap(),

@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.util.*
 
-abstract class AMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
+abstract class AMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResultOld> : IMachineLearningClient<I, O, FR> {
     // 1. get the input and save it into a queue
     // 2. get output and remove from the queue.
         // IF the output is useful build the evaluation item and add it to the evaluation list

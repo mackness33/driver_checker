@@ -20,7 +20,7 @@ interface MachineLearningWindowsCollection <E : IMachineLearningOutputStatsOld> 
     fun getMetrics() : List<IWindowBasicData>
 
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
-    fun getFinalResults(): IMachineLearningFinalResult
+    fun getFinalResults(): IMachineLearningFinalResultOld
     fun initialize(availableSettings: ISettingsOld)
 }
 
@@ -37,7 +37,7 @@ interface ClassificationWindowsCollection <E : IClassificationOutputStatsOld<S>,
 
     override fun getAdditionalMetrics() : List<IGroupMetrics<S>?>
 
-    override fun getFinalResults(): IClassificationFinalResult<S>
+    override fun getFinalResults(): IClassificationFinalResultOld<S>
 }
 
 interface ClassificationWindowsMutableCollection <E : IClassificationOutputStatsOld<S>, S> :

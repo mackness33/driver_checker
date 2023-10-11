@@ -6,7 +6,7 @@ import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-interface IMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResult> {
+interface IMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResultOld> {
     // LIVE DATA
     val hasEnded: LiveData<Boolean>
 

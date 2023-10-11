@@ -26,8 +26,8 @@ open class ImageDetectionSingleWindow  : AClassificationSingleWindow<IImageDetec
         )
     }
 
-    override fun getFinalResults(): IClassificationFinalResult<String> {
-        return ImageDetectionFinalResult(confidence, group!!, mapOf(getData()), 0.0f)
+    override fun getFinalResults(): IClassificationFinalResultOld<String> {
+        return ImageDetectionFinalResultOld(confidence, group!!, mapOf(getData()), 0.0f)
     }
 
     // TODO: This static object is not useful. You can build the object however you want to without this.

@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
 import com.example.driverchecker.utils.ObservableData
 
-interface IClassificationClient<I, O : IClassificationOutputStatsOld<S>, FR : IClassificationFinalResult<S>, S> : IMachineLearningClient<I, O, FR> {
+interface IClassificationClient<I, O : IClassificationOutputStatsOld<S>, FR : IClassificationFinalResultOld<S>, S> : IMachineLearningClient<I, O, FR> {
     // LIVE DATA
     override val finalResult: ObservableData<FR?>
 
