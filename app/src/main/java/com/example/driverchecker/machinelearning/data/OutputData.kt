@@ -16,7 +16,7 @@ interface IMachineLearningOutputStats : WithConfidence, IStats
 data class MachineLearningStats(override val confidence: Float) : IMachineLearningOutputStats
 
 
-interface IMachineLearningOutput<E : IMachineLearningItem> {
+interface IMachineLearningOutput<E : IMachineLearningItem> : WithIndex {
     val items: List<E>
     val stats: IMachineLearningOutputStats
     val metrics: IMetrics?
@@ -26,9 +26,10 @@ data class MachineLearningOutput<E : IMachineLearningItem> (
     override val items: List<E>,
     override val stats: IMachineLearningOutputStats,
     override val metrics: IMetrics?,
+    override val index: Int,
 ) : IMachineLearningOutput<E> {
     constructor(copy: IMachineLearningOutput<E>) : this (
-        copy.items, copy.stats, copy.metrics
+        copy.items, copy.stats, copy.metrics, copy.index
     )
 }
 
@@ -51,8 +52,9 @@ data class ClassificationOutput<E : IClassificationItem<G>, G> (
     override val items: List<E>,
     override val stats: IClassificationOutputStats<G>,
     override val metrics: IMetrics?,
+    override val index: Int,
 ) : IClassificationOutput<E, G> {
     constructor(copy: IClassificationOutput<E, G>) : this (
-        copy.items, copy.stats, copy.metrics
+        copy.items, copy.stats, copy.metrics, copy.index
     )
 }

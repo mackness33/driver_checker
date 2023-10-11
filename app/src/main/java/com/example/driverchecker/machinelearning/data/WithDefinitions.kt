@@ -26,3 +26,13 @@ interface WithGroups<S> {
 interface WithGroupsData<S> : WithWindowData {
     override val data: Map<IWindowBasicData, IGroupMetrics<S>?>
 }
+
+
+
+interface WithInput<I> {
+    val input: I
+}
+
+interface WithIndex {
+    val index: Int
+}

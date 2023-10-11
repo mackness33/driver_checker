@@ -3,16 +3,8 @@ package com.example.driverchecker.machinelearning.data
 import android.graphics.Bitmap
 import com.example.driverchecker.utils.BitmapUtils
 
-// ---------------------------------- DEFINITION ----------------------------------
-interface WithInput<I> {
-    val input: I
-}
-
-
-// ---------------------------------- MACHINE LEARNING OLD ----------------------------------
-interface IMachineLearningInput<I> : WithInput<I> {
-    val index: Int
-}
+// ---------------------------------- MACHINE LEARNING ----------------------------------
+interface IMachineLearningInput<I> : WithInput<I>, WithIndex
 
 data class MachineLearningInput<I>(
     override val input: I,
