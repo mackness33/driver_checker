@@ -6,7 +6,7 @@ interface IStats
 
 interface IMetrics
 
-interface IMutableOutput<E : IMachineLearningItem> {
+interface IMutableOutput<E : IMachineLearningItem> : IMachineLearningOutput<E> {
     fun push(item: E): Boolean
     fun getImmutable() : IMachineLearningOutput<E>
 }
@@ -33,7 +33,7 @@ data class MachineLearningOutput<E : IMachineLearningItem> (
 }
 
 
-interface IMutableClassificationOutput<E : IClassificationItem<G>, G> : IMutableOutput<E> {
+interface IMutableClassificationOutput<E : IClassificationItem<G>, G> : IMutableOutput<E>, IClassificationOutput<E, G> {
     override fun getImmutable() : IClassificationOutput<E, G>
 }
 

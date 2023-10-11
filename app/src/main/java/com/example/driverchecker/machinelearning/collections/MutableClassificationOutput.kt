@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.collections
 import com.example.driverchecker.machinelearning.data.*
 
 open class MutableClassificationOutput<E : IClassificationItem<G>, G> (collection: Collection<E>? = null)
-    : List<E>, IClassificationOutput<E, G>, MutableMachineLearningOutput<E>(collection) {
+    : List<E>, IMutableClassificationOutput<E, G>, MutableMachineLearningOutput<E>(collection) {
     override val stats: IClassificationOutputStats<G>
         get() = ClassificationStats(calculateConfidence(), groups)
 
