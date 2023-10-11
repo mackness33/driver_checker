@@ -1,15 +1,13 @@
 package com.example.driverchecker.ui.adapters
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.R
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
+import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutputOld
 import com.example.driverchecker.utils.ColorManager
 import java.util.*
 
@@ -20,7 +18,7 @@ import java.util.*
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
 class PredictionsAdapter(
-    private val items: List<IImageDetectionFullOutput<String>>,
+    private val items: List<IImageDetectionFullOutputOld<String>>,
     private var colorList: Set<String>? = setOf("driver", "passenger"),
     private val onPredictionClickListener: (Long?, Int?) -> Unit
 ) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {
@@ -34,7 +32,7 @@ class PredictionsAdapter(
         val textGroup: TextView = view.findViewById(R.id.text_group)
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
-        fun bind (detectionItem: IImageDetectionFullOutput<String>, position: Int, onPredictionClickListener: (Long?, Int?) -> Unit) {
+        fun bind (detectionItem: IImageDetectionFullOutputOld<String>, position: Int, onPredictionClickListener: (Long?, Int?) -> Unit) {
 //            val bitmap: Bitmap = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
             imageInput.setImageBitmap(detectionItem.input.input)
             textIndex.text = position.toString()

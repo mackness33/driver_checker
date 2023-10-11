@@ -10,7 +10,7 @@ import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-class ImageDetectionClient : AClassificationClient<IImageDetectionInputOld, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String>() {
+class ImageDetectionClient : AClassificationClient<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
     override val finalResult: ObservableData<IImageDetectionFinalResult<String>?>
         get() = mFinalResult

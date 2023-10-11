@@ -2,11 +2,10 @@ package com.example.driverchecker.machinelearning.helpers.windows.multiples
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.factories.IMachineLearningWindowFactory
-import com.example.driverchecker.machinelearning.helpers.windows.factories.IWindowFactory
 import com.example.driverchecker.machinelearning.helpers.windows.singles.IMachineLearningSingleWindow
 import kotlinx.coroutines.CoroutineScope
 
-abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStats, W : IMachineLearningSingleWindow<E>, S : IMachineLearningSingleWindowSettings>(scope: CoroutineScope) :
+abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutputStatsOld, W : IMachineLearningSingleWindow<E>, S : IMachineLearningSingleWindowSettings>(scope: CoroutineScope) :
     AMultipleWindows<E, W, S> (scope), IMachineLearningMultipleWindows<E> {
     abstract override val factory: IMachineLearningWindowFactory<E, S, W>
 

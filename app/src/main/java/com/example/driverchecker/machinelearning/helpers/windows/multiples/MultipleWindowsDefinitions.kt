@@ -10,14 +10,14 @@ interface IMultipleWindows <E> : IWindow<E> {
     fun <M : IMultipleWindowSettings> update (newSettings: M)
 }
 
-interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStats> : IMultipleWindows<E> {
+interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStatsOld> : IMultipleWindows<E> {
     fun getData() : Map<IWindowBasicData, IAdditionalMetrics?>
     fun getMetrics() : List<IWindowBasicData>
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
     fun getFinalResults(): IMachineLearningFinalResult
 }
 
-interface IClassificationMultipleWindows <E : IClassificationOutputStats<S>, S> :
+interface IClassificationMultipleWindows <E : IClassificationOutputStatsOld<S>, S> :
     IMachineLearningMultipleWindows<E> {
     val groups: Set<S>
 

@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.manipulators
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.driverchecker.machinelearning.collections.MachineLearningItemMutableList
+import com.example.driverchecker.machinelearning.collections.MachineLearningItemMutableListOld
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.AMachineLearningListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.util.*
 
-abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
+abstract class AMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
     // 1. get the input and save it into a queue
     // 2. get output and remove from the queue.
         // IF the output is useful build the evaluation item and add it to the evaluation list
@@ -54,7 +54,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
 
     // VARIABLES
     // array of evaluated items by the mlRepo
-    protected val evaluatedItemsArray = MachineLearningItemMutableList<O>()
+    protected val evaluatedItemsArray = MachineLearningItemMutableListOld<O>()
     override val currentResultsList: List<O>
         get() = evaluatedItemsArray
 

@@ -1,20 +1,14 @@
 package com.example.driverchecker.ui.adapters
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.R
 import com.example.driverchecker.machinelearning.data.IGroupMetrics
-import com.example.driverchecker.machinelearning.data.IImageDetectionFinalResult
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
 import com.example.driverchecker.machinelearning.data.IWindowBasicData
-import com.example.driverchecker.utils.ColorManager
 import java.util.*
 
 

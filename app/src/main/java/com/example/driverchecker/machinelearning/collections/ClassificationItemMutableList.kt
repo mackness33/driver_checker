@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.data.IMutableClassificationWith
 import com.example.driverchecker.machinelearning.data.MutableClassificationWithMetrics
 
 open class ClassificationItemMutableList<E : IClassificationItem<S>, S> :
-    MachineLearningItemMutableList<E>, ClassificationItemList<E, S> {
+    MachineLearningItemMutableListOld<E>, ClassificationItemList<E, S> {
     constructor(initialCapacity: Int) : super(initialCapacity)
     constructor(collection: Collection<E>) : super(collection)
     constructor() : super()

@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.helpers.windows.singles
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
-abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStats> constructor(
+abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStatsOld> constructor(
     initialSettings: IMachineLearningSingleWindowSettings,
     internalTag: IWindowTag,
 ) : ASingleWindow<E>(initialSettings, internalTag), IMachineLearningSingleWindow<E> {

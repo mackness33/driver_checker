@@ -174,7 +174,7 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutputStats<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutputStatsOld<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
         for (index in partialResults.indices) {
@@ -188,7 +188,7 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartialsAndItems(partialResults: List<IImageDetectionFullOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+    suspend fun insertAllPartialsAndItems(partialResults: List<IImageDetectionFullOutputOld<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
         for (index in partialResults.indices) {

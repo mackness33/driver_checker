@@ -1,16 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
 import android.graphics.RectF
-import com.example.driverchecker.machinelearning.collections.MachineLearningItemList
-import kotlin.coroutines.cancellation.CancellationException
-
-// ---------------------------------- DEFINITION ----------------------------------
-
-interface WithConfidence {
-    val confidence: Float
-}
-
-
 
 // ---------------------------------- MACHINE LEARNING ----------------------------------
 typealias IMachineLearningItem = WithConfidence

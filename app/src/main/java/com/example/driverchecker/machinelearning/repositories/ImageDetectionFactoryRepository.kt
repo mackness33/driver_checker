@@ -14,15 +14,15 @@ import com.example.driverchecker.machinelearning.repositories.general.AClassific
 import kotlinx.coroutines.CoroutineScope
 
 class ImageDetectionFactoryRepository
-    : AClassificationFactoryRepository<IImageDetectionInputOld, IImageDetectionFullOutput<String>, IImageDetectionFinalResult<String>, String> {
+    : AClassificationFactoryRepository<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResult<String>, String> {
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
-    override var model: IClassificationModel<IImageDetectionInputOld, IImageDetectionFullOutput<String>, String>? = null
+    override var model: IClassificationModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, String>? = null
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutput<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
+    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutputOld<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
 
     init {
         val semaphores = setOf("model", "client")
@@ -52,7 +52,7 @@ class ImageDetectionFactoryRepository
         return false
     }
 
-    private fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInputOld, IImageDetectionFullOutput<String>, String>? {
+    private fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, String>? {
         return when (modelName){
             "YoloV5" -> {
                 val path = modelInit["path"] as String?

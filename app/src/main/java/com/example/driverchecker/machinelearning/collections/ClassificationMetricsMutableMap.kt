@@ -15,19 +15,19 @@ open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S>,
         mMetrics.putAll(keys.associateWith { LockableData(Triple(0, 0,0)) })
     }
 
-    override fun replace (element: IClassificationOutputStats<S>) {
+    override fun replace (element: IClassificationOutputStatsOld<S>) {
         element.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
         }
     }
 
-    override fun add (element: IClassificationOutputStats<S>) {
+    override fun add (element: IClassificationOutputStatsOld<S>) {
         element.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(tripleSum(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
         }
     }
 
-    override fun subtract (element: IClassificationOutputStats<S>) {
+    override fun subtract (element: IClassificationOutputStatsOld<S>) {
         element.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(
                 tripleSubtract(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))

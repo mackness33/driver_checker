@@ -1,8 +1,5 @@
 package com.example.driverchecker.machinelearning.data
 
-import com.example.driverchecker.machinelearning.collections.MachineLearningItemList
-import kotlin.coroutines.cancellation.CancellationException
-
 // ---------------------------------- MACHINE LEARNING ----------------------------------
 typealias IMachineLearningFinalResultStats = WithConfidence
 

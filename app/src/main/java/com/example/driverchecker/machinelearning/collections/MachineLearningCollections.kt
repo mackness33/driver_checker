@@ -4,15 +4,15 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 
-interface MachineLearningItemList<E : IMachineLearningItem> : List<E>, IMachineLearningOutputStats
-interface ClassificationItemList<E : IClassificationItem<S>, S> : MachineLearningItemList<E>,
-    IClassificationOutputStats<S>
+interface MachineLearningItemListOld<E : IMachineLearningItem> : List<E>, IMachineLearningOutputStatsOld
+interface ClassificationItemList<E : IClassificationItem<S>, S> : MachineLearningItemListOld<E>,
+    IClassificationOutputStatsOld<S>
 
 interface ClassificationMetricsMap<S> : IGroupMetrics<S> {
     val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
 }
 
-interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : IWindow<E> {
+interface MachineLearningWindowsCollection <E : IMachineLearningOutputStatsOld> : IWindow<E> {
     val settings: IMultipleWindowSettingsOld
 
     fun getData() : Map<IWindowBasicData, IAdditionalMetrics?>
@@ -24,12 +24,12 @@ interface MachineLearningWindowsCollection <E : IMachineLearningOutputStats> : I
     fun initialize(availableSettings: ISettingsOld)
 }
 
-interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStats> :
+interface MachineLearningWindowsMutableCollection <E : IMachineLearningOutputStatsOld> :
     MachineLearningWindowsCollection<E> {
     fun updateSettings (newSettings: ISettingsOld)
 }
 
-interface ClassificationWindowsCollection <E : IClassificationOutputStats<S>, S> :
+interface ClassificationWindowsCollection <E : IClassificationOutputStatsOld<S>, S> :
     MachineLearningWindowsCollection<E> {
     val groups: Set<S>
 
@@ -40,7 +40,7 @@ interface ClassificationWindowsCollection <E : IClassificationOutputStats<S>, S>
     override fun getFinalResults(): IClassificationFinalResult<S>
 }
 
-interface ClassificationWindowsMutableCollection <E : IClassificationOutputStats<S>, S> :
+interface ClassificationWindowsMutableCollection <E : IClassificationOutputStatsOld<S>, S> :
     ClassificationWindowsCollection<E, S>, MachineLearningWindowsMutableCollection<E> {
     fun updateGroups (newGroups: Set<S>)
 }

@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.repositories.general
 
-import com.example.driverchecker.machinelearning.collections.ClassificationWindowsMutableCollection
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
 import com.example.driverchecker.machinelearning.helpers.windows.multiples.IClassificationMultipleWindows
@@ -10,7 +9,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 
 
-abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStats<S>, FR : IClassificationFinalResult<S>, S>
+abstract class AClassificationFactoryRepository<I, O : IClassificationOutputStatsOld<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningFactoryRepository<I, O, FR>, IClassificationRepository<I, O, FR, S> {
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)

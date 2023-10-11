@@ -1,6 +1,5 @@
 package com.example.driverchecker.machinelearning.helpers.windows.factories
 
-import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.HomogenousOffsetImageDetectionTag
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.MultipleGroupImageDetectionTag
@@ -8,7 +7,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleG
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 
 class ImageDetectionWindowFactory : IClassificationWindowFactory<
-        IImageDetectionFullOutput<String>,
+        IImageDetectionFullOutputOld<String>,
         IClassificationSingleWindowSettings<String>,
         ImageDetectionSingleWindow,
         String> {

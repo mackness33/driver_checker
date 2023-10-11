@@ -14,7 +14,7 @@ interface ISingleWindow <E> : IWindow<E> {
     fun updateSettings(newSettings: IWindowSettingsOld)
 }
 
-interface IMachineLearningSingleWindow <E : IMachineLearningOutputStats> : ISingleWindow<E> {
+interface IMachineLearningSingleWindow <E : IMachineLearningOutputStatsOld> : ISingleWindow<E> {
     val threshold: Float
 
     fun getData() : Pair<IWindowBasicData, IAdditionalMetrics?>
@@ -23,7 +23,7 @@ interface IMachineLearningSingleWindow <E : IMachineLearningOutputStats> : ISing
     fun getFinalResults(): IMachineLearningFinalResult
 }
 
-interface IClassificationSingleWindow <E : IClassificationOutputStats<S>, S> :
+interface IClassificationSingleWindow <E : IClassificationOutputStatsOld<S>, S> :
     IMachineLearningSingleWindow<E> {
     val supergroupCounter: Map<S, Int>
     val groupMetrics: IGroupMetrics<S>

@@ -10,29 +10,29 @@ interface IWindowFactory<E, S : ISingleWindowSettings, W : ISingleWindow<E>> {
 }
 
 interface IMachineLearningWindowFactory <
-        E : IMachineLearningOutputStats,
+        E : IMachineLearningOutputStatsOld,
         S : IMachineLearningSingleWindowSettings,
         W : IMachineLearningSingleWindow<E>
         > : IWindowFactory<E, S, W>
 
 
 interface IClassificationWindowFactory <
-        E : IClassificationOutputStats<G>,
+        E : IClassificationOutputStatsOld<G>,
         S : IClassificationSingleWindowSettings<G>,
         W : IClassificationSingleWindow<E, G>,
         G
         > : IMachineLearningWindowFactory<E, S, W>
 
 typealias IImageDetectionWindowFactory = IClassificationWindowFactory<
-        IImageDetectionFullOutput<String>,
+        IImageDetectionFullOutputOld<String>,
         IClassificationSingleWindowSettings<String>,
         ImageDetectionSingleWindow,
         String
         >
 
 interface IImageDetectionWindowFactory2 <G> : IClassificationWindowFactory<
-        IImageDetectionFullOutput<G>,
+        IImageDetectionFullOutputOld<G>,
         IClassificationSingleWindowSettings<G>,
-        IClassificationSingleWindow<IImageDetectionFullOutput<G>, G>,
+        IClassificationSingleWindow<IImageDetectionFullOutputOld<G>, G>,
         G
     >

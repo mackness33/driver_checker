@@ -15,7 +15,7 @@ import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 
 class YOLOModel :
-    ClassifierTorchModel<IImageDetectionInputOld, IImageDetectionFullOutput<String>, String>
+    ClassifierTorchModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, String>
 {
     constructor(scope: CoroutineScope) : super(scope)
 
@@ -46,7 +46,7 @@ class YOLOModel :
         )
     }
 
-    override fun evaluateData(input: IImageDetectionInputOld): IImageDetectionFullOutput<String> {
+    override fun evaluateData(input: IImageDetectionInputOld): IImageDetectionFullOutputOld<String> {
         // preparing input tensor
         val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.preProcessedImage,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
@@ -60,8 +60,8 @@ class YOLOModel :
         return outputsToNMSPredictions(predictions, input)
     }
 
-    override fun postProcess(output: IImageDetectionFullOutput<String>): IImageDetectionFullOutput<String> {
-        return ImageDetectionFullOutput(
+    override fun postProcess(output: IImageDetectionFullOutputOld<String>): IImageDetectionFullOutputOld<String> {
+        return ImageDetectionFullOutputOld(
             output.input,
             ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
         )
@@ -70,7 +70,7 @@ class YOLOModel :
     private fun outputsToNMSPredictions(
         outputs: FloatArray,
         image: IImageDetectionInputOld
-    ): IImageDetectionFullOutput<String> {
+    ): IImageDetectionFullOutputOld<String> {
         val results: ClassificationItemMutableList<IImageDetectionFullItem<String>, String> = ClassificationItemMutableList()
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
         val imageScaleX = image.imageRatio?.first ?: 1.0f
@@ -120,7 +120,7 @@ class YOLOModel :
             }
         }
 
-        return ImageDetectionFullOutput(
+        return ImageDetectionFullOutputOld(
             image,
             results
         )

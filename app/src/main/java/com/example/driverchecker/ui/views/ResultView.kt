@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.View
 import com.example.driverchecker.database.entity.ItemEntity
 import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutput
+import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutputOld
 import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
 import kotlin.math.min
@@ -130,7 +130,7 @@ class ResultView : View {
         canvas.drawRect(resizedRect, paintRectangle)
     }
 
-    fun setResults (imageDetectionOutputs: IImageDetectionFullOutput<String>?) {
+    fun setResults (imageDetectionOutputs: IImageDetectionFullOutputOld<String>?) {
         if (imageDetectionOutputs != null) {
             itemResults = imageDetectionOutputs.listItems.map { DrawableItemResult(it) }
 //        bitmapScale = imageDetectionOutputs.input.

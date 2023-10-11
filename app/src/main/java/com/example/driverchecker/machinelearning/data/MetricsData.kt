@@ -6,9 +6,7 @@ import androidx.room.ColumnInfo
 /* NEW METRICS */
 interface IAdditionalMetrics
 
-interface WithWindowData {
-    val data: Map<IWindowBasicData, IAdditionalMetrics?>
-}
+
 
 interface WithWindowInfo {
     val data: List<IWindowBasicData>
@@ -19,9 +17,6 @@ interface WithGroupData<S> {
     val additionalMetrics: List<IGroupMetrics<S>>
 }
 
-interface WithGroupsData<S> : WithWindowData {
-    override val data: Map<IWindowBasicData, IGroupMetrics<S>?>
-}
 
 
 interface IWindowBasicData : IWindowMetrics, IWindowSettingsOld
@@ -60,10 +55,6 @@ data class WindowBasicData (
         copySettings.windowThreshold,
         copySettings.type
     )
-}
-
-interface WithMetrics {
-    val metrics: IWindowMetrics?
 }
 
 
@@ -139,9 +130,9 @@ interface IGroupMetrics<S> : IAdditionalMetrics {
 
 interface IMutableGroupMetrics<S> : IGroupMetrics<S> {
     fun initialize (keys: Set<S>)
-    fun replace (element: IClassificationOutputStats<S>)
-    fun add (element: IClassificationOutputStats<S>)
-    fun subtract (element: IClassificationOutputStats<S>)
+    fun replace (element: IClassificationOutputStatsOld<S>)
+    fun add (element: IClassificationOutputStatsOld<S>)
+    fun subtract (element: IClassificationOutputStatsOld<S>)
     fun remove (keys: Set<S>)
     fun clear ()
 
