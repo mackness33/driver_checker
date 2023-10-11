@@ -13,8 +13,21 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import java.util.*
 
 abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
+    // 1. get the input and save it into a queue
+    // 2. get output and remove from the queue.
+        // IF the output is useful build the evaluation item and add it to the evaluation list
+        // ELSE remove the input from the queue
+
+    // PARTIALS is build by Input U Output specified from the generics.
+    // Partials map is gonna be a Input -> Output
+    protected val inputQueue: Queue<I> = LinkedList()
+    protected val partialsMap: MutableMap<I, O> = mutableMapOf()
+    val partials: Map<I, O> = partialsMap
+    val inputs: List<I> = partialsMap.keys.toList()
+    val outputs: List<O> = partialsMap.values.toList()
 
     // LIVE DATA
     protected val mHasEnded: AtomicObservableData<Boolean> = LockableData(false)
@@ -50,6 +63,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
 
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
+    // TODO: to be delete
     override var settings: IOldSettings = OldSettings(4, 0.80f, 0.10f)
         protected set
 
@@ -97,10 +111,15 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStats, FR : I
     // FUNCTIONS
     override suspend fun produceInput (input: I) {
         mLiveInput.emit(input)
+        inputQueue.add(input)
     }
 
     override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
         evaluationListener.listen(scope, evaluationFlow)
+    }
+
+    fun buildPartial (output: O) {
+
     }
 
     // INNER CLASSES

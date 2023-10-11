@@ -79,7 +79,7 @@ class MutableClassificationWithMetrics<S> : IMutableClassificationWithMetrics<S>
         objectsFound--
     }
 
-    fun toReadOnly() : ClassificationWithMetrics<S> = ClassificationWithMetrics(
+    fun toImmutable() : ClassificationWithMetrics<S> = ClassificationWithMetrics(
         this.name,
         this.externalIndex,
         this.internalIndex,

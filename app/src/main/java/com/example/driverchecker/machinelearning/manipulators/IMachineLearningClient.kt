@@ -31,6 +31,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutputStats, FR : IMachi
 
     val currentState: ObservableData<LiveEvaluationStateInterface?>
 
+    // TODO: to be deleted
     fun updateoldSettings(newSettings: IOldSettings)
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
