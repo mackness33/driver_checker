@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemMutableListOld
+import com.example.driverchecker.machinelearning.collections.MutableMachineLearningOutput
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.AMachineLearningListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.util.*
 
-abstract class AMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResultOld> : IMachineLearningClient<I, O, FR> {
+abstract class AMachineLearningClient<I, O : IMachineLearningOutput, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
     // 1. get the input and save it into a queue
     // 2. get output and remove from the queue.
         // IF the output is useful build the evaluation item and add it to the evaluation list
@@ -54,7 +55,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR 
 
     // VARIABLES
     // array of evaluated items by the mlRepo
-    protected val evaluatedItemsArray = MachineLearningItemMutableListOld<O>()
+    protected val evaluatedItemsArray: MutableList<O> = mutableListOf()
     override val currentResultsList: List<O>
         get() = evaluatedItemsArray
 
@@ -122,6 +123,10 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR 
 
     }
 
+    fun addPartialToList (output: O) {
+        evaluatedItemsArray.add(output)
+    }
+
     // INNER CLASSES
     protected open inner class EvaluationListener : AMachineLearningListener {
 
@@ -147,6 +152,7 @@ abstract class AMachineLearningClient<I, O : IMachineLearningOutputStatsOld, FR 
             try {
                 if (state.partialResult != null && !mHasEnded.value) {
                     val partialResult: O = state.partialResult as O
+//                    evaluatedItemsArray.add(state.partialResult)
                     evaluatedItemsArray.add(partialResult)
                     mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
                     mLastResult.postValue(partialResult)

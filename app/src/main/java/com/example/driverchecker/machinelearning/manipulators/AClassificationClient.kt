@@ -12,7 +12,7 @@ import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-abstract class AClassificationClient<I, O : IClassificationOutputStatsOld<S>, FR : IClassificationFinalResultOld<S>, S>
+abstract class AClassificationClient<I, O : IClassificationOutput<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
     override val finalResult: ObservableData<FR?>
@@ -22,7 +22,7 @@ abstract class AClassificationClient<I, O : IClassificationOutputStatsOld<S>, FR
         protected set
 
 //    protected val mMetricsPerGroup = mutableMapOf<S, MutableLiveData<Pair<Int, Int>>>()
-    protected val mMetricsPerGroup = ClassificationMetricsMutableMap<S>()
+    protected val mMetricsPerGroup = ClassificationMetricsMutableMap<O, S>()
 //    override val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>> = mMetricsPerGroup.liveMetrics
     override val metricsPerGroup: ClassificationMetricsMap<S> = mMetricsPerGroup
 
@@ -94,8 +94,8 @@ abstract class AClassificationClient<I, O : IClassificationOutputStatsOld<S>, FR
 
         override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<S>) {
             super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
-            if (state.partialResult != null && state.partialResult.groups.isNotEmpty() && !mHasEnded.value) {
-                mMetricsPerGroup.add(state.partialResult)
+            if (state.partialResult != null && state.partialResult.stats.groups.isNotEmpty() && !mHasEnded.value) {
+                mMetricsPerGroup.add(state.partialResult as O)
             }
         }
     }
