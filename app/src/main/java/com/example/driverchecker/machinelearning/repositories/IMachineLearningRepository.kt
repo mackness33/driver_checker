@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
-interface IMachineLearningRepository<in I, out O : IMachineLearningOutputStatsOld, FR : IMachineLearningFinalResultOld> {
+interface IMachineLearningRepository<in I, out O : IMachineLearningOutput, FR : IMachineLearningFinalResult> {
     suspend fun instantEvaluation (input: I): O?
 
     suspend fun continuousEvaluation (input: Flow<I>): O?

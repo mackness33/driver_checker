@@ -14,7 +14,7 @@ import com.example.driverchecker.utils.Timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-abstract class AMachineLearningRepository<I, O : IMachineLearningOutputStatsOld, FR: IMachineLearningFinalResultOld> (override val repositoryScope: CoroutineScope) :
+abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMachineLearningFinalResult> (override val repositoryScope: CoroutineScope) :
     IMachineLearningRepository<I, O, FR> {
 
     protected val producerIsInitialized = CompletableDeferred<Nothing?>()

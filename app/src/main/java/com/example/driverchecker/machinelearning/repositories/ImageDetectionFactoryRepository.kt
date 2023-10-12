@@ -14,15 +14,15 @@ import com.example.driverchecker.machinelearning.repositories.general.AClassific
 import kotlinx.coroutines.CoroutineScope
 
 class ImageDetectionFactoryRepository
-    : AClassificationFactoryRepository<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResultOld<String>, String> {
+    : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>, String> {
     constructor(repositoryScope: CoroutineScope) : super(repositoryScope)
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
-    override var model: IClassificationModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, String>? = null
+    override var model: IClassificationModel<IImageDetectionInput, IImageDetectionOutput<String>, String>? = null
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionFullOutputOld<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
+    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionOutput<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
 
     init {
         val semaphores = setOf("model", "client")

@@ -57,3 +57,19 @@ data class ClassificationOutput<G> (
         copy.items, copy.stats, copy.metrics, copy.index
     )
 }
+
+
+interface IImageDetectionOutput<G> : IClassificationOutput<G> {
+    override val items: List<IImageDetectionItem<G>>
+}
+
+data class ImageDetectionOutput<G> (
+    override val items: List<IImageDetectionItem<G>>,
+    override val stats: IClassificationOutputStats<G>,
+    override val metrics: IMetrics?,
+    override val index: Int,
+) : IImageDetectionOutput<G> {
+    constructor(copy: IImageDetectionOutput<G>) : this (
+        copy.items, copy.stats, copy.metrics, copy.index
+    )
+}

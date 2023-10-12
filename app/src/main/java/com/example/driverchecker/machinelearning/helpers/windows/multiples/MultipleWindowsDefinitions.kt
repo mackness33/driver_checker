@@ -10,7 +10,7 @@ interface IMultipleWindows <E> : IWindow<E> {
     fun <M : IMultipleWindowSettings> update (newSettings: M)
 }
 
-interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStatsOld> : IMultipleWindows<E> {
+interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStats> : IMultipleWindows<E> {
     fun getData() : Map<IWindowBasicData, IAdditionalMetrics?>
     fun getMetrics() : List<IWindowBasicData>
     fun getAdditionalMetrics() : List<IAdditionalMetrics?>
