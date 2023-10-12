@@ -4,7 +4,8 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
 
-open class ImageDetectionSingleWindow  : AClassificationSingleWindow<IImageDetectionFullOutputOld<String>, String> {
+open class ImageDetectionSingleWindow
+    : AClassificationSingleWindow<IClassificationOutputStats<String>, String> {
 
     constructor (initialSettings: IClassificationSingleWindowSettings<String>) :
             super (initialSettings, SingleGroupImageDetectionTag)
@@ -26,7 +27,10 @@ open class ImageDetectionSingleWindow  : AClassificationSingleWindow<IImageDetec
         )
     }
 
-    override fun getFinalResults(): IClassificationFinalResultOld<String> {
-        return ImageDetectionFinalResultOld(confidence, group!!, mapOf(getData()), 0.0f)
+    override fun getFinalResults(): IClassificationFinalResult<String> {
+        return ClassificationFinalResult(
+            ClassificationFinalResultStats(confidence, group!!),
+            ClassificationFinalResultMetrics(getData())
+        )
     }
 }

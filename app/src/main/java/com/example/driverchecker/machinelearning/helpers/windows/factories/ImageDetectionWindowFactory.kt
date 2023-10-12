@@ -7,7 +7,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleG
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 
 class ImageDetectionWindowFactory : IClassificationWindowFactory<
-        IImageDetectionFullOutputOld<String>,
+        IClassificationOutputStats<String>,
         IClassificationSingleWindowSettings<String>,
         ImageDetectionSingleWindow,
         String> {

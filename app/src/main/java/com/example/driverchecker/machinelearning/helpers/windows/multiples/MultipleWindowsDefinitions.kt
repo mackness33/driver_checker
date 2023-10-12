@@ -17,7 +17,7 @@ interface IMachineLearningMultipleWindows <E : IMachineLearningOutputStats> : IM
     fun getFinalResults(): IMachineLearningFinalResultOld
 }
 
-interface IClassificationMultipleWindows <E : IClassificationOutputStatsOld<S>, S> :
+interface IClassificationMultipleWindows <E : IClassificationOutputStats<S>, S> :
     IMachineLearningMultipleWindows<E> {
     val groups: Set<S>
 

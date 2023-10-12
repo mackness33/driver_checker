@@ -22,7 +22,7 @@ class ImageDetectionFactoryRepository
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionOutput<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
+    override val collectionOfWindows: IClassificationMultipleWindows<IClassificationOutputStats<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
 
     init {
         val semaphores = setOf("model", "client")
@@ -52,7 +52,7 @@ class ImageDetectionFactoryRepository
         return false
     }
 
-    private fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, String>? {
+    private fun factory (modelName: String, modelInit: Map<String, Any?>) : IClassificationModel<IImageDetectionInput, IImageDetectionOutput<String>, String>? {
         return when (modelName){
             "YoloV5" -> {
                 val path = modelInit["path"] as String?

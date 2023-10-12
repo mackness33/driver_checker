@@ -4,7 +4,7 @@ import com.example.driverchecker.machinelearning.collections.ClassificationMetri
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
-abstract class AClassificationSingleWindow<E : IClassificationOutputStatsOld<S>, S> (
+abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S> (
     initialSettings: IClassificationSingleWindowSettings<S>,
     internalTag: IWindowTag,
     ) : AMachineLearningSingleWindow<E>(initialSettings, internalTag), IClassificationSingleWindow<E, S> {
@@ -12,7 +12,7 @@ abstract class AClassificationSingleWindow<E : IClassificationOutputStatsOld<S>,
     override val supergroupCounter: Map<S, Int>
         get() = mSupergroupCounter
 
-    protected val mGroupMetrics: IMutableGroupMetrics<S> = ClassificationMetricsMutableMap()
+    protected val mGroupMetrics: IMutableGroupMetrics<E, S> = ClassificationMetricsMutableMap()
     override val groupMetrics: IGroupMetrics<S>
         get() = mGroupMetrics
 
@@ -75,7 +75,7 @@ abstract class AClassificationSingleWindow<E : IClassificationOutputStatsOld<S>,
     }
 
     override fun getAdditionalMetrics(): IGroupMetrics<S>? {
-        return mGroupMetrics.copyMetrics()
+        return mGroupMetrics.asImmutable()
     }
 
     /* CLASSIFICATION */

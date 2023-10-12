@@ -25,6 +25,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
     override val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
         get() = evaluationStateProducer.sharedFlow
 
+    protected open var lastEvaluatedInput: O? = null
+
     // abstracted
     protected abstract val model: IMachineLearningModel<I, O>?
     protected abstract var clientListener: ClientStateListener?
@@ -51,7 +53,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         get() = mSettings
     private val privateSettings: ISettingsOld
         get() = mSettings.value
-    protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<O>
+    protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<IMachineLearningOutputStats>
 
     open fun initialize (semaphores: Set<String>) {
         readySemaphore.initialize(semaphores)
@@ -64,19 +66,19 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         model?.updateThreshold(threshold)
     }
 
-    override suspend fun instantEvaluation(input: I): O? {
-        var result: O? = null
-        val job = repositoryScope.launch(Dispatchers.Default) { result = model?.processAndEvaluate(input) }
-        job.join()
+//    override suspend fun instantEvaluation(input: I): O? {
+//        var result: O? = null
+//        val job = repositoryScope.launch(Dispatchers.Default) { result = model?.processAndEvaluate(input) }
+//        job.join()
+//
+//        return result
+//    }
 
-        return result
-    }
-
-    override suspend fun continuousEvaluation(input: Flow<I>): O? {
-        jobEvaluation(input).join()
-
-        return collectionOfWindows.lastResult
-    }
+//    override suspend fun continuousEvaluation(input: Flow<I>): O? {
+//        jobEvaluation(input).join()
+//
+//        return collectionOfWindows.lastResult
+//    }
 
     protected open fun jobEvaluation (input: Flow<I>): Job {
         return repositoryScope.launch(Dispatchers.Default) {
@@ -123,7 +125,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
     ) {
         Log.d("JobClassification", "finally finished")
         timer.markEnd()
-        collectionOfWindows.next(postProcessedResult, timer.diff())
+        collectionOfWindows.next(postProcessedResult.stats, timer.diff())
+        lastEvaluatedInput = postProcessedResult
         timer.markStart()
 
         // TODO: delete this check. Make the client value and decide what to do about it
@@ -240,7 +243,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         override suspend fun emitLoading() {
             emit(
                 LiveEvaluationState.Loading (
-                    collectionOfWindows.totalElements, collectionOfWindows.lastResult
+                    collectionOfWindows.totalElements, lastEvaluatedInput
                 )
             )
         }

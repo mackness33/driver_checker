@@ -3,8 +3,8 @@ package com.example.driverchecker.machinelearning.collections
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.*
 
-open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S>,
-    IMutableGroupMetrics<S> {
+open class ClassificationMetricsMutableMap<in E : IClassificationOutputStats<S>, S> : ClassificationMetricsMap<S>,
+    IMutableGroupMetrics<E, S> {
     protected val mMetrics: MutableMap<S, AtomicObservableData<Triple<Int, Int, Int>>> = mutableMapOf()
     override val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
         get() = mMetrics
@@ -15,19 +15,19 @@ open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S>,
         mMetrics.putAll(keys.associateWith { LockableData(Triple(0, 0,0)) })
     }
 
-    override fun replace (element: IClassificationOutputStatsOld<S>) {
+    override fun replace (element: E) {
         element.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
         }
     }
 
-    override fun add (element: IClassificationOutputStatsOld<S>) {
+    override fun add (element: E) {
         element.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(tripleSum(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
         }
     }
 
-    override fun subtract (element: IClassificationOutputStatsOld<S>) {
+    override fun subtract (element: E) {
         element.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(
                 tripleSubtract(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
@@ -47,8 +47,8 @@ open class ClassificationMetricsMutableMap<S> : ClassificationMetricsMap<S>,
         return groupMetrics.toMutableMap()
     }
 
-    override fun copyMetrics() : IGroupMetrics<S> {
-        return GroupMetrics(this)
+    override fun asImmutable() : IGroupMetrics<S> {
+        return GroupMetrics(this.groupMetrics)
     }
 
     private fun sumAllObjectsFound (setOfClassifications: Set<IClassificationWithMetrics<S>>) : Int {

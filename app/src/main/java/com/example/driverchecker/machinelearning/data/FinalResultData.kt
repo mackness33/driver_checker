@@ -27,13 +27,15 @@ data class MachineLearningFinalResult (
 
 interface IClassificationFinalResultStats<G> : IMachineLearningFinalResultStats, WithSupergroup<G>
 data class ClassificationFinalResultStats<G>(
-    override val confidence: Float
-) : IMachineLearningFinalResultStats
+    override val confidence: Float, override val supergroup: G
+) : IClassificationFinalResultStats<G>
 
 interface IClassificationFinalResultMetrics<G> : WithGroupsData<G>, IMachineLearningFinalResultsMetrics
 data class ClassificationFinalResultMetrics<G>(
     override val data: Map<IWindowBasicData, IGroupMetrics<G>?>
-) : IClassificationFinalResultMetrics<G>
+) : IClassificationFinalResultMetrics<G> {
+    constructor (single: Pair<IWindowBasicData, IGroupMetrics<G>?>) : this (mapOf(single))
+}
 
 
 interface IClassificationFinalResult<G> : IMachineLearningFinalResult {

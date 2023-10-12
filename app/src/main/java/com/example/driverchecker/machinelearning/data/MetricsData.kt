@@ -128,16 +128,16 @@ interface IGroupMetrics<S> : IAdditionalMetrics {
     val groupMetrics : Map<S, Triple<Int, Int, Int>>
 }
 
-interface IMutableGroupMetrics<S> : IGroupMetrics<S> {
+interface IMutableGroupMetrics<in E : IClassificationOutputStats<S>, S> : IGroupMetrics<S> {
     fun initialize (keys: Set<S>)
-    fun replace (element: IClassificationOutputStatsOld<S>)
-    fun add (element: IClassificationOutputStatsOld<S>)
-    fun subtract (element: IClassificationOutputStatsOld<S>)
+    fun replace (element: E)
+    fun add (element: E)
+    fun subtract (element: E)
     fun remove (keys: Set<S>)
     fun clear ()
 
     fun copy() : Map<S, Triple<Int, Int, Int>>
-    fun copyMetrics() : IGroupMetrics<S>
+    fun asImmutable() : IGroupMetrics<S>
 }
 
 data class GroupMetrics<S> (
@@ -150,10 +150,6 @@ data class GroupMetrics<S> (
 //    constructor (listEntity: List<GroupMetricsEntity>) : this (
 //        listCopyEntity.toMap().toMutableMap()
 //    )
-
-    constructor (copy: IMutableGroupMetrics<S>) : this (
-        copy.copy()
-    )
 
     constructor () : this (emptyMap())
 }

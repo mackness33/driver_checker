@@ -15,7 +15,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutput<S>,
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
     abstract override var model: IClassificationModel<I, O, S>?
-    abstract override val collectionOfWindows: IClassificationMultipleWindows<O, S>
+    abstract override val collectionOfWindows: IClassificationMultipleWindows<IClassificationOutputStats<S>, S>
 
 
     override val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveClassificationProducer()
@@ -34,14 +34,6 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutput<S>,
                 LiveClassificationState.Start(
                     (model as IClassificationModel<I, O, S>).classifier.maxClassesInGroup(),
                     (model as IClassificationModel<I, O, S>).classifier
-                )
-            )
-        }
-
-        override suspend fun emitLoading() {
-            emit(
-                LiveClassificationState.Loading (
-                    collectionOfWindows.totalElements, collectionOfWindows.lastResult
                 )
             )
         }
