@@ -17,20 +17,20 @@ data class MachineLearningInput<I>(
 data class ImageDetectionInput(
     override var input: Bitmap,
     override val index: Int,
-    override var imageRatio: Pair<Float, Float>? = null,
+    override var imageRatio: Pair<Float, Float> = Pair(1.0f, 1.0f),
 ) : IImageDetectionInput {
     override fun resizeImage (width: Int, height: Int) {
-        input = Bitmap.createScaledBitmap(this.input, width, height, true)
         imageRatio = input.width.toFloat()/width to input.height.toFloat()/height
+        input = Bitmap.createScaledBitmap(this.input, width, height, true)
     }
 
     override fun rotate (angle: Float) {
-        input = BitmapUtils.rotateBitmap(input, -90f)
+        input = BitmapUtils.rotateBitmap(input, angle)
     }
 }
 
 interface IImageDetectionInput : IMachineLearningInput<Bitmap> {
-    val imageRatio: Pair<Float, Float>?
+    val imageRatio: Pair<Float, Float>
     fun resizeImage (width: Int, height: Int)
     fun rotate (angle: Float)
 }

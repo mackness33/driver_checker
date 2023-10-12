@@ -4,7 +4,7 @@ interface IStats
 
 interface IMetrics
 
-interface IMachineLearningMutableOutput<E : IMachineLearningItem> : IMachineLearningOutput {
+interface IMachineLearningMutableOutput<E : IMachineLearningItem> : List<E>, IMachineLearningOutput {
     fun push(item: E): Boolean
     fun getImmutable() : IMachineLearningOutput
 }
@@ -56,6 +56,10 @@ data class ClassificationOutput<G> (
     constructor(copy: IClassificationOutput<G>) : this (
         copy.items, copy.stats, copy.metrics, copy.index
     )
+
+    constructor(copy: IMutableClassificationOutput<IClassificationItem<G>, G>) : this (
+        copy.items, copy.stats, copy.metrics, copy.index
+    )
 }
 
 
@@ -71,5 +75,9 @@ data class ImageDetectionOutput<G> (
 ) : IImageDetectionOutput<G> {
     constructor(copy: IImageDetectionOutput<G>) : this (
         copy.items, copy.stats, copy.metrics, copy.index
+    )
+
+    constructor(copy: IMutableClassificationOutput<IImageDetectionItem<G>, G>) : this (
+        (copy.items as List<IImageDetectionItem<G>>), copy.stats, copy.metrics, copy.index
     )
 }

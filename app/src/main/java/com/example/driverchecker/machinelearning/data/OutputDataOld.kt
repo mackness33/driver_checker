@@ -1,6 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
-import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
+import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableListOld
 import com.example.driverchecker.machinelearning.collections.MachineLearningItemListOld
 
 // ---------------------------------- MACHINE LEARNING ----------------------------------
@@ -32,7 +32,7 @@ data class MachineLearningFullOutputOld <I, E : WithConfidence> (
 interface IClassificationOutputStatsOld<S> : IMachineLearningOutputStatsOld, WithGroups<S>
 
 interface IClassificationOutputOld<E : IClassificationItem<S>, S> : IMachineLearningOutputOld<E>, IClassificationOutputStatsOld<S> {
-    override val listItems: ClassificationItemMutableList<E, S>
+    override val listItems: ClassificationItemMutableListOld<E, S>
 }
 
 data class ClassificationOutputStatsOld<S> (
@@ -43,7 +43,7 @@ data class ClassificationOutputStatsOld<S> (
 
 
 data class ClassificationOutputOld<E : IClassificationItem<S>, S> (
-    override val listItems: ClassificationItemMutableList<E, S>
+    override val listItems: ClassificationItemMutableListOld<E, S>
 ) : IClassificationOutputOld<E, S> {
     override val confidence: Float = listItems.confidence
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups
@@ -52,7 +52,7 @@ data class ClassificationOutputOld<E : IClassificationItem<S>, S> (
 interface IClassificationFullOutputOld<I, E : IClassificationFullItem<S>, S> : IOldMachineLearningFullOutput<I, E>, IClassificationOutputOld<E, S>
 data class ClassificationFullOutputOld<I, E : IClassificationFullItem<S>, S> (
     override val input: I,
-    override val listItems: ClassificationItemMutableList<E, S>,
+    override val listItems: ClassificationItemMutableListOld<E, S>,
 ) : IClassificationFullOutputOld<I, E, S> {
     override val confidence: Float = listItems.confidence
     override val groups: Map<S, Set<IClassificationWithMetrics<S>>> = listItems.groups

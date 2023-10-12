@@ -5,7 +5,7 @@ import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.machinelearning.helpers.windows.IWindow
 
 interface MachineLearningItemListOld<E : IMachineLearningItem> : List<E>, IMachineLearningOutputStatsOld
-interface ClassificationItemList<E : IClassificationItem<S>, S> : MachineLearningItemListOld<E>,
+interface ClassificationItemListOld<E : IClassificationItem<S>, S> : MachineLearningItemListOld<E>,
     IClassificationOutputStatsOld<S>
 
 interface ClassificationMetricsMap<S> : IGroupMetrics<S> {

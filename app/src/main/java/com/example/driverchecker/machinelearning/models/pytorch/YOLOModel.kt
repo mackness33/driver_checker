@@ -3,7 +3,9 @@ package com.example.driverchecker.machinelearning.models.pytorch
 import android.graphics.Bitmap
 import android.graphics.RectF
 import android.util.Log
-import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
+import com.example.driverchecker.machinelearning.collections.ClassificationItemListOld
+import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableListOld
+import com.example.driverchecker.machinelearning.collections.MutableClassificationOutput
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
@@ -15,7 +17,7 @@ import org.pytorch.*
 import org.pytorch.torchvision.TensorImageUtils
 
 class YOLOModel :
-    ClassifierTorchModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, String>
+    ClassifierTorchModel<IImageDetectionInput, IImageDetectionOutput<String>, String>
 {
     constructor(scope: CoroutineScope) : super(scope)
 
@@ -35,20 +37,15 @@ class YOLOModel :
     private val outputRow = 25200 // as decided by the YOLOv5 model for input image of size 640*640
     private val maxPredictionsLimit = 5
 
-    override fun preProcess(data: IImageDetectionInputOld): IImageDetectionInputOld {
-        val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(data.input, -90f)
-        val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, inputWidth, inputHeight, true)
-        return ImageDetectionInputOld(
-            rotatedBitmap,
-            resizedBitmap,
-            inputWidth to inputHeight,
-            (rotatedBitmap.width.toFloat()/inputWidth) to (rotatedBitmap.height.toFloat()/inputHeight)
-        )
+    override fun preProcess(data: IImageDetectionInput): IImageDetectionInput {
+        data.rotate(-90f)
+        data.resizeImage(inputWidth, inputHeight)
+        return data
     }
 
-    override fun evaluateData(input: IImageDetectionInputOld): IImageDetectionFullOutputOld<String> {
+    override fun evaluateData(input: IImageDetectionInput): IImageDetectionOutput<String> {
         // preparing input tensor
-        val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.preProcessedImage,
+        val inputTensor: Tensor = TensorImageUtils.bitmapToFloat32Tensor(input.input,
             ImageDetectionUtils.NO_MEAN_RGB, ImageDetectionUtils.NO_STD_RGB, MemoryFormat.CHANNELS_LAST)
 
         // running the model
@@ -60,21 +57,20 @@ class YOLOModel :
         return outputsToNMSPredictions(predictions, input)
     }
 
-    override fun postProcess(output: IImageDetectionFullOutputOld<String>): IImageDetectionFullOutputOld<String> {
-        return ImageDetectionFullOutputOld(
-            output.input,
-            ImageDetectionUtils.nonMaxSuppression(output.listItems, maxPredictionsLimit, threshold)
+    override fun postProcess(output: IImageDetectionOutput<String>): IImageDetectionOutput<String> {
+        return ImageDetectionOutput(
+            ImageDetectionUtils.nonMaxSuppression(output, maxPredictionsLimit, threshold)
         )
     }
 
     private fun outputsToNMSPredictions(
         outputs: FloatArray,
-        image: IImageDetectionInputOld
-    ): IImageDetectionFullOutputOld<String> {
-        val results: ClassificationItemMutableList<IImageDetectionFullItem<String>, String> = ClassificationItemMutableList()
+        image: IImageDetectionInput
+    ): IImageDetectionOutput<String> {
+        val results: IMutableClassificationOutput<IImageDetectionItem<String>, String> = MutableClassificationOutput(image.index)
         val outputColumn = mClassifier.size() + 5 // left, top, right, bottom, score and class probability
-        val imageScaleX = image.imageRatio?.first ?: 1.0f
-        val imageScaleY = image.imageRatio?.second ?: 1.0f
+        val imageScaleX = image.imageRatio.first
+        val imageScaleY = image.imageRatio.second
         val imageRect = RectF(
             0.0f,
             0.0f,
@@ -108,7 +104,7 @@ class YOLOModel :
                     }
                 }
 
-                results.add(
+                results.push(
                     ImageDetectionFullItem(
                         clsIndex,
 
@@ -120,10 +116,7 @@ class YOLOModel :
             }
         }
 
-        return ImageDetectionFullOutputOld(
-            image,
-            results
-        )
+        return ImageDetectionOutput(results)
     }
 
     override fun loadClassifications(json: String?): Boolean {

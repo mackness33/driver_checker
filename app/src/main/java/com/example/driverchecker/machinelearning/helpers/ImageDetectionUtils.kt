@@ -1,9 +1,9 @@
 package com.example.driverchecker.machinelearning.helpers
 
 import android.graphics.*
-import android.util.Log
 import androidx.camera.core.ImageProxy
-import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableList
+import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableListOld
+import com.example.driverchecker.machinelearning.collections.MutableClassificationOutput
 import com.example.driverchecker.machinelearning.data.*
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -23,16 +23,16 @@ object ImageDetectionUtils {
      * - threshold: used to decide whether boxes overlap too much
      */
     fun <S> nonMaxSuppression(
-        boxes: ClassificationItemMutableList<IImageDetectionFullItem<S>, S>,
+        boxes: IImageDetectionOutput<S>,
         limit: Int = Int.MAX_VALUE,
         threshold: Float
-    ): ClassificationItemMutableList<IImageDetectionFullItem<S>, S> {
+    ): IMutableClassificationOutput<IImageDetectionItem<S>, S> {
 
         // Do an argument sort on the confidence scores, from high to low.
-        val sortedBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
+        val sortedBoxes = boxes.items.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }
 //        val secondBoxes = boxes.sortedWith { o1, o2 -> o2.confidence.compareTo(o1.confidence) }.toMutableSet()
 //        val checkedBoxes = mutableSetOf<IImageDetectionFullItem<S>>()
-        val selected: ClassificationItemMutableList<IImageDetectionFullItem<S>, S> = ClassificationItemMutableList(10)
+        val selected: IMutableClassificationOutput<IImageDetectionItem<S>, S> = MutableClassificationOutput(boxes.index)
 //        val secondSelected: ClassificationItemMutableList<IImageDetectionFullItem<S>, S> = ClassificationItemMutableList(10)
         val active = BooleanArray(sortedBoxes.size)
         Arrays.fill(active, true)
@@ -50,7 +50,7 @@ object ImageDetectionUtils {
         while (i < sortedBoxes.size && !done) {
             if (active[i]) {
                 val boxA = sortedBoxes[i]
-                selected.add(boxA)
+                selected.push(boxA)
                 if (selected.size >= limit) break
                 for (j in i + 1 until sortedBoxes.size) {
                     if (active[j]) {
