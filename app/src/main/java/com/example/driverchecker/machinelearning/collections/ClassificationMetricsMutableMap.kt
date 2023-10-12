@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.collections
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.*
 
-open class ClassificationMetricsMutableMap<in E : IClassificationOutputStats<S>, S> : ClassificationMetricsMap<S>,
+open class ClassificationMetricsMutableMap<in E : IClassificationOutput<S>, S> : ClassificationMetricsMap<S>,
     IMutableGroupMetrics<E, S> {
     protected val mMetrics: MutableMap<S, AtomicObservableData<Triple<Int, Int, Int>>> = mutableMapOf()
     override val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
@@ -16,19 +16,19 @@ open class ClassificationMetricsMutableMap<in E : IClassificationOutputStats<S>,
     }
 
     override fun replace (element: E) {
-        element.groups.forEach { entry ->
+        element.stats.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
         }
     }
 
     override fun add (element: E) {
-        element.groups.forEach { entry ->
+        element.stats.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(tripleSum(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value))))
         }
     }
 
     override fun subtract (element: E) {
-        element.groups.forEach { entry ->
+        element.stats.groups.forEach { entry ->
             mMetrics[entry.key]?.postValue(
                 tripleSubtract(mMetrics[entry.key]?.value, Triple(1, entry.value.size, sumAllObjectsFound(entry.value)))
             )

@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.singles.ImageDe
 import kotlinx.coroutines.CoroutineScope
 
 open class ImageDetectionMultipleWindows (scope: CoroutineScope) :
-    AClassificationMultipleWindows<IClassificationOutputStats<String>, String, ImageDetectionSingleWindow, IClassificationSingleWindowSettings<String>> (scope) {
+    AClassificationMultipleWindows<IImageDetectionOutput<String>, String, ImageDetectionSingleWindow, IClassificationSingleWindowSettings<String>> (scope) {
     override val factory = ImageDetectionWindowFactory()
 
     /* MULTIPLE */

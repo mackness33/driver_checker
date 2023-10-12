@@ -137,8 +137,8 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
         override suspend fun onLiveClassificationLoading(state: LiveClassificationState.Loading<String>) {
             super.onLiveEvaluationLoading(LiveEvaluationState.Loading(state.index, state.partialResult))
 
-            if (state.partialResult?.groups != null) {
-                mColoredOutputs.add(state.partialResult.groups.mapValues { entry ->
+            if (state.partialResult?.stats?.groups != null) {
+                mColoredOutputs.add(state.partialResult.stats.groups.mapValues { entry ->
                     entry.value.map { classification -> classification.internalIndex }.toSet()
                 })
             }

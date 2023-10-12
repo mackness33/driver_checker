@@ -15,7 +15,7 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutput<S>,
     constructor(modelName: String, modelInit: Map<String, Any?>, repositoryScope: CoroutineScope) : super(modelName, modelInit, repositoryScope)
 
     abstract override var model: IClassificationModel<I, O, S>?
-    abstract override val collectionOfWindows: IClassificationMultipleWindows<IClassificationOutputStats<S>, S>
+    abstract override val collectionOfWindows: IClassificationMultipleWindows<O, S>
 
 
     override val evaluationStateProducer: ILiveEvaluationProducer<LiveEvaluationStateInterface> = LiveClassificationProducer()

@@ -22,7 +22,7 @@ class ImageDetectionFactoryRepository
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
 
-    override val collectionOfWindows: IClassificationMultipleWindows<IClassificationOutputStats<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
+    override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionOutput<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
 
     init {
         val semaphores = setOf("model", "client")

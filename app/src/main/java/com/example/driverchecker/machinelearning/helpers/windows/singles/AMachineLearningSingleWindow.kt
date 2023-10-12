@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.helpers.windows.singles
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
-abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStats> constructor(
+abstract class AMachineLearningSingleWindow<E : IMachineLearningOutput> constructor(
     initialSettings: IMachineLearningSingleWindowSettings,
     internalTag: IWindowTag,
 ) : ASingleWindow<E>(initialSettings, internalTag), IMachineLearningSingleWindow<E> {
@@ -30,7 +30,7 @@ abstract class AMachineLearningSingleWindow<E : IMachineLearningOutputStats> con
 
     override fun update () {
         if (windowIsFull())
-            confidence = window.fold(0.0f) { acc, next -> acc + next.confidence } / window.size
+            confidence = window.fold(0.0f) { acc, next -> acc + next.stats.confidence } / window.size
     }
 
     override fun postUpdate () {

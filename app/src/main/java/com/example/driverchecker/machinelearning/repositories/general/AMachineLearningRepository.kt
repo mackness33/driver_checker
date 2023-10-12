@@ -53,7 +53,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         get() = mSettings
     private val privateSettings: ISettingsOld
         get() = mSettings.value
-    protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<IMachineLearningOutputStats>
+    protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<O>
 
     open fun initialize (semaphores: Set<String>) {
         readySemaphore.initialize(semaphores)
@@ -125,7 +125,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
     ) {
         Log.d("JobClassification", "finally finished")
         timer.markEnd()
-        collectionOfWindows.next(postProcessedResult.stats, timer.diff())
+        collectionOfWindows.next(postProcessedResult, timer.diff())
         lastEvaluatedInput = postProcessedResult
         timer.markStart()
 

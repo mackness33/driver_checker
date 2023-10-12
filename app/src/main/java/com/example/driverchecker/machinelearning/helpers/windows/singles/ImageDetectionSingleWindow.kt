@@ -5,7 +5,7 @@ import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindow
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
 
 open class ImageDetectionSingleWindow
-    : AClassificationSingleWindow<IClassificationOutputStats<String>, String> {
+    : AClassificationSingleWindow<IImageDetectionOutput<String>, String> {
 
     constructor (initialSettings: IClassificationSingleWindowSettings<String>) :
             super (initialSettings, SingleGroupImageDetectionTag)

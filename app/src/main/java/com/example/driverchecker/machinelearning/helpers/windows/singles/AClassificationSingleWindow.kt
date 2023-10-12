@@ -4,7 +4,7 @@ import com.example.driverchecker.machinelearning.collections.ClassificationMetri
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
 
-abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S> (
+abstract class AClassificationSingleWindow<E : IClassificationOutput<S>, S> (
     initialSettings: IClassificationSingleWindowSettings<S>,
     internalTag: IWindowTag,
     ) : AMachineLearningSingleWindow<E>(initialSettings, internalTag), IClassificationSingleWindow<E, S> {
@@ -30,12 +30,12 @@ abstract class AClassificationSingleWindow<E : IClassificationOutputStats<S>, S>
     /* SINGLE */
     override fun preUpdate (element: E) : Boolean {
         // TODO: The last check must be moved to the supergroup
-        if (element.groups.isEmpty() || element.groups.size > 1) {
+        if (element.stats.groups.isEmpty() || element.stats.groups.size > 1) {
             return false
         }
 
-        val groupsToIncrease: Set<S> = element.groups.keys
-        val groupsToDecrease: Set<S> = if (windowIsFull()) window.first().groups.keys else emptySet()
+        val groupsToIncrease: Set<S> = element.stats.groups.keys
+        val groupsToDecrease: Set<S> = if (windowIsFull()) window.first().stats.groups.keys else emptySet()
         val allPossibleKeysToUpdate = groupsToDecrease.union(groupsToIncrease).intersect(mSupergroupCounter.keys)
 
         // for each key to update in the counter I add to the value of the element and sub the element that is going to be removed

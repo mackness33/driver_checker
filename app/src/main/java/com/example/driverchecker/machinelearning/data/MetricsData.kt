@@ -128,7 +128,7 @@ interface IGroupMetrics<S> : IAdditionalMetrics {
     val groupMetrics : Map<S, Triple<Int, Int, Int>>
 }
 
-interface IMutableGroupMetrics<in E : IClassificationOutputStats<S>, S> : IGroupMetrics<S> {
+interface IMutableGroupMetrics<in E : IClassificationOutput<S>, S> : IGroupMetrics<S> {
     fun initialize (keys: Set<S>)
     fun replace (element: E)
     fun add (element: E)
