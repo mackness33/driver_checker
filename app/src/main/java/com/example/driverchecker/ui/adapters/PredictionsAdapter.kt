@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutputOld
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import com.example.driverchecker.utils.ColorManager
 import java.util.*
 
@@ -18,7 +19,7 @@ import java.util.*
 // PredictionAdapter display a list of "lines" which are made of various things including the itemColorRecyclerView
 //   made of all the classView
 class PredictionsAdapter(
-    private val items: List<IImageDetectionFullOutputOld<String>>,
+    private val items: List<IImageDetectionOutput<String>>,
     private var colorList: Set<String>? = setOf("driver", "passenger"),
     private val onPredictionClickListener: (Long?, Int?) -> Unit
 ) : RecyclerView.Adapter<PredictionsAdapter.ViewHolder>() {
@@ -32,11 +33,11 @@ class PredictionsAdapter(
         val textGroup: TextView = view.findViewById(R.id.text_group)
         val imageInput: ImageView = view.findViewById(R.id.imgInput)
 
-        fun bind (detectionItem: IImageDetectionFullOutputOld<String>, position: Int, onPredictionClickListener: (Long?, Int?) -> Unit) {
+        fun bind (detectionItem: IImageDetectionOutput<String>, position: Int, onPredictionClickListener: (Long?, Int?) -> Unit) {
 //            val bitmap: Bitmap = BitmapUtils.rotateBitmap(detectionItem.input.input, -90.0f)
-            imageInput.setImageBitmap(detectionItem.input.input)
+//            imageInput.setImageBitmap(detectionItem.input.input)
             textIndex.text = position.toString()
-            textGroup.text = detectionItem.groups.keys.first().replaceFirstChar {
+            textGroup.text = detectionItem.stats.groups.keys.first().replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
 
@@ -62,7 +63,7 @@ class PredictionsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.bind(items[position], (position + 1), onPredictionClickListener)
-        var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(items[position].groups.keys.first()) }
+        var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(items[position].stats.groups.keys.first()) }
         indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
 
         viewHolder.textGroup.setTextColor(ColorManager.listFullColors[indexOfGroup].scale[2])

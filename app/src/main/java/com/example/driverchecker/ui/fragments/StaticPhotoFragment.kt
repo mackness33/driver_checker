@@ -62,7 +62,8 @@ class StaticPhotoFragment : Fragment() {
         if (indexPartial != null && indexPartial >= 1 && indexPartial <= activityModel.lastItemsList.size){
             val output = activityModel.lastItemsList.elementAt(indexPartial-1)
 //            val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(output.input.input, -90.0f)
-            binding.imageView.setImageBitmap(output.input.input)
+            // TODO: rechange the input to set the bitmap
+//            binding.imageView.setImageBitmap(output.input.input)
 
             binding.resultView.setColorSchemes(activityModel.classificationGroups.value)
             binding.resultView.setResults(output)

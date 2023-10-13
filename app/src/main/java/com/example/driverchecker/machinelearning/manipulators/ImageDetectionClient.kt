@@ -10,19 +10,19 @@ import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-class ImageDetectionClient : AClassificationClient<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResultOld<String>, String>() {
+class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
-    override val finalResult: ObservableData<IImageDetectionFinalResultOld<String>?>
-        get() = mFinalResult
+//    override val finalResult: ObservableData<IImageDetectionFinalResult<String>?>
+//        get() = mFinalResult
     
     // FUNCTIONS
 
     suspend fun produceImage (imgProxy: ImageProxy) {
-        produceInput(ImageDetectionInputOld(ImageDetectionUtils.imageProxyToBitmap(imgProxy), null))
+        produceInput(ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy), 4))
     }
 
     suspend fun produceImage (bitmap: Bitmap) {
-        produceInput(ImageDetectionInputOld(bitmap, null))
+        produceInput(ImageDetectionInput(bitmap, 4))
     }
 
     // INNER CLASSES
@@ -37,7 +37,7 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInputOld, IIma
             super.onLiveClassificationEnd(state)
 
             if (state.finalResult != null)
-                mFinalResult.postValue(ClassificationFinalResultOld(state.finalResult))
+                mFinalResult.postValue(ClassificationFinalResult(state.finalResult))
 
             Log.d("ImageDetectionClient - EvaluationImageDetectionListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }

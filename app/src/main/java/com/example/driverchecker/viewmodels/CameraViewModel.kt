@@ -15,8 +15,8 @@ import com.example.driverchecker.utils.ObservableData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 
-class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResultOld<String>>(imageDetectionRepository) {
-    override val evaluationClient: IClassificationClient<IImageDetectionInputOld, IImageDetectionFullOutputOld<String>, IImageDetectionFinalResultOld<String>, String> = ImageDetectionClient()
+class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>>(imageDetectionRepository) {
+    override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>, String> = ImageDetectionClient()
 
     val passengerInfo: ObservableData<Triple<Int, Int, Int>>?
         get() = evaluationClient.metricsPerGroup.liveMetrics["passenger"]
@@ -62,16 +62,18 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     }
 
     fun insert(name: String) = viewModelScope.launch {
-        mAwaitEndInsert.deferredAwait()
-        mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
+        // TODO: database save
 
-        val evalId = evaluationRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
+//        mAwaitEndInsert.deferredAwait()
+//        mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
+
+//        val evalId = evaluationRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
 //        evaluationRepository.insertAllOldMetrics(metricsPerGroup, evalId)
 
-        mAwaitImagesPaths.await()
-        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
+//        mAwaitImagesPaths.await()
+//        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
 
-        mAwaitEndInsert.complete(evalId)
+//        mAwaitEndInsert.complete(evalId)
     }
 
     fun updateModelThreshold (modelThreshold: Float) {

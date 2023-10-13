@@ -44,14 +44,14 @@ class ResultFragment : Fragment() {
         binding.finalWindowView.itemAnimator = null
         activityModel.finalResult.observe(viewLifecycleOwner) { output ->
             binding.textMostGroup.text = String.format("%s",
-                output?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                output?.stats?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )
-            binding.textAvgConfidence.text = String.format("%.2f%%", output?.confidence?.times(100))
-            binding.textModelThreshold.text = String.format("%.2f%%", output?.modelThreshold?.times(100))
+            binding.textAvgConfidence.text = String.format("%.2f%%", output?.stats?.confidence?.times(100))
+//            binding.textModelThreshold.text = String.format("%.2f%%", output?.modelThreshold?.times(100))
 //            binding.textTime.text = String.format("%.2fs", output?.data.metrics?.totalTime)
 
-            if (output?.data != null) {
-                binding.finalWindowView.adapter = WindowsAdapter(output.data, activityModel.classificationGroups.value) { indexLastImage ->
+            if (output?.metrics?.data != null) {
+                binding.finalWindowView.adapter = WindowsAdapter(output.metrics!!.data, activityModel.classificationGroups.value) { indexLastImage ->
                     val bundle = bundleOf("indexLastPhoto" to indexLastImage)
                     findNavController().navigate(R.id.outputFragment, bundle)
                 }

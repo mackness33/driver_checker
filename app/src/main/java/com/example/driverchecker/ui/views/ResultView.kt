@@ -6,8 +6,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.example.driverchecker.database.entity.ItemEntity
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullItem
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutputOld
+import com.example.driverchecker.machinelearning.data.IImageDetectionItem
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import com.example.driverchecker.utils.ColorManager
 import com.example.driverchecker.utils.IColorScale
 import kotlin.math.min
@@ -69,31 +69,27 @@ class ResultView : View {
 
     private fun calculate (item : DrawableItemResult) : RectF {
         if (isMirrored) {
-            val vector = min(width.toFloat()/bitmapDim.first, height.toFloat()/bitmapDim.second)
+            val vector = min(width.toFloat() / bitmapDim.first, height.toFloat() / bitmapDim.second)
             val offset =
-                ((width - paintRectangle.strokeWidth) - vector * bitmapDim.first)/2 to
-                        ((height - paintRectangle.strokeWidth) - vector * bitmapDim.second)/2
+                ((width - paintRectangle.strokeWidth) - vector * bitmapDim.first) / 2 to
+                        ((height - paintRectangle.strokeWidth) - vector * bitmapDim.second) / 2
 
-            val result = RectF(
+            return RectF(
                 offset.first + vector * item.rect.left + paintRectangle.strokeWidth,
                 offset.second + vector * item.rect.top + paintRectangle.strokeWidth,
                 offset.first + vector * item.rect.right - paintRectangle.strokeWidth,
                 offset.second + vector * item.rect.bottom - paintRectangle.strokeWidth
             )
-
-            return result
         } else {
-            val vector = width.toFloat()/bitmapDim.first to height.toFloat()/bitmapDim.second
-            val distance = (bitmapDim.first/2) - item.rect.centerX()
+            val vector = width.toFloat() / bitmapDim.first to height.toFloat() / bitmapDim.second
+            val distance = (bitmapDim.first / 2) - item.rect.centerX()
 
-            val result = RectF(
+            return RectF(
                 vector.first * (item.rect.left + distance * 2),
                 vector.second * item.rect.top,
                 vector.first * (item.rect.right + distance * 2),
                 vector.second * item.rect.bottom
             )
-
-            return result
         }
     }
 
@@ -130,11 +126,13 @@ class ResultView : View {
         canvas.drawRect(resizedRect, paintRectangle)
     }
 
-    fun setResults (imageDetectionOutputs: IImageDetectionFullOutputOld<String>?) {
+    fun setResults (imageDetectionOutputs: IImageDetectionOutput<String>?) {
         if (imageDetectionOutputs != null) {
-            itemResults = imageDetectionOutputs.listItems.map { DrawableItemResult(it) }
+            itemResults = imageDetectionOutputs.items.map { DrawableItemResult(it) }
 //        bitmapScale = imageDetectionOutputs.input.
-            bitmapDim = imageDetectionOutputs.input.input.width to imageDetectionOutputs.input.input.height
+//            bitmapDim = imageDetectionOutputs.input.input.width to imageDetectionOutputs.input.input.height
+            // TODO: re-change the bitmap dimension to be flexible
+            bitmapDim = 480 to 640
         } else {
             itemResults = null
         }
@@ -160,7 +158,7 @@ class ResultView : View {
         val confidence: Float,
         val group: String
     ) {
-        constructor(imageDetectionItem: IImageDetectionFullItem<String>) : this (
+        constructor(imageDetectionItem: IImageDetectionItem<String>) : this (
             rect = imageDetectionItem.rect,
             internalIndex = imageDetectionItem.classification.internalIndex,
             classification = imageDetectionItem.classification.name,
