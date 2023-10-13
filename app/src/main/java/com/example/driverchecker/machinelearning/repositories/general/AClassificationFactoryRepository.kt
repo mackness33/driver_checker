@@ -38,6 +38,14 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutput<S>,
             )
         }
 
+        override suspend fun emitLoading() {
+            emit(
+                LiveClassificationState.Loading (
+                    collectionOfWindows.totalElements, collectionOfWindows.lastResult
+                )
+            )
+        }
+
         override suspend fun emitErrorEnd(cause: Throwable) {
             emit(LiveClassificationState.End<S>(cause, null))
         }

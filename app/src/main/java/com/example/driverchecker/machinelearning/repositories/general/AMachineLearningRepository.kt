@@ -243,7 +243,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         override suspend fun emitLoading() {
             emit(
                 LiveEvaluationState.Loading (
-                    collectionOfWindows.totalElements, lastEvaluatedInput
+                    collectionOfWindows.totalElements, collectionOfWindows.lastResult
                 )
             )
         }
