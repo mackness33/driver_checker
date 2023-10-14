@@ -40,19 +40,4 @@ data class WindowSettingsOld (
     constructor() : this (0, 0.0f, "")
 }
 
-
-data class SettingsOld (
-    override val multipleWindowsFrames: List<Int>,
-    override val multipleWindowsThresholds: List<Float>,
-    override val multipleTypes: List<String>,
-    override val modelThreshold: Float
-) : ISettingsOld {
-    constructor(copyMultipleWindowSettings: IMultipleWindowSettingsOld, copyModelSettings: IModelSettings) : this (
-        copyMultipleWindowSettings.multipleWindowsFrames,
-        copyMultipleWindowSettings.multipleWindowsThresholds,
-        copyMultipleWindowSettings.multipleTypes,
-        copyModelSettings.modelThreshold
-    )
-}
-
 class SettingsException(override val message: String?, override val cause: Throwable?) : Throwable(message, cause)

@@ -3,7 +3,7 @@ package com.example.driverchecker.machinelearning.collections
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.*
 
-open class ClassificationMetricsMutableMap<in E : IClassificationOutput<S>, S> : ClassificationMetricsMap<S>,
+open class ClassificationMetricsMutableMap<in E : IClassificationOutput<S>, S> : IObservableGroupMetrics<S>,
     IMutableGroupMetrics<E, S> {
     protected val mMetrics: MutableMap<S, AtomicObservableData<Triple<Int, Int, Int>>> = mutableMapOf()
     override val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>

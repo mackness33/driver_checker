@@ -3,7 +3,6 @@ package com.example.driverchecker.machinelearning.manipulators
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.driverchecker.machinelearning.collections.ClassificationMetricsMap
 import com.example.driverchecker.machinelearning.collections.ClassificationMetricsMutableMap
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
@@ -24,7 +23,7 @@ abstract class AClassificationClient<I : WithIndex, O : IClassificationOutput<S>
 //    protected val mMetricsPerGroup = mutableMapOf<S, MutableLiveData<Pair<Int, Int>>>()
     protected val mMetricsPerGroup = ClassificationMetricsMutableMap<O, S>()
 //    override val metricsPerGroup: Map<S, StateLiveData<Triple<Int, Int, Int>?>> = mMetricsPerGroup.liveMetrics
-    override val metricsPerGroup: ClassificationMetricsMap<S> = mMetricsPerGroup
+    override val metricsPerGroup: IObservableGroupMetrics<S> = mMetricsPerGroup
 
     protected val mAreMetricsObservable = MutableLiveData(false)
     override val areMetricsObservable: LiveData<Boolean>

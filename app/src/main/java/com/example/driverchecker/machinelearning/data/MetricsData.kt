@@ -1,23 +1,11 @@
 package com.example.driverchecker.machinelearning.data
 
 import androidx.room.ColumnInfo
+import com.example.driverchecker.utils.ObservableData
 
 
 /* NEW METRICS */
 interface IAdditionalMetrics
-
-
-
-interface WithWindowInfo {
-    val data: List<IWindowBasicData>
-}
-
-
-interface WithGroupData<S> {
-    val additionalMetrics: List<IGroupMetrics<S>>
-}
-
-
 
 interface IWindowBasicData : IWindowMetrics, IWindowSettingsOld
 
@@ -85,43 +73,6 @@ data class WindowMetrics (
     )
 }
 
-/* OLD METRICS */
-interface WithOldMetrics {
-    val metrics: IOldMetrics?
-}
-
-interface IOldMetrics {
-    val totalTime: Double
-    val totalWindows: Int
-}
-
-interface IWindowOldMetrics : IOldMetrics {
-    val type: String
-}
-
-
-data class WindowOldMetrics (
-    override val totalTime: Double, override val totalWindows: Int, override val type: String
-) : IWindowOldMetrics {
-    constructor(copy: IWindowOldMetrics) : this(
-        copy.totalTime, copy.totalWindows, copy.type
-    )
-
-    constructor() : this(0.0, 0,"")
-}
-
-data class MachineLearningOldMetrics (
-    @ColumnInfo(name = "total_time") override val totalTime: Double,
-    @ColumnInfo(name = "total_windows") override val totalWindows: Int
-) : IOldMetrics {
-    constructor(copy: IOldMetrics?) : this (
-        copy?.totalTime ?: 0.0,
-        copy?.totalWindows ?: 0,
-    )
-}
-
-
-
 /* GROUP */
 
 interface IGroupMetrics<S> : IAdditionalMetrics {
@@ -147,15 +98,9 @@ data class GroupMetrics<S> (
         listCopyEntity.toMap().toMutableMap()
     )
 
-//    constructor (listEntity: List<GroupMetricsEntity>) : this (
-//        listCopyEntity.toMap().toMutableMap()
-//    )
-
     constructor () : this (emptyMap())
 }
 
-/**
- * ICFR {
- *     metrics: Map<IWindowMetrics, IGroupMetrics?>
- *  }
- **/
+interface IObservableGroupMetrics<S> : IGroupMetrics<S> {
+    val liveMetrics: Map<S, ObservableData<Triple<Int, Int, Int>>>
+}
