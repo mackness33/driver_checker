@@ -12,7 +12,7 @@ import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
-abstract class AClassificationClient<I, O : IClassificationOutput<S>, FR : IClassificationFinalResult<S>, S>
+abstract class AClassificationClient<I : WithIndex, O : IClassificationOutput<S>, FR : IClassificationFinalResult<S>, S>
     : AMachineLearningClient<I, O, FR> (), IClassificationClient<I, O, FR, S> {
     // LIVE DATA
     override val finalResult: ObservableData<FR?>
@@ -60,7 +60,7 @@ abstract class AClassificationClient<I, O : IClassificationOutput<S>, FR : IClas
                     else -> super.collectStates(state)
                 }
             } catch (e : Throwable) {
-                Log.d("ClassificationListener", "Bad cast to Start<S> or End<S>", e)
+                Log.e("ClassificationListener", "Bad cast to Start<S> or End<S>", e)
             }
         }
 

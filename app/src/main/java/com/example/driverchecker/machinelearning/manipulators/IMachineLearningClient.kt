@@ -17,7 +17,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutput, FR : IMachineLea
     val partialResultEvent: LiveData<PartialEvaluationStateInterface>
 
     // array of evaluated items by the mlRepo
-    val currentResultsList: List<O>
+    val currentResultsList: List<O?>
 
     val lastResultsList: List<O>
 

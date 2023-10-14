@@ -53,7 +53,7 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
         get () = evaluationClient.partialResultEvent
 
     // array of evaluated items by the mlRepo
-    val evaluatedItemsList: List<O>
+    val evaluatedItemsList: List<O?>
         get() = evaluationClient.currentResultsList
 
     val lastItemsList: List<O>
