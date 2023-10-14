@@ -24,12 +24,6 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
 
     protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
 
-    val availableSettings: IMultipleWindowSettingsOld
-        get() = machineLearningRepository.availableSettings
-
-    val actualSettings: LiveData<ISettingsOld>
-        get() = machineLearningRepository.settings.liveData
-
     // LIVE DATA
     // last result evaluated by the mlRepo
     val lastResult: LiveData<O?>

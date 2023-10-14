@@ -16,7 +16,7 @@ data class EvaluationEntity (
 //    override val data: Map<IWindowBasicData, IGroupMetrics<String>?>,
     @ColumnInfo(name = "model_threshold") val modelThreshold: Float,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-) : IClassificationFinalResultStatsOld<String> {
+) : IClassificationFinalResultStats<String> {
     constructor(finalResult: IClassificationFinalResult<String>, title: String) : this (
         finalResult.stats.confidence,
         title,

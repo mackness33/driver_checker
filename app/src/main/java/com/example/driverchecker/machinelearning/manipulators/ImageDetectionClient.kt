@@ -13,11 +13,9 @@ import java.util.*
 
 class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>, String>() {
     override val evaluationListener: ClassificationListener<String> = EvaluationImageDetectionListener()
-//    override val finalResult
     private var index: Int = 0
     
     // FUNCTIONS
-
     suspend fun produceImage (imgProxy: ImageProxy) {
         val iii = ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy), ++index)
         iii.rotate(-90f)

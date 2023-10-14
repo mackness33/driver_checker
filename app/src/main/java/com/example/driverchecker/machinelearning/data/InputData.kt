@@ -43,28 +43,3 @@ interface IImageDetectionInput : IMachineLearningInput<Bitmap> {
     fun rotate (angle: Float)
     fun copy () : IImageDetectionInput
 }
-
-
-
-// ---------------------------------- MACHINE LEARNING OLD ----------------------------------
-typealias IMachineLearningInputOld<I> = WithInput<I>
-
-data class MachineLearningInputOld<I>(
-    override val input: I,
-) : IMachineLearningInputOld<I>
-
-
-
-// ---------------------------------- IMAGE DETECTION OLD  ----------------------------------
-data class ImageDetectionInputOld(
-    override val input: Bitmap,
-    override val preProcessedImage: Bitmap?,
-    override val modelRatio: Pair<Int, Int>? = null,
-    override val imageRatio: Pair<Float, Float>? = null,
-) : IImageDetectionInputOld
-
-interface IImageDetectionInputOld : IMachineLearningInputOld<Bitmap> {
-    val preProcessedImage: Bitmap?
-    val modelRatio: Pair<Int, Int>?
-    val imageRatio: Pair<Float, Float>?
-}

@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
-import com.example.driverchecker.machinelearning.data.IImageDetectionFullOutputOld
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import com.example.driverchecker.utils.ColorManager
 import java.util.*

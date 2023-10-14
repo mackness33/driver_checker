@@ -9,10 +9,6 @@ abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutput, W : I
     AMultipleWindows<E, W, S>(scope), IMachineLearningMultipleWindows<E> {
     abstract override val factory: IMachineLearningWindowFactory<E, S, W>
 
-    /* MACHINE LEARNING */
-    override val confidence: Float
-        get() = 0.0f
-
     /* DATA */
     override fun getMetrics(): List<IWindowBasicData> {
         return currentWindows.values.map { it.getMetrics() }

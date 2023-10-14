@@ -37,22 +37,12 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
     protected val timer = Timer()
 
     // SETTINGS
-    override val availableSettings : ISettingsOld = SettingsOld (
-        listOf(1, 3, 5, 10, 20, 30),
-        listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
-        listOf("BasicImageDetectionWindow"),
-        0.10f
-    )
-    protected val mSettings: MutableObservableData<ISettingsOld> = StatefulData(SettingsOld(
-        availableSettings.multipleWindowsFrames.subList(2,4),
-        availableSettings.multipleWindowsThresholds.subList(1,4),
-        availableSettings.multipleTypes.subList(0,1),
-        0.10f
-    ))
-    override val settings: ObservableData<ISettingsOld>
-        get() = mSettings
-    private val privateSettings: ISettingsOld
-        get() = mSettings.value
+//    override val availableSettings : ISettingsOld = SettingsOld (
+//        listOf(1, 3, 5, 10, 20, 30),
+//        listOf(0.10f, 0.50f, 0.70f, 0.80f, 0.90f, 0.95f),
+//        listOf("BasicImageDetectionWindow"),
+//        0.10f
+//    )
     protected abstract val collectionOfWindows: IMachineLearningMultipleWindows<O>
 
     open fun initialize (semaphores: Set<String>) {

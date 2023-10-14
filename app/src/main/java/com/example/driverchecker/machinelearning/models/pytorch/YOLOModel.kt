@@ -1,15 +1,11 @@
 package com.example.driverchecker.machinelearning.models.pytorch
 
-import android.graphics.Bitmap
 import android.graphics.RectF
 import android.util.Log
-import com.example.driverchecker.machinelearning.collections.ClassificationItemListOld
-import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableListOld
 import com.example.driverchecker.machinelearning.collections.MutableClassificationOutput
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.data.ImageDetectionFullItem
 import com.example.driverchecker.machinelearning.helpers.ImageDetectionUtils
-import com.example.driverchecker.utils.BitmapUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json

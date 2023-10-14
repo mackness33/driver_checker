@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.windows
 
 import com.example.driverchecker.machinelearning.data.*
 
-interface IWindow <E> : IMachineLearningFinalResultStatsOld {
+interface IWindow <E> {
     val hasAcceptedLast: Boolean
     val totalElements: Int
     val lastResult: E?

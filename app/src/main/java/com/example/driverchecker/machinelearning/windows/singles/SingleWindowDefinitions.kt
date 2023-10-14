@@ -16,6 +16,7 @@ interface ISingleWindow <E> : IWindow<E> {
 
 interface IMachineLearningSingleWindow <E : IMachineLearningOutput> : ISingleWindow<E> {
     val threshold: Float
+    val confidence: Float
 
     fun getData() : Pair<IWindowBasicData, IAdditionalMetrics?>
     fun getMetrics() : IWindowBasicData

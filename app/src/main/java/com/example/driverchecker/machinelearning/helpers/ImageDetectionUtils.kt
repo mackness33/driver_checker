@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.helpers
 
 import android.graphics.*
 import androidx.camera.core.ImageProxy
-import com.example.driverchecker.machinelearning.collections.ClassificationItemMutableListOld
 import com.example.driverchecker.machinelearning.collections.MutableClassificationOutput
 import com.example.driverchecker.machinelearning.data.*
 import java.io.ByteArrayOutputStream

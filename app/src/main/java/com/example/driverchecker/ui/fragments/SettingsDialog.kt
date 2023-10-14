@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.driverchecker.databinding.DialogSettingsBinding
-import com.example.driverchecker.machinelearning.data.OldSettings
 import com.example.driverchecker.machinelearning.data.SettingsException
 import com.example.driverchecker.viewmodels.CameraViewModel
 

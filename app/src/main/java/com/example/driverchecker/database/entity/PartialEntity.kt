@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
-import com.example.driverchecker.machinelearning.data.IImageDetectionOutputStatsOld
 
 
 @Entity(
