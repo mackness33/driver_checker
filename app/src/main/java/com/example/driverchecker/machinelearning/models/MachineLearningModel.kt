@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.models
 
+import com.example.driverchecker.machinelearning.helpers.producers.AAtomicProducer
 import com.example.driverchecker.machinelearning.helpers.producers.AProducer
 import com.example.driverchecker.machinelearning.helpers.producers.IModelStateProducer
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +29,7 @@ abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLea
 
     override fun processAndEvaluatesStream (input: Flow<I>): Flow<R>? {
         return input
-            .buffer()
+//            .buffer()
             .map { data -> preProcess(data)}
             .map { preProcessedInput -> evaluateData(preProcessedInput)}
             .map { output -> postProcess(output)}
@@ -43,7 +44,7 @@ abstract class MachineLearningModel<I, R>  (scope: CoroutineScope) : IMachineLea
     }
 
     protected open inner class ModelStateProducer :
-        AProducer<Boolean>(1, 1, BufferOverflow.DROP_OLDEST, modelScope),
+        AAtomicProducer<Boolean>(1, 1, BufferOverflow.DROP_OLDEST, modelScope),
         IModelStateProducer<Boolean>
     {
         protected val readyMap : MutableMap<String, Boolean> = mutableMapOf()

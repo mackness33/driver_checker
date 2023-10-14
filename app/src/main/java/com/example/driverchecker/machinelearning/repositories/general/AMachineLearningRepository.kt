@@ -180,7 +180,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
                 // TODO: change the check here
                 if (evaluationStateProducer.isLast(LiveEvaluationState.Ready(true))) {
 //                if (liveEvaluationJob == null)
-                    liveEvaluationJob = jobEvaluation(typedState.input.buffer(1))
+                    liveEvaluationJob = jobEvaluation(typedState.input)
                 }
             } catch (e : Throwable) {
                 evaluationStateProducer.emitErrorEnd(e)
@@ -229,7 +229,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
     }
 
     protected open inner class LiveEvaluationProducer :
-        AAtomicProducer<LiveEvaluationStateInterface>(1, 5),
+        AAtomicProducer<LiveEvaluationStateInterface>(1, 0),
         ILiveEvaluationProducer<LiveEvaluationStateInterface>
     {
         override suspend fun emitReady(isReady: Boolean) {

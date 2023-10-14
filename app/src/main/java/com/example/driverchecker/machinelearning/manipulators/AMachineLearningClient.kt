@@ -9,12 +9,18 @@ import com.example.driverchecker.machinelearning.helpers.IMutableEvaluationsMap
 import com.example.driverchecker.machinelearning.helpers.NotNullEvaluationsMap
 import com.example.driverchecker.machinelearning.helpers.listeners.AMachineLearningListener
 import com.example.driverchecker.machinelearning.helpers.listeners.MachineLearningListener
+import com.example.driverchecker.machinelearning.helpers.producers.AAtomicProducer
+import com.example.driverchecker.machinelearning.helpers.producers.AReactiveSemaphore
+import com.example.driverchecker.machinelearning.helpers.producers.IClientStateProducer
+import com.example.driverchecker.machinelearning.helpers.producers.IModelStateProducer
 import com.example.driverchecker.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 
 abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
     // 1. get the input and save it into a queue
@@ -82,8 +88,11 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
     )
+    protected val mClientStateProducer = ClientStateProducer()
     override val clientState: SharedFlow<ClientStateInterface>
+//        get() = mClientStateProducer.sharedFlow
         get() = mClientState.asSharedFlow()
+
 
 
 
@@ -168,4 +177,57 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
     }
+
+    protected open inner class ClientStateProducer
+        : AAtomicProducer<ClientStateInterface>(0, 0, BufferOverflow.SUSPEND),
+        IClientStateProducer<ClientStateInterface> {
+        override fun initialize() {}
+        override suspend fun emitReady() = emit(ClientState.Ready)
+
+        override suspend fun emitStart() = emit(ClientState.Start(liveInput, settings))
+
+        override suspend fun emitStop(cause: ExternalCancellationException) = emit(ClientState.Stop(cause))
+    }
+
+    protected open inner class InputState
+        : AAtomicProducer<Boolean>(0, 0, BufferOverflow.SUSPEND)
+    {
+        private var isFirst: Boolean = false
+
+        suspend fun produceInput (input: I) {
+            if (!isFirst) {
+                mLiveInput.emit(input)
+                mEvaluationsMap.offerInput(input)
+            } else {
+                isFirst = true
+            }
+        }
+
+        override fun initialize() {
+            isFirst = false
+        }
+    }
+
+    protected open inner class InputSemaphore : AReactiveSemaphore<String>() {
+        private val inputMutex = Mutex()
+        private var isFirst: Boolean = false
+
+        override suspend fun action() {
+            if (readyMap.values.fold(true) { last, current -> last && current }) {
+                inputMutex.unlock()
+            } else {
+                inputMutex.lock()
+            }
+        }
+
+        suspend fun produceInput (input: I) {
+            if (!isFirst) {
+                mLiveInput.emit(input)
+                mEvaluationsMap.offerInput(input)
+            } else {
+                isFirst = true
+            }
+        }
+    }
+
 }
