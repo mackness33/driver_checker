@@ -14,13 +14,16 @@ import com.example.driverchecker.machinelearning.helpers.producers.AReactiveSema
 import com.example.driverchecker.machinelearning.helpers.producers.IClientStateProducer
 import com.example.driverchecker.machinelearning.helpers.producers.IModelStateProducer
 import com.example.driverchecker.utils.*
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.Semaphore
 
 abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
     // 1. get the input and save it into a queue
@@ -78,8 +81,10 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.SUSPEND
     )
+    protected val mLiveInputProduce: InputProducer = InputProducer()
     override val liveInput: SharedFlow<I>
-        get() = mLiveInput.asSharedFlow()
+        get() = mLiveInputProduce.sharedFlow
+//        get() = mLiveInput.asSharedFlow()
 
 
     // producer flow of the data in input of mlRepository
@@ -90,23 +95,26 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
     )
     protected val mClientStateProducer = ClientStateProducer()
     override val clientState: SharedFlow<ClientStateInterface>
-//        get() = mClientStateProducer.sharedFlow
-        get() = mClientState.asSharedFlow()
+        get() = mClientStateProducer.sharedFlow
+//        get() = mClientState.asSharedFlow()
 
 
 
 
-    override suspend fun ready () {
-        mClientState.emit(ClientState.Ready)
-    }
+//    override suspend fun ready () {
+//        mClientState.emit(ClientState.Ready)
+//    }
+    override suspend fun ready () = mClientStateProducer.emitReady()
 
-    override suspend fun start () {
-        mClientState.emit(ClientState.Start(liveInput, settings))
-    }
+//    override suspend fun start () {
+//        mClientState.emit(ClientState.Start(liveInput, settings))
+//    }
+    override suspend fun start() = mClientStateProducer.emitStart()
 
-    override suspend fun stop (cause: ExternalCancellationException) {
-        mClientState.emit(ClientState.Stop(cause))
-    }
+//    override suspend fun stop (cause: ExternalCancellationException) {
+//        mClientState.emit(ClientState.Stop(cause))
+//    }
+    override suspend fun stop (cause: ExternalCancellationException) = mClientStateProducer.emitStop(cause)
 
     override suspend fun updateSettings (newSettings: ISettingsOld) {
         mClientState.emit(ClientState.UpdateSettings(newSettings))
@@ -118,17 +126,14 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
 
 
     // FUNCTIONS
-    override suspend fun produceInput (input: I) {
-        mLiveInput.emit(input)
-        mEvaluationsMap.offerInput(input)
-    }
+//    override suspend fun produceInput (input: I) {
+//        mLiveInput.emit(input)
+//        mEvaluationsMap.offerInput(input)
+//    }
+    override suspend fun produceInput(input: I) = mLiveInputProduce.produceInput(input)
 
     override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
         evaluationListener.listen(scope, evaluationFlow)
-    }
-
-    fun addPartialToList (output: O) {
-        evaluatedItemsArray.add(output)
     }
 
     // INNER CLASSES
@@ -149,6 +154,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
 
         override suspend fun onLiveEvaluationStart() {
             mLastResult.postValue(null)
+            mLiveInputProduce.unlock()
             Log.d("MachineLearningClient - EvaluationListener", "START: ${mPartialResultEvent.value} initialIndex")
         }
 
@@ -174,6 +180,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
             // update the UI with the text of the class
             lastResultsList = evaluatedItemsArray.toMutableList()
             mHasEnded.update(state.finalResult != null)
+            mLiveInputProduce.lock()
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
         }
     }
@@ -189,14 +196,25 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         override suspend fun emitStop(cause: ExternalCancellationException) = emit(ClientState.Stop(cause))
     }
 
-    protected open inner class InputState
-        : AAtomicProducer<Boolean>(0, 0, BufferOverflow.SUSPEND)
-    {
+    protected open inner class InputProducer
+        : AAtomicProducer<I>(0, 0, BufferOverflow.SUSPEND) {
+        protected var evaluationHasStarted = CompletableDeferred<Nothing?>()
         private var isFirst: Boolean = false
 
+        fun unlock() {
+            evaluationHasStarted.complete(null)
+        }
+
+        fun lock() = runBlocking {
+            evaluationHasStarted.cancelAndJoin()
+            evaluationHasStarted = CompletableDeferred()
+            isFirst = false
+        }
+
         suspend fun produceInput (input: I) {
+            evaluationHasStarted.await()
             if (!isFirst) {
-                mLiveInput.emit(input)
+                emit(input)
                 mEvaluationsMap.offerInput(input)
             } else {
                 isFirst = true
@@ -204,29 +222,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         }
 
         override fun initialize() {
-            isFirst = false
-        }
-    }
-
-    protected open inner class InputSemaphore : AReactiveSemaphore<String>() {
-        private val inputMutex = Mutex()
-        private var isFirst: Boolean = false
-
-        override suspend fun action() {
-            if (readyMap.values.fold(true) { last, current -> last && current }) {
-                inputMutex.unlock()
-            } else {
-                inputMutex.lock()
-            }
-        }
-
-        suspend fun produceInput (input: I) {
-            if (!isFirst) {
-                mLiveInput.emit(input)
-                mEvaluationsMap.offerInput(input)
-            } else {
-                isFirst = true
-            }
+            lock()
         }
     }
 
