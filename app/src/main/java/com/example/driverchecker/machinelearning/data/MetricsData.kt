@@ -74,7 +74,6 @@ data class WindowMetrics (
 }
 
 /* GROUP */
-
 interface IGroupMetrics<S> : IAdditionalMetrics {
     val groupMetrics : Map<S, Triple<Int, Int, Int>>
 }

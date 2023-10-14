@@ -2,12 +2,6 @@ package com.example.driverchecker.machinelearning.data
 
 import androidx.room.ColumnInfo
 
-
-/* NEW */
-interface WithSettingsOld {
-    val settings: ISettingsOld
-}
-
 interface IWindowSettingsOld {
     val windowFrames: Int
     val windowThreshold: Float

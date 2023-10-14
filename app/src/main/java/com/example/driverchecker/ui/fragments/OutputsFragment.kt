@@ -53,7 +53,7 @@ class OutputsFragment : Fragment() {
         when {
             evaluationId == -1L -> {
                 binding.finalWindowView.adapter = PredictionsAdapter(
-                    activityModel.lastItemsList,
+                    activityModel.listOfCompletedEvaluation.toList(),
                     activityModel.classificationGroups.value,
                     ::navigateToStaticPhoto
                 )

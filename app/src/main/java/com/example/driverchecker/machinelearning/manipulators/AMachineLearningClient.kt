@@ -155,7 +155,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
     protected open inner class InputProducer
         : AAtomicProducer<I>(0, 0, BufferOverflow.SUSPEND) {
         protected var evaluationHasStarted = CompletableDeferred<Nothing?>()
-        private var isFirst: Boolean = false
+        private var isSecond: Int = 0
 
         fun unlock() {
             evaluationHasStarted.complete(null)
@@ -164,16 +164,16 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         fun lock() = runBlocking {
             evaluationHasStarted.cancelAndJoin()
             evaluationHasStarted = CompletableDeferred()
-            isFirst = false
+            isSecond = 0
         }
 
         suspend fun produceInput (input: I) {
             evaluationHasStarted.await()
-            if (!isFirst) {
+            if (isSecond >= 2) {
                 emit(input)
                 mEvaluationsMap.offerInput(input)
             } else {
-                isFirst = true
+                isSecond++
             }
         }
 

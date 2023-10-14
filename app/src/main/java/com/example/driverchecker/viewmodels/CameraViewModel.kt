@@ -39,6 +39,9 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     val metricsPerGroup: Map<String, Triple<Int, Int, Int>?>
         get() = evaluationClient.lastMetricsPerGroup
 
+    val listOfCompletedEvaluation: Map<IImageDetectionInput, IImageDetectionOutput<String>?>
+        get() = evaluationClient.lastEvaluationsMap.filter { entry -> entry.value != null }
+
     private val mSaveImages = DeferrableData<List<Bitmap>?>(null, viewModelScope.coroutineContext)
     val saveImages: LiveData<List<Bitmap>?>
         get() = mSaveImages.liveData
