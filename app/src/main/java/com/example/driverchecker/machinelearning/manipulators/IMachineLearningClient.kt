@@ -19,9 +19,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutput, FR : IMachineLea
     // array of evaluated items by the mlRepo
     val currentResultsList: List<O?>
 
-    val lastResultsList: List<O>
-
-    val settings: IOldSettings
+    val lastResultsList: List<O?>
 
     val finalResult: ObservableData<FR?>
 
@@ -30,9 +28,6 @@ interface IMachineLearningClient<I, O : IMachineLearningOutput, FR : IMachineLea
     val clientState: SharedFlow<ClientStateInterface>
 
     val currentState: ObservableData<LiveEvaluationStateInterface?>
-
-    // TODO: to be deleted
-    fun updateoldSettings(newSettings: IOldSettings)
 
     fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?)
 
@@ -43,8 +38,4 @@ interface IMachineLearningClient<I, O : IMachineLearningOutput, FR : IMachineLea
     suspend fun start ()
 
     suspend fun stop (cause: ExternalCancellationException = ExternalCancellationException())
-
-    suspend fun updateSettings(newSettings: ISettingsOld)
-
-//    val lastEvaluationData: Map<IWindowBasicData, IAdditionalMetrics?>
 }

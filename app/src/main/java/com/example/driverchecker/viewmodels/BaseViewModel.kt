@@ -24,9 +24,6 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
 
     protected abstract val evaluationClient: IMachineLearningClient<I, O, FR>
 
-    open val oldSettings: IOldSettings
-        get() = evaluationClient.settings
-
     val availableSettings: IMultipleWindowSettingsOld
         get() = machineLearningRepository.availableSettings
 
@@ -57,7 +54,7 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
         get() = evaluationClient.currentResultsList
 
     val lastItemsList: List<O>
-        get() = evaluationClient.lastResultsList
+        get() = evaluationClient.lastResultsList.filterNotNull()
 
     val finalResult: ObservableData<FR?>
         get() = evaluationClient.finalResult
@@ -91,10 +88,6 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
     // start/stop the evaluation of the ml
     fun evaluate (record: Boolean) {
         mIsEvaluating.value = record
-    }
-
-    fun saveSettings (newSettings: IOldSettings) {
-        evaluationClient.updateoldSettings(newSettings)
     }
 
     // update of the live classification of the mlRepo

@@ -66,70 +66,33 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
     override val currentResultsList: List<O?>
         get() = evaluationsMap.outputs
 
-    override var lastResultsList: List<O> = emptyList()
+    override var lastResultsList: List<O?> = emptyList()
         protected set
 
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
-    // TODO: to be delete
-    override var settings: IOldSettings = OldSettings(4, 0.80f, 0.10f)
-        protected set
-
     // producer flow of the data in input of mlRepository
-    protected val mLiveInput: MutableSharedFlow<I> = MutableSharedFlow (
-        replay = 0,
-        extraBufferCapacity = 0,
-        onBufferOverflow = BufferOverflow.SUSPEND
-    )
     protected val mLiveInputProduce: InputProducer = InputProducer()
     override val liveInput: SharedFlow<I>
         get() = mLiveInputProduce.sharedFlow
-//        get() = mLiveInput.asSharedFlow()
 
 
     // producer flow of the data in input of mlRepository
-    protected val mClientState: MutableSharedFlow<ClientStateInterface> = MutableSharedFlow (
-        replay = 0,
-        extraBufferCapacity = 0,
-        onBufferOverflow = BufferOverflow.SUSPEND
-    )
     protected val mClientStateProducer = ClientStateProducer()
     override val clientState: SharedFlow<ClientStateInterface>
         get() = mClientStateProducer.sharedFlow
-//        get() = mClientState.asSharedFlow()
 
 
 
 
-//    override suspend fun ready () {
-//        mClientState.emit(ClientState.Ready)
-//    }
     override suspend fun ready () = mClientStateProducer.emitReady()
 
-//    override suspend fun start () {
-//        mClientState.emit(ClientState.Start(liveInput, settings))
-//    }
     override suspend fun start() = mClientStateProducer.emitStart()
 
-//    override suspend fun stop (cause: ExternalCancellationException) {
-//        mClientState.emit(ClientState.Stop(cause))
-//    }
     override suspend fun stop (cause: ExternalCancellationException) = mClientStateProducer.emitStop(cause)
-
-    override suspend fun updateSettings (newSettings: ISettingsOld) {
-        mClientState.emit(ClientState.UpdateSettings(newSettings))
-    }
-
-    override fun updateoldSettings (newSettings: IOldSettings) {
-        settings = newSettings
-    }
 
 
     // FUNCTIONS
-//    override suspend fun produceInput (input: I) {
-//        mLiveInput.emit(input)
-//        mEvaluationsMap.offerInput(input)
-//    }
     override suspend fun produceInput(input: I) = mLiveInputProduce.produceInput(input)
 
     override fun listen (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>?) {
@@ -163,7 +126,6 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
             try {
                 if (state.partialResult != null && !mHasEnded.value) {
                     state.partialResult as O
-//                    evaluatedItemsArray.add(state.partialResult)
                     evaluatedItemsArray.add(state.partialResult)
                     mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
                     mLastResult.postValue(state.partialResult)
@@ -179,6 +141,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             lastResultsList = evaluatedItemsArray.toMutableList()
+            lastResultsList = evaluationsMap.outputs.toMutableList()
             mHasEnded.update(state.finalResult != null)
             mLiveInputProduce.lock()
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")
@@ -191,7 +154,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         override fun initialize() {}
         override suspend fun emitReady() = emit(ClientState.Ready)
 
-        override suspend fun emitStart() = emit(ClientState.Start(liveInput, settings))
+        override suspend fun emitStart() = emit(ClientState.Start(liveInput))
 
         override suspend fun emitStop(cause: ExternalCancellationException) = emit(ClientState.Stop(cause))
     }

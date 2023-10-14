@@ -29,7 +29,7 @@ sealed interface ClientStateInterface
 sealed class ClientState : ClientStateInterface {
     object Ready : ClientState()
     data class UpdateSettings(val settings: ISettingsOld) : ClientState()
-    data class Start<E>(val input: SharedFlow<E>, val settings: IOldSettings) : ClientState()
+    data class Start<E>(val input: SharedFlow<E>) : ClientState()
     data class Stop(val cause: ExternalCancellationException) : ClientState()
 }
 
