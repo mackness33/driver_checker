@@ -20,6 +20,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutput, FR : IMachineLea
     val currentResultsList: List<O?>
 
     val lastResultsList: List<O?>
+    val lastEvaluationsMap: Map<I, O?>
 
     val finalResult: ObservableData<FR?>
 

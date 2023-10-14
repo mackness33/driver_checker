@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.driverchecker.machinelearning.data.IImageDetectionOutput
 import com.example.driverchecker.machinelearning.data.IImageDetectionOutputStatsOld
 
 
@@ -26,10 +27,10 @@ data class PartialEntity (
     @ColumnInfo(name = "evaluation_id") val evaluationId: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) {
-    constructor(partialResult: IImageDetectionOutputStatsOld<String>, outputIndex: Int, evalId: Long, imagePath: String?) : this (
-        confidence = partialResult.confidence,
+    constructor(partialResult: IImageDetectionOutput<String>, outputIndex: Int, evalId: Long, imagePath: String?) : this (
+        confidence = partialResult.stats.confidence,
         index = outputIndex,
-        group = partialResult.groups.keys.first(),
+        group = partialResult.stats.groups.keys.first(),
         path = imagePath,
         evaluationId = evalId
     )

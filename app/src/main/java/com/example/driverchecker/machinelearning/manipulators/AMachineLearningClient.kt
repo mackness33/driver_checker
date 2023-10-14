@@ -61,6 +61,9 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
     override var lastResultsList: List<O?> = emptyList()
         protected set
 
+    override var lastEvaluationsMap: Map<I, O?> = emptyMap()
+        protected set
+
     protected open val evaluationListener: MachineLearningListener = EvaluationListener()
 
     // producer flow of the data in input of mlRepository

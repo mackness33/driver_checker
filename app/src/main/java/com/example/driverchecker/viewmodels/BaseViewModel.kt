@@ -70,10 +70,8 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
 
 
     // FUNCTIONS
-    fun setActualPage (nextPage: IPage) {
-        runBlocking {
-            mActualPage.update(nextPage)
-        }
+    fun setActualPage (nextPage: IPage) = runBlocking {
+        mActualPage.update(nextPage)
     }
 
     open fun resetShown () {
@@ -91,16 +89,14 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
     }
 
     // update of the live classification of the mlRepo
-    fun updateLiveClassification (stopEvent: Boolean = false) {
-        runBlocking(Dispatchers.Default) {
-            when {
-                mIsEvaluating.value == null -> {}
-                !(mIsEvaluating.value!! || stopEvent) -> {
-                    evaluationClient.start()
-                }
-                mIsEvaluating.value!! -> {
-                    evaluationClient.stop()
-                }
+    fun updateLiveClassification (stopEvent: Boolean = false) = runBlocking(Dispatchers.Default) {
+        when {
+            mIsEvaluating.value == null -> {}
+            !(mIsEvaluating.value!! || stopEvent) -> {
+                evaluationClient.start()
+            }
+            mIsEvaluating.value!! -> {
+                evaluationClient.stop()
             }
         }
     }

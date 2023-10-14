@@ -62,18 +62,18 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     }
 
     fun insert(name: String) = viewModelScope.launch {
-        // TODO: database save
+        mAwaitEndInsert.deferredAwait()
+        mSaveImages.complete(evaluationClient.lastEvaluationsMap.keys.map { it.input })
 
-//        mAwaitEndInsert.deferredAwait()
-//        mSaveImages.complete(evaluationClient.lastResultsList.map { it.input.input })
+        val evalId = evaluationRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
+        evaluationRepository.insertAllOldMetrics(metricsPerGroup, evalId)
 
-//        val evalId = evaluationRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
-//        evaluationRepository.insertAllOldMetrics(metricsPerGroup, evalId)
+        mAwaitImagesPaths.await()
+        evaluationRepository.insertAllPartialsAndItems(
+            evaluationClient.lastEvaluationsMap.values.filterNotNull(), evalId, mAwaitImagesPaths.value
+        )
 
-//        mAwaitImagesPaths.await()
-//        evaluationRepository.insertAllPartialsAndItems(evaluationClient.lastResultsList, evalId, mAwaitImagesPaths.value)
-
-//        mAwaitEndInsert.complete(evalId)
+        mAwaitEndInsert.complete(evalId)
     }
 
     fun updateModelThreshold (modelThreshold: Float) {

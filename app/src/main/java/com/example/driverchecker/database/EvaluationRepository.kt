@@ -90,12 +90,12 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertFinalResult(finalResult: IImageDetectionFinalResultOld<String>, name: String) : Long {
+    suspend fun insertFinalResult(finalResult: IClassificationFinalResult<String>, name: String) : Long {
         val id = evaluationDao.insert(EvaluationEntity(finalResult, name))
 
         val ids = mutableListOf<Long>()
 
-        finalResult.data.forEach { window ->
+        finalResult.metrics?.data?.forEach { window ->
             val metricId = windowInformationDao.insert(WindowInformationEntity(window.key, id))
 
             val groupIds = mutableListOf<Long>()
@@ -174,7 +174,7 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutputStatsOld<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+    suspend fun insertAllPartials(partialResults: List<IImageDetectionOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
         for (index in partialResults.indices) {
@@ -188,14 +188,14 @@ class EvaluationRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertAllPartialsAndItems(partialResults: List<IImageDetectionFullOutputOld<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
+    suspend fun insertAllPartialsAndItems(partialResults: List<IImageDetectionOutput<String>>, evalId: Long, paths: List<String?>?) : List<Long> {
         val ids = mutableListOf<Long>()
 
         for (index in partialResults.indices) {
             val id = partialDao.insert(PartialEntity(partialResults[index], ids.size, evalId, paths?.get(index)))
             val itemsIds = mutableListOf<Long>()
 
-            partialResults[index].listItems.forEach { itemsIds.add(itemDao.insert(ItemEntity(it, id))) }
+            partialResults[index].items.forEach { itemsIds.add(itemDao.insert(ItemEntity(it, id))) }
             Log.d("EvalRepo", "Items inserted with: $itemsIds")
 
             ids.add(id)

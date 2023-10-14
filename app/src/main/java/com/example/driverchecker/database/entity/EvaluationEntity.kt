@@ -17,10 +17,10 @@ data class EvaluationEntity (
     @ColumnInfo(name = "model_threshold") val modelThreshold: Float,
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 ) : IClassificationFinalResultStatsOld<String> {
-    constructor(finalResult: IImageDetectionFinalResultOld<String>, title: String) : this (
-        finalResult.confidence,
+    constructor(finalResult: IClassificationFinalResult<String>, title: String) : this (
+        finalResult.stats.confidence,
         title,
-        finalResult.supergroup,
-        finalResult.modelThreshold
+        finalResult.stats.supergroup,
+        0.12f
     )
 }
