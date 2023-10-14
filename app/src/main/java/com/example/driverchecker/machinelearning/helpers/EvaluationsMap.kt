@@ -51,11 +51,6 @@ abstract class AEvaluationsMap <C : WithIndex, I: C, O: C> : IMutableEvaluations
     protected abstract fun checkInputWithOutput (input: C, output: C?) : Boolean
 }
 
-
-//class AllEvaluationsMap <C, I: C, O: C> : AEvaluationsMap<C, I, O> () {
-//    override fun checkInputWithOutput (input: C, output: C?) : Boolean = true
-//}
-
 open class NotNullEvaluationsMap <C: WithIndex, I: C, O: C> : AEvaluationsMap<C, I, O> () {
     override fun checkInputWithOutput (input: C, output: C?) : Boolean {
         return output != null && output.index == output.index

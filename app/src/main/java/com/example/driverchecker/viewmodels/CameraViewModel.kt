@@ -63,7 +63,9 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
     fun insert(name: String) = viewModelScope.launch {
         mAwaitEndInsert.deferredAwait()
-        mSaveImages.complete(evaluationClient.lastEvaluationsMap.keys.map { it.input })
+        val mapWithoutNullOutputs = evaluationClient.lastEvaluationsMap.filter { entry -> entry.value != null }
+
+        mSaveImages.complete(mapWithoutNullOutputs.keys.toList().map { key -> key.input })
 
         val evalId = evaluationRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
         evaluationRepository.insertAllOldMetrics(metricsPerGroup, evalId)

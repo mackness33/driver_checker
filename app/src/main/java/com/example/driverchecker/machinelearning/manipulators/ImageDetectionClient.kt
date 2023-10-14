@@ -19,7 +19,10 @@ class ImageDetectionClient : AClassificationClient<IImageDetectionInput, IImageD
     // FUNCTIONS
 
     suspend fun produceImage (imgProxy: ImageProxy) {
-        produceInput(ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy), ++index))
+        val iii = ImageDetectionInput(ImageDetectionUtils.imageProxyToBitmap(imgProxy), ++index)
+        iii.rotate(-90f)
+
+        produceInput(iii)
     }
 
     suspend fun produceImage (bitmap: Bitmap) {

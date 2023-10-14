@@ -134,6 +134,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
             lastResultsList = evaluationsMap.outputs.toMutableList()
+            lastEvaluationsMap = evaluationsMap.partials.toMutableMap()
             mHasEnded.update(state.finalResult != null)
             mLiveInputProduce.lock()
             Log.d("MachineLearningClient - EvaluationListener", "END: ${state.finalResult} for the ${mPartialResultEvent.value} time")

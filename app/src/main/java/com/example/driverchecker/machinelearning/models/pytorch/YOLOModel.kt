@@ -38,9 +38,9 @@ class YOLOModel :
     private val maxPredictionsLimit = 5
 
     override fun preProcess(data: IImageDetectionInput): IImageDetectionInput {
-        data.rotate(-90f)
-        data.resizeImage(inputWidth, inputHeight)
-        return data
+        val clone = data.copy()
+        clone.resizeImage(inputWidth, inputHeight)
+        return clone
     }
 
     override fun evaluateData(input: IImageDetectionInput): IImageDetectionOutput<String> {
