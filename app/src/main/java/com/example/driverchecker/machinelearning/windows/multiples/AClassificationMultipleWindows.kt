@@ -1,12 +1,12 @@
-package com.example.driverchecker.machinelearning.helpers.windows.multiples
+package com.example.driverchecker.machinelearning.windows.multiples
 
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.factories.IClassificationWindowFactory
-import com.example.driverchecker.machinelearning.helpers.windows.singles.IClassificationSingleWindow
+import com.example.driverchecker.machinelearning.windows.factories.IClassificationWindowFactory
+import com.example.driverchecker.machinelearning.windows.singles.IClassificationSingleWindow
 import kotlinx.coroutines.CoroutineScope
 
 abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W : IClassificationSingleWindow<E, G>, S : IClassificationSingleWindowSettings<G>> (scope: CoroutineScope) :
-    AMachineLearningMultipleWindows<E, W, S> (scope),
+    AMachineLearningMultipleWindows<E, W, S>(scope),
     IClassificationMultipleWindows<E, G> {
     abstract override val factory: IClassificationWindowFactory<E, S, W, G>
 

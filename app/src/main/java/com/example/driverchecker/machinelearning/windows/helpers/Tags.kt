@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.helpers.windows.helpers
+package com.example.driverchecker.machinelearning.windows.helpers
 
 sealed interface IWindowTag {
     val name : String

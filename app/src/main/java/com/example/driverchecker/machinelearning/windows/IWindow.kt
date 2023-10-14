@@ -1,4 +1,4 @@
-package com.example.driverchecker.machinelearning.helpers.windows
+package com.example.driverchecker.machinelearning.windows
 
 import com.example.driverchecker.machinelearning.data.*
 

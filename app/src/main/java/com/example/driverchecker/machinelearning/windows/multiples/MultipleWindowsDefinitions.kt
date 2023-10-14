@@ -1,7 +1,7 @@
-package com.example.driverchecker.machinelearning.helpers.windows.multiples
+package com.example.driverchecker.machinelearning.windows.multiples
 
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.IWindow
+import com.example.driverchecker.machinelearning.windows.IWindow
 
 interface IMultipleWindows <E> : IWindow<E> {
     val activeWindows: Set<IWindow<E>>

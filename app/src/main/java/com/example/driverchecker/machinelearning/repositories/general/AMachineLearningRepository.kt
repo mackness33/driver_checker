@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.*
 import com.example.driverchecker.machinelearning.helpers.producers.*
-import com.example.driverchecker.machinelearning.helpers.windows.multiples.IMachineLearningMultipleWindows
+import com.example.driverchecker.machinelearning.windows.multiples.IMachineLearningMultipleWindows
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
 import com.example.driverchecker.utils.MutableObservableData

@@ -1,8 +1,8 @@
-package com.example.driverchecker.machinelearning.helpers.windows.singles
+package com.example.driverchecker.machinelearning.windows.singles
 
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.helpers.IWindowTag
-import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.IWindowTag
+import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupImageDetectionTag
 
 open class ImageDetectionSingleWindow
     : AClassificationSingleWindow<IImageDetectionOutput<String>, String> {

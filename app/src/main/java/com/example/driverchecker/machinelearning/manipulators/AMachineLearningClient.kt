@@ -26,14 +26,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
 
 abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput, FR : IMachineLearningFinalResult> : IMachineLearningClient<I, O, FR> {
-    // 1. get the input and save it into a queue
-    // 2. get output and remove from the queue.
-        // IF the output is useful build the evaluation item and add it to the evaluation list
-        // ELSE remove the input from the queue
-
-    // PARTIALS is build by Input U Output specified from the generics.
-    // Partials map is gonna be a Input -> Output
-//    protected val inputQueue: Queue<IMachineLearningInput<I>> = LinkedList()
     protected val mEvaluationsMap: IMutableEvaluationsMap<WithIndex, I, O> = NotNullEvaluationsMap()
     val evaluationsMap: IEvaluationsMap<WithIndex, I, O> = mEvaluationsMap
 
@@ -107,7 +99,6 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         constructor (scope: CoroutineScope, evaluationFlow: SharedFlow<LiveEvaluationStateInterface>) : super(scope, evaluationFlow)
 
         override suspend fun onLiveEvaluationReady(state: LiveEvaluationState.Ready) {
-            evaluatedItemsArray.clear()
             mHasEnded.update(false)
             mPartialResultEvent.postValue(PartialEvaluationState.Clear)
             mLastResult.postValue(null)
@@ -126,10 +117,9 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
             try {
                 if (state.partialResult != null && !mHasEnded.value) {
                     state.partialResult as O
-                    evaluatedItemsArray.add(state.partialResult)
-                    mPartialResultEvent.postValue(PartialEvaluationState.Insert(evaluatedItemsArray.size))
-                    mLastResult.postValue(state.partialResult)
                     mEvaluationsMap.submitOutput(state.partialResult)
+                    mPartialResultEvent.postValue(PartialEvaluationState.Insert(mEvaluationsMap.outputs.size))
+                    mLastResult.postValue(state.partialResult)
                 }
             } catch (e : Throwable) {
                 Log.e("MachineLearningClient - EvaluationListener", "Client couldn't load the partial result properly", e)
@@ -140,7 +130,6 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
 
         override suspend fun onLiveEvaluationEnd(state: LiveEvaluationState.End) {
             // update the UI with the text of the class
-            lastResultsList = evaluatedItemsArray.toMutableList()
             lastResultsList = evaluationsMap.outputs.toMutableList()
             mHasEnded.update(state.finalResult != null)
             mLiveInputProduce.lock()

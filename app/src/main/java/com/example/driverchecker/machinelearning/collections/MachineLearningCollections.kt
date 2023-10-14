@@ -2,7 +2,7 @@ package com.example.driverchecker.machinelearning.collections
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.utils.ObservableData
-import com.example.driverchecker.machinelearning.helpers.windows.IWindow
+import com.example.driverchecker.machinelearning.windows.IWindow
 
 interface MachineLearningItemListOld<E : IMachineLearningItem> : List<E>, IMachineLearningOutputStatsOld
 interface ClassificationItemListOld<E : IClassificationItem<S>, S> : MachineLearningItemListOld<E>,

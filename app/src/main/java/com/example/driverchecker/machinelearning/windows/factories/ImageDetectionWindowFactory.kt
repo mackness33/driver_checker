@@ -1,10 +1,11 @@
-package com.example.driverchecker.machinelearning.helpers.windows.factories
+package com.example.driverchecker.machinelearning.windows.factories
 
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.helpers.HomogenousOffsetImageDetectionTag
-import com.example.driverchecker.machinelearning.helpers.windows.helpers.MultipleGroupImageDetectionTag
-import com.example.driverchecker.machinelearning.helpers.windows.helpers.SingleGroupImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.HomogenousOffsetImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.MultipleGroupImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupImageDetectionTag
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
+import com.example.driverchecker.machinelearning.windows.singles.ImageDetectionSingleWindow
 
 class ImageDetectionWindowFactory : IClassificationWindowFactory<
         IImageDetectionOutput<String>,

@@ -1,12 +1,12 @@
-package com.example.driverchecker.machinelearning.helpers.windows.multiples
+package com.example.driverchecker.machinelearning.windows.multiples
 
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.factories.ImageDetectionWindowFactory
-import com.example.driverchecker.machinelearning.helpers.windows.singles.ImageDetectionSingleWindow
+import com.example.driverchecker.machinelearning.windows.factories.ImageDetectionWindowFactory
+import com.example.driverchecker.machinelearning.windows.singles.ImageDetectionSingleWindow
 import kotlinx.coroutines.CoroutineScope
 
 open class ImageDetectionMultipleWindows (scope: CoroutineScope) :
-    AClassificationMultipleWindows<IImageDetectionOutput<String>, String, ImageDetectionSingleWindow, IClassificationSingleWindowSettings<String>> (scope) {
+    AClassificationMultipleWindows<IImageDetectionOutput<String>, String, ImageDetectionSingleWindow, IClassificationSingleWindowSettings<String>>(scope) {
     override val factory = ImageDetectionWindowFactory()
 
     /* MULTIPLE */

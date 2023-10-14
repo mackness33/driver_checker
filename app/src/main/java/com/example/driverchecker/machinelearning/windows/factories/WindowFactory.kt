@@ -1,7 +1,11 @@
-package com.example.driverchecker.machinelearning.helpers.windows.factories
+package com.example.driverchecker.machinelearning.windows.factories
 
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.windows.singles.*
+import com.example.driverchecker.machinelearning.windows.singles.IClassificationSingleWindow
+import com.example.driverchecker.machinelearning.windows.singles.IMachineLearningSingleWindow
+import com.example.driverchecker.machinelearning.windows.singles.ISingleWindow
+import com.example.driverchecker.machinelearning.windows.singles.ImageDetectionSingleWindow
 
 /* DEFINITIONS */
 interface IWindowFactory<E, S : ISingleWindowSettings, W : ISingleWindow<E>> {
@@ -35,4 +39,4 @@ interface IImageDetectionWindowFactory2 <G> : IClassificationWindowFactory<
         IClassificationSingleWindowSettings<G>,
         IClassificationSingleWindow<IClassificationOutput<G>, G>,
         G
-    >
+        >
