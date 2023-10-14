@@ -35,8 +35,8 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
         get() = mHasEnded.liveData
 
     // last result evaluated by the mlRepo
-    protected val mLastResult: MutableLiveData<O?> = MutableLiveData(null)
-    override val lastResult: LiveData<O?>
+    protected val mLastResult: MutableLiveData<Pair<I, O?>> = MutableLiveData(null)
+    override val lastResult: LiveData<Pair<I, O?>>
         get() = mLastResult
 
     // the index of the partialResult
@@ -122,7 +122,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
                     state.partialResult as O
                     mEvaluationsMap.submitOutput(state.partialResult)
                     mPartialResultEvent.postValue(PartialEvaluationState.Insert(mEvaluationsMap.outputs.size))
-                    mLastResult.postValue(state.partialResult)
+                    mLastResult.postValue(mEvaluationsMap.partials.toList().last())
                 }
             } catch (e : Throwable) {
                 Log.e("MachineLearningClient - EvaluationListener", "Client couldn't load the partial result properly", e)

@@ -126,13 +126,10 @@ class ResultView : View {
         canvas.drawRect(resizedRect, paintRectangle)
     }
 
-    fun setResults (imageDetectionOutputs: IImageDetectionOutput<String>?) {
+    fun setResults (imageDetectionOutputs: IImageDetectionOutput<String>?, inputDimension: Pair<Int,Int>) {
         if (imageDetectionOutputs != null) {
             itemResults = imageDetectionOutputs.items.map { DrawableItemResult(it) }
-//        bitmapScale = imageDetectionOutputs.input.
-//            bitmapDim = imageDetectionOutputs.input.input.width to imageDetectionOutputs.input.input.height
-            // TODO: re-change the bitmap dimension to be flexible
-            bitmapDim = 480 to 640
+            bitmapDim = inputDimension
         } else {
             itemResults = null
         }

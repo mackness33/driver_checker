@@ -11,7 +11,7 @@ interface IMachineLearningClient<I, O : IMachineLearningOutput, FR : IMachineLea
     val hasEnded: LiveData<Boolean>
 
     // last result evaluated by the mlRepo
-    val lastResult: LiveData<O?>
+    val lastResult: LiveData<Pair<I, O?>>
 
     // the index of the partialResult
     val partialResultEvent: LiveData<PartialEvaluationStateInterface>

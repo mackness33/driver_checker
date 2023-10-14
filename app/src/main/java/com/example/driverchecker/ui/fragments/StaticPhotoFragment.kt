@@ -59,14 +59,12 @@ class StaticPhotoFragment : Fragment() {
 
         val indexPartial = arguments?.getInt("indexPartial")
 
-        if (indexPartial != null && indexPartial >= 1 && indexPartial <= activityModel.lastItemsList.size){
-            val output = activityModel.lastItemsList.elementAt(indexPartial-1)
-//            val rotatedBitmap: Bitmap = BitmapUtils.rotateBitmap(output.input.input, -90.0f)
-            // TODO: rechange the input to set the bitmap
-//            binding.imageView.setImageBitmap(output.input.input)
+        if (indexPartial != null && indexPartial >= 1 && indexPartial <= activityModel.listOfCompletedEvaluation.size){
+            val partial = activityModel.listOfCompletedEvaluation.entries.elementAt(indexPartial-1)
+            binding.imageView.setImageBitmap(partial.key.input)
 
             binding.resultView.setColorSchemes(activityModel.classificationGroups.value)
-            binding.resultView.setResults(output)
+            binding.resultView.setResults(partial.value, partial.key.input.width to partial.key.input.height)
             binding.resultView.invalidate()
         }
     }

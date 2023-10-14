@@ -116,7 +116,11 @@ class CameraFragment : Fragment() {
 //        }
 
         model.lastResult.observe(viewLifecycleOwner) { partial ->
-            binding.resultView.setResults(partial)
+            if (partial != null) {
+                binding.resultView.setResults(partial.second, partial.first.input.width to partial.first.input.height)
+            } else {
+                binding.resultView.setResults(null, 0 to 0)
+            }
             binding.resultView.invalidate()
         }
 
