@@ -87,4 +87,13 @@
         android:name="com.example.driverchecker.ui.fragments.SettingsDialog"
         android:label="@string/label_settings"
         tools:layout="@layout/dialog_settings" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.driverchecker.ui.fragments.MySettingsFragment"/>
+<!--        android:label="@string/label_settings"-->
+
+    <!--Global action-->
+    <action android:id="@+id/open_settings_fragment"
+        app:destination="@id/settingsFragment"/>
 </navigation>

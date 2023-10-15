@@ -23,4 +23,9 @@
         android:enabled="true"
         app:showAsAction="never"
         android:title="@string/about" />
+    <item
+        android:id="@+id/open_settings_fragment"
+        android:enabled="true"
+        app:showAsAction="never"
+        android:title="@string/settings" />
 </menu>
