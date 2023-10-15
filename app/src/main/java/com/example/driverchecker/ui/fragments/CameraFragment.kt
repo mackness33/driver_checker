@@ -108,7 +108,7 @@ class CameraFragment : Fragment() {
 //            }
 //        }
 
-//        model.showResults.observe(viewLifecycleOwner) { show ->
+//        model.showResults.observe(viewLifecycleOwner) {  show ->
 //            if (show) {
 //                cameraXHandler.pauseCamera()
 //                findNavController().navigate(R.id.action_cameraFragment_to_resultFragment)
@@ -213,6 +213,11 @@ class CameraFragment : Fragment() {
 
         model.ready()
         model.setActualPage(Page.Camera)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        model.updateLiveClassification(true)
     }
 
     // TODO: Create callback to manage onStart and onFinalize
