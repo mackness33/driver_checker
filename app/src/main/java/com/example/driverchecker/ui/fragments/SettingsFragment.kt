@@ -21,4 +21,9 @@ class MySettingsFragment : PreferenceFragmentCompat() {
 //                true // Return true if the click is handled.
 //            }
     }
+
+    override fun onPause() {
+        super.onPause()
+        // TODO: make the request to update the settings.
+    }
 }

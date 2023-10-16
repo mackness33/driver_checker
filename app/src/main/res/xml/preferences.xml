@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="Models">
+        <SeekBarPreference
+            android:key="threshold"
+            android:title="Threshold"
+            app:defaultValue="15"
+            app:min="1"
+            android:max="100"
+            app:seekBarIncrement="1" />
 
-    <SwitchPreferenceCompat
-        app:key="notifications"
-        app:title="Enable message notifications"/>
-
-    <Preference
-        app:key="feedback"
-        app:title="Send feedback"
-        app:summary="Report technical issues or suggest new features"/>
+        <SeekBarPreference
+            android:key="uoi_threshold"
+            android:title="Union-Over-Intersection Threshold"
+            app:defaultValue="50"
+            app:min="1"
+            android:max="100"
+            app:seekBarIncrement="1" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
