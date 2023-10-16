@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,12 +17,8 @@ import com.example.driverchecker.R
 import com.example.driverchecker.databinding.FragmentOutputsBinding
 import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.ui.adapters.*
-import com.example.driverchecker.utils.BitmapUtils
-import com.example.driverchecker.utils.Page
 import com.example.driverchecker.viewmodels.DisplayResultViewModel
 import com.example.driverchecker.viewmodels.DisplayResultViewModelFactory
-import kotlinx.coroutines.runBlocking
-import java.util.*
 
 class OutputsFragment : Fragment() {
     private lateinit var layout: View
@@ -31,7 +26,7 @@ class OutputsFragment : Fragment() {
     private val binding get() = _binding!!
     private val activityModel: CameraViewModel by activityViewModels()
     private val displayResultViewModel: DisplayResultViewModel by viewModels {
-        DisplayResultViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
+        DisplayResultViewModelFactory((requireActivity().application as DriverChecker).imageDetectionDatabaseRepository)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -1,33 +1,36 @@
 package com.example.driverchecker
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.get
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import androidx.navigation.ui.NavigationUI.navigateUp
 import com.example.driverchecker.machinelearning.data.LiveEvaluationState
+import com.example.driverchecker.utils.PreferencesRepository
 import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.viewmodels.CameraViewModelFactory
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(){
 
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = IMAGE_DETECTION_PREFERENCES_NAME)
     private lateinit var mAppBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
     private lateinit var toolbar: Toolbar
     private val model: CameraViewModel by viewModels() {
         CameraViewModelFactory(
             (application as DriverChecker).repository,
-            (application as DriverChecker).evaluationRepository)
+            (application as DriverChecker).imageDetectionDatabaseRepository,
+            PreferencesRepository(this.dataStore, this)
+        )
     }
     private lateinit var menuItemsVisibility: Map<Int, Boolean>
 
@@ -119,5 +122,9 @@ class MainActivity : AppCompatActivity(){
     override fun onSupportNavigateUp(): Boolean {
         return navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    companion object {
+        private const val IMAGE_DETECTION_PREFERENCES_NAME = "image_detection_settings"
     }
 }

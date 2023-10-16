@@ -1,16 +1,21 @@
 package com.example.driverchecker
 
 import android.app.Application
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.driverchecker.database.DriverCheckerRoomDatabase
-import com.example.driverchecker.database.EvaluationRepository
+import com.example.driverchecker.database.ImageDetectionDatabaseRepository
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.media.FileUtils
+import com.example.driverchecker.utils.PreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
 class DriverChecker : Application() {
     // No need to cancel this scope as it'll be torn down with the process
-    val applicationScope = CoroutineScope(SupervisorJob())
+    private val applicationScope = CoroutineScope(SupervisorJob())
 
     // Using by lazy so the database and the repository are only created when they're needed
     // rather than when the application starts
@@ -19,7 +24,7 @@ class DriverChecker : Application() {
     // rather than when the application starts
     val database by lazy { DriverCheckerRoomDatabase.getDatabase(this, applicationScope) }
 //    val testRepository by lazy { TestRepo(database.testDao()) }
-    val evaluationRepository by lazy { EvaluationRepository(
+    val imageDetectionDatabaseRepository by lazy { ImageDetectionDatabaseRepository(
         database.evaluationDao(),
         database.partialDao(),
         database.itemDao(),

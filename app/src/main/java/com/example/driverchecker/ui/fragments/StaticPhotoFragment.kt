@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.driverchecker.DriverChecker
 import com.example.driverchecker.databinding.FragmentStaticPhotoBinding
-import com.example.driverchecker.machinelearning.data.IImageDetectionItem
 import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.viewmodels.*
 
@@ -20,7 +19,7 @@ class StaticPhotoFragment : Fragment() {
     private val binding get() = _binding!!
     private val activityModel: CameraViewModel by activityViewModels()
     private val staticPhotoViewModel: StaticPhotoViewModel by viewModels {
-        StaticPhotoViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
+        StaticPhotoViewModelFactory((requireActivity().application as DriverChecker).imageDetectionDatabaseRepository)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

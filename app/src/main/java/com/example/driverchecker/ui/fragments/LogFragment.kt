@@ -9,7 +9,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.driverchecker.DriverChecker
@@ -25,7 +24,7 @@ class LogFragment : Fragment() {
     private val binding get() = _binding!!
     private val activityViewModel: LogViewModel by activityViewModels()
     private val logViewModel: LogViewModel by viewModels {
-        LogViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
+        LogViewModelFactory((requireActivity().application as DriverChecker).imageDetectionDatabaseRepository)
     }
 
 

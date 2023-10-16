@@ -90,7 +90,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.driverchecker.ui.fragments.MySettingsFragment"/>
+        android:name="com.example.driverchecker.ui.fragments.SettingsFragment"/>
 <!--        android:label="@string/label_settings"-->
 
     <!--Global action-->

@@ -1,7 +1,6 @@
 package com.example.driverchecker.ui.fragments;
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +15,9 @@ import com.example.driverchecker.DriverChecker
 import com.example.driverchecker.R
 import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.databinding.FragmentResultBinding
-import com.example.driverchecker.ui.adapters.MetricsTableAdapter
-import com.example.driverchecker.ui.adapters.OutputsAdapter
 import com.example.driverchecker.ui.adapters.WindowsAdapter
 import com.example.driverchecker.viewmodels.DisplayResultViewModel
 import com.example.driverchecker.viewmodels.DisplayResultViewModelFactory
-import com.example.driverchecker.viewmodels.LogViewModelFactory
 import java.util.*
 
 class DisplayResultFragment : Fragment() {
@@ -30,7 +26,7 @@ class DisplayResultFragment : Fragment() {
     private val binding get() = _binding!!
     private val activityModel: CameraViewModel by activityViewModels()
     private val displayResultViewModel: DisplayResultViewModel by viewModels {
-        DisplayResultViewModelFactory((requireActivity().application as DriverChecker).evaluationRepository)
+        DisplayResultViewModelFactory((requireActivity().application as DriverChecker).imageDetectionDatabaseRepository)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

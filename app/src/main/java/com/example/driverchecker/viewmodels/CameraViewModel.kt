@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.example.driverchecker.database.EvaluationRepository
+import com.example.driverchecker.database.ImageDetectionDatabaseRepository
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
@@ -12,10 +12,17 @@ import com.example.driverchecker.machinelearning.manipulators.IClassificationCli
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.ObservableData
+import com.example.driverchecker.utils.PreferencesRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 
-class CameraViewModel (private val imageDetectionRepository: ImageDetectionFactoryRepository, private val evaluationRepository: EvaluationRepository) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>>(imageDetectionRepository) {
+class CameraViewModel (
+    private val modelRepository: ImageDetectionFactoryRepository,
+    private val databaseRepository: ImageDetectionDatabaseRepository,
+    private val preferencesRepository: PreferencesRepository
+) : BaseViewModel<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>>(
+    modelRepository
+) {
     override val evaluationClient: IClassificationClient<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>, String> = ImageDetectionClient()
 
     val passengerInfo: ObservableData<Triple<Int, Int, Int>>?
@@ -70,11 +77,11 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
         mSaveImages.complete(mapWithoutNullOutputs.keys.toList().map { key -> key.input })
 
-        val evalId = evaluationRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
-        evaluationRepository.insertAllOldMetrics(metricsPerGroup, evalId)
+        val evalId = databaseRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
+        databaseRepository.insertAllOldMetrics(metricsPerGroup, evalId)
 
         mAwaitImagesPaths.await()
-        evaluationRepository.insertAllPartialsAndItems(
+        databaseRepository.insertAllPartialsAndItems(
             evaluationClient.lastEvaluationsMap.values.filterNotNull(), evalId, mAwaitImagesPaths.value
         )
 
@@ -82,13 +89,13 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     }
 
     fun updateModelThreshold (modelThreshold: Float) {
-        imageDetectionRepository.updateModelThreshold(modelThreshold)
+        modelRepository.updateModelThreshold(modelThreshold)
     }
 
 
     fun update(name: String) = viewModelScope.launch {
         if (mAwaitEndInsert.value != null && mAwaitEndInsert.value!! > 0)
-            evaluationRepository.updateById(mAwaitEndInsert.value!!, name)
+            databaseRepository.updateById(mAwaitEndInsert.value!!, name)
     }
 
     suspend fun produceImage (image: ImageProxy) = viewModelScope.launch {
@@ -167,7 +174,7 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
 
     override fun onCleared() {
         super.onCleared()
-        imageDetectionRepository.removeClient()
+        modelRepository.removeClient()
     }
 
     fun onResultsViewed () {
@@ -175,9 +182,9 @@ class CameraViewModel (private val imageDetectionRepository: ImageDetectionFacto
     }
 
     init {
-        imageDetectionRepository
+        modelRepository
         evaluationListener.listen(viewModelScope, evaluationState)
         evaluationClient.listen(viewModelScope, evaluationState)
-        imageDetectionRepository.addClient(evaluationClient.clientState)
+        modelRepository.addClient(evaluationClient.clientState)
     }
 }

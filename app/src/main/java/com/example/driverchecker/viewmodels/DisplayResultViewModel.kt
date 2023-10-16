@@ -2,14 +2,14 @@ package com.example.driverchecker.viewmodels
 
 import androidx.lifecycle.*
 import com.example.driverchecker.database.entity.EvaluationEntity
-import com.example.driverchecker.database.EvaluationRepository
+import com.example.driverchecker.database.ImageDetectionDatabaseRepository
 import com.example.driverchecker.database.entity.PartialEntity
 import com.example.driverchecker.machinelearning.data.IGroupMetrics
 import com.example.driverchecker.machinelearning.data.IWindowBasicData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DisplayResultViewModel(private val repository: EvaluationRepository) : ViewModel() {
+class DisplayResultViewModel(private val repository: ImageDetectionDatabaseRepository) : ViewModel() {
     // Using LiveData and caching what allWords returns has several benefits:
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
