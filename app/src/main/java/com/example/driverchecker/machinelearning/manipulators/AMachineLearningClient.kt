@@ -36,7 +36,7 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
 
     // last result evaluated by the mlRepo
     protected val mLastResult: MutableLiveData<Pair<I, O?>> = MutableLiveData(null)
-    override val lastResult: LiveData<Pair<I, O?>>
+    override val observableEvaluation: LiveData<Pair<I, O?>>
         get() = mLastResult
 
     // the index of the partialResult
@@ -47,6 +47,8 @@ abstract class AMachineLearningClient<I : WithIndex, O : IMachineLearningOutput,
 
     protected open val mFinalResult: MutableObservableData<FR?> = StatefulData(null)
     override val finalResult: ObservableData<FR?>
+        get() = mFinalResult
+    override val lastFinalResult: ObservableData<FR?>
         get() = mFinalResult
 
     override val currentState: ObservableData<LiveEvaluationStateInterface?>

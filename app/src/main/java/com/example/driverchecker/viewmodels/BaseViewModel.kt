@@ -27,7 +27,7 @@ abstract class BaseViewModel<I, O : IMachineLearningOutput, FR : IMachineLearnin
     // LIVE DATA
     // last result evaluated by the mlRepo
     val lastResult: LiveData<Pair<I, O?>>
-        get() = evaluationClient.lastResult
+        get() = evaluationClient.observableEvaluation
 
     // bool to check if the mlRepo is evaluating
     protected val mIsEvaluating: MutableLiveData<Boolean> = MutableLiveData(false)
