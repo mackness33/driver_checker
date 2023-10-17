@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.helpers.classifiers.IClassifier
+import com.example.driverchecker.machinelearning.windows.helpers.IWindowTag
 import kotlinx.coroutines.flow.SharedFlow
 
 // ---------------------------------- SEALED CLASSES/INTERFACES ----------------------------------
@@ -31,6 +32,17 @@ sealed class ClientState : ClientStateInterface {
     data class UpdateSettings(val settings: ISettingsOld) : ClientState()
     data class Start<E>(val input: SharedFlow<E>) : ClientState()
     data class Stop(val cause: ExternalCancellationException) : ClientState()
+}
+
+
+
+sealed interface SettingsStateInterface
+
+sealed class SettingsState : SettingsStateInterface {
+    data class ModelSettings (val threshold: Float, val uoiThreshold: Float) : SettingsState()
+    data class WindowSettings (val threshold: Float, val size: Int, val Offset: Int, val type: IWindowTag) : SettingsState()
+    data class FullSettings (val modelSettings: ModelSettings, val windowSettings: WindowSettings) : SettingsState()
+    object NoSettings : SettingsState()
 }
 
 

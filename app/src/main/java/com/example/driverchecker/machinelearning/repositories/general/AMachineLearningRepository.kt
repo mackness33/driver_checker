@@ -7,10 +7,7 @@ import com.example.driverchecker.machinelearning.helpers.producers.*
 import com.example.driverchecker.machinelearning.windows.multiples.IMachineLearningMultipleWindows
 import com.example.driverchecker.machinelearning.models.IMachineLearningModel
 import com.example.driverchecker.machinelearning.repositories.IMachineLearningRepository
-import com.example.driverchecker.utils.MutableObservableData
-import com.example.driverchecker.utils.ObservableData
-import com.example.driverchecker.utils.StatefulData
-import com.example.driverchecker.utils.Timer
+import com.example.driverchecker.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -31,6 +28,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
     protected abstract val model: IMachineLearningModel<I, O>?
     protected abstract var clientListener: ClientStateListener?
     protected abstract var modelListener: IGenericListener<Boolean>?
+    protected abstract var settingsListener: SettingsStateListener?
 
     protected var liveEvaluationJob: Job? = null
 
@@ -48,8 +46,6 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
     open fun initialize (semaphores: Set<String>) {
         readySemaphore.initialize(semaphores)
         evaluationStateProducer.initialize()
-//        collectionOfWindows.initialize(availableSettings)
-//        collectionOfWindows.updateSettings(privateSettings)
     }
 
     override fun updateModelThreshold (threshold: Float) {
@@ -200,12 +196,39 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         }
     }
 
+    protected open inner class SettingsListener : ASettingsStateListener {
+        constructor () : super()
+
+        constructor (scope: CoroutineScope, modelFlow: SharedFlow<SettingsStateInterface>) :
+                super(scope, modelFlow)
+
+        override suspend fun collectStates (state: SettingsStateInterface) {
+            super.collectStates(state)
+        }
+
+        override suspend fun onModelSettingsChange(state: SettingsState.ModelSettings) {
+            model?.updateThreshold(state.threshold)
+//            readySemaphore.update("settings", true, triggerAction = true)
+        }
+
+        override suspend fun onWindowSettingsChange(state: SettingsState.WindowSettings) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun onFullSettingsChange(state: SettingsState.FullSettings) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun onNoSettingsChange() {}
+    }
+
+
+
     protected open inner class ReadySemaphore() : AReactiveSemaphore<String>() {
         protected var lastAction : Boolean? = null
 
         override fun initialize (semaphores: Set<String>) {
             super.initialize(semaphores)
-//            triggerReadyState()
             lastAction = false
         }
 
@@ -217,6 +240,8 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
             }
         }
     }
+
+
 
     protected open inner class LiveEvaluationProducer :
         AAtomicProducer<LiveEvaluationStateInterface>(1, 0),

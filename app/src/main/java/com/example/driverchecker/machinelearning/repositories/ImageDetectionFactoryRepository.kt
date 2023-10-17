@@ -5,6 +5,7 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateListener
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
 import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
+import com.example.driverchecker.machinelearning.helpers.listeners.SettingsStateListener
 import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupImageDetectionTag
 import com.example.driverchecker.machinelearning.windows.multiples.IClassificationMultipleWindows
 import com.example.driverchecker.machinelearning.windows.multiples.ImageDetectionMultipleWindows
@@ -12,6 +13,10 @@ import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 
 class ImageDetectionFactoryRepository
     : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>, String> {
@@ -21,6 +26,7 @@ class ImageDetectionFactoryRepository
     override var model: IClassificationModel<IImageDetectionInput, IImageDetectionOutput<String>, String>? = null
     override var clientListener: ClientStateListener? = ClientListener()
     override var modelListener: IGenericListener<Boolean>? = null
+    override var settingsListener: SettingsStateListener? = null
 
     override val collectionOfWindows: IClassificationMultipleWindows<IImageDetectionOutput<String>, String> = ImageDetectionMultipleWindows(repositoryScope)
 
@@ -75,5 +81,10 @@ class ImageDetectionFactoryRepository
 
     override fun loadClassifications(json: String?): Boolean {
         TODO("Not yet implemented")
+    }
+
+    override fun setSettingsFlow(settingsFlow: Flow<SettingsStateInterface>) {
+        settingsListener?.destroy()
+        settingsListener = SettingsListener(repositoryScope, settingsFlow.shareIn(repositoryScope, SharingStarted.Lazily, 1))
     }
 }

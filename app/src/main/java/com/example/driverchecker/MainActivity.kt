@@ -21,7 +21,6 @@ import com.example.driverchecker.viewmodels.CameraViewModelFactory
 
 class MainActivity : AppCompatActivity(){
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = IMAGE_DETECTION_PREFERENCES_NAME)
     private lateinit var mAppBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
     private lateinit var toolbar: Toolbar
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity(){
         CameraViewModelFactory(
             (application as DriverChecker).repository,
             (application as DriverChecker).imageDetectionDatabaseRepository,
-            PreferencesRepository(this.dataStore, this)
+            (application as DriverChecker).preferencesRepository
         )
     }
     private lateinit var menuItemsVisibility: Map<Int, Boolean>
@@ -122,9 +121,5 @@ class MainActivity : AppCompatActivity(){
     override fun onSupportNavigateUp(): Boolean {
         return navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp()
-    }
-
-    companion object {
-        private const val IMAGE_DETECTION_PREFERENCES_NAME = "image_detection_settings"
     }
 }

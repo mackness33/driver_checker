@@ -186,5 +186,6 @@ class CameraViewModel (
         evaluationListener.listen(viewModelScope, evaluationState)
         evaluationClient.listen(viewModelScope, evaluationState)
         modelRepository.addClient(evaluationClient.clientState)
+        modelRepository.setSettingsFlow(preferencesRepository.preferencesFlow)
     }
 }

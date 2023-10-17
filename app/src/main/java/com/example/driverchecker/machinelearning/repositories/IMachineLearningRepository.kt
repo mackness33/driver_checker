@@ -17,6 +17,8 @@ interface IMachineLearningRepository<in I, out O : IMachineLearningOutput, FR : 
 
     fun <ModelInit> updateModel (init: ModelInit)
 
+    fun setSettingsFlow (settingsFlow: Flow<SettingsStateInterface>)
+
     val evaluationFlowState: SharedFlow<LiveEvaluationStateInterface>?
     val repositoryScope: CoroutineScope
 
