@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="Models">
         <SeekBarPreference
-            android:key="threshold"
+            android:key="model_threshold"
             android:title="Threshold"
             app:defaultValue="15"
             app:min="1"
@@ -11,7 +11,7 @@
             app:seekBarIncrement="1" />
 
         <SeekBarPreference
-            android:key="uoi_threshold"
+            android:key="model_uoi_threshold"
             android:title="Union-Over-Intersection Threshold"
             app:defaultValue="50"
             app:min="1"

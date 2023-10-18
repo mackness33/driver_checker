@@ -41,6 +41,17 @@ class DisplayResultViewModelFactory(private val repository: ImageDetectionDataba
 }
 
 
+class SettingsViewModelFactory(private val repository: PreferencesRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SettingsViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class $modelClass")
+    }
+}
+
+
 class StaticPhotoViewModelFactory(private val repository: ImageDetectionDatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StaticPhotoViewModel::class.java)) {
