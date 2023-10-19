@@ -1,8 +1,7 @@
 package com.example.driverchecker.machinelearning.data
 
-import androidx.room.ColumnInfo
 import com.example.driverchecker.machinelearning.windows.helpers.IWindowTag
-import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupTag
 
 
 interface IMultipleWindowSettings {
@@ -39,7 +38,7 @@ data class MultipleWindowSettings<S> (
                         frames,
                         threshold,
                         this.groups,
-                        SingleGroupImageDetectionTag
+                        SingleGroupTag
                      ))
                 }
             }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="emptyArray" />
+
+
+    <string-array name="windowThresholdsDefaults">
+        <item>51</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="windowThresholds">
+        <item>51</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>95</item>
+        <item>96</item>
+        <item>97</item>
+        <item>98</item>
+        <item>99</item>
+    </string-array>
+
+
+
+    <string-array name="windowSizesDefaults">
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="windowSizes">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>8</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
+
+
+
+    <string-array name="windowTypesDefaults">
+        <item>Single Group Per Image</item>
+    </string-array>
+
+    <string-array name="windowTypes">
+        <item>Single Group Per Image</item>
+        <item>Multiple Group Per Image</item>
+        <item>Single Group With Offset</item>
+        <item>Multiple Groups With Offset</item>
+    </string-array>
+
+    <string-array name="windowTypesValues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+
+
+    <string-array name="windowOffset">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
+
+</resources>

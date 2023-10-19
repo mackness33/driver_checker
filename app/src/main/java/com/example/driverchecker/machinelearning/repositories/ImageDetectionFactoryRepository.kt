@@ -6,7 +6,7 @@ import com.example.driverchecker.machinelearning.helpers.listeners.ClientStateLi
 import com.example.driverchecker.machinelearning.helpers.listeners.GenericMode
 import com.example.driverchecker.machinelearning.helpers.listeners.IGenericListener
 import com.example.driverchecker.machinelearning.helpers.listeners.SettingsStateListener
-import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupTag
 import com.example.driverchecker.machinelearning.windows.multiples.IClassificationMultipleWindows
 import com.example.driverchecker.machinelearning.windows.multiples.ImageDetectionMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -33,7 +33,7 @@ class ImageDetectionFactoryRepository
         (collectionOfWindows as ImageDetectionMultipleWindows).update(
             MultipleWindowSettings (
                 setOf(1, 3, 5),
-                setOf(SingleGroupImageDetectionTag),
+                setOf(SingleGroupTag),
                 setOf(0.10f, 0.50f),
                 model?.classifier?.supergroups?.keys ?: emptySet()
             )

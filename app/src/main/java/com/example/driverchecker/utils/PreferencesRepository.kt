@@ -1,12 +1,11 @@
 package com.example.driverchecker.utils
 
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.driverchecker.machinelearning.data.SettingsState
 import com.example.driverchecker.machinelearning.data.SettingsStateInterface
-import com.example.driverchecker.machinelearning.windows.helpers.MultipleGroupImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
@@ -16,6 +15,13 @@ class PreferencesRepository (
     private val dataStore: DataStore<Preferences>,
     private val scope: CoroutineScope,
 ) {
+    private val tagsMap: Map<Int, IWindowTag> = mapOf(
+        1 to SingleGroupTag,
+        2 to MultipleGroupTag,
+        3 to SingleGroupOffsetTag,
+        4 to MultipleGroupOffsetTag
+    )
+
     private val preferencesCategories: Map<String, Set<String>> = mapOf(
         "model" to setOf(
             MODEL_THRESHOLD_NAME,
@@ -87,7 +93,7 @@ class PreferencesRepository (
             threshold.toFloat() / 100,
             size,
             1,
-            MultipleGroupImageDetectionTag
+            MultipleGroupTag
         )
     }
 
