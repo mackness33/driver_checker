@@ -35,7 +35,7 @@ class DriverChecker : Application() {
         database.groupMetricsDao()
     )}
 
-    val preferencesRepository by lazy { PreferencesRepository(this.dataStore, this) }
+    val preferencesRepository by lazy { PreferencesRepository(this.dataStore, applicationScope) }
 
     val repository by lazy { ImageDetectionFactoryRepository.getInstance(
         "YoloV5",

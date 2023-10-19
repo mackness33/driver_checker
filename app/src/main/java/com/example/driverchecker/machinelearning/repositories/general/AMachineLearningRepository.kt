@@ -208,7 +208,7 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
 
         override suspend fun onModelSettingsChange(state: SettingsState.ModelSettings) {
             model?.updateThreshold(state.threshold)
-//            readySemaphore.update("settings", true, triggerAction = true)
+            Log.d("SettingsListener", "Model settings changed with threshold:${state.threshold}")
         }
 
         override suspend fun onWindowSettingsChange(state: SettingsState.WindowSettings) {
@@ -216,10 +216,14 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         }
 
         override suspend fun onFullSettingsChange(state: SettingsState.FullSettings) {
-            TODO("Not yet implemented")
+            model?.updateThreshold(state.modelSettings.threshold)
+            Log.d("SettingsListener", "Full settings changed with threshold:${state.modelSettings.threshold}")
         }
 
-        override suspend fun onNoSettingsChange() {}
+        override suspend fun onNoSettingsChange() {
+            Log.d("SettingsListener", "No settings changed")
+
+        }
     }
 
 

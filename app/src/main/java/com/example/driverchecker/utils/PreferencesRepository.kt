@@ -6,25 +6,21 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.driverchecker.machinelearning.data.SettingsState
 import com.example.driverchecker.machinelearning.data.SettingsStateInterface
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import com.example.driverchecker.machinelearning.windows.helpers.MultipleGroupImageDetectionTag
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 
 class PreferencesRepository (
     private val dataStore: DataStore<Preferences>,
-    context: Context
+    private val scope: CoroutineScope,
 ) {
-    private var modelPreferencesFlag: Boolean = false
-    val preferencesCategories: Map<String, Set<String>> = mapOf(
+    private val preferencesCategories: Map<String, Set<String>> = mapOf(
         "model" to setOf(
             MODEL_THRESHOLD_NAME,
             MODEL_UOI_THRESHOLD_NAME
         )
-    )
-    private val preferencesFlags: MutableMap<String, Boolean> = mutableMapOf(
-        "model" to false
     )
     private val preferencesValues: MutableMap<String, IPreferences?> =
         preferencesCategories.keys.associateWith { null }.toMutableMap()
@@ -40,7 +36,7 @@ class PreferencesRepository (
         const val MODEL_UOI_THRESHOLD_NAME = "model_uoi_threshold"
     }
 
-    val preferencesFlow: Flow<SettingsStateInterface> = dataStore.data
+    val preferencesFlow: SharedFlow<SettingsStateInterface> = dataStore.data
         .catch { exception ->
             // dataStore.data throws an IOException when an error is encountered when reading data
             if (exception is IOException) {
@@ -50,18 +46,34 @@ class PreferencesRepository (
             }
         }
         .map { preferences ->
-            return@map when {
-//                preferencesValues.values.fold(true) {last, current -> last && current != null} -> buildModelPreferences(
-//                    preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
-//                    preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
-//                )
+            val result = when {
+                preferencesValues.values.fold(true) {last, current -> last && current != null} ->
+                    buildFullPreferences(
+                        preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
+                        preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
+                    )
                 preferencesValues["model"] != null -> buildModelPreferences(
                     preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
                     preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
                 )
                 else -> SettingsState.NoSettings
             }
-        }
+
+            // Clean the preferencesValues
+            preferencesValues.replaceAll { _, _ -> null }
+
+            return@map result
+        }.shareIn(scope, SharingStarted.Eagerly, 1)
+
+    private suspend fun initializePreferencesFlow() {
+        preferencesValues["model"] = ModelPreferences(0, 0,)
+        preferencesValues["window"] = WindowPreferences()
+        dataStore.updateData { prefs -> prefs }
+    }
+
+    init {
+        runBlocking { initializePreferencesFlow() }
+    }
 
     private fun buildModelPreferences(threshold: Int, uoiThreshold: Int) : SettingsState.ModelSettings {
         return SettingsState.ModelSettings(
@@ -70,10 +82,26 @@ class PreferencesRepository (
         )
     }
 
+    private fun buildWindowPreferences(threshold: Int, size: Int) : SettingsState.WindowSettings {
+        return SettingsState.WindowSettings(
+            threshold.toFloat() / 100,
+            size,
+            1,
+            MultipleGroupImageDetectionTag
+        )
+    }
+
+    private fun buildFullPreferences(threshold: Int, uoiThreshold: Int) : SettingsState.FullSettings {
+        return SettingsState.FullSettings(
+            buildModelPreferences(threshold, uoiThreshold),
+            buildWindowPreferences(threshold, 1)
+        )
+    }
+
     val sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { preferences, key ->
             val category: String? = getCategoryFromPreferenceKey(key)
-            if ( category != null) {
+            if (category != null) {
                 preferencesValues[category] = when (category) {
                     "model" -> ModelPreferences(
                         preferences.getInt(MODEL_THRESHOLD_NAME, 0),
@@ -111,3 +139,4 @@ class PreferencesRepository (
 
 sealed interface IPreferences
 data class ModelPreferences (val threshold: Int, val uoiThreshold: Int) : IPreferences
+data class WindowPreferences (val giorgio: Boolean? = null) : IPreferences

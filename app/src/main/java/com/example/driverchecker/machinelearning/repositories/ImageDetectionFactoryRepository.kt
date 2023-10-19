@@ -13,10 +13,7 @@ import com.example.driverchecker.machinelearning.models.IClassificationModel
 import com.example.driverchecker.machinelearning.models.pytorch.YOLOModel
 import com.example.driverchecker.machinelearning.repositories.general.AClassificationFactoryRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 
 class ImageDetectionFactoryRepository
     : AClassificationFactoryRepository<IImageDetectionInput, IImageDetectionOutput<String>, IClassificationFinalResult<String>, String> {
@@ -83,8 +80,8 @@ class ImageDetectionFactoryRepository
         TODO("Not yet implemented")
     }
 
-    override fun setSettingsFlow(settingsFlow: Flow<SettingsStateInterface>) {
+    override fun setSettingsFlow(settingsFlow: SharedFlow<SettingsStateInterface>) {
         settingsListener?.destroy()
-        settingsListener = SettingsListener(repositoryScope, settingsFlow.shareIn(repositoryScope, SharingStarted.Lazily, 1))
+        settingsListener = SettingsListener(repositoryScope, settingsFlow)
     }
 }
