@@ -48,7 +48,11 @@ class OutputsFragment : Fragment() {
         when {
             evaluationId == -1L -> {
                 binding.finalWindowView.adapter = PredictionsAdapter(
-                    activityModel.listOfCompletedEvaluation.toList(),
+                    activityModel.listOfCompletedEvaluation.toList()
+                        .subList(0,
+                            (indexLastPhoto
+                                ?: (activityModel.listOfCompletedEvaluation.size))
+                        ),
                     activityModel.classificationGroups.value,
                     ::navigateToStaticPhoto
                 )
@@ -60,7 +64,7 @@ class OutputsFragment : Fragment() {
                 displayResultViewModel.partials.observe(viewLifecycleOwner) { listPartials ->
                     if (listPartials != null)
                         binding.finalWindowView.adapter = OutputsAdapter(
-                            listPartials,
+                            listPartials.subList(0, indexLastPhoto ?: listPartials.size),
                             ::navigateToStaticPhoto
                         )
                 }

@@ -62,8 +62,11 @@ class DisplayResultFragment : Fragment() {
 
         displayResultViewModel.windowInformation.observe(viewLifecycleOwner) {
             if (it != null)
-                binding.finalWindowView.adapter = WindowsAdapter(it) { _ ->
-                    val bundle = bundleOf("evaluationId" to (displayResultViewModel.evaluationId ?: -1L))
+                binding.finalWindowView.adapter = WindowsAdapter(it) { lastIndex ->
+                    val bundle = bundleOf(
+                        "evaluationId" to (displayResultViewModel.evaluationId ?: -1L),
+                        "indexLastPhoto" to lastIndex
+                    )
                     findNavController().navigate(R.id.outputFragment, bundle)
                 }
         }
