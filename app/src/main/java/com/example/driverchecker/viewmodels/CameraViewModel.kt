@@ -6,8 +6,10 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
 import com.example.driverchecker.database.ImageDetectionDatabaseRepository
 import com.example.driverchecker.machinelearning.data.*
+import com.example.driverchecker.machinelearning.helpers.listeners.ASettingsStateListener
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
+import com.example.driverchecker.machinelearning.helpers.listeners.SettingsStateListener
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
 import com.example.driverchecker.utils.DeferrableData
@@ -58,6 +60,10 @@ class CameraViewModel (
     val awaitEndInsert: LiveData<Long?>
         get() = mAwaitEndInsert.liveData
 
+    private val settingsListener = SettingsListener(viewModelScope, preferencesRepository.preferencesFlow)
+    var modelSettings: SettingsState.ModelSettings? = null
+        private set
+
     val currentState: ObservableData<LiveEvaluationStateInterface?>
         get() = evaluationClient.currentState
 
@@ -77,7 +83,11 @@ class CameraViewModel (
 
         mSaveImages.complete(mapWithoutNullOutputs.keys.toList().map { key -> key.input })
 
-        val evalId = databaseRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
+        val evalId = databaseRepository.insertFinalResult(
+            evaluationClient.finalResult.value!!,
+            name,
+            preferencesRepository.activePreferences["model"] as SettingsState.ModelSettings
+        )
 
         // TODO: to delete?
         databaseRepository.insertAllOldMetrics(metricsPerGroup, evalId)
@@ -171,6 +181,37 @@ class CameraViewModel (
                 mAwaitImagesPaths.reset()
                 mAwaitEndInsert.reset()
             }
+        }
+    }
+
+    protected open inner class SettingsListener : ASettingsStateListener {
+        constructor () : super()
+
+        constructor (scope: CoroutineScope, modelFlow: SharedFlow<SettingsStateInterface>) :
+                super(scope, modelFlow)
+
+        override suspend fun collectStates (state: SettingsStateInterface) {
+            super.collectStates(state)
+        }
+
+        override suspend fun onModelSettingsChange(state: SettingsState.ModelSettings) {
+//            model?.updateThreshold(state.threshold)
+            modelSettings = state
+            Log.d("SettingsListener", "Model settings changed with threshold:${state.threshold}")
+        }
+
+        override suspend fun onWindowSettingsChange(state: SettingsState.WindowSettings) {
+            Log.d("SettingsListener", "Window settings changed with ${state}")
+        }
+
+        override suspend fun onFullSettingsChange(state: SettingsState.FullSettings) {
+//            model?.updateThreshold(state.modelSettings.threshold)
+            modelSettings = state.modelSettings
+            Log.d("SettingsListener", "Full settings changed with ${state}")
+        }
+
+        override suspend fun onNoSettingsChange() {
+            Log.d("SettingsListener", "No settings changed")
         }
     }
 

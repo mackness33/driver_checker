@@ -47,7 +47,7 @@ class ResultFragment : Fragment() {
                 output?.stats?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             )
             binding.textAvgConfidence.text = String.format("%.2f%%", output?.stats?.confidence?.times(100))
-//            binding.textModelThreshold.text = String.format("%.2f%%", output?.modelThreshold?.times(100))
+            binding.textModelThreshold.text = String.format("%.2f%%", activityModel.modelSettings?.threshold?.times(100))
 //            binding.textTime.text = String.format("%.2fs", output?.data.metrics?.totalTime)
 
             if (output?.metrics?.data != null) {

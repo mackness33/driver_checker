@@ -90,8 +90,12 @@ class ImageDetectionDatabaseRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertFinalResult(finalResult: IClassificationFinalResult<String>, name: String) : Long {
-        val id = evaluationDao.insert(EvaluationEntity(finalResult, name))
+    suspend fun insertFinalResult(
+        finalResult: IClassificationFinalResult<String>,
+        name: String,
+        modelSettings: SettingsState.ModelSettings,
+    ) : Long {
+        val id = evaluationDao.insert(EvaluationEntity(finalResult, name, modelSettings))
 
         val ids = mutableListOf<Long>()
 

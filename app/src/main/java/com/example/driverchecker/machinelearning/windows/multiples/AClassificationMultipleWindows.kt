@@ -36,20 +36,7 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W
     }
 
     override fun <M : IMultipleWindowSettings> update (newSettings: M) {
-        // get the list of settings as a set and get all the windows that are not part of the current ones
-        // TODO: try catch?
-//        val listOfNewSettings = newSettings.asListOfSettings().toSet() as Set<S>
-//        val newWindows = factory.createMapOfWindow(listOfNewSettings.minus(currentWindows.keys))
-//
-//        // remove the windows not part of the new settings and add the one that are not there
-//        currentWindows = currentWindows
-//            .minus(currentWindows.keys.minus(listOfNewSettings))
-//            .plus(newWindows)
-//
-//        activeWindows = currentWindows.values.toSet()
-//
         super.update(newSettings)
-//        newSettings.groups
         try {
             newSettings as IClassificationMultipleWindowSettings<G>
             finalGroupsCounter.clear()
@@ -64,10 +51,9 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W
     override fun updateGroups(newGroups: Set<G>) {
         groups = newGroups
 
-//        availableWindows.forEach { it.value.updateGroups(newGroups) }
         finalGroupsCounter.clear()
-        Log.d("TESTCLASSSS", groups.toString())
         finalGroupsCounter.putAll(groups.associateWith { 0 })
+
         currentWindows.forEach { (_, window) -> window.updateGroups(newGroups) }
     }
 

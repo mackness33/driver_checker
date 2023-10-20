@@ -44,6 +44,10 @@ class PreferencesRepository (
     )
     private val preferencesValues: MutableMap<String, IPreferences?> =
         preferencesCategories.keys.associateWith { null }.toMutableMap()
+    private val mActivePreferences: MutableMap<String, SettingsStateInterface?> =
+        preferencesCategories.keys.associateWith { null }.toMutableMap()
+    val activePreferences: Map<String, SettingsStateInterface?> = mActivePreferences
+
 
 
     private object PreferencesKeys {
@@ -67,7 +71,12 @@ class PreferencesRepository (
         }
         .map { preferences ->
             val result = when {
-                preferencesValues.values.fold(true) {last, current -> last && current != null} ->
+                preferencesValues.values.fold(true) {last, current -> last && current != null} -> {
+                    mActivePreferences["model"] = buildModelPreferences(
+                        preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
+                        preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
+                    )
+
                     buildFullPreferences(
                         buildModelPreferences(
                             preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
@@ -80,10 +89,18 @@ class PreferencesRepository (
                             preferences[PreferencesKeys.WINDOW_OFFSETS_KEY],
                         )
                     )
-                preferencesValues["model"] != null -> buildModelPreferences(
-                    preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
-                    preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
-                )
+                }
+                preferencesValues["model"] != null -> {
+                    mActivePreferences["model"] = buildModelPreferences(
+                        preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
+                        preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
+                    )
+
+                    buildModelPreferences(
+                        preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
+                        preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
+                    )
+                }
                 preferencesValues["window"] != null -> buildWindowPreferences(
                     preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf(),
                     preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf(),
