@@ -68,11 +68,14 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
         if (areAllSatisfied)
             isFinalResultBuilt.reset()
 
+        satisfiedWindows.forEach { win -> onWindowSatisfied(win)}
         // minus assign
         activeWindows = activeWindows.minus(satisfiedWindows)
 
         return areAllSatisfied
     }
+
+    protected abstract fun onWindowSatisfied(window: W)
 
     override fun next(element: E, timeOffset: Double?) {
         activeWindows.forEach { it.next(element, timeOffset) }

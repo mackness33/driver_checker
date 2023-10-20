@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.windows.multiples
 
+import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.windows.factories.IClassificationWindowFactory
 import com.example.driverchecker.machinelearning.windows.singles.IClassificationSingleWindow
@@ -11,8 +12,18 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W
     abstract override val factory: IClassificationWindowFactory<E, S, W, G>
 
     /* CLASSIFICATION */
-    override var groups: Set<G> = emptySet()
+    final override var groups: Set<G> = emptySet()
         protected set
+    protected val finalGroupsCounter: MutableMap<G, Int> = groups.associateWith { 0 }.toMutableMap()
+
+
+
+    override fun onWindowSatisfied(window: W) {
+        val finalWindowGroup = window.group
+        if (finalWindowGroup != null && finalGroupsCounter.contains(finalWindowGroup))
+            finalGroupsCounter[finalWindowGroup] = finalGroupsCounter[finalWindowGroup]!! + 1
+        super.onWindowSatisfied(window)
+    }
 
     /* DATA */
     override fun getAdditionalMetrics(): List<IGroupMetrics<G>?> {
@@ -24,11 +35,44 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W
         return listOfData.toMap()
     }
 
+    override fun <M : IMultipleWindowSettings> update (newSettings: M) {
+        // get the list of settings as a set and get all the windows that are not part of the current ones
+        // TODO: try catch?
+//        val listOfNewSettings = newSettings.asListOfSettings().toSet() as Set<S>
+//        val newWindows = factory.createMapOfWindow(listOfNewSettings.minus(currentWindows.keys))
+//
+//        // remove the windows not part of the new settings and add the one that are not there
+//        currentWindows = currentWindows
+//            .minus(currentWindows.keys.minus(listOfNewSettings))
+//            .plus(newWindows)
+//
+//        activeWindows = currentWindows.values.toSet()
+//
+        super.update(newSettings)
+//        newSettings.groups
+        try {
+            newSettings as IClassificationMultipleWindowSettings<G>
+            finalGroupsCounter.clear()
+            finalGroupsCounter.putAll(newSettings.groups.associateWith { 0 })
+        } catch (castException: Throwable) {
+            Log.e("ClassificationMultipleWindow", castException.message.toString(), castException)
+        }
+
+    }
+
 
     override fun updateGroups(newGroups: Set<G>) {
         groups = newGroups
 
 //        availableWindows.forEach { it.value.updateGroups(newGroups) }
+        finalGroupsCounter.clear()
+        Log.d("TESTCLASSSS", groups.toString())
+        finalGroupsCounter.putAll(groups.associateWith { 0 })
         currentWindows.forEach { (_, window) -> window.updateGroups(newGroups) }
+    }
+
+    override suspend fun clean() {
+        super.clean()
+        finalGroupsCounter.replaceAll { _, _ -> 0}
     }
 }

@@ -28,6 +28,7 @@ interface IClassificationSingleWindow <E : IClassificationOutput<S>, S> :
     IMachineLearningSingleWindow<E> {
     val supergroupCounter: Map<S, Int>
     val groupMetrics: IGroupMetrics<S>
+    val group : S?
 
     fun updateGroups (newGroups: Set<S>)
 

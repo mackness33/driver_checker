@@ -21,7 +21,7 @@ abstract class AClassificationSingleWindow<E : IClassificationOutput<S>, S> (
         mGroupMetrics.initialize(initialSettings.groups)
     }
 
-    protected val group : S?
+    override val group : S?
         get() =
             if (windowIsFull() && supergroupCounter.isNotEmpty())
                 mSupergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key
@@ -63,7 +63,8 @@ abstract class AClassificationSingleWindow<E : IClassificationOutput<S>, S> (
 
     override suspend fun clean () {
         super.clean()
-        mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
+//        mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
+        mSupergroupCounter.replaceAll { _, _ -> 0 }
         // TODO: create the clean function
         mGroupMetrics.clear()
         mGroupMetrics.initialize(mSupergroupCounter.keys)

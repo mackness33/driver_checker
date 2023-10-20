@@ -78,6 +78,8 @@ class CameraViewModel (
         mSaveImages.complete(mapWithoutNullOutputs.keys.toList().map { key -> key.input })
 
         val evalId = databaseRepository.insertFinalResult(evaluationClient.finalResult.value!!, name)
+
+        // TODO: to delete?
         databaseRepository.insertAllOldMetrics(metricsPerGroup, evalId)
 
         mAwaitImagesPaths.await()

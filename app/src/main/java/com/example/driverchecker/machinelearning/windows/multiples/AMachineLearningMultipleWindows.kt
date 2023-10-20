@@ -8,6 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutput, W : IMachineLearningSingleWindow<E>, S : IMachineLearningSingleWindowSettings>(scope: CoroutineScope) :
     AMultipleWindows<E, W, S>(scope), IMachineLearningMultipleWindows<E> {
     abstract override val factory: IMachineLearningWindowFactory<E, S, W>
+    protected var finalConfidence: Float = 0.0f
+
+    override fun onWindowSatisfied(window: W) {
+        finalConfidence += window.confidence
+    }
 
     /* DATA */
     override fun getMetrics(): List<IWindowBasicData> {
@@ -21,5 +26,10 @@ abstract class AMachineLearningMultipleWindows<E : IMachineLearningOutput, W : I
     override fun getData(): Map<IWindowBasicData, IAdditionalMetrics?> {
         val listOfData = currentWindows.values.map { it.getData() }
         return listOfData.toMap()
+    }
+
+    override suspend fun clean() {
+        super.clean()
+        finalConfidence = 0.0f
     }
 }
