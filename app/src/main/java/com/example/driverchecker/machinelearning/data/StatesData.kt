@@ -40,7 +40,12 @@ sealed interface SettingsStateInterface
 
 sealed class SettingsState : SettingsStateInterface {
     data class ModelSettings (val threshold: Float, val uoiThreshold: Float) : SettingsState()
-    data class WindowSettings (val threshold: Float, val size: Int, val Offset: Int, val type: IWindowTag) : SettingsState()
+    data class WindowSettings (
+        val types: Set<IWindowTag?>,
+        val thresholds: Set<Float?>,
+        val sizes: Set<Int?>,
+        val offsets: Set<Int?>?
+    ) : SettingsState()
     data class FullSettings (val modelSettings: ModelSettings, val windowSettings: WindowSettings) : SettingsState()
     object NoSettings : SettingsState()
 }

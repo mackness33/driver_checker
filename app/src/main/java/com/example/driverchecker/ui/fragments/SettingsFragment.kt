@@ -3,17 +3,13 @@ package com.example.driverchecker.ui.fragments
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.viewModels
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.example.driverchecker.DriverChecker
+import com.example.driverchecker.MainActivity
 import com.example.driverchecker.R
-import com.example.driverchecker.machinelearning.data.SettingsState
-import com.example.driverchecker.machinelearning.data.SettingsStateInterface
-import com.example.driverchecker.utils.PreferencesRepository
 import com.example.driverchecker.viewmodels.*
-import kotlin.properties.Delegates
 
 class SettingsFragment : PreferenceFragmentCompat() {
     /*
@@ -26,6 +22,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+
+        val sharedPrefs = preferenceManager.sharedPreferences
+        Log.d("SHARED PREFS", sharedPrefs?.all.toString())
     }
 
     override fun onResume() {

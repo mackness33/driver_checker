@@ -47,6 +47,6 @@ class DriverChecker : Application() {
     )}
 
     companion object {
-        private const val IMAGE_DETECTION_PREFERENCES_NAME = "image_detection_settings"
+        private val IMAGE_DETECTION_PREFERENCES_NAME = "image_detection_settings"
     }
 }

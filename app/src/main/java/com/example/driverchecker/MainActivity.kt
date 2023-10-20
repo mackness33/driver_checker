@@ -18,8 +18,19 @@ import com.example.driverchecker.machinelearning.data.LiveEvaluationState
 import com.example.driverchecker.utils.PreferencesRepository
 import com.example.driverchecker.viewmodels.CameraViewModel
 import com.example.driverchecker.viewmodels.CameraViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 
 class MainActivity : AppCompatActivity(){
+
+//    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Some.IMAGE_DETECTION_PREFERENCES_NAME)
+//    private val activityScope = CoroutineScope(SupervisorJob())
+//    val preferencesRepository by lazy { PreferencesRepository((application as DriverChecker).dataStore, activityScope) }
+
+
+    companion object Some {
+        const val IMAGE_DETECTION_PREFERENCES_NAME = "image_detection_settings"
+    }
 
     private lateinit var mAppBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController

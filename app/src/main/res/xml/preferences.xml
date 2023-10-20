@@ -19,41 +19,41 @@
             app:seekBarIncrement="1" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Windows">
+<!--    <PreferenceCategory android:title="Windows">-->
 
-        <MultiSelectListPreference
-            android:defaultValue="@array/windowThresholdsDefaults"
-            android:entries="@array/windowThresholds"
-            android:entryValues="@array/windowThresholds"
-            android:key="multi_select_list_window_threshold"
-            android:title="Windows Thresholds" />
-
-
-        <MultiSelectListPreference
-            android:defaultValue="@array/windowSizesDefaults"
-            android:entries="@array/windowSizes"
-            android:dialogTitle="Select Windows Thresholds"
-            android:singleLineTitle="true"
-            android:summary="Please select all the possible size of the windows"
-            android:entryValues="@array/windowSizes"
-            android:key="multi_select_list_window_size"
-            android:title="Windows Sizes" />
+<!--        <MultiSelectListPreference-->
+<!--            android:defaultValue="@array/windowThresholdsDefaults"-->
+<!--            android:entries="@array/windowThresholds"-->
+<!--            android:entryValues="@array/windowThresholds"-->
+<!--            android:key="windows_thresholds"-->
+<!--            android:title="Windows Thresholds" />-->
 
 
-        <MultiSelectListPreference
-            android:defaultValue="@array/windowTypesDefaults"
-            android:entries="@array/windowTypes"
-            android:entryValues="@array/windowTypesValues"
-            android:key="multi_select_list_window_types"
-            android:title="Windows Types" />
+<!--        <MultiSelectListPreference-->
+<!--            android:defaultValue="@array/windowSizesDefaults"-->
+<!--            android:entries="@array/windowSizes"-->
+<!--            android:dialogTitle="Select Windows Thresholds"-->
+<!--            android:singleLineTitle="true"-->
+<!--            android:summary="Please select all the possible size of the windows"-->
+<!--            android:entryValues="@array/windowSizes"-->
+<!--            android:key="windows_sizes"-->
+<!--            android:title="Windows Sizes" />-->
 
 
-        <MultiSelectListPreference
-            android:defaultValue="@array/windowOffset"
-            android:entries="@array/windowOffset"
-            android:entryValues="@array/windowOffset"
-            android:key="multi_select_list_window_types"
-            android:title="Windows Offset" />
-    </PreferenceCategory>
+<!--        <MultiSelectListPreference-->
+<!--            android:defaultValue="@array/windowTypesDefaults"-->
+<!--            android:entries="@array/windowTypes"-->
+<!--            android:entryValues="@array/windowTypesValues"-->
+<!--            android:key="windows_types"-->
+<!--            android:title="Windows Types" />-->
+
+
+<!--        <MultiSelectListPreference-->
+<!--            android:defaultValue="@array/windowOffset"-->
+<!--            android:entries="@array/windowOffset"-->
+<!--            android:entryValues="@array/windowOffset"-->
+<!--            android:key="windows_offsets"-->
+<!--            android:title="Windows Offset" />-->
+<!--    </PreferenceCategory>-->
 
 </PreferenceScreen>

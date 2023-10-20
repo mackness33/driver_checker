@@ -15,7 +15,7 @@ abstract class ASettingsStateListener : SettingsStateListener, AGenericListener<
         when (state) {
             is SettingsState.FullSettings -> onFullSettingsChange(state)
             is SettingsState.ModelSettings -> onModelSettingsChange(state)
-            is SettingsState.WindowSettings -> TODO()
+            is SettingsState.WindowSettings -> onWindowSettingsChange(state)
             SettingsState.NoSettings -> onNoSettingsChange()
         }
     }
