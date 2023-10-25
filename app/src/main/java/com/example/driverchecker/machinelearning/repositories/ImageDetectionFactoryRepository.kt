@@ -30,14 +30,14 @@ class ImageDetectionFactoryRepository
     init {
         val semaphores = setOf("model", "client")
         initialize(semaphores)
-        (collectionOfWindows as ImageDetectionMultipleWindows).update(
-            MultipleWindowSettings (
-                setOf(1, 3, 5),
-                setOf(SingleGroupTag),
-                setOf(0.10f, 0.50f),
-                model?.classifier?.supergroups?.keys ?: emptySet()
-            )
-        )
+//        (collectionOfWindows as ImageDetectionMultipleWindows).update(
+//            MultipleWindowSettingsOld (
+//                setOf(1, 3, 5),
+//                setOf(SingleGroupTag),
+//                setOf(0.10f, 0.50f),
+//                model?.classifier?.supergroups?.keys ?: emptySet()
+//            )
+//        )
     }
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {

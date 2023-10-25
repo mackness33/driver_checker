@@ -4,11 +4,16 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.windows.helpers.*
 
 open class OffsetMultipleGroupWindow : MultipleGroupWindow {
-    constructor (initialSettings: IClassificationSingleWindowSettings<String>) :
-            super (initialSettings, MultipleGroupOffsetTag)
+    constructor (
+        initialSettings: IMachineLearningSingleWindowSettings,
+        initialClassificationSettings: IClassificationSingleWindowSettings<String>
+    ) : super (initialSettings, initialClassificationSettings, MultipleGroupOffsetTag)
 
-    protected constructor (initialSettings: IClassificationSingleWindowSettings<String>, internalTag: ImageDetectionTag) :
-            super (initialSettings, internalTag)
+    protected constructor (
+        initialSettings: IMachineLearningSingleWindowSettings,
+        initialClassificationSettings: IClassificationSingleWindowSettings<String>,
+        internalTag: ImageDetectionTag
+    ) : super (initialSettings, initialClassificationSettings, internalTag)
 
     protected val offset: Int = 0
 

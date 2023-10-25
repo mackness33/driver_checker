@@ -86,7 +86,7 @@ class PreferencesRepository (
                             preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf(),
                             preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf(),
                             preferences[PreferencesKeys.WINDOW_SIZES_KEY] ?: setOf(),
-                            preferences[PreferencesKeys.WINDOW_OFFSETS_KEY],
+                            preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] ?: setOf(),
                         )
                     )
                 }
@@ -105,7 +105,7 @@ class PreferencesRepository (
                     preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf(),
                     preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf(),
                     preferences[PreferencesKeys.WINDOW_SIZES_KEY] ?: setOf(),
-                    preferences[PreferencesKeys.WINDOW_OFFSETS_KEY],
+                    preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] ?: setOf(),
                 )
                 else -> SettingsState.NoSettings
             }
@@ -121,7 +121,7 @@ class PreferencesRepository (
 
     private suspend fun initializePreferencesFlow() {
         preferencesValues["model"] = ModelPreferences(0, 0,)
-        preferencesValues["window"] = WindowPreferences(setOf(), setOf(), setOf(), null)
+        preferencesValues["window"] = WindowPreferences(setOf(), setOf(), setOf(), setOf())
         dataStore.updateData { prefs -> prefs }
     }
 
@@ -150,14 +150,14 @@ class PreferencesRepository (
         types: Set<String?>,
         thresholds: Set<String?>,
         sizes: Set<String?>,
-        offsets: Set<String?>?
+        offsets: Set<String?>
     ) : SettingsState.WindowSettings {
         Log.d("WINDOWPREFERENCES", types.toString())
         return SettingsState.WindowSettings(
             types.mapNotNull { type -> tagsMap[type] }.toSet(),
             thresholds.mapNotNull { threshold -> threshold?.toFloat()?.div(100) }.toSet(),
             sizes.mapNotNull { frame -> frame?.toInt() }.toSet(),
-            offsets?.mapNotNull { offset -> offset?.toInt() }?.toSet()
+            offsets.mapNotNull { offset -> offset?.toInt() }.toSet()
         )
     }
 
@@ -174,7 +174,7 @@ class PreferencesRepository (
                         preferences.getStringSet(WINDOW_TYPES_NAME, null) ?: setOf(),
                         preferences.getStringSet(WINDOW_THRESHOLDS_NAME, null) ?: setOf(),
                         preferences.getStringSet(WINDOW_SIZES_NAME, null) ?: setOf(),
-                        preferences.getStringSet(WINDOW_OFFSETS_NAME, null),
+                        preferences.getStringSet(WINDOW_OFFSETS_NAME, null) ?: setOf(),
                     )
                     else -> null
                 }
@@ -217,7 +217,7 @@ class PreferencesRepository (
             preferences[PreferencesKeys.WINDOW_TYPES_KEY] = windowPreferences.types
             preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] = windowPreferences.thresholds
             preferences[PreferencesKeys.WINDOW_SIZES_KEY] = windowPreferences.sizes
-            preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] = windowPreferences.offsets ?: setOf()
+            preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] = windowPreferences.offsets
         }
     }
 
@@ -254,5 +254,5 @@ data class WindowPreferences (
     val types: Set<String>,
     val thresholds: Set<String>,
     val sizes: Set<String>,
-    val offsets: Set<String>?
+    val offsets: Set<String>
 ) : IPreferences

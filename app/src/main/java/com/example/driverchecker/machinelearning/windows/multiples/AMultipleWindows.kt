@@ -3,7 +3,6 @@ package com.example.driverchecker.machinelearning.windows.multiples
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.windows.factories.IWindowFactory
-import com.example.driverchecker.machinelearning.windows.factories.ImageDetectionWindowFactory
 import com.example.driverchecker.machinelearning.windows.singles.ISingleWindow
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.MutableCompletableData

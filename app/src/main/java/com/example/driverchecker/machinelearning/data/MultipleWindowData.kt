@@ -1,7 +1,6 @@
 package com.example.driverchecker.machinelearning.data
 
 import com.example.driverchecker.machinelearning.windows.helpers.IWindowTag
-import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupTag
 
 
 interface IMultipleWindowSettings {
@@ -32,11 +31,11 @@ interface IMachineLearningMultipleWindowSettings : IMultipleWindowSettings {
     }
 }
 
-interface IClassificationMultipleWindowSettings<S> : IMachineLearningMultipleWindowSettings {
+interface IClassificationMultipleWindowSettingsOld<S> : IMachineLearningMultipleWindowSettings {
     val groups: Set<S>
 
-    override fun asListOfSettings () : List<IClassificationSingleWindowSettings<S>> {
-        val outputSettingsList: MutableList<IClassificationSingleWindowSettings<S>> = mutableListOf()
+    override fun asListOfSettings () : List<IClassificationSingleWindowSettingsOld<S>> {
+        val outputSettingsList: MutableList<IClassificationSingleWindowSettingsOld<S>> = mutableListOf()
         this.tags?.forEach { type ->
             this.sizes.forEach { frames ->
                 this.thresholds.forEach { threshold ->
@@ -54,11 +53,11 @@ interface IClassificationMultipleWindowSettings<S> : IMachineLearningMultipleWin
     }
 }
 
-interface IOffsetMultipleWindowSettings<S> : IClassificationMultipleWindowSettings<S> {
+interface IOffsetMultipleWindowSettings : IMachineLearningMultipleWindowSettings {
     val offsets: Set<Int>
 
-    override fun asListOfSettings () : List<IOffsetSingleWindowSettings<S>> {
-        val outputSettingsList: MutableList<IOffsetSingleWindowSettings<S>> = mutableListOf()
+    override fun asListOfSettings () : List<IOffsetSingleWindowSettings> {
+        val outputSettingsList: MutableList<IOffsetSingleWindowSettings> = mutableListOf()
         this.tags?.forEach { type ->
             this.sizes.forEach { frames ->
                 this.thresholds.forEach { threshold ->
@@ -67,7 +66,6 @@ interface IOffsetMultipleWindowSettings<S> : IClassificationMultipleWindowSettin
                             OffsetSingleWindowSettings(
                                 frames,
                                 threshold,
-                                this.groups,
                                 type,
                                 offset
                             )
@@ -81,12 +79,12 @@ interface IOffsetMultipleWindowSettings<S> : IClassificationMultipleWindowSettin
     }
 }
 
-data class MultipleWindowSettings<S> (
+data class MultipleWindowSettingsOld<S> (
     override val sizes: Set<Int>,
     override val tags: Set<IWindowTag>?,
     override val thresholds: Set<Float>,
     override val groups: Set<S>,
-) : IClassificationMultipleWindowSettings<S> {
+) : IClassificationMultipleWindowSettingsOld<S> {
     constructor (stateSettings: SettingsState.WindowSettings, groups: Set<S>) : this(
         stateSettings.sizes,
         stateSettings.tags,
@@ -95,18 +93,25 @@ data class MultipleWindowSettings<S> (
     )
 }
 
-data class OffsetMultipleWindowSettings<S> (
+data class OffsetMultipleWindowSettings (
     override val sizes: Set<Int>,
     override val tags: Set<IWindowTag>?,
     override val thresholds: Set<Float>,
-    override val groups: Set<S>,
     override val offsets: Set<Int>,
-) : IOffsetMultipleWindowSettings<S> {
-    constructor (stateSettings: SettingsState.WindowSettings, groups: Set<S>) : this(
-        stateSettings.sizes,
-        stateSettings.tags,
-        stateSettings.thresholds,
-        groups,
-        setOf()
+) : IOffsetMultipleWindowSettings {
+    constructor (original: IOffsetMultipleWindowSettings) : this(
+        original.sizes,
+        original.tags,
+        original.thresholds,
+        original.offsets
     )
 }
+
+
+interface IClassificationMultipleWindowSettings<S>{
+    val groups: Set<S>
+}
+
+data class ClassificationMultipleWindowSettings<S> (
+    override val groups: Set<S>
+) : IClassificationMultipleWindowSettings<S>

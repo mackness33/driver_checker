@@ -2,7 +2,6 @@ package com.example.driverchecker.machinelearning.repositories.general
 
 import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.listeners.ASettingsStateListener
 import com.example.driverchecker.machinelearning.helpers.producers.ILiveEvaluationProducer
 import com.example.driverchecker.machinelearning.windows.multiples.IClassificationMultipleWindows
 import com.example.driverchecker.machinelearning.models.IClassificationModel
@@ -64,18 +63,14 @@ abstract class AClassificationFactoryRepository<I, O : IClassificationOutput<S>,
                 super(scope, modelFlow)
 
         override suspend fun onWindowSettingsChange(state: SettingsState.WindowSettings) {
-            collectionOfWindows.update(MultipleWindowSettings(
-                state, model?.classifier?.supergroups?.keys!!
-            ))
+            collectionOfWindows.update(state)
 
             Log.d("SettingsListener", "Window settings changed with ${state}")
         }
 
         override suspend fun onFullSettingsChange(state: SettingsState.FullSettings) {
             model?.updateThreshold(state.modelSettings.threshold)
-            collectionOfWindows.update(MultipleWindowSettings(
-                state.windowSettings, model?.classifier?.supergroups?.keys!!
-            ))
+            collectionOfWindows.update(state.windowSettings)
             Log.d("SettingsListener", "Full settings changed with ${state}")
         }
     }

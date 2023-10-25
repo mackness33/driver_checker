@@ -1,12 +1,12 @@
 package com.example.driverchecker.machinelearning.windows.multiples
 
-import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.windows.factories.IClassificationWindowFactory
+import com.example.driverchecker.machinelearning.windows.factories.IClassificationWindowFactoryOld
 import com.example.driverchecker.machinelearning.windows.singles.IClassificationSingleWindow
 import kotlinx.coroutines.CoroutineScope
 
-abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W : IClassificationSingleWindow<E, G>, S : IClassificationSingleWindowSettings<G>> (scope: CoroutineScope) :
+abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W : IClassificationSingleWindow<E, G>, S : IOffsetSingleWindowSettings> (scope: CoroutineScope) :
     AMachineLearningMultipleWindows<E, W, S>(scope),
     IClassificationMultipleWindows<E, G> {
     abstract override val factory: IClassificationWindowFactory<E, S, W, G>
@@ -35,17 +35,17 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W
         return listOfData.toMap()
     }
 
-    override fun <M : IMultipleWindowSettings> update (newSettings: M) {
-        super.update(newSettings)
-        try {
-            newSettings as IClassificationMultipleWindowSettings<G>
-            finalGroupsCounter.clear()
-            finalGroupsCounter.putAll(newSettings.groups.associateWith { 0 })
-        } catch (castException: Throwable) {
-            Log.e("ClassificationMultipleWindow", castException.message.toString(), castException)
-        }
-
-    }
+//    override fun <M : IMultipleWindowSettings> update (newSettings: M) {
+//        super.update(newSettings)
+//        try {
+//            newSettings as IClassificationMultipleWindowSettingsOld<G>
+//            finalGroupsCounter.clear()
+//            finalGroupsCounter.putAll(newSettings.groups.associateWith { 0 })
+//        } catch (castException: Throwable) {
+//            Log.e("ClassificationMultipleWindow", castException.message.toString(), castException)
+//        }
+//
+//    }
 
 
     override fun updateGroups(newGroups: Set<G>) {

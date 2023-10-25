@@ -12,11 +12,11 @@ interface IMachineLearningSingleWindowSettings : ISingleWindowSettings {
     val threshold: Float
 }
 
-interface IClassificationSingleWindowSettings<S> : IMachineLearningSingleWindowSettings {
+interface IClassificationSingleWindowSettingsOld<S> : IMachineLearningSingleWindowSettings {
     val groups: Set<S>
 }
 
-interface IOffsetSingleWindowSettings<S> : IClassificationSingleWindowSettings<S> {
+interface IOffsetSingleWindowSettings : IMachineLearningSingleWindowSettings {
     val offset: Int
 }
 
@@ -25,16 +25,15 @@ data class SingleWindowSettings<S> (
     override val threshold: Float,
     override val groups: Set<S>,
     override val tag: IWindowTag? = null
-) : IClassificationSingleWindowSettings<S>
+) : IClassificationSingleWindowSettingsOld<S>
 
 
-data class OffsetSingleWindowSettings<S> (
+data class OffsetSingleWindowSettings (
     override val size: Int,
     override val threshold: Float,
-    override val groups: Set<S>,
     override val tag: IWindowTag? = null,
     override val offset: Int = 0
-) : IOffsetSingleWindowSettings<S>
+) : IOffsetSingleWindowSettings
 
 data class SingleMachineLearningWindowSettings (
     override val size: Int,
@@ -42,6 +41,10 @@ data class SingleMachineLearningWindowSettings (
     override val tag: IWindowTag? = null
 ) : IMachineLearningSingleWindowSettings
 
-interface IClassificationWindowSettings<S> {
+interface IClassificationSingleWindowSettings<S> {
     val groups: Set<S>
 }
+
+data class ClassificationSingleWindowSettings<S> (
+    override val groups: Set<S> = setOf(),
+) : IClassificationSingleWindowSettings<S>

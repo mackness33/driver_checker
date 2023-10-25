@@ -44,8 +44,8 @@ sealed class SettingsState : SettingsStateInterface {
         override val tags: Set<IWindowTag>,
         override val thresholds: Set<Float>,
         override val sizes: Set<Int>,
-        val offsets: Set<Int>?
-    ) : SettingsState(), IMachineLearningMultipleWindowSettings
+        override val offsets: Set<Int>
+    ) : SettingsState(), IOffsetMultipleWindowSettings
 
     data class FullSettings (val modelSettings: ModelSettings, val windowSettings: WindowSettings) : SettingsState()
     object NoSettings : SettingsState()

@@ -19,23 +19,46 @@ interface IMachineLearningWindowFactory <
         > : IWindowFactory<E, S, W>
 
 
-interface IClassificationWindowFactory <
+interface IOffsetWindowFactory <
         E : IClassificationOutput<G>,
-        S : IClassificationSingleWindowSettings<G>,
+        S : IOffsetSingleWindowSettings,
+        W : IClassificationSingleWindow<E, G>,
+        G
+    > : IMachineLearningWindowFactory<E, S, W>
+
+interface IClassificationWindowFactory<
+        E : IClassificationOutput<G>, S : IMachineLearningSingleWindowSettings,
+        W : IClassificationSingleWindow<E, G>, G
+    > : IMachineLearningWindowFactory<E,S,W> {
+    fun createWindow (
+        initialSettings: S,
+        initialClassificationSettings: IClassificationSingleWindowSettings<G>
+    ): W
+
+    fun createMapOfWindow (
+        collectionOfSettings: Set<S>,
+        initialClassificationSettings: IClassificationSingleWindowSettings<G>
+    ): Map<S, W>
+}
+
+
+interface IClassificationWindowFactoryOld <
+        E : IClassificationOutput<G>,
+        S : IClassificationSingleWindowSettingsOld<G>,
         W : IClassificationSingleWindow<E, G>,
         G
         > : IMachineLearningWindowFactory<E, S, W>
 
-typealias IImageDetectionWindowFactory = IClassificationWindowFactory<
+typealias IImageDetectionWindowFactory = IClassificationWindowFactoryOld<
         IImageDetectionOutput<String>,
-        IClassificationSingleWindowSettings<String>,
+        IClassificationSingleWindowSettingsOld<String>,
         ImageDetectionSingleWindow,
         String
         >
 
-interface IImageDetectionWindowFactory2 <G> : IClassificationWindowFactory<
+interface IImageDetectionWindowFactoryOld2 <G> : IClassificationWindowFactoryOld<
         IClassificationOutput<G>,
-        IClassificationSingleWindowSettings<G>,
+        IClassificationSingleWindowSettingsOld<G>,
         IClassificationSingleWindow<IClassificationOutput<G>, G>,
         G
         >
