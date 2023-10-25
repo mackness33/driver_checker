@@ -8,6 +8,7 @@
             app:defaultValue="15"
             app:min="1"
             android:max="100"
+            app:showSeekBarValue="true"
             app:seekBarIncrement="1" />
 
         <SeekBarPreference
@@ -16,6 +17,7 @@
             app:defaultValue="50"
             app:min="1"
             android:max="100"
+            app:showSeekBarValue="true"
             app:seekBarIncrement="1" />
     </PreferenceCategory>
 
