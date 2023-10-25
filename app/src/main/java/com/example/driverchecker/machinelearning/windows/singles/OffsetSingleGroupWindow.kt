@@ -3,20 +3,19 @@ package com.example.driverchecker.machinelearning.windows.singles
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.windows.helpers.IWindowTag
 import com.example.driverchecker.machinelearning.windows.helpers.ImageDetectionTag
+import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupOffsetTag
 import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupTag
 
-open class SingleGroupWindow : ImageDetectionSingleWindow {
+open class OffsetSingleGroupWindow : SingleGroupWindow {
     constructor (initialSettings: IClassificationSingleWindowSettings<String>) :
-            super (initialSettings, SingleGroupTag)
+            super (initialSettings, SingleGroupOffsetTag)
 
     protected constructor (initialSettings: IClassificationSingleWindowSettings<String>, internalTag: ImageDetectionTag) :
             super (initialSettings, internalTag)
 
-    override fun preUpdate (element: IImageDetectionOutput<String>) : Boolean {
-        if (element.stats.groups.size > 1) {
-            return false
-        }
+    protected val offset: Int = 0
 
-        return super.preUpdate(element)
+    override fun isSatisfied() : Boolean {
+        return totalWindows >= offset && super.isSatisfied()
     }
 }

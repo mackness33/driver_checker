@@ -22,11 +22,14 @@ abstract class AClassificationSingleWindow<E : IClassificationOutput<S>, S> (
     }
 
     override val group : S?
-        get() =
-            if (windowIsFull() && supergroupCounter.isNotEmpty())
-                mSupergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key
-            else
-                null
+        get() = calculateGroup()
+
+    private fun calculateGroup() : S? {
+        return if (windowIsFull() && supergroupCounter.isNotEmpty())
+            mSupergroupCounter.maxWith { o1, o2 -> o1.value.compareTo(o2.value) }.key
+        else
+            null
+    }
 
     /* SINGLE */
     override fun preUpdate (element: E) : Boolean {
@@ -62,7 +65,6 @@ abstract class AClassificationSingleWindow<E : IClassificationOutput<S>, S> (
 
     override suspend fun clean () {
         super.clean()
-//        mSupergroupCounter.putAll(mSupergroupCounter.keys.associateWith { 0 })
         mSupergroupCounter.replaceAll { _, _ -> 0 }
         // TODO: create the clean function
         mGroupMetrics.clear()
