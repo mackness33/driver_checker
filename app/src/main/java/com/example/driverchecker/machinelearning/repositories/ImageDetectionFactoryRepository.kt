@@ -82,6 +82,6 @@ class ImageDetectionFactoryRepository
 
     override fun setSettingsFlow(settingsFlow: SharedFlow<SettingsStateInterface>) {
         settingsListener?.destroy()
-        settingsListener = SettingsListener(repositoryScope, settingsFlow)
+        settingsListener = ClassificationSettingsListener(repositoryScope, settingsFlow)
     }
 }

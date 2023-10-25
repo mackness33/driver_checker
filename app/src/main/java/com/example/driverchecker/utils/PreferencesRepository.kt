@@ -154,10 +154,10 @@ class PreferencesRepository (
         offsets: Set<String?>?
     ) : SettingsState.WindowSettings {
         return SettingsState.WindowSettings(
-            types.map { type -> tagsMap[type] }.toSet(),
-            thresholds.map { threshold -> threshold?.toFloat() }.toSet(),
-            sizes.map { frame -> frame?.toInt() }.toSet(),
-            offsets?.map { offset -> offset?.toInt() }?.toSet()
+            types.mapNotNull { type -> tagsMap[type] }.toSet(),
+            thresholds.mapNotNull { threshold -> threshold?.toFloat() }.toSet(),
+            sizes.mapNotNull { frame -> frame?.toInt() }.toSet(),
+            offsets?.mapNotNull { offset -> offset?.toInt() }?.toSet()
         )
     }
 
@@ -198,7 +198,7 @@ class PreferencesRepository (
             preferencesValues["model"] != null -> updateModelPreferences(
                 preferencesValues["model"] as ModelPreferences
             )
-            preferencesValues["model"] != null -> updateWindowPreferences(
+            preferencesValues["window"] != null -> updateWindowPreferences(
                 preferencesValues["window"] as WindowPreferences
             )
             else -> {}
@@ -222,20 +222,20 @@ class PreferencesRepository (
     }
 
     companion object {
-        @Volatile
-        private var INSTANCE: PreferencesRepository? = null
-
-        fun getInstance(dataStore: DataStore<Preferences>, scope: CoroutineScope, context: Context): PreferencesRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE?.let {
-                    return it
-                }
-
-                val instance = PreferencesRepository(dataStore, scope)
-                INSTANCE = instance
-                instance
-            }
-        }
+//        @Volatile
+//        private var INSTANCE: PreferencesRepository? = null
+//
+//        fun getInstance(dataStore: DataStore<Preferences>, scope: CoroutineScope, context: Context): PreferencesRepository {
+//            return INSTANCE ?: synchronized(this) {
+//                INSTANCE?.let {
+//                    return it
+//                }
+//
+//                val instance = PreferencesRepository(dataStore, scope)
+//                INSTANCE = instance
+//                instance
+//            }
+//        }
 
 
         const val MODEL_THRESHOLD_NAME = "model_threshold"

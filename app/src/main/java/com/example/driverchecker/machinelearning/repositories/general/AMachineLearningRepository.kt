@@ -212,11 +212,13 @@ abstract class AMachineLearningRepository<I, O : IMachineLearningOutput, FR: IMa
         }
 
         override suspend fun onWindowSettingsChange(state: SettingsState.WindowSettings) {
+            collectionOfWindows.update(state)
             Log.d("SettingsListener", "Window settings changed with ${state}")
         }
 
         override suspend fun onFullSettingsChange(state: SettingsState.FullSettings) {
             model?.updateThreshold(state.modelSettings.threshold)
+            collectionOfWindows.update(state.windowSettings)
             Log.d("SettingsListener", "Full settings changed with ${state}")
         }
 

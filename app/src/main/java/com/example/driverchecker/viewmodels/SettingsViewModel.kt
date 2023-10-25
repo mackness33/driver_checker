@@ -10,12 +10,6 @@ import com.example.driverchecker.utils.PreferencesRepository
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(private val repository: PreferencesRepository) : ViewModel() {
-
-//    fun changesMadeBy(key: String) {
-//        when (repository.getCategoryFromPreferenceKey(key)) {
-//            "model" -> repository.updateModelPreferences()
-//        }
-//    }
     val sharedPreferencesListener = repository.sharedPreferencesListener
 
     fun commit () = repository.commit()

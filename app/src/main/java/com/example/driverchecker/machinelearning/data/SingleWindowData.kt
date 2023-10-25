@@ -22,3 +22,9 @@ data class SingleWindowSettings<S> (
     override val groups: Set<S>,
     override val tag: IWindowTag? = null
 ) : IClassificationSingleWindowSettings<S>
+
+data class SingleMachineLearningWindowSettings (
+    override val size: Int,
+    override val threshold: Float,
+    override val tag: IWindowTag? = null
+) : IMachineLearningSingleWindowSettings
