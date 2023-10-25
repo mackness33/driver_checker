@@ -24,4 +24,19 @@ open class OffsetSingleGroupWindow : SingleGroupWindow {
     override fun isSatisfied() : Boolean {
         return totalWindows >= offset && super.isSatisfied()
     }
+
+    override fun getMetrics(): IWindowBasicData {
+        return WindowBasicData(
+            totalTime,
+            totalWindows,
+            averageTime,
+            averageConfidence,
+            confidence,
+            group!!,
+            size,
+            threshold,
+            tag.name,
+            offset
+        )
+    }
 }

@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.driverchecker.R
 import com.example.driverchecker.machinelearning.data.IGroupMetrics
 import com.example.driverchecker.machinelearning.data.IWindowBasicData
+import com.example.driverchecker.ui.viewholders.BasicWindowViewHolder
+import com.example.driverchecker.ui.viewholders.OffsetWindowViewHolder
 import java.util.*
 
 
@@ -21,7 +23,7 @@ class WindowsAdapter(
     private val items: Map<IWindowBasicData, IGroupMetrics<String>?>,
     private val colorList: Set<String>? = setOf("driver", "passenger"),
     private val onPartialClickListener: (Int) -> Unit
-) : RecyclerView.Adapter<WindowsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<BasicWindowViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
@@ -76,16 +78,22 @@ class WindowsAdapter(
     }
 
     // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): BasicWindowViewHolder {
         // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_window, viewGroup, false)
-
-        return ViewHolder(view)
+        return when (viewType){
+            Const.HAS_OFFSET -> OffsetWindowViewHolder(
+                LayoutInflater.from(viewGroup.context)
+                .inflate(R.layout.item_offset_window, viewGroup, false)
+            )
+            else -> BasicWindowViewHolder(
+                LayoutInflater.from(viewGroup.context)
+                .inflate(R.layout.item_window, viewGroup, false)
+            )
+        }
     }
 
     // Replace the contents of a view (invoked by the layout manager)
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: BasicWindowViewHolder, position: Int) {
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
@@ -94,6 +102,18 @@ class WindowsAdapter(
 //        indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 6 else indexOfGroup
 //
 //        viewHolder.textGroup.setTextColor(ColorManager.listFullColors[indexOfGroup].scale[2])
+    }
+
+    private object Const{
+        const val HAS_OFFSET = 0 // random unique value
+        const val NO_OFFSET = 1
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (items.toList()[position].first.type.contains("offset", true))
+            Const.HAS_OFFSET
+        else
+            Const.NO_OFFSET
     }
 
     // Return the size of your dataset (invoked by the layout manager)

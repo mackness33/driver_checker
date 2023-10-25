@@ -29,6 +29,7 @@ open class ImageDetectionSingleWindow
             size,
             threshold,
             tag.name,
+            null
         )
     }
 

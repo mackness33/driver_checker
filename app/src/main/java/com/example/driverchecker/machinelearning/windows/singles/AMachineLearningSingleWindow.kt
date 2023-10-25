@@ -12,7 +12,7 @@ abstract class AMachineLearningSingleWindow<E : IMachineLearningOutput> construc
     override var confidence: Float = 0.0f
         protected set
     override val settings: IWindowSettingsOld
-        get() = WindowSettingsOld(size, threshold, "NoTag")
+        get() = WindowSettingsOld(size, threshold, "NoTag", null)
 
     protected var sumOfConfidencePerWindowDone: Float = 0.0f
     protected val averageTime: Double

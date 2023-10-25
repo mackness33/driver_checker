@@ -1,6 +1,7 @@
 package com.example.driverchecker.machinelearning.data
 
 import androidx.room.ColumnInfo
+import androidx.room.util.copy
 import com.example.driverchecker.utils.ObservableData
 
 
@@ -18,7 +19,8 @@ data class WindowBasicData (
     @ColumnInfo(name = "group") override val supergroup: String,
     @ColumnInfo(name = "window_frames") override val windowFrames: Int,
     @ColumnInfo(name = "window_threshold") override val windowThreshold: Float,
-    @ColumnInfo(name = "type") override val type: String
+    @ColumnInfo(name = "type") override val type: String,
+    @ColumnInfo(name = "offset") override val offset: Int?
 ) : IWindowBasicData {
     constructor(copy: IWindowBasicData) : this (
         copy.totalTime,
@@ -29,7 +31,8 @@ data class WindowBasicData (
         copy.supergroup,
         copy.windowFrames,
         copy.windowThreshold,
-        copy.type
+        copy.type,
+        copy.offset
     )
 
     constructor(copyMetrics: IWindowMetrics, copySettings: IWindowSettingsOld) : this (
@@ -41,7 +44,8 @@ data class WindowBasicData (
         copyMetrics.supergroup,
         copySettings.windowFrames,
         copySettings.windowThreshold,
-        copySettings.type
+        copySettings.type,
+        copySettings.offset
     )
 }
 

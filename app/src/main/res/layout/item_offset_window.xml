@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="10dp"
+    card_view:cardCornerRadius="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--   TITLE     -->
+        <LinearLayout
+            android:id="@+id/layout_title"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            card_view:layout_constraintTop_toTopOf="@id/text_result"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintBottom_toBottomOf="@id/text_result"
+            android:orientation="horizontal"
+            />
+        <TextView
+            android:id="@+id/text_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Result"
+            card_view:layout_constraintTop_toTopOf="@id/layout_title"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@id/text_frame"
+            card_view:layout_constraintBottom_toBottomOf="@id/layout_title"
+            card_view:layout_constraintBaseline_toBaselineOf="@id/layout_title"
+            android:textSize="30sp" />
+        <TextView
+            android:id="@+id/text_frame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="50"
+            card_view:layout_constraintTop_toTopOf="@id/layout_title"
+            card_view:layout_constraintStart_toEndOf="@id/text_result"
+            card_view:layout_constraintEnd_toStartOf="@id/text_threshold"
+            card_view:layout_constraintBottom_toBottomOf="@id/layout_title"
+            card_view:layout_constraintBaseline_toBaselineOf="@id/layout_title"
+            android:textSize="30sp" />
+        <TextView
+            android:id="@+id/text_threshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="80%"
+            card_view:layout_constraintTop_toTopOf="@id/layout_title"
+            card_view:layout_constraintStart_toEndOf="@id/text_frame"
+            card_view:layout_constraintEnd_toStartOf="@id/text_offset"
+            card_view:layout_constraintBottom_toBottomOf="@id/layout_title"
+            card_view:layout_constraintBaseline_toBaselineOf="@id/layout_title"
+            android:textSize="30sp" />
+        <TextView
+            android:id="@+id/text_offset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="1"
+            card_view:layout_constraintTop_toTopOf="@id/layout_title"
+            card_view:layout_constraintStart_toEndOf="@id/text_threshold"
+            card_view:layout_constraintEnd_toEndOf="@id/layout_title"
+            card_view:layout_constraintBottom_toBottomOf="@id/layout_title"
+            card_view:layout_constraintBaseline_toBaselineOf="@id/layout_title"
+            android:textSize="30sp" />
+
+
+        <!--    FIRST ROW    -->
+        <LinearLayout
+            android:id="@+id/layout_confidence"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            card_view:layout_constraintTop_toTopOf="@id/layout_type"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@id/layout_type"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/label_confidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Confidence:"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/text_confidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="77%"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            card_view:layout_constraintTop_toBottomOf="@id/layout_title"
+            card_view:layout_constraintStart_toEndOf="@id/layout_confidence"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            >
+            <TextView
+                android:id="@+id/label_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Type:"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/text_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Classification Wind"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <!--    SECOND ROW    -->
+        <LinearLayout
+            android:id="@+id/layout_total_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            card_view:layout_constraintTop_toTopOf="@id/layout_total_frames"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@id/layout_total_frames"
+            card_view:layout_constraintBottom_toBottomOf="@id/layout_total_frames"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/label_total_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Total Time:"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/text_total_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="5.00000s"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_total_frames"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            card_view:layout_constraintTop_toBottomOf="@id/layout_type"
+            card_view:layout_constraintStart_toEndOf="@id/layout_confidence"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            >
+            <TextView
+                android:id="@+id/label_total_frames"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Total Windows:"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/text_total_frames"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="30"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/table_group_metrics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="5dp"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            card_view:layout_constraintTop_toBottomOf="@id/layout_total_time"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            >
+
+            <LinearLayout
+                android:id="@+id/text_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:layout_marginTop="10dp"
+                >
+
+                <TextView
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="@string/table_header_name"
+                    />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="@string/table_header_images"
+                    />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="@string/table_header_classes"
+                    />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="@string/table_header_objects"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/text_driver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:layout_marginTop="10dp"
+                >
+
+                <TextView
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="Driver"
+                    />
+
+                <TextView
+                    android:id="@+id/text_images_driver"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="5"
+                    />
+
+                <TextView
+                    android:id="@+id/text_classes_driver"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="4"
+                    />
+
+                <TextView
+                    android:id="@+id/text_objects_driver"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="3"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/text_passenger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:layout_marginTop="10dp"
+                >
+
+                <TextView
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="Passenger"
+                    />
+
+                <TextView
+                    android:id="@+id/text_images_passenger"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="1"
+                    />
+
+                <TextView
+                    android:id="@+id/text_classes_passenger"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="2"
+                    />
+
+                <TextView
+                    android:id="@+id/text_objects_passenger"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:text="0"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_check_images"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:text="Check Images"
+            card_view:layout_constraintTop_toBottomOf="@id/table_group_metrics"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
