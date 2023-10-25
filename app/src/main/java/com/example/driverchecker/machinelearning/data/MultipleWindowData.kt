@@ -61,9 +61,9 @@ data class MultipleWindowSettings<S> (
     override val groups: Set<S>,
 ) : IClassificationMultipleWindowSettings<S> {
     constructor (stateSettings: SettingsState.WindowSettings, groups: Set<S>) : this(
-        stateSettings.sizes.filterNotNull().toSet(),
-        stateSettings.tags.filterNotNull().toSet(),
-        stateSettings.thresholds.filterNotNull().toSet(),
+        stateSettings.sizes,
+        stateSettings.tags,
+        stateSettings.thresholds,
         groups
     )
 }

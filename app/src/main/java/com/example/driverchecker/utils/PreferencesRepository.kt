@@ -155,7 +155,7 @@ class PreferencesRepository (
     ) : SettingsState.WindowSettings {
         return SettingsState.WindowSettings(
             types.mapNotNull { type -> tagsMap[type] }.toSet(),
-            thresholds.mapNotNull { threshold -> threshold?.toFloat() }.toSet(),
+            thresholds.mapNotNull { threshold -> threshold?.toFloat()?.div(100) }.toSet(),
             sizes.mapNotNull { frame -> frame?.toInt() }.toSet(),
             offsets?.mapNotNull { offset -> offset?.toInt() }?.toSet()
         )
