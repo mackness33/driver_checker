@@ -112,8 +112,7 @@ class PreferencesRepository (
 
 //            print ("result: $result")
             Log.d("PREFERENCES", "preferences: $preferences")
-            Log.d("PREFERENCES", "preferences contains: ${preferences.contains(PreferencesKeys.WINDOW_TYPES_KEY)}")
-            Log.d("PREFERENCES", "preferences keys: ${preferences.asMap().keys}")
+            Log.d("PREFERENCES", "preferences types: ${preferences[PreferencesKeys.WINDOW_TYPES_KEY]}")
             // Clean the preferencesValues
             preferencesValues.replaceAll { _, _ -> null }
 
@@ -153,6 +152,7 @@ class PreferencesRepository (
         sizes: Set<String?>,
         offsets: Set<String?>?
     ) : SettingsState.WindowSettings {
+        Log.d("WINDOWPREFERENCES", types.toString())
         return SettingsState.WindowSettings(
             types.mapNotNull { type -> tagsMap[type] }.toSet(),
             thresholds.mapNotNull { threshold -> threshold?.toFloat()?.div(100) }.toSet(),

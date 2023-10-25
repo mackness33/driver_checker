@@ -1,7 +1,6 @@
 package com.example.driverchecker.machinelearning.windows.factories
 
 import com.example.driverchecker.machinelearning.data.*
-import com.example.driverchecker.machinelearning.helpers.windows.singles.*
 import com.example.driverchecker.machinelearning.windows.singles.IClassificationSingleWindow
 import com.example.driverchecker.machinelearning.windows.singles.IMachineLearningSingleWindow
 import com.example.driverchecker.machinelearning.windows.singles.ISingleWindow

@@ -22,7 +22,7 @@ interface IMachineLearningMultipleWindowSettings : IMultipleWindowSettings {
                     outputSettingsList.add(SingleMachineLearningWindowSettings(
                         frames,
                         threshold,
-                        SingleGroupTag
+                        type
                     ))
                 }
             }
@@ -44,7 +44,7 @@ interface IClassificationMultipleWindowSettings<S> : IMachineLearningMultipleWin
                         frames,
                         threshold,
                         this.groups,
-                        SingleGroupTag
+                        type
                     ))
                 }
             }

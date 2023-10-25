@@ -43,6 +43,7 @@ abstract class AMultipleWindows<E, W : ISingleWindow<E>, S : ISingleWindowSettin
         // get the list of settings as a set and get all the windows that are not part of the current ones
         // TODO: try catch?
         val listOfNewSettings = newSettings.asListOfSettings().toSet() as Set<S>
+        Log.d("MULTIPLE WINDOWS", listOfNewSettings.toString())
         val newWindows = factory.createMapOfWindow(listOfNewSettings.minus(currentWindows.keys))
 
         // remove the windows not part of the new settings and add the one that are not there

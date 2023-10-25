@@ -6,6 +6,8 @@ import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupOffs
 import com.example.driverchecker.machinelearning.windows.helpers.MultipleGroupTag
 import com.example.driverchecker.machinelearning.windows.helpers.SingleGroupTag
 import com.example.driverchecker.machinelearning.windows.singles.ImageDetectionSingleWindow
+import com.example.driverchecker.machinelearning.windows.singles.MultipleGroupWindow
+import com.example.driverchecker.machinelearning.windows.singles.SingleGroupWindow
 
 class ImageDetectionWindowFactory : IClassificationWindowFactory<
         IImageDetectionOutput<String>,
@@ -25,8 +27,8 @@ class ImageDetectionWindowFactory : IClassificationWindowFactory<
         // TODO: make the single window return it's own settings
         return when (settings.tag) {
             SingleGroupOffsetTag -> TODO("Throw an exception")
-            MultipleGroupTag -> TODO("Throw an exception")
-            SingleGroupTag -> settings to ImageDetectionSingleWindow(settings)
+            MultipleGroupTag -> settings to MultipleGroupWindow(settings)
+            SingleGroupTag -> settings to SingleGroupWindow(settings)
             MultipleGroupOffsetTag -> TODO()
             null -> TODO()
         }

@@ -30,8 +30,7 @@ abstract class AClassificationSingleWindow<E : IClassificationOutput<S>, S> (
 
     /* SINGLE */
     override fun preUpdate (element: E) : Boolean {
-        // TODO: The last check must be moved to the supergroup
-        if (element.stats.groups.isEmpty() || element.stats.groups.size > 1) {
+        if (element.stats.groups.isEmpty()) {
             return false
         }
 
