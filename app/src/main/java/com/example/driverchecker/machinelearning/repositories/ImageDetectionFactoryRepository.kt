@@ -38,6 +38,7 @@ class ImageDetectionFactoryRepository
 //                model?.classifier?.supergroups?.keys ?: emptySet()
 //            )
 //        )
+        collectionOfWindows.updateGroups(model?.classifier?.supergroups?.keys ?: emptySet())
     }
 
     override fun use (modelName: String, modelInit: Map<String, Any?>) : Boolean {

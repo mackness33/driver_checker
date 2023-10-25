@@ -1,5 +1,6 @@
 package com.example.driverchecker.machinelearning.windows.multiples
 
+import android.util.Log
 import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.windows.factories.IClassificationWindowFactory
 import com.example.driverchecker.machinelearning.windows.factories.IClassificationWindowFactoryOld
@@ -35,17 +36,11 @@ abstract class AClassificationMultipleWindows<E : IClassificationOutput<G>, G, W
         return listOfData.toMap()
     }
 
-//    override fun <M : IMultipleWindowSettings> update (newSettings: M) {
-//        super.update(newSettings)
-//        try {
-//            newSettings as IClassificationMultipleWindowSettingsOld<G>
-//            finalGroupsCounter.clear()
-//            finalGroupsCounter.putAll(newSettings.groups.associateWith { 0 })
-//        } catch (castException: Throwable) {
-//            Log.e("ClassificationMultipleWindow", castException.message.toString(), castException)
-//        }
-//
-//    }
+    /*  WINDOWS  */
+    override fun <M : IMultipleWindowSettings> update (newSettings: M) {
+        super.update(newSettings)
+        updateGroups(groups)
+    }
 
 
     override fun updateGroups(newGroups: Set<G>) {

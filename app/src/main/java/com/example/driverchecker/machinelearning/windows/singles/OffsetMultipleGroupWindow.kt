@@ -5,17 +5,21 @@ import com.example.driverchecker.machinelearning.windows.helpers.*
 
 open class OffsetMultipleGroupWindow : MultipleGroupWindow {
     constructor (
-        initialSettings: IMachineLearningSingleWindowSettings,
+        initialSettings: IOffsetSingleWindowSettings,
         initialClassificationSettings: IClassificationSingleWindowSettings<String>
-    ) : super (initialSettings, initialClassificationSettings, MultipleGroupOffsetTag)
+    ) : super (initialSettings, initialClassificationSettings, MultipleGroupOffsetTag) {
+        offset = initialSettings.offset
+    }
 
     protected constructor (
-        initialSettings: IMachineLearningSingleWindowSettings,
+        initialSettings: IOffsetSingleWindowSettings,
         initialClassificationSettings: IClassificationSingleWindowSettings<String>,
         internalTag: ImageDetectionTag
-    ) : super (initialSettings, initialClassificationSettings, internalTag)
+    ) : super (initialSettings, initialClassificationSettings, internalTag) {
+        offset = initialSettings.offset
+    }
 
-    protected val offset: Int = 0
+    protected val offset: Int
 
     override fun isSatisfied() : Boolean {
         return totalWindows >= offset && super.isSatisfied()
