@@ -61,7 +61,7 @@ class PartialsAdapter(
         )
         
         try {
-            val group = items[position].toList().first()
+            val group = items.last().toList().first()
 
             var indexOfGroup = colorList?.indexOfFirst { it.contentEquals(group.first) }
             indexOfGroup = if (indexOfGroup == null || indexOfGroup < 0) 9 else indexOfGroup
