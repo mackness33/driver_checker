@@ -79,14 +79,14 @@ class PreferencesRepository (
 
                     buildFullPreferences(
                         buildModelPreferences(
-                            preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 0,
-                            preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 0
+                            preferences[PreferencesKeys.MODEL_THRESHOLD_KEY] ?: 15,
+                            preferences[PreferencesKeys.MODEL_UOI_THRESHOLD_KEY] ?: 50
                         ),
                         buildWindowPreferences(
-                            preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf(),
-                            preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf(),
-                            preferences[PreferencesKeys.WINDOW_SIZES_KEY] ?: setOf(),
-                            preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] ?: setOf(),
+                            preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf("1"),
+                            preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf("51"),
+                            preferences[PreferencesKeys.WINDOW_SIZES_KEY] ?: setOf("10"),
+                            preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] ?: setOf("0"),
                         )
                     )
                 }
@@ -102,16 +102,17 @@ class PreferencesRepository (
                     )
                 }
                 preferencesValues["window"] != null -> buildWindowPreferences(
-                    preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf(),
-                    preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf(),
-                    preferences[PreferencesKeys.WINDOW_SIZES_KEY] ?: setOf(),
-                    preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] ?: setOf(),
+                    preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf("1"),
+                    preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf("51"),
+                    preferences[PreferencesKeys.WINDOW_SIZES_KEY] ?: setOf("10"),
+                    preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] ?: setOf("0"),
                 )
                 else -> SettingsState.NoSettings
             }
 
 //            print ("result: $result")
             Log.d("PREFERENCES", "preferences: $preferences")
+            Log.d("PREFERENCES", "result: $result")
             Log.d("PREFERENCES", "preferences types: ${preferences[PreferencesKeys.WINDOW_TYPES_KEY]}")
             // Clean the preferencesValues
             preferencesValues.replaceAll { _, _ -> null }

@@ -25,8 +25,8 @@ abstract class AGenericListener<S> : IGenericListener<S> {
 
         job = scope.launch(Dispatchers.Default) {
             when (mode) {
-                GenericMode.First -> mCurrentState.update(inputFlow?.replayCache?.first())
-                GenericMode.Last -> mCurrentState.update(inputFlow?.replayCache?.last())
+                GenericMode.First -> if (!inputFlow?.replayCache.isNullOrEmpty()) mCurrentState.update(inputFlow?.replayCache?.first())
+                GenericMode.Last -> if (!inputFlow?.replayCache.isNullOrEmpty()) mCurrentState.update(inputFlow?.replayCache?.last())
                 GenericMode.None -> {}
             }
             inputFlow?.collect { state -> collectStates(state)}

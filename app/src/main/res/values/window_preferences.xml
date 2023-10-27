@@ -42,7 +42,7 @@
 
 
     <string-array name="windowTypesDefaults">
-        <item>Single Group Per Image</item>
+        <item>1</item>
     </string-array>
 
     <string-array name="windowTypes">

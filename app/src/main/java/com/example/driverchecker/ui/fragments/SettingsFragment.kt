@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.viewModels
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.example.driverchecker.DriverChecker
@@ -25,6 +26,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val sharedPrefs = preferenceManager.sharedPreferences
         Log.d("SHARED PREFS", sharedPrefs?.all.toString())
+
+        findPreference<MultiSelectListPreference?>("windows_types")
+            ?.setOnPreferenceChangeListener { preference, newValue ->
+                Log.d("TYPES", "preference: $preference, newValue: ${newValue}")
+                true
+            }
     }
 
     override fun onResume() {
