@@ -112,10 +112,10 @@ class ImageDetectionDatabaseRepository(
 
             ids.add(metricId)
 
-            Log.d("EvalRepo", "GroupMetrics inserted with: $groupIds")
+            Log.d("EvalRepo", "Total GroupMetrics inserted: $groupIds.size")
         }
 
-        Log.d("EvalRepo", "Metrics inserted with: $ids")
+        Log.d("EvalRepo", "Total Metrics inserted: ${ids.size}")
         Log.d("EvalRepo", "Eval inserted with: $id")
         return id
     }

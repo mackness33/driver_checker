@@ -17,6 +17,7 @@ open class ImageDetectionMultipleWindows (scope: CoroutineScope) :
         finalConfidence /= currentWindows.size
 //        Log.d("TEST", finalGroupsCounter.size.toString())
 //        Log.d("TEST", finalGroupsCounter.toString())
+        Log.d("CheckSizeWindows", "currentWindows: ${currentWindows.size}, activeWindows: ${activeWindows.size}, inactiveWindwos: ${inactiveWindows.size}")
         val fr = ClassificationFinalResult(
             ClassificationFinalResultStats(
                 finalConfidence,

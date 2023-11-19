@@ -71,13 +71,13 @@ class CameraViewModel (
         mAwaitImagesPaths.complete(paths)
     }
 
-    fun save(name: String) = viewModelScope.launch {
+    fun save(name: String) = viewModelScope.launch(Dispatchers.Default) {
         if (evaluationClient.finalResult.value != null) {
             if (mSaveImages.isCompleted()) update(name) else insert(name)
         }
     }
 
-    fun insert(name: String) = viewModelScope.launch {
+    fun insert(name: String) = viewModelScope.launch(Dispatchers.Default) {
         mAwaitEndInsert.deferredAwait()
         val mapWithoutNullOutputs = evaluationClient.lastEvaluationsMap.filter { entry -> entry.value != null }
 
