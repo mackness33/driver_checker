@@ -22,7 +22,7 @@ open class OffsetSingleGroupWindow : SingleGroupWindow {
     protected val offset: Int
 
     override fun isSatisfied() : Boolean {
-        return totalWindows >= offset && super.isSatisfied()
+        return totalWindows > offset && super.isSatisfied()
     }
 
     override fun getMetrics(): IWindowBasicData {

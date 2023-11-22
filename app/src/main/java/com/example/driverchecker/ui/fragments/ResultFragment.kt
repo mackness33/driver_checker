@@ -42,6 +42,7 @@ class ResultFragment : Fragment() {
 
         binding.finalWindowView.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
         binding.finalWindowView.itemAnimator = null
+
         activityModel.finalResult.observe(viewLifecycleOwner) { output ->
             binding.textMostGroup.text = String.format("%s",
                 output?.stats?.supergroup?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
@@ -86,7 +87,7 @@ class ResultFragment : Fragment() {
         binding.buttonSave.text = "Save"
 
         binding.buttonSave.setOnClickListener { _ ->
-            activityModel.save(binding.editTitle.text.toString())
+            activityModel.save(binding.editTitle.text.toString(), requireContext())
         }
 
         activityModel.setActualPage (Page.Result)

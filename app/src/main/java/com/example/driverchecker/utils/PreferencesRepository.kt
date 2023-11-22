@@ -102,7 +102,7 @@ class PreferencesRepository (
                     )
                 }
                 preferencesValues["window"] != null -> buildWindowPreferences(
-                    preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf("1"),
+                    preferences[PreferencesKeys.WINDOW_TYPES_KEY] ?: setOf("3"),
                     preferences[PreferencesKeys.WINDOW_THRESHOLDS_KEY] ?: setOf("51"),
                     preferences[PreferencesKeys.WINDOW_SIZES_KEY] ?: setOf("10"),
                     preferences[PreferencesKeys.WINDOW_OFFSETS_KEY] ?: setOf("0"),

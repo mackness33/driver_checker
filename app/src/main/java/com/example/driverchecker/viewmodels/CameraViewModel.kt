@@ -1,5 +1,6 @@
 package com.example.driverchecker.viewmodels
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.camera.core.ImageProxy
@@ -9,9 +10,9 @@ import com.example.driverchecker.machinelearning.data.*
 import com.example.driverchecker.machinelearning.helpers.listeners.ASettingsStateListener
 import com.example.driverchecker.machinelearning.repositories.ImageDetectionFactoryRepository
 import com.example.driverchecker.machinelearning.helpers.listeners.ClassificationListener
-import com.example.driverchecker.machinelearning.helpers.listeners.SettingsStateListener
 import com.example.driverchecker.machinelearning.manipulators.IClassificationClient
 import com.example.driverchecker.machinelearning.manipulators.ImageDetectionClient
+import com.example.driverchecker.utils.BitmapUtils
 import com.example.driverchecker.utils.DeferrableData
 import com.example.driverchecker.utils.ObservableData
 import com.example.driverchecker.utils.PreferencesRepository
@@ -71,33 +72,53 @@ class CameraViewModel (
         mAwaitImagesPaths.complete(paths)
     }
 
-    fun save(name: String) = viewModelScope.launch(Dispatchers.Default) {
+    fun save(name: String, context: Context) = viewModelScope.launch(Dispatchers.Default) {
         if (evaluationClient.finalResult.value != null) {
-            if (mSaveImages.isCompleted()) update(name) else insert(name)
+            if (mSaveImages.isCompleted()) update(name) else insert(name, context)
         }
     }
 
-    fun insert(name: String) = viewModelScope.launch(Dispatchers.Default) {
+    fun insert(name: String, context: Context) = viewModelScope.launch(Dispatchers.Default) {
         mAwaitEndInsert.deferredAwait()
         val mapWithoutNullOutputs = evaluationClient.lastEvaluationsMap.filter { entry -> entry.value != null }
 
-        mSaveImages.complete(mapWithoutNullOutputs.keys.toList().map { key -> key.input })
+        val images = mapWithoutNullOutputs.keys.toList().map { key -> key.input }
 
-        val evalId = databaseRepository.insertFinalResult(
-            evaluationClient.finalResult.value!!,
-            name,
-            preferencesRepository.activePreferences["model"] as SettingsState.ModelSettings
-        )
+        val insertEvaluation = async {
+            databaseRepository.insertFinalResult(
+                evaluationClient.finalResult.value!!,
+                name,
+                preferencesRepository.activePreferences["model"] as SettingsState.ModelSettings
+            )
+        }
 
-        // TODO: to delete?
-        databaseRepository.insertAllOldMetrics(metricsPerGroup, evalId)
+        val paths = async {
+            if (images != null)
+                BitmapUtils.saveMultipleBitmapInStorage(images, context)
+            else
+                emptyList()
+        }
 
-        mAwaitImagesPaths.await()
+        val evaluationId = insertEvaluation.await()
+
         databaseRepository.insertAllPartialsAndItems(
-            evaluationClient.lastEvaluationsMap.values.filterNotNull(), evalId, mAwaitImagesPaths.value
+            evaluationClient.lastEvaluationsMap.values.filterNotNull(),
+            evaluationId,
+            paths.await()
         )
 
-        mAwaitEndInsert.complete(evalId)
+        mAwaitEndInsert.complete(evaluationId)
+    }
+
+    private fun saveImages (images: List<Bitmap>?, context: Context) : List<String?> {
+        if (images != null) {
+            return BitmapUtils.saveMultipleBitmapInStorage(
+                images,
+                context
+            )
+        }
+
+        return emptyList()
     }
 
     fun updateModelThreshold (modelThreshold: Float) {
